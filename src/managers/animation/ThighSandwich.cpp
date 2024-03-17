@@ -260,7 +260,7 @@ namespace {
 		//sandwichdata.OverideShrinkRune(0.0);
 		for (auto tiny: sandwichdata.GetActors()) {
 			SetBeingHeld(tiny, false);
-			EnableCollisions(tiny, &data.giant);
+			EnableCollisions(tiny);
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 	}
@@ -288,7 +288,7 @@ namespace {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		for (auto tiny: sandwichdata.GetActors()) {
 			SetBeingHeld(tiny, false);
-			EnableCollisions(tiny, &data.giant);
+			EnableCollisions(tiny);
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 		//sandwichdata.DisableRuneTask(&data.giant, false); // Disable Rune Growth

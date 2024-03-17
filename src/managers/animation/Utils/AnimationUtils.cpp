@@ -234,7 +234,7 @@ namespace Gts {
 		}
 
 		if (tiny) {
-			EnableCollisions(tiny, giant);
+			EnableCollisions(tiny);
 			SetBeingHeld(tiny, false);
 			PushActorAway(giant, tiny, 1.0);
 			UpdateFriendlyHugs(giant, tiny, true); // set GTS_IsFollower (tiny) and GTS_HuggingTeammate (GTS) bools to false

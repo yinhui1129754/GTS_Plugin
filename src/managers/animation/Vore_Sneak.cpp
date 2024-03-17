@@ -125,7 +125,7 @@ namespace {
 		for (auto& tiny: VoreData.GetVories()) {
 			if (tiny) {
 				AllowToBeCrushed(tiny, true);
-				EnableCollisions(tiny, giant);
+				EnableCollisions(tiny);
 			}
 		}
 		VoreData.AllowToBeVored(true);
