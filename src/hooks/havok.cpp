@@ -77,7 +77,6 @@ namespace {
 		auto tranDataA = Transient::GetSingleton().GetData(actor);
 		if (tranDataA) {
 			if (tranDataA->disable_collision_with == otherActor) {
-				log::info("CollisionA is disabled");
 				return true;
 			}
 		}
@@ -85,7 +84,6 @@ namespace {
 		auto tranDataB = Transient::GetSingleton().GetData(otherActor);
 		if (tranDataB) {
 			if (tranDataB->disable_collision_with == actor) {
-				log::info("CollisionB is disabled");
 				return true;
 			}
 		}
@@ -236,7 +234,7 @@ namespace Hooks
 			auto colLayerA = GetCollisionLayer(a_collidableA);
 			auto colLayerB = GetCollisionLayer(a_collidableB);
 
-			CollisionPrints(a_collidableA, a_collidableB);
+			//CollisionPrints(a_collidableA, a_collidableB);
 
 			bool Check_A = (colLayerA == COL_LAYER::kBiped || colLayerA == COL_LAYER::kCharController || colLayerA == COL_LAYER::kDeadBip || colLayerA == COL_LAYER::kBipedNoCC);
 			bool Check_B = (colLayerB == COL_LAYER::kBiped || colLayerB == COL_LAYER::kCharController || colLayerB == COL_LAYER::kDeadBip || colLayerB == COL_LAYER::kBipedNoCC);
