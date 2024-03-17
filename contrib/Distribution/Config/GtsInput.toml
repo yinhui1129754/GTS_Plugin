@@ -1,0 +1,610 @@
+# Keyboard event map
+#
+# Key names are from directinput
+# https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee418641(v=vs.85)
+# without the DIK_ prefix
+#
+# Mouse buttons: LMB RMB MOUSE3 MOUSE4 MOUSE5  
+#
+# (last 3 are Middle and side buttons)
+#
+# Events are specicified like this:
+# ```toml
+# [[InputEvent]]
+# name = "SomeKeyEvent"
+# keys = [ "A", "B", "LMB" ]
+# exclusive = false
+# duration = 0.0
+# trigger = "once"
+# ```
+# - Small Guide:
+#
+# - name: Is the event name. This determines what is done when these keys are
+#         pressed. More that one `[[InputEvent]]` can trigger the same event name
+#         which means you can have multiple keys combinations do that same thing, if you repeat the name at least.
+#
+# - keys: Is a comma seperated list [] of keys names that will trigger the event
+#
+# - exclusive: When true means ONLY these keys must be pressed for the entire duration
+#              When false - other keys may be pressed and the event will still fire
+#
+# - duration: The length of time the keys must be pressed for before they fire
+#
+# - trigger: Either 
+#            - "once" , "continuous" or "release". 
+#            - "once" - the keys must be released before the event will fire again.
+#            - "continuous" - the event will fire every frame until the keys are released
+#            - "release" - event will be sent once you release the keys
+#
+# If you will forget to put , between "key" "key" - controls will break and input won't work.
+# If for some reason input doesn't work - the mod will send in-game error that will let you know that you messed up in the config somewhere.
+# In that case, triple check everything. High chance that you forgot comma or , somewhere.
+#
+# Correct: keys = ["Key","Key"]. INCORRECT: keys = ["Key""Key"]
+
+#========================================================
+#================ V O R E
+#========================================================
+
+[[InputEvent]]
+name = "Vore"
+keys = [ "LSHIFT", "V"]
+trigger = "once"
+
+# Start Vore Attempt.
+
+#========================================================
+#================ S T O M P S
+#========================================================
+
+# If crawling/crouching, all Stomp input will be replaced with hand attacks instead.
+# ^ So use same stomp keys to perform hand attacks when crawling
+
+[[InputEvent]]
+name = "RightStomp_Strong"
+keys = ["LSHIFT", "E"]
+trigger = "continuous"
+duration = 0.44
+
+[[InputEvent]]
+name = "LeftStomp_Strong"
+keys = ["LSHIFT", "Q"]
+trigger = "continuous"
+duration = 0.44
+
+# ^ Trigger powerful stomps. 
+
+
+[[InputEvent]]
+name = "TrampleLeft"
+keys = ["LSHIFT", "Q"]
+trigger = "release"
+duration = 0.20
+
+[[InputEvent]]
+name = "TrampleRight"
+keys = ["LSHIFT", "E"]
+trigger = "release"
+duration = 0.20
+
+# ^ Trigger trample anims instead 
+
+
+[[InputEvent]]
+name = "RightStomp"
+keys = ["LSHIFT", "E"]
+trigger = "release"
+duration = 0.0
+
+# Trigger Stomp Right animation.
+
+[[InputEvent]]
+name = "LeftStomp"
+keys = ["LSHIFT", "Q"]
+trigger = "release"
+duration = 0.0
+
+# Trigger Stomp Left animation.
+
+#========================================================
+#================ T H I G H  C R U S H
+#========================================================
+
+[[InputEvent]]
+name = "ThighCrush"
+keys = ["LALT", "S"]
+exclusive = true
+duration = 0.0
+
+# Enter Thigh Crush Animation.
+
+[[InputEvent]]
+name = "ThighCrushKill"
+keys = ["LMB"]
+exclusive = false
+
+# Start Leg Spread, Leg Close animation.
+
+[[InputEvent]]
+name = "ThighCrushSpare"
+keys = ["RMB"]
+exclusive = true
+
+[[InputEvent]]
+name = "ThighCrushSpare"
+keys = ["W"]
+exclusive = true
+
+# ^ Ways to Exit Thigh Crush animation.
+
+#========================================================
+#============ T H I G H  S A N D W I C H
+#========================================================
+
+[[InputEvent]]
+name = "ThighSandwichEnter"
+keys = ["LSHIFT", "C"]
+exclusive = true
+
+# Attempt to Start Thigh Sandwich animation with someone.
+
+[[InputEvent]]
+name = "ThighSandwichAttackHeavy"
+keys = ["LMB"]
+exclusive = false
+trigger = "continuous"
+duration = 0.33
+
+# Do Heavy Thigh Sandwich attack, Can be Looped.
+
+[[InputEvent]]
+name = "ThighSandwichAttack" 
+keys = ["LMB"]
+exclusive = false
+trigger = "release"
+duration = 0.0
+
+# Do Thigh Sandwich attack, Can be Looped.
+
+
+[[InputEvent]]
+name = "ThighSandwichExit"
+keys = ["RMB"]
+exclusive = true
+duration = 0.5
+
+[[InputEvent]]
+name = "ThighSandwichExit"
+keys = ["W"]
+exclusive = true
+
+
+# ^ Ways to exit Thigh Sandwich. 
+
+#========================================================
+#============ K I C K S
+#========================================================
+
+#If crouching/crawling, all kicks will be replaced with hand swipes instead
+
+[[InputEvent]]
+name = "HeavyKickRight"
+keys = ["LALT", "E"]
+trigger = "continuous"
+exclusive = false
+duration = 0.33
+# Heavy Left Kick when not sneaking
+
+[[InputEvent]]
+name = "HeavyKickLeft"
+keys = ["LALT", "Q"]
+trigger = "continuous"
+exclusive = false
+duration = 0.33
+# Heavy Right Kick when not sneaking
+
+[[InputEvent]]
+name = "LightKickLeft"
+keys = ["LALT", "Q"]
+trigger = "release"
+exclusive = false
+duration = 0.0
+# Left Kick when not sneaking
+
+[[InputEvent]]
+name = "LightKickRight"
+keys = ["LALT", "E"]
+trigger = "release"
+exclusive = false
+duration = 0.0
+# Right Kick when not sneaking
+
+
+#========================================================
+#============ C R A W L I N G
+#========================================================
+
+[[InputEvent]]
+name = "HeavySwipeRight"
+keys = ["LALT", "E"]
+trigger = "continuous"
+exclusive = false
+duration = 0.33
+# Heavy Left swipe when crawling
+
+[[InputEvent]]
+name = "HeavySwipeLeft"
+keys = ["LALT", "Q"]
+trigger = "continuous"
+exclusive = false
+duration = 0.33
+# Heavy Right swipe when crawling
+
+[[InputEvent]]
+name = "LightSwipeLeft"
+keys = ["LALT", "Q"]
+trigger = "release"
+exclusive = false
+duration = 0.0
+# Left swipe when crawling
+
+[[InputEvent]]
+name = "LightSwipeRight"
+keys = ["LALT", "E"]
+trigger = "release"
+exclusive = false
+duration = 0.0
+# Right swipe when crawling
+
+
+#========================================================
+#============ H U G S
+#========================================================
+[[InputEvent]]
+name = "HugAttempt"
+keys = ["LSHIFT", "H"]
+exclusive = false
+
+# Attempt to hug someone
+
+[[InputEvent]]
+name = "HugShrink"
+keys = ["LMB"]
+trigger = "release"
+duration = 0.0
+exclusive = true
+# Shrink the one you're currently hugging.
+
+[[InputEvent]]
+name = "HugHeal"
+keys = ["LMB"]
+trigger = "continuous"
+duration = 0.33
+exclusive = true
+# If you have Loving Embrace perk, heal the one you hug. 
+# Will Shrink other if actor is hostile or if you don't have the perk
+
+
+[[InputEvent]]
+name = "HugCrush"
+keys = ["S"]
+exclusive = false
+#Crush the victim
+
+[[InputEvent]]
+name = "ForceHugCrush"
+keys = ["S"]
+exclusive = false
+duration = 0.50
+#Force Hug Crush when you have the perk that allows it. Hold for 0.5 sec
+
+[[InputEvent]]
+name = "HugRelease"
+keys = ["RMB"]
+exclusive = true
+
+[[InputEvent]]
+name = "HugRelease"
+keys = ["W"]
+exclusive = true
+duration = 0.50
+
+# Spare the one you're hugging.
+
+#========================================================
+#========================= Butt / Breast Crush
+#========================================================
+[[InputEvent]]
+name = "QuickButtCrushStart"
+keys = ["LSHIFT", "B"]
+trigger = "continuous"
+duration = 1.0 
+# Start Quick Butt/Breast Crush. Always does a quick one without targets. Hold for 1 second to trigger.
+
+[[InputEvent]]
+name = "ButtCrushStart"
+keys = ["LSHIFT", "B"]
+trigger = "release"
+duration = 0.0 
+# Start Butt/Breast Crush. If you have perk, it will look for closest actors to capture them. Else start normal butt crush.
+
+[[InputEvent]]
+name = "ButtCrushGrow"
+keys = ["W"]
+duration = 0.0
+trigger = "continuous"
+# Grow in size during butt crush. Requires perk.
+
+[[InputEvent]]
+name = "ButtCrushAttack"
+keys = ["LMB"]
+duration = 0.25 
+# Perform drop-down, dealing massive damage at butt/breast zone.
+
+[[InputEvent]]
+name = "ButtCrushAttack"
+keys = ["RMB"]
+duration = 0.25 
+# Perform drop-down, dealing massive damage at butt/breast zone.
+
+#========================================================
+#========================= SBE
+#========================================================
+
+#----- This is for prone movement that looks good together with Sneak Behavior Extensions- True Prone System (MGSV Style Crawling)  (Mod name). 
+#----- In Prone mode, Giantess is only able to perform Stomps: Stomps are replaced with matching side-rolls.
+#------This Toggles/Disables it. Can be used without this mod just fine.
+
+
+[[InputEvent]]
+name = "SBO_ToggleProne"
+keys = ["X"]
+exclusive = false
+trigger = "continuous"
+duration = 0.66
+
+[[InputEvent]]
+name = "SBO_DisableProne"
+keys = ["X"]
+exclusive = false
+trigger = "once"
+duration = 0.0
+
+[[InputEvent]]
+name = "SBO_DisableProne"
+keys = ["RMB"]
+exclusive = false
+trigger = "continuous"
+duration = 0.5
+
+[[InputEvent]]
+name = "SBO_ToggleDive"
+keys = ["LSHIFT", "W"]
+exclusive = false
+trigger = "continuous"
+duration = 0.20
+
+
+#========================================================
+#========================= G R A B
+#======================================================== 
+
+[[InputEvent]]
+name = "GrabOther"
+keys = ["F"]
+duration = 0.25 
+# Grabs closest actor.
+
+[[InputEvent]]
+name = "GrabAttack"
+keys = ["E"]
+exclusive = false
+duration = 0.5 
+trigger = "continuous"
+
+# Damage actor that is currently held in hand
+# Crushes actor if there's no health left.
+
+[[InputEvent]]
+name = "GrabVore"
+keys = ["V"]
+exclusive = false
+duration = 0.5 
+trigger = "continuous"
+
+# Vore Everyone in your hands
+
+[[InputEvent]]
+name = "GrabThrow"
+keys = ["X"]
+exclusive = false
+trigger = "continuous"
+
+# Throw Everyone in your hands
+
+
+[[InputEvent]]
+name = "GrabRelease"
+keys = ["RMB"]
+exclusive = false
+
+# Release actor from hand.
+
+[[InputEvent]]
+name = "BreastsPut"
+keys = ["LSHIFT", "B"]
+duration = 0.5
+# Put actor between breasts. Requires someone to be in hands.
+
+[[InputEvent]]
+name = "BreastsRemove"
+keys = ["LSHIFT", "B"]
+duration = 0.5
+# Put actor between breasts. Requires someone to be between breasts.
+
+
+#========================================================
+#========================= C A M E R A
+#========================================================
+
+[[InputEvent]]
+name = "HorizontalCameraReset"
+keys = ["RIGHT", "LEFT"]
+exclusive = false
+trigger = "continuous"
+
+[[InputEvent]]
+name = "VerticalCameraReset"
+keys = ["UP", "DOWN"]
+exclusive = false
+trigger = "continuous"
+
+[[InputEvent]]
+name = "CameraLeft"
+keys = ["LALT", "LEFT"]
+exclusive = false
+trigger = "continuous"
+
+[[InputEvent]]
+name = "CameraRight"
+keys = ["LALT", "RIGHT"]
+exclusive = false
+trigger = "continuous"
+
+[[InputEvent]]
+name = "CameraUp"
+keys = ["LALT", "UP"]
+exclusive = true
+trigger = "continuous"
+
+[[InputEvent]]
+name = "CameraDown"
+keys = ["LALT", "DOWN"]
+exclusive = false
+trigger = "continuous"
+
+#========================================================
+#========================= A N I M  S P E E D
+#========================================================
+
+[[InputEvent]]
+name = "AnimSpeedUp"
+keys = ["LMB"]
+exclusive = false
+trigger = "continuous"
+
+# Boost animation speed of Stomp/Thigh Crush/Thigh Sandwich. Can be applied only during specific events that allow it.
+
+[[InputEvent]]
+name = "AnimSpeedDown"
+keys = ["RMB"]
+exclusive = true
+trigger = "continuous"
+
+# Slow down animation speed of Stomp/Thigh Crush/Thigh Sandwich. Can be applied only during specific events that allow it.
+
+[[InputEvent]]
+name = "AnimMaxSpeed"
+keys = ["RMB", "LMB"]
+exclusive = false
+trigger = "continuous"
+
+# Massively Boost animation speed of Stomp/Thigh Crush/Thigh Sandwich. Can be applied only during specific events that allow it.
+
+#========================================================
+#========================= P E R K S
+#========================================================
+
+#=========================Shrink Outburst
+[[InputEvent]]
+name = "ShrinkOutburst"
+keys = ["LSHIFT", "F"]
+duration = 0
+exclusive = false
+trigger = "once"
+
+
+#=========================Size Reserve
+
+[[InputEvent]]
+name = "SizeReserve"
+keys = ["E"]
+duration = 1.2
+trigger = "continuous"
+
+# Use size reserve and grow yourself. Requires Perk.
+
+[[InputEvent]]
+name = "DisplaySizeReserve"
+keys = ["F"]
+duration = 1.2
+
+# Hold to print size reserve value. Requires Perk.
+
+#=========================Total Control: Rapid Growth/Shrink
+[[InputEvent]]
+name = "RapidGrowth"
+keys = ["LSHIFT", "1"]
+duration = 0.0
+# Rapidly Grow self. Requires Matching Perk.
+
+[[InputEvent]]
+name = "RapidShrink"
+keys = ["LSHIFT", "2"]
+duration = 0.0
+# Rapidly Shift self. Requires Matching Perk.
+
+#=========================Total Control: Growth/Shrink
+
+[[InputEvent]]
+name = "TotalControlGrow"
+keys = ["UP", "LEFT"]
+exclusive = false
+trigger = "continuous"
+
+# Grow self. Requires Matching Perk.
+
+[[InputEvent]]
+name = "TotalControlShrink"
+keys = ["DOWN", "LEFT"]
+exclusive = false
+trigger = "continuous" 
+
+# Shrink self. Requires Matching Perk.
+
+[[InputEvent]]
+name = "TotalControlGrowOther"
+keys = ["LSHIFT", "UP", "LEFT"]
+exclusive = false
+trigger = "continuous"
+
+# Grow followers. Requires Matching Perk.
+
+[[InputEvent]]
+name = "TotalControlShrinkOther"
+keys = ["LSHIFT", "DOWN", "LEFT"]
+exclusive = false
+trigger = "continuous"
+
+# Shrink followers. Requires Matching Perk.
+
+#========================================================
+#========================= M I S C
+#========================================================
+
+[[InputEvent]]
+name = "PartyReport"
+keys = ["LCONTROL"]
+duration = 1.2
+
+# Reports Follower's size info into the console
+
+[[InputEvent]]
+name = "ProtectSmallOnes"
+keys = ["C"]
+duration = 1.0
+
+# Protect tinies against size-related damage for 30 seconds. 
+# Works only when the quest is completed
+# Protects from yourself and followers.
+# Works on non-hostile actors only. 
