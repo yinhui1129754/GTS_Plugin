@@ -85,7 +85,7 @@ namespace Gts {
 			bool Protection = false;
 			bool was_sneaking = false;
 
-			bool DisableControls = false;
+			bool disable_collision = false;
 
 			float IsNotImmune = 1.0;
 
@@ -149,7 +149,7 @@ namespace Gts {
 			result.was_sneaking = was_sneaking;
 			
 
-			result.DisableControls = DisableControls;
+			result.disable_collision = disable_collision;
 
 			result.IsNotImmune = IsNotImmune;
 			

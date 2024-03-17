@@ -238,8 +238,8 @@ namespace Gts {
 	void PrintDeathSource(Actor* giant, Actor* tiny, DamageSource cause);
 	void PrintSuffocate(Actor* pred, Actor* prey);
 	void ShrinkUntil(Actor* giant, Actor* tiny, float expected, float halflife, bool animation);
-	void DisableCollisions(Actor* actor, TESObjectREFR* otherActor);
-	void EnableCollisions(Actor* actor);
+	void DisableCollisions(Actor* actor, Actor* otherActor);
+	void EnableCollisions(Actor* actor, Actor* otherActor);
 
 	void SpringGrow(Actor* actor, float amt, float halfLife, std::string_view naming);
 	void SpringGrow_Free(Actor* actor, float amt, float halfLife, std::string_view naming);

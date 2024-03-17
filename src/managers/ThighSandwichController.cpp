@@ -163,7 +163,7 @@ namespace Gts {
 			float threshold = 6.0;
 
 			if (giant->IsDead() || sizedifference < threshold) {
-				EnableCollisions(tiny);
+				EnableCollisions(tiny, giant);
 				SetBeingHeld(tiny, false);
 				AllowToBeCrushed(tiny, true);
 				PushActorAway(giant, tiny, 1.0);

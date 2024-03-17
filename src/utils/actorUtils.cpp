@@ -2501,34 +2501,31 @@ namespace Gts {
 		}
 	}
 
-	void DisableCollisions(Actor* actor, TESObjectREFR* otherActor) {
+	void DisableCollisions(Actor* actor, Actor* otherActor) {
 		if (actor) {
 			auto trans = Transient::GetSingleton().GetData(actor);
 			if (trans) {
-				trans->disable_collision_with = otherActor;
-				auto colliders = ActorCollisionData(actor);
-				colliders.UpdateCollisionFilter();
-				if (otherActor) {
-					Actor* asOtherActor = skyrim_cast<Actor*>(otherActor);
-					auto otherColliders = ActorCollisionData(asOtherActor);
-					otherColliders.UpdateCollisionFilter();
-				}
+				trans->disable_collision = true;
+			}
+		}
+		if (otherActor) {
+			auto trans = Transient::GetSingleton().GetData(otherActor);
+			if (trans) {
+				trans->disable_collision = true;
 			}
 		}
 	}
-	void EnableCollisions(Actor* actor) {
+	
+	void EnableCollisions(Actor* actor, Actor* otherActor) {
 		if (actor) {
 			auto trans = Transient::GetSingleton().GetData(actor);
 			if (trans) {
-				auto otherActor = trans->disable_collision_with;
-				trans->disable_collision_with = nullptr;
-				auto colliders = ActorCollisionData(actor);
-				colliders.UpdateCollisionFilter();
-				if (otherActor) {
-					Actor* asOtherActor = skyrim_cast<Actor*>(otherActor);
-					auto otherColliders = ActorCollisionData(asOtherActor);
-					otherColliders.UpdateCollisionFilter();
-				}
+				trans->disable_collision = false;
+			}
+		} if (otherActor) {
+			auto trans = Transient::GetSingleton().GetData(otherActor);
+			if (trans) {
+				trans->disable_collision = false;
 			}
 		}
 	}

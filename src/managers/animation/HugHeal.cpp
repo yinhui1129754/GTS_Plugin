@@ -55,7 +55,7 @@ namespace {
 	void AbortHugAnimation_Friendly(Actor* giant) {
 		auto tiny = HugShrink::GetHuggiesActor(giant);
 		if (tiny) {
-			EnableCollisions(tiny);
+			EnableCollisions(tiny, giant);
 			SetBeingHeld(tiny, false);
 			UpdateFriendlyHugs(giant, tiny, true); // set GTS_IsFollower (tiny) and GTS_HuggingTeammate (GTS) bools to false
 			Hugs_FixAnimationDesync(giant, tiny, true); // reset anim speed override so .dll won't use it

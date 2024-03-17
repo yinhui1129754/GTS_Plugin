@@ -68,17 +68,17 @@ namespace {
 			}
 			if (!IsButtCrushing(giantref)) {
 				SetBeingEaten(tiny, false);
-				EnableCollisions(tiny);
+				EnableCollisions(tiny, giantref);
 				return false;
 			}
 			if (!AttachTo_NoForceRagdoll(giantref, tinyref, coords)) {
 				SetBeingEaten(tiny, false);
-				EnableCollisions(tiny);
+				EnableCollisions(tiny, giantref);
 				return false;
 			}
 			if (tinyref->IsDead()) {
 				SetBeingEaten(tiny, false);
-				EnableCollisions(tiny);
+				EnableCollisions(tiny, giantref);
 				return false;
 			}
 			return true;

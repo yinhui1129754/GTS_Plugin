@@ -51,7 +51,7 @@ namespace Gts {
 		bool was_sneaking;
 		
 
-		bool DisableControls;
+		bool disable_collision;
 
 		float IsNotImmune;
 

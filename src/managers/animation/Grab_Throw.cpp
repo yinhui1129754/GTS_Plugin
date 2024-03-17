@@ -190,7 +190,7 @@ namespace {
 			if ((endTime - startTime) > 1e-4) {
 				// Time has elapsed
 				SetBeingHeld(tiny, false);
-				EnableCollisions(tiny);
+				EnableCollisions(tiny, giant);
 
 				NiPoint3 vector = endThrow - startThrow;
 				float distanceTravelled = vector.Length();

@@ -196,7 +196,7 @@ namespace {
 		//BlockFirstPerson(giant, false);
 		if (grabbedActor) {
 			PushActorAway(giant, grabbedActor, 1.0);
-			EnableCollisions(grabbedActor);
+			EnableCollisions(grabbedActor, giant);
 			SetBeingHeld(grabbedActor, false);
 		}
 		Grab::DetachActorTask(giant);
@@ -207,7 +207,7 @@ namespace {
 		auto giant = &data.giant;
 		auto grabbedActor = Grab::GetHeldActor(giant);
 		if (grabbedActor) {
-			EnableCollisions(grabbedActor);
+			EnableCollisions(grabbedActor, giant);
 		}
 		SetBetweenBreasts(giant, false);
 
@@ -226,7 +226,7 @@ namespace {
 		auto giant = &data.giant;
 		auto grabbedActor = Grab::GetHeldActor(giant);
 		if (grabbedActor) {
-			EnableCollisions(grabbedActor);
+			EnableCollisions(grabbedActor, giant);
 			SetBeingHeld(grabbedActor, false);
 		}
 		SetBetweenBreasts(giant, false);
