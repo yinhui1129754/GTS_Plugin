@@ -76,6 +76,10 @@ namespace {
 		}
 		auto tranDataA = Transient::GetSingleton().GetData(actor);
 		if (tranDataA) {
+			if (tranDataA->disable_collision_with != nullptr) {
+				log::info("Collision A is with {}", tranDataA->disable_collision_with->GetDisplayFullName());
+			}
+			
 			if (tranDataA->disable_collision_with == otherActor || tranDataA->disable_collision_with == actor) {
 				return true;
 			}
@@ -83,6 +87,10 @@ namespace {
 
 		auto tranDataB = Transient::GetSingleton().GetData(otherActor);
 		if (tranDataB) {
+			if (tranDataB->disable_collision_with != nullptr) {
+				log::info("Collision B owner: {}", otherActor->GetDisplayFullName());
+				log::info("Collision B is with {}", tranDataB->disable_collision_with->GetDisplayFullName());
+			}
 			if (tranDataB->disable_collision_with == actor || tranDataB->disable_collision_with == otherActor) {
 				return true;
 			}

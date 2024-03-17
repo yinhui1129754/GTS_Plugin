@@ -182,7 +182,7 @@ namespace Gts {
 			} else {
 				if (pred->formID == 0x14) {
 					std::string_view message = std::format("{} is too big to be hugged", prey->GetDisplayFullName());
-					shake_camera(pred, 0.30, 0.10);
+					shake_camera(pred, 0.45, 0.30);
 					TiredSound(pred, message);
 				}
 				return false;

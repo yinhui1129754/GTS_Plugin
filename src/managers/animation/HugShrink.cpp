@@ -69,7 +69,7 @@ namespace {
 		}
 
 		auto huggedActor = HugShrink::GetHuggiesActor(giant);
-		if (!huggedActor) {
+		if (huggedActor) {
 			DisableCollisions(huggedActor, giant);
 		}
 	} // Used for Sneak Hugs only
@@ -87,8 +87,6 @@ namespace {
 		if (!giant->IsSneaking()) {
 			Hugs_ShakeCamera(giant);
 		}
-
-		DisableCollisions(huggedActor, giant);
 	}
 
 	void GTS_Hug_Grow(AnimationEventData& data) {
