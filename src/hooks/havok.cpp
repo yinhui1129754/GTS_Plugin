@@ -76,14 +76,14 @@ namespace {
 		}
 		auto tranDataA = Transient::GetSingleton().GetData(actor);
 		if (tranDataA) {
-			if (tranDataA->disable_collision_with == otherActor) {
+			if (tranDataA->disable_collision_with == otherActor || tranDataA->disable_collision_with == actor) {
 				return true;
 			}
 		}
 
 		auto tranDataB = Transient::GetSingleton().GetData(otherActor);
 		if (tranDataB) {
-			if (tranDataB->disable_collision_with == actor) {
+			if (tranDataB->disable_collision_with == actor || tranDataB->disable_collision_with == otherActor) {
 				return true;
 			}
 		}

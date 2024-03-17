@@ -122,7 +122,7 @@ namespace {
 		if (!Runtime::HasPerk(player, "ColossalGrowth")) {
 			return;
 		}
-		if (!IsGtsBusy(player)) {
+		if (!IsGtsBusy(player) && !IsChangingSize(player)) {
 			AnimationManager::StartAnim("TriggerGrowth", player);
 		}
 		
@@ -132,7 +132,7 @@ namespace {
 		if (!Runtime::HasPerk(player, "ColossalGrowth")) {
 			return;
 		}
-		if (!IsGtsBusy(player)) {
+		if (!IsGtsBusy(player) && !IsChangingSize(player)) {
 			AnimationManager::StartAnim("TriggerShrink", player);
 		}
 	}

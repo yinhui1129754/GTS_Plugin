@@ -366,6 +366,15 @@ namespace Gts {
 		return ragdoll;
 	}
 
+	bool IsChangingSize(Actor* actor) { // Used to disallow growth/shrink during specific animations
+		bool Growing = false;
+		bool Shrinking = false;
+		actor->GetGraphVariableBool("GTS_IsGrowing", Growing);
+		actor->GetGraphVariableBool("GTS_IsShrinking", Shrinking);
+
+		return Growing || Shrinking;
+	}
+
 	bool IsProning(Actor* actor) {
 		bool prone = false;
 		auto transient = Transient::GetSingleton().GetData(actor);

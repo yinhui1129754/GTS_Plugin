@@ -33,6 +33,7 @@ namespace Gts {
 	bool IsEquipBusy(Actor* actor);
 	
 	bool IsRagdolled(Actor* actor);
+	bool IsChangingSize(Actor* actor);
 
 	bool IsFootGrinding(Actor* actor);
 	bool isTrampling(Actor* actor);

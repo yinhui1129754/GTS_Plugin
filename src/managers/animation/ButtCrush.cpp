@@ -259,7 +259,7 @@ namespace {
 		if (IsFirstPerson()) {
 			return;
 		}
-		if (IsGtsBusy(player) || !CanPerformAnimation(player, 2)) {
+		if (IsGtsBusy(player) || IsChangingSize(player) || !CanPerformAnimation(player, 2)) {
 			return;
 		}
 		auto grabbedActor = Grab::GetHeldActor(player);
@@ -318,7 +318,7 @@ namespace {
 		if (IsFirstPerson() || IsGtsBusy(player)) {
 			return;
 		}
-		if (IsButtCrushing(player) && Runtime::HasPerk(player, "ButtCrush_GrowingDisaster")) {
+		if (IsButtCrushing(player) && !IsChangingSize(player) && Runtime::HasPerk(player, "ButtCrush_GrowingDisaster")) {
 			float GrowthCount = GetGrowthLimit(player);
 			bool CanGrow = ButtCrush_IsAbleToGrow(player, GrowthCount);
 			if (CanGrow) {
