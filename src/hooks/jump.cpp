@@ -73,7 +73,7 @@ namespace Hooks {
 			//log::info("Original jump height: {}", result);
 		    if (actor) {
 				if (actor->formID == 0x14) {
-					float scale = get_giantess_scale(actor);
+					float scale = -1.0;//get_giantess_scale(actor);
 					result *= scale;
 				}
 				//log::info("Value: {}", result);
