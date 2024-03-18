@@ -65,7 +65,7 @@ namespace Hooks {
 
 
 		
-		static CallHook<float(Actor*)> SkyrimJumpHeight(RELOCATION_ID(36271, 37257),  REL::Relocate(0x190, 0x17F),
+		static CallHook<float(Actor* actor)> SkyrimJumpHeight(RELOCATION_ID(36271, 37257),  REL::Relocate(0x190, 0x17F),
 		// SE: find offset : 0x1405d2110 - 0x1405d1f80  
 		// So offset is = 0x190 .  36271 = 5D1F80
 		[](auto* actor) {
@@ -73,7 +73,7 @@ namespace Hooks {
 			//log::info("Original jump height: {}", result);
 		    if (actor) {
 				if (actor->formID == 0x14) {
-					float scale = -1.0;//get_giantess_scale(actor);
+					float scale = std::clamp(get_giantess_scale(actor), 0.8f, 99999.0f);
 					result *= scale;
 				}
 				//log::info("Value: {}", result);

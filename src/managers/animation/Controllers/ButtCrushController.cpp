@@ -190,7 +190,7 @@ namespace Gts {
 			return false;
 		}
 		float pred_scale = get_visual_scale(pred);
-		float sizedifference = GetSizeDifference(pred, prey, true);
+		float sizedifference = GetSizeDifference(pred, prey, true, false);
 
 		float MINIMUM_BUTTCRUSH_SCALE = Action_Booty;
 		float MINIMUM_DISTANCE = MINIMUM_BUTTCRUSH_DISTANCE;
@@ -228,7 +228,7 @@ namespace Gts {
 			prey->NotifyAnimationGraph("GTS_EnterFear");
 			auto camera = PlayerCamera::GetSingleton();
 			
-			if (GetSizeDifference(pred, prey, false) < Action_Booty) {
+			if (GetSizeDifference(pred, prey, false, false) < Action_Booty) {
 				ShrinkUntil(pred, prey, 3.4, 0.25, true);
 				return;
 			}

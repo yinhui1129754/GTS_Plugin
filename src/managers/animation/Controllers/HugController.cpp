@@ -148,7 +148,7 @@ namespace Gts {
 		float pred_scale = get_visual_scale(pred);
 		// No need to check for BB scale in this case
 
-		float sizedifference = GetSizeDifference(pred, prey, false);
+		float sizedifference = GetSizeDifference(pred, prey, false, true);
 		
 
 		float MINIMUM_DISTANCE = MINIMUM_HUG_DISTANCE;

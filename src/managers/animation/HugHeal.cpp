@@ -127,7 +127,7 @@ namespace {
 			auto giantref = gianthandle.get().get();
 			auto tinyref = tinyhandle.get().get();
 
-			float sizedifference = GetSizeDifference(giantref, tinyref, false);
+			float sizedifference = GetSizeDifference(giantref, tinyref, false, true);
 			float threshold = 3.0;
 			float stamina = 0.35;
 

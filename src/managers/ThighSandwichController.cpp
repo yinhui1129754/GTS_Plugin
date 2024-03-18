@@ -159,7 +159,7 @@ namespace Gts {
 			}
 
 			float tinyScale = get_visual_scale(tiny);
-			float sizedifference = GetSizeDifference(giant, tiny, true);
+			float sizedifference = GetSizeDifference(giant, tiny, true, false);
 			float threshold = 6.0;
 
 			if (giant->IsDead() || sizedifference < threshold) {
@@ -290,7 +290,7 @@ namespace Gts {
 
 		float pred_scale = get_visual_scale(pred);
 
-		float sizedifference = GetSizeDifference(pred, prey, true);
+		float sizedifference = GetSizeDifference(pred, prey, true, false);
 
 		float MINIMUM_SANDWICH_SCALE = Action_Sandwich;
 
@@ -328,7 +328,7 @@ namespace Gts {
 		}
 		ShrinkUntil(pred, prey, 6.0, 0.20, true);
 
-		if (GetSizeDifference(pred, prey, false) < Action_Sandwich) {
+		if (GetSizeDifference(pred, prey, false, false) < Action_Sandwich) {
 			return;
 		}
 		
