@@ -898,7 +898,7 @@ namespace Gts {
 
 	float GetSizeDifference(Actor* giant, Actor* tiny, bool Check_SMT, bool HH) {
 		float hh_gts = 0.0; 
-		float hh_tiny = 0.0; HighHeelManager::GetHHOffset(tiny)[2] * 0.01;
+		float hh_tiny = 0.0;
 
 		if (HH) { // Apply HH only in cases when we need it
 			hh_gts = HighHeelManager::GetHHOffset(giant)[2] * 0.01;
