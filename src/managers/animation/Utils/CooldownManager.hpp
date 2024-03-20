@@ -19,7 +19,7 @@ namespace Gts {
         Action_Hugs,
         Emotion_Laugh,
         Emotion_Moan,
-    }
+    };
 
     struct CooldownData {
         double lastPushTime = -1.0e8;
