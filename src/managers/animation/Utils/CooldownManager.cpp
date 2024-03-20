@@ -93,6 +93,9 @@ namespace Gts {
             case CooldownSource::Action_ScareOther:   
                 data.lastScareTime = Time::WorldTimeElapsed();
                 break; 
+            case CooldownSource::Action_Hugs:   
+                data.lastHugTime = Time::WorldTimeElapsed();
+                break;     
             case CooldownSource::Emotion_Laugh:   
                 data.lastLaughTime = Time::WorldTimeElapsed();
                 break; 

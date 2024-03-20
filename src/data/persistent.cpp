@@ -1,3 +1,4 @@
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
@@ -102,6 +103,7 @@ namespace Gts {
 		std::uint32_t version;
 
 		SizeManager::GetSingleton().Reset();
+		//CooldownManager::GetSingleton().Reset();
 
 		FixAnimationsAndCamera(); // Call it from ActorUtils, needed to fix Grab anim on save-reload
 

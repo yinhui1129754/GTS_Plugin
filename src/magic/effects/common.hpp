@@ -29,8 +29,9 @@ namespace Gts {
 	}
 
 	inline void AdvanceSkill(Actor* giant, ActorValue Attribute, float points, float multiplier) {
+		// DLL Equivalent of AdvanceSkill from Papyrus, does the same thing
 		if (giant->formID == 0x14) {
-			giant->UseSkill(Attribute, points * multiplier, nullptr);
+			giant->UseSkill(Attribute, points * 0.016 * multiplier * TimeScale(), nullptr);
 		}
 	}
 
@@ -255,7 +256,13 @@ namespace Gts {
 		update_target_scale(from, -shrink_amount, SizeEffectType::kShrink);
 		update_target_scale(to, growth_amount, SizeEffectType::kGrow);
 
-		//log::info("Steal efficiency: {} - {}, : {}", from->GetDisplayFullName(), to->GetDisplayFullName(), effeciency);
+		float XpMult = 1.0;
+
+		if (from->IsDead()) {
+			XpMult = 0.25;
+		}
+
+		AdvanceSkill(to, ActorValue::kAlteration, shrink_amount, XpMult); // Gain vanilla Alteration xp
 
 		if (source == ShrinkSource::hugs) { // quest: shrink by 2 and 5 meters worth of size in total (stage 1 / 2) 
 			AdvanceQuestProgression(to, 1.0, shrink_amount);

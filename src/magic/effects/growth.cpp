@@ -48,5 +48,13 @@ namespace Gts {
 		}
 
 		Grow(caster, 0.0, power * bonus);
+
+
+		float mult = 0.15;
+		if (caster->IsInCombat()) {
+			mult = 1.0;
+		}
+
+		AdvanceSkill(caster, ActorValue::kAlteration, power * bonus, 1.0); // Gain vanilla Alteration xp
 	}
 }
