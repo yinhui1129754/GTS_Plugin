@@ -900,7 +900,7 @@ namespace Gts {
 		float hh_gts = 0.0; 
 		float hh_tiny = 0.0;
 
-		if (HH) { // Apply HH only in cases when we need it
+		if (HH) { // Apply HH only in cases when we need it, such as damage and hugs
 			hh_gts = HighHeelManager::GetHHOffset(giant)[2] * 0.01;
 			hh_tiny = HighHeelManager::GetHHOffset(tiny)[2] * 0.01;
 		}

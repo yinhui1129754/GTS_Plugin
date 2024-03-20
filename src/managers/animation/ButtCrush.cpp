@@ -315,7 +315,7 @@ namespace {
 
 	void ButtCrushGrowEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
-		if (IsFirstPerson() || IsGtsBusy(player)) {
+		if (IsFirstPerson()) {
 			return;
 		}
 		if (IsButtCrushing(player) && !IsChangingSize(player) && Runtime::HasPerk(player, "ButtCrush_GrowingDisaster")) {
