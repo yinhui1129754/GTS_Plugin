@@ -574,13 +574,13 @@ namespace Gts {
 	}
 
 	bool CanDoButtCrush(Actor* actor, bool apply_cooldown) {
-		bool Allow = SizeManager::IsButtCrushInCooldown(actor);
+		bool Allow = IsActionOnCooldown(actor, CooldownSource::Action_ButtCrush);
 
 		if (!Allow && apply_cooldown) { // send it to cooldown if it returns 'not busy'
-			SizeManager::GetSingleton().GetDamageData(actor).lastButtCrushTime = Time::WorldTimeElapsed();
+			ApplyActionCooldown(actor, CooldownSource::Action_ButtCrush);
 		}
 
-		return !Allow;
+		return !Allow; // return flipped OnCooldown. By default it false, we flip it so it returns True (Can perform butt crush)
 	}
 
 	bool GetCameraOverride(Actor* actor) {

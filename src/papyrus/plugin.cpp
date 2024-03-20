@@ -371,10 +371,6 @@ namespace {
 		}
 	}
 
-	void AllowActorDeletion(StaticFunctionTag*, bool enabled) {
-		Persistent::GetSingleton().delete_actors = enabled;
-	}
-
 	bool WasDragonEaten(StaticFunctionTag*) {
 		auto pc = PlayerCharacter::GetSingleton();
 		auto transient = Transient::GetSingleton().GetData(pc);
@@ -517,7 +513,6 @@ namespace Gts {
 		vm->RegisterFunction("IncreaseSizeLimit", PapyrusClass, IncreaseSizeLimit);
 		vm->RegisterFunction("IncreaseMassLimit", PapyrusClass, IncreaseMassLimit);
 		vm->RegisterFunction("DisintegrateTarget", PapyrusClass, DisintegrateTarget);
-		vm->RegisterFunction("AllowActorDeletion", PapyrusClass, AllowActorDeletion);
 		vm->RegisterFunction("WasDragonEaten", PapyrusClass, WasDragonEaten);
 		vm->RegisterFunction("GetDevourmentCompatibility", PapyrusClass, GetDevourmentCompatibility);
 		vm->RegisterFunction("SetDevourmentCompatibility", PapyrusClass, SetDevourmentCompatibility);

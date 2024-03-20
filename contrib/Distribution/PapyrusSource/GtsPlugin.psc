@@ -224,9 +224,7 @@ function SetLaunchObjects(Bool enabled) global native
 
 function IncreaseSizeLimit(float value, Actor caster) global native
 function IncreaseMassLimit(float value, Actor caster) global native
-
-;allow/disallow deletion of actors
-Function AllowActorDeletion(Bool enabled) global native    
+  
 Bool function WasDragonEaten() global native 
 
 Bool function DragonCheck(Actor target) global native   
