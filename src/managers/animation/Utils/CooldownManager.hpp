@@ -45,7 +45,7 @@ namespace Gts {
 
 			void Reset();
 
-			CooldownData& GetData(Actor* actor);
+			CooldownData& GetCooldownData(Actor* actor);
 
         private: 
 			std::map<Actor*, CooldownData> CooldownData;
