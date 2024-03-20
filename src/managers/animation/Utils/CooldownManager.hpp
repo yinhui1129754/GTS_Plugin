@@ -34,6 +34,9 @@ namespace Gts {
         double lastMoanTime = -1.0e8;
     };
 
+    void ApplyActionCooldown(Actor* giant, CooldownSource source);
+    bool IsActionOnCooldown(Actor* giant, CooldownSource source);
+
     class CooldownManager : public EventListener {
 		public:
 			[[nodiscard]] static CooldownManager& GetSingleton() noexcept;
@@ -44,10 +47,7 @@ namespace Gts {
 
 			CooldownData& GetData(Actor* actor);
 
-            void ApplyActionCooldown(Actor* giant, CooldownSource source);
-            bool IsActionOnCooldown(Actor* giant, CooldownSource source);
-
         private: 
 			std::map<Actor*, CooldownData> CooldownData;
-    }
+    };
 }
