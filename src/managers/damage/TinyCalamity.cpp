@@ -1,3 +1,4 @@
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/tinyCalamity.hpp"
 #include "managers/CrushManager.hpp"
