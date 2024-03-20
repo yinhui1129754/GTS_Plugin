@@ -144,8 +144,9 @@ namespace Gts {
 				std::size_t numberOfPrey = 1;
 				std::vector<Actor*> preys = hugs.GetHugTargetsInFront(pred, numberOfPrey);
 				for (auto prey: preys) {
-					float sizedifference = get_visual_scale(pred)/get_visual_scale(prey);
-					if (sizedifference > 0.98 && sizedifference < GetHugShrinkThreshold(pred)) {
+					float sizedifference = GetSizeDifference(pred, prey, false, true);
+					if (sizedifference > Action_Hug && sizedifference < GetHugShrinkThreshold(pred)) {
+						// ^ If Size > 0.92 (minimum) && Size < 2.5 + perk bonus (maximum) threshold basically
 						AI_StartHugs(pred, prey);
 					}
 				}

@@ -259,7 +259,7 @@ namespace {
 		if (!huggedActor) {
 			return;
 		}
-		if (get_target_scale(player)/get_target_scale(huggedActor) >= GetHugShrinkThreshold(player)) {
+		if (get_target_scale(player)/get_target_scale(huggedActor) > GetHugShrinkThreshold(player)) {
 			if (!IsHugCrushing(player) && !IsHugHealing(player)) {
 				AbortHugAnimation(player, huggedActor);
 			}
@@ -277,7 +277,7 @@ namespace {
 			return;
 		}
 
-		if (get_target_scale(player)/get_target_scale(huggedActor) >= GetHugShrinkThreshold(player)) {
+		if (get_target_scale(player)/get_target_scale(huggedActor) > GetHugShrinkThreshold(player)) {
 			if (!IsHugCrushing(player) && !IsHugHealing(player)) {
 				AbortHugAnimation(player, huggedActor);
 			}

@@ -31,7 +31,7 @@ namespace {
 	const double HEALTHGATE_COOLDOWN = 60.0f;
 	const double SCARE_COOLDOWN = 6.0f;
 	const double BUTTCRUSH_COOLDOWN = 30.0f;
-	const double HUGS_COOLDOWN = 12.0f;
+	const double HUGS_COOLDOWN = 8.0f;
 	const float LAUNCH_DAMAGE_BASE = 1.0f;
 	const float LAUNCH_KNOCKBACK_BASE = 0.02f;
 
