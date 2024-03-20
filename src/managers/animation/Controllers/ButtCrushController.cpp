@@ -55,7 +55,7 @@ namespace {
 			ForceRagdoll(tinyref, false);
 			DamageAV(giantref, ActorValue::kStamina, 0.32 * GetButtCrushCost(giant));
 
-			SizeManager::GetSingleton().GetDamageData(giantref).lastButtCrushTime = Time::WorldTimeElapsed(); // Set butt crush on the cooldown
+			ApplyActionCooldown(giantref, CooldownSource::Action_ButtCrush); // Set butt crush on the cooldown
 
 			if (stamina <= 2.0) {
 				AnimationManager::StartAnim("ButtCrush_Attack", giantref); // Try to Abort it
@@ -240,7 +240,7 @@ namespace Gts {
 
 			AttachToObjectBTask(pred, prey);
 
-			SizeManager::GetSingleton().GetDamageData(pred).lastButtCrushTime = Time::WorldTimeElapsed(); // Set butt crush on the cooldown
+			ApplyActionCooldown(pred, CooldownSource::Action_ButtCrush); // Set butt crush on the cooldown
 			AnimationManager::StartAnim("ButtCrush_Start", pred);
 		} else {
 			if (!IsCrawling(pred)) {

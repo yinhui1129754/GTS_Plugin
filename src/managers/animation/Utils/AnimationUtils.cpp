@@ -995,7 +995,7 @@ namespace Gts {
 						});
 					}
 					if (nodeCollisions > 0) {
-						bool allow = sizemanager.IsHandDamaging(otherActor);
+						bool allow = IsActionOnCooldown(otherActor, CooldownSource::Damage_Hand);
 						if (!allow) {
 							float aveForce = std::clamp(force, 0.16f, 0.70f);
 							float pushForce = std::clamp(force, 0.04f, 0.10f);
@@ -1033,7 +1033,7 @@ namespace Gts {
 
 							
 							ApplyShakeAtPoint(giant, 3.0 * pushpower * audio, node->world.translate, 1.5);
-							sizemanager.GetDamageData(otherActor).lastHandDamageTime = Time::WorldTimeElapsed();
+							ApplyActionCooldown(otherActor, CooldownSource::Damage_Hand);
 							CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 						}
 					}
@@ -1125,14 +1125,14 @@ namespace Gts {
 									damage /= damage_zones_applied;
 									if (CooldownCheck) {
 										float pushForce = std::clamp(force, 0.04f, 0.10f);
-										bool OnCooldown = sizemanager.IsThighDamaging(otherActor);
+										bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
 										if (!OnCooldown) {
 											float pushCalc = 0.06 * pushForce * speed;
 											Laugh_Chance(actor, otherActor, 1.35, "ThighCrush");
 											float difference = giantScale / (tinyScale * GetSizeFromBoundingBox(otherActor));
 											PushTowards(actor, otherActor, leg, pushCalc * difference, true);
 											CollisionDamage.DoSizeDamage(actor, otherActor, damage * speed * perk, bbmult, crush_threshold, random, Cause, true);
-											sizemanager.GetDamageData(otherActor).lastThighDamageTime = Time::WorldTimeElapsed();
+											ApplyActionCooldown(otherActor, CooldownSource::Damage_Thigh);
 										}
 									} else {
 										Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
@@ -1427,8 +1427,7 @@ namespace Gts {
 	}
 
 	void Laugh_Chance(Actor* giant, Actor* otherActor, float multiply, std::string_view name) {
-		auto& Emotions = EmotionManager::GetSingleton();
-		bool Blocked = Emotions.Laugh_InCooldown(giant);
+		bool Blocked = IsActionOnCooldown(giant, CooldownSource::Emotion_Laugh);
 		if (!Blocked) {
 			int rng = rand() % 2 + 1;
 			if (rng <= 1.0) {
@@ -1438,15 +1437,14 @@ namespace Gts {
 				if (!otherActor->IsDead()) {
 					PlayLaughSound(giant, 1.0, 1);
 					Task_FacialEmotionTask_Smile(giant, duration, name);
-					Emotions.GetEmotionData(giant).lastLaughTime = Time::WorldTimeElapsed();
+					ApplyActionCooldown(giant, CooldownSource::Emotion_Laugh);
 				}
 			}
 		}
 	}
 
 	void Laugh_Chance(Actor* giant, float multiply, std::string_view name) {
-		auto& Emotions = EmotionManager::GetSingleton();
-		bool Blocked = Emotions.Laugh_InCooldown(giant);
+		bool Blocked = IsActionOnCooldown(giant, CooldownSource::Emotion_Laugh);
 		if (!Blocked) {
 			int rng = rand() % 2 + 1;
 			if (rng <= 1.0) {
@@ -1455,7 +1453,7 @@ namespace Gts {
 
 				PlayLaughSound(giant, 1.0, 1);
 				Task_FacialEmotionTask_Smile(giant, duration, name);
-				Emotions.GetEmotionData(giant).lastLaughTime = Time::WorldTimeElapsed();
+				ApplyActionCooldown(giant, CooldownSource::Emotion_Laugh);
 			}
 		}
 	}

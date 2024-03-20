@@ -144,8 +144,8 @@ namespace {
 
 			if (a_damage > GetAV(receiver, ActorValue::kHealth)) {
 				if (Runtime::HasPerk(receiver, "HealthGate")) {
-					if (!SizeManager::GetSingleton().IsHealthGateInCooldown(receiver)) {
-						SizeManager::GetSingleton().GetDamageData(receiver).lastHealthGateTime = Time::WorldTimeElapsed();
+					if (!IsActionOnCooldown(receiver, CooldownSource::Action_HealthGate)) {
+						ApplyActionCooldown(receiver, CooldownSource::Action_HealthGate);
 						float maxhp = GetMaxAV(receiver, ActorValue::kHealth);
 						float target = get_target_scale(receiver);
 						float natural = get_natural_scale(receiver);

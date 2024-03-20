@@ -198,7 +198,7 @@ namespace Gts {
 			return;
 		}
 		static Timer HugTimer = Timer(12.0);
-		if (SizeManager::IsHugsOnCooldown(pred)) {
+		if (IsActionOnCooldown(pred, CooldownSource::Action_Hugs)) {
 			TiredSound(pred, "Hugs are on the cooldown");
 			return;
 		}
@@ -216,6 +216,6 @@ namespace Gts {
 			AnimationManager::StartAnim("Huggies_Try_Victim", prey); //   GTSBEH_HugAbsorbStart_V
 		}
 
-		SizeManager::GetSingleton().GetDamageData(pred).lastHugTime = Time::WorldTimeElapsed();
+		ApplyActionCooldown(pred, CooldownSource::Action_Hugs);
 	}
 }

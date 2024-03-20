@@ -1899,10 +1899,10 @@ namespace Gts {
 		bool moving = IsMoving(giant);
 
 		if (model) {
-			bool isdamaging = sizemanager.IsDamaging(tiny);
+			bool isdamaging = IsActionOnCooldown(tiny, CooldownSource::Push_Basic);
 			if (!isdamaging && (force >= 0.12 || moving || IsFootGrinding(giant))) {
 				StaggerOr(giant, tiny, 0, 0, 0, 0);
-				sizemanager.GetDamageData(tiny).lastDamageTime = Time::WorldTimeElapsed();
+				ApplyActionCooldown(tiny, CooldownSource::Push_Basic);
 			}
 		}
 	}
@@ -2327,11 +2327,11 @@ namespace Gts {
 			rng /= sizedifference;
 			if (rng <= 1.0 * sizedifference) {
 				log::info("Trying to scare {}", tiny->GetDisplayFullName());
-				bool IsScared = SizeManager::GetSingleton().IsBeingScared(tiny);
+				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
 				log::info("Allow: {}", IsScared);
 				if (!IsScared) {
 					auto combat = tiny->GetActorRuntimeData().combatController;
-					SizeManager::GetSingleton().GetDamageData(tiny).lastScareTime = Time::WorldTimeElapsed();
+					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
 					if (!combat) {
 						return;
 					}

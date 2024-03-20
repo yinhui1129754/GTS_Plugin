@@ -17,8 +17,6 @@
 namespace {
 
 	const float Speed_up = 12.0f;
-	const double LAUGH_COOLDOWN = 5.0f;
-	const double MOAN_COOLDOWN = 5.0f;
 
 	BSFaceGenAnimationData* GetFacialData(Actor* giant) {
 		auto fgen = giant->GetFaceGenAnimationData();
@@ -168,9 +166,6 @@ namespace Gts {
 		return "EmotionManager";
 	}
 
-	void EmotionManager::Reset() {
-		this->EmotionData.clear();
-	}
 
 	void EmotionManager::OverridePhenome(Actor* giant, int number, float power, float halflife, float target) {
 		Task_UpdatePhenome(giant, number, halflife, target);
@@ -178,18 +173,5 @@ namespace Gts {
 
 	void EmotionManager::OverrideModifier(Actor* giant, int number, float power, float halflife, float target) {
 		Task_UpdateModifier(giant, number, halflife, target);
-	}
-
-	bool EmotionManager::Laugh_InCooldown(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (EmotionManager::GetSingleton().GetEmotionData(actor).lastLaughTime + LAUGH_COOLDOWN);
-	}
-
-	bool EmotionManager::Moan_InCooldown(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (EmotionManager::GetSingleton().GetEmotionData(actor).lastMoanTime + MOAN_COOLDOWN);
-	}
-
-	EmotionData& EmotionManager::GetEmotionData(Actor* actor) {
-		this->EmotionData.try_emplace(actor);
-		return this->EmotionData.at(actor);
 	}
 }

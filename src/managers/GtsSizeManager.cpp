@@ -32,20 +32,6 @@ namespace {
 	const double SCARE_COOLDOWN = 6.0f;
 	const double BUTTCRUSH_COOLDOWN = 30.0f;
 	const double HUGS_COOLDOWN = 8.0f;
-	const float LAUNCH_DAMAGE_BASE = 1.0f;
-	const float LAUNCH_KNOCKBACK_BASE = 0.02f;
-
-	float Calculate_ButtCrushTimer(Actor* actor) {
-		bool lvl70 = Runtime::HasPerk(actor, "ButtCrush_UnstableGrowth");
-		bool lvl100 = Runtime::HasPerk(actor, "ButtCrush_LoomingDoom");
-		float reduction = 0.0;
-		if (lvl100) { // 25% reduction
-			reduction += 7.5;
-		} else if (lvl70) { // 15% reduction
-			reduction += 4.5;
-		} 
-		return reduction;
-	}
 
 	float Calculate_Halflife(CameraTracking Bone) {
 		if (Bone == CameraTracking::Thigh_Crush) { // Thigh Crushing
@@ -381,57 +367,6 @@ namespace Gts {
 		}
 		
 		TaskManager::CancelAllTasks(); // just in case, to avoid CTD
-		this->DamageData.clear();
-		this->launchData.clear();
 	}
 
-	LaunchData& SizeManager::GetLaunchData(Actor* actor) {
-		this->launchData.try_emplace(actor);
-		return this->launchData.at(actor);
-	}
-
-	DamageData& SizeManager::GetDamageData(Actor* actor) {
-		this->DamageData.try_emplace(actor);
-		return this->DamageData.at(actor);
-	}
-
-	bool SizeManager::IsLaunching(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (SizeManager::GetSingleton().GetLaunchData(actor).lastLaunchTime + LAUNCH_COOLDOWN);
-	}
-
-	bool SizeManager::IsDamaging(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (SizeManager::GetSingleton().GetDamageData(actor).lastDamageTime + DAMAGE_COOLDOWN);
-	}
-
-	bool SizeManager::IsHandDamaging(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (SizeManager::GetSingleton().GetDamageData(actor).lastHandDamageTime + HANDDAMAGE_COOLDOWN);
-	}
-
-	bool SizeManager::IsThighDamaging(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (SizeManager::GetSingleton().GetDamageData(actor).lastThighDamageTime + THIGHDAMAGE_COOLDOWN);
-	}
-
-	bool SizeManager::IsBeingScared(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (SizeManager::GetSingleton().GetDamageData(actor).lastScareTime + SCARE_COOLDOWN);
-	}
-
-	bool SizeManager::IsHealthGateInCooldown(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (SizeManager::GetSingleton().GetDamageData(actor).lastHealthGateTime + HEALTHGATE_COOLDOWN);
-	}
-
-	bool SizeManager::IsButtCrushInCooldown(Actor* actor) {
-		float ButtCrush_CD = BUTTCRUSH_COOLDOWN - Calculate_ButtCrushTimer(actor);
-		return Time::WorldTimeElapsed() <= (SizeManager::GetSingleton().GetDamageData(actor).lastButtCrushTime + ButtCrush_CD);
-	}
-
-	bool SizeManager::IsHugsOnCooldown(Actor* actor) {
-		return Time::WorldTimeElapsed() <= (SizeManager::GetSingleton().GetDamageData(actor).lastHugTime + HUGS_COOLDOWN);
-	}
-
-
-
-	bool SizeManager::GetPreciseDamage() { // Unused
-		auto result = Runtime::GetBool("PreciseDamage");
-		return result;
-	}
 }

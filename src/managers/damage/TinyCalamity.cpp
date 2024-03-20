@@ -232,11 +232,11 @@ namespace Gts {
                             damage /= damage_zones_applied;
                             if (ApplyCooldown) { // Needed to fix Thigh Crush stuff
                                 auto& sizemanager = SizeManager::GetSingleton();
-                                bool OnCooldown = sizemanager.IsThighDamaging(otherActor);
+                                bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
                                 if (!OnCooldown) {
                                     Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
                                     CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, false);
-                                    sizemanager.GetDamageData(otherActor).lastThighDamageTime = Time::WorldTimeElapsed();
+                                    ApplyActionCooldown(otherActor, CooldownSource::Damage_Thigh);
                                 }
                             } else {
                                 Utils_PushCheck(actor, otherActor, force); // pass original un-altered force

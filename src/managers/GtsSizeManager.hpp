@@ -25,20 +25,6 @@ namespace Gts {
 		float Camera_HalfLife = 0.05;
 	};
 
-	struct LaunchData {
-		double lastLaunchTime = -1.0e8; 
-	};
-
-	struct DamageData {
-		double lastDamageTime = -1.0e8;
-		double lastHandDamageTime = -1.0e8;
-		double lastHealthGateTime = -1.0e8;
-		double lastThighDamageTime = -1.0e8;
-		double lastButtCrushTime = -1.0e8;
-		double lastScareTime = -1.0e8;
-		double lastHugTime = -1.0e8;
-	};
-
 	class SizeManager : public EventListener {
 		public:
 			[[nodiscard]] static SizeManager& GetSingleton() noexcept;
@@ -82,23 +68,7 @@ namespace Gts {
 
 			float BalancedMode();
 
-			LaunchData& GetLaunchData(Actor* actor);
-			DamageData& GetDamageData(Actor* actor);
-
-			static bool IsLaunching(Actor* actor);
-			static bool IsDamaging(Actor* actor);
-			static bool IsHandDamaging(Actor* actor);
-			static bool IsThighDamaging(Actor* actor);
-			static bool IsBeingScared(Actor* actor);
-			static bool IsButtCrushInCooldown(Actor* actor);
-			static bool IsHugsOnCooldown(Actor* actor);
-			static bool IsHealthGateInCooldown(Actor* actor);
-
-			bool GetPreciseDamage();
-
 		private: 
 			std::map<Actor*, SizeManagerData> sizeData;
-			std::map<Actor*, LaunchData> launchData;
-			std::map<Actor*, DamageData> DamageData;
 	};
 }

@@ -125,7 +125,7 @@ namespace {
 		float knockBack = LAUNCH_KNOCKBACK * giantSize * force;
 
 		auto& sizemanager = SizeManager::GetSingleton();
-		bool IsLaunching = sizemanager.IsLaunching(tiny);
+		bool IsLaunching = IsActionOnCooldown(tiny, CooldownSource::Damage_Launch);
 		if (IsLaunching) {
 			return;
 		}
@@ -138,7 +138,7 @@ namespace {
 				power *= 1.5;
 			}
 
-			sizemanager.GetSingleton().GetLaunchData(tiny).lastLaunchTime = Time::WorldTimeElapsed();
+			ApplyActionCooldown(tiny, CooldownSource::Damage_Launch);
 
 			if (Runtime::HasPerkTeam(giant, "LaunchDamage") && CanDoDamage(giant, tiny)) {
 				float damage = LAUNCH_DAMAGE * sizeRatio * force * DamageMult;
