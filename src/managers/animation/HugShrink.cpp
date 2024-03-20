@@ -420,7 +420,7 @@ namespace Gts {
 			tinyref->GetGraphVariableBool("GTS_IsFollower", Tiny_HuggedAsAlly);
 			giantref->GetGraphVariableBool("GTS_HuggingTeammate", GTS_HuggingAlly);
 
-			ApplyCooldown(giantref, CooldownSource::Action_Hugs) // Send Hugs on cooldown non-stop
+			ApplyCooldown(giantref, CooldownSource::Action_Hugs); // Send Hugs on cooldown non-stop
 
 			bool HuggingAlly = GTS_HuggingAlly && Tiny_HuggedAsAlly;
 
