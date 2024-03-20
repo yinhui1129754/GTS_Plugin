@@ -1,3 +1,5 @@
+#include "managers/animation/Utils/CooldownManager.hpp"
+
 #include "Config.hpp"
 #include "hooks/hooks.hpp"
 #include "papyrus/papyrus.hpp"
@@ -171,6 +173,7 @@ void InitializeEventSystem() {
 	EventDispatcher::AddListener(&Runtime::GetSingleton()); // Stores spells, globals and other important data
 	EventDispatcher::AddListener(&Persistent::GetSingleton());
 	EventDispatcher::AddListener(&Transient::GetSingleton());
+	EventDispatcher::AddListener(&CooldownManager::GetSingleton());
 
 	EventDispatcher::AddListener(&TaskManager::GetSingleton());
 	EventDispatcher::AddListener(&SpringManager::GetSingleton());
