@@ -31,7 +31,8 @@ namespace Gts {
 	inline void AdvanceSkill(Actor* giant, ActorValue Attribute, float points, float multiplier) {
 		// DLL Equivalent of AdvanceSkill from Papyrus, does the same thing
 		if (giant->formID == 0x14) {
-			giant->UseSkill(Attribute, points * multiplier * TimeScale(), nullptr);
+			log::info("Advancing skill, points: {}, Mult: {}, TimeScale: {}, Result: {}, * 60: {}", points, multiplier, TimeScale(), points * multiplier * TimeScale(), points * 60 * multiplier * TimeScale());
+			giant->UseSkill(Attribute, points * 60 * multiplier * TimeScale(), nullptr);
 		}
 	}
 
