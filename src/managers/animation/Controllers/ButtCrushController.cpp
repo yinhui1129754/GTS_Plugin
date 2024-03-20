@@ -46,8 +46,6 @@ namespace {
 			auto giantref = gianthandle.get().get();
 			auto tinyref = tinyhandle.get().get();
 
-
-
 			auto node = find_node(giantref, "AnimObjectB");
 			if (!node) {
 				return false;
@@ -56,6 +54,8 @@ namespace {
 			float stamina = GetAV(giantref, ActorValue::kStamina);
 			ForceRagdoll(tinyref, false);
 			DamageAV(giantref, ActorValue::kStamina, 0.32 * GetButtCrushCost(giant));
+
+			SizeManager::GetSingleton().GetDamageData(pred).lastButtCrushTime = Time::WorldTimeElapsed(); // Set butt crush on the cooldown
 
 			if (stamina <= 2.0) {
 				AnimationManager::StartAnim("ButtCrush_Attack", giantref); // Try to Abort it

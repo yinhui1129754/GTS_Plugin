@@ -15,7 +15,7 @@ namespace Gts {
 	const float Action_Booty = 2.0f; // for butt and cleavage crush
 	const float Action_Vore = 8.0f;
 	const float Action_Grab = 8.0f;
-	const float Action_Hug = 0.92f; // for hug drop threshold
+	const float Action_Hug = 0.92f; // for hug grab/drop threshold
     const float Action_FingerGrind = 6.0f;
 
 //-----------------------------------------Default Damage Values
@@ -111,7 +111,7 @@ namespace Gts {
 
     ////////////////Throw
 
-    const float Damage_Throw_Collision = 10.0f;
+    const float Damage_Throw_Collision = 10.0f; // unused for now, buggy
 
     
 

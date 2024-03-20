@@ -147,11 +147,10 @@ namespace Gts {
 		float prey_distance = (pred->GetPosition() - prey->GetPosition()).Length();
 		if (pred->formID == 0x14 && prey_distance <= MINIMUM_DISTANCE * pred_scale && sizedifference < MINIMUM_GRAB_SCALE) {
 			Notify("{} is too big to be grabbed.", prey->GetDisplayFullName());
-			Attacked(prey, pred);
 			return false;
 		}
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale) && sizedifference > MINIMUM_GRAB_SCALE) {
-			if ((prey->formID != 0x14 && IsEssential(prey))) {
+			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
 				return false;
 			} else {
 				return true;
