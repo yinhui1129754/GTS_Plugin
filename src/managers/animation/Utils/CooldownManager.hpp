@@ -24,6 +24,7 @@ namespace Gts {
     struct CooldownData {
         double lastPushTime = -1.0e8;
         double lastHandDamageTime = -1.0e8;
+        double lastLaunchTime = -1.0e8;
         double lastHealthGateTime = -1.0e8;
         double lastThighDamageTime = -1.0e8;
         double lastButtCrushTime = -1.0e8;

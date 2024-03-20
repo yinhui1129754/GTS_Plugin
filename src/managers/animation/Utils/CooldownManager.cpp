@@ -110,15 +110,15 @@ namespace Gts {
             case CooldownSource::Damage_Launch: 
                 return time <= (data.lastLaunchTime + LAUNCH_COOLDOWN);
                 break;
-            case CooldownSource::Damage_Basic:
-                return time <= (data.lastPushTime + PUSH_COOLDOWN);
-                break;
             case CooldownSource::Damage_Hand:
                 return time <= (data.lastHandDamageTime + HANDDAMAGE_COOLDOWN);
                 break;    
             case CooldownSource::Damage_Thigh:
                 return time <= (data.lastThighDamageTime + THIGHDAMAGE_COOLDOWN);
                 break;
+            case CooldownSource::Push_Basic:
+                return time <= (data.lastPushTime + PUSH_COOLDOWN);
+                break;   
             case CooldownSource::Action_ButtCrush:
                 return time <= (data.lastButtCrushTime + (BUTTCRUSH_COOLDOWN - Calculate_ButtCrushTimer(giant)));
                 break;
