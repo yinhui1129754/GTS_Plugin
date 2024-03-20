@@ -40,7 +40,6 @@ namespace Gts {
     class CooldownManager : public EventListener {
 		public:
 			[[nodiscard]] static CooldownManager& GetSingleton() noexcept;
-
 			virtual std::string DebugName() override;
 
 			void Reset();

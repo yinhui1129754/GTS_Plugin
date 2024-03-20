@@ -48,6 +48,15 @@ namespace {
 
 namespace Gts {
 
+    CooldownManager& CooldownManager::GetSingleton() noexcept {
+		static CooldownManager instance;
+		return instance;
+	}
+
+	std::string CooldownManager::DebugName() {
+		return "CooldownManager";
+	}
+
     CooldownData& CooldownManager::GetCooldownData(Actor* actor) {
 		this->CooldownData.try_emplace(actor);
 		return this->CooldownData.at(actor);
@@ -60,7 +69,7 @@ namespace Gts {
 
     void ApplyActionCooldown(Actor* giant, CooldownSource source) {
         float time = Time::WorldTimeElapsed();
-        auto& data = this->GetCooldownData(giant);
+        auto& data = CooldownManager::GetSingleton().GetCooldownData(giant);
 
         switch (source) {
             case CooldownSource::Damage_Launch: 
@@ -95,7 +104,7 @@ namespace Gts {
 
     bool IsActionOnCooldown(Actor* giant, CooldownSource source) {
         float time = Time::WorldTimeElapsed();
-        auto& data = this->GetCooldownData(giant);
+        auto& data = CooldownManager::GetSingleton().GetCooldownData(giant);
 
         switch (source) {
             case CooldownSource::Damage_Launch: 
