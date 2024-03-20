@@ -75,43 +75,6 @@ namespace {
 		}
 	}
 
-	void CameraFOVTask(Actor* actor, float reduce, float speed) {
-		auto camera = PlayerCamera::GetSingleton();
-		if (!camera) {
-			return;
-		}
-		if (actor->formID == 0x14) {
-			auto tranData = Transient::GetSingleton().GetData(actor);
-			bool TP = camera->IsInThirdPerson();
-			bool FP = camera->IsInFirstPerson();
-
-			if (tranData) {
-				tranData->WorldFov_Default = camera->worldFOV;
-				tranData->FpFov_Default = camera->firstPersonFOV;
-				float DefaultTP = tranData->WorldFov_Default;
-				float DefaultFP = tranData->FpFov_Default;
-				if (DefaultTP > 0) {
-					std::string name = std::format("Fov_Growth_{}", actor->formID);
-					ActorHandle gianthandle = actor->CreateRefHandle();
-					camera->worldFOV *= reduce;
-					TaskManager::Run(name, [=](auto& progressData) {
-						if (!gianthandle) {
-							return false;
-						}
-						auto giantref = gianthandle.get().get();
-						float scale = 1.0 + (get_visual_scale(giantref)/10);
-						camera->worldFOV += DefaultTP * speed;
-						if (camera->worldFOV >= DefaultTP) {
-							camera->worldFOV = DefaultTP;
-							return false; // stop it
-						}
-						return true;
-					});
-				}
-			}
-		}
-	}
-
 	void DisableButtTrackTask(Actor* giant) {
 		std::string name = std::format("DisableCamera_{}", giant->formID);
 		auto gianthandle = giant->CreateRefHandle();

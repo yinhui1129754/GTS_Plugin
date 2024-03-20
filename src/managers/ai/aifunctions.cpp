@@ -112,7 +112,8 @@ namespace Gts {
 		if (saved_data) {
 			saved_data->bonus_max_size += value;
 			if (reset) {
-				update_target_scale(giant, -saved_data->bonus_max_size, SizeEffectType::kNeutral);
+				SpringGrow_Free(giant, -saved_data->bonus_max_size, 0.3 / GetAnimationSlowdown(giant), "SizeReset");
+				///update_target_scale(giant, -saved_data->bonus_max_size, SizeEffectType::kNeutral);
 				if (get_target_scale(giant) < get_natural_scale(giant)) {
 					set_target_scale(giant, get_natural_scale(giant)); // Protect against going into negatives
 				}
