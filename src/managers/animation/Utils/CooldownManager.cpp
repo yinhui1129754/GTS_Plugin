@@ -130,7 +130,8 @@ namespace Gts {
                 break; 
             case CooldownSource::Action_Hugs:
                 return time <= (data.lastHugTime + HUGS_COOLDOWN);
-                break;    
-        }
+                break;   
+            }
+        return false; 
     }
 }

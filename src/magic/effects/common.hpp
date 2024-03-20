@@ -28,6 +28,12 @@ namespace Gts {
 		return allow;
 	}
 
+	inline void AdvanceSkill(Actor* giant, ActorValue Attribute, float points, float multiplier) {
+		if (giant->formID == 0x14) {
+			giant->UseSkill(Attribute, points * multiplier, nullptr);
+		}
+	}
+
 	inline void AdjustSizeReserve(Actor* giant, float value) {
 		if (!Runtime::HasPerk(giant, "SizeReserve")) {
 			return;

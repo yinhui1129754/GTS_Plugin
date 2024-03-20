@@ -170,6 +170,10 @@ namespace Gts {
 		
 		TransferSize(caster, target, IsDualCasting(), shrink * SizeDifference * bonus, gainpower * balancemodebonus, false, ShrinkSource::magic);
 
+		float sizeTaken = std::clamp(1.0f - get_giantess_scale(target), 0.01f, 1.0f);
+
+		AdvanceSkill(caster, ActorValue::kAlteration, this->power, sizeTaken); // Gain vanilla Alteration xp
+
 		Attacked(target, caster); // make it work like a hostile spell
 
 		if (ShrinkToNothing(caster, target)) {
