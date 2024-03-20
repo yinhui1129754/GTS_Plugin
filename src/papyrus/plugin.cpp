@@ -399,10 +399,6 @@ namespace {
 		return IsDragon(actor);
 	}
 
-	bool GetPreciseDamage(StaticFunctionTag*) {
-		return SizeManager::GetSingleton().GetPreciseDamage();
-	}
-
 	bool GetIsSpeedAdjusted(StaticFunctionTag*) {
 		return Persistent::GetSingleton().is_speed_adjusted;
 	}
@@ -479,7 +475,6 @@ namespace Gts {
 		vm->RegisterFunction("GetAttributeBonus", PapyrusClass, GetAttributeBonus);
 		vm->RegisterFunction("GetFlatAttributeBonus", PapyrusClass, GetFlatAttributeBonus);
 		vm->RegisterFunction("GetHitGrowth", PapyrusClass, GetHitGrowth);
-		vm->RegisterFunction("GetPreciseDamage", PapyrusClass, GetPreciseDamage);
 		vm->RegisterFunction("SetHitGrowth", PapyrusClass, SetHitGrowth);
 		vm->RegisterFunction("SetGrowthHalfLife", PapyrusClass, SetGrowthHalfLife);
 		vm->RegisterFunction("GetGrowthHalfLife", PapyrusClass, GetGrowthHalfLife);

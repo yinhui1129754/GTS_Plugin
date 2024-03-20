@@ -234,9 +234,6 @@ Bool function DragonCheck(Actor target) global native
 ; Returns true/false based on GTS_Installed behavior variable
 Bool function GtsBehaviorsInstalled(Actor giant) global native 
 
-; Allow/Get precise damage toggle
-Bool Function GetPreciseDamage() global native
-
 ; Controls if the Anim and Walk speeds adjustments are enabled or not
 ;
 ; Value is saved into the cosave
