@@ -135,18 +135,24 @@ namespace Gts {
 
 		float sizedifference = GetSizeDifference(pred, prey, true, false);
 
-		if (pred->formID == 0x14 && IsTeammate(prey) && !GetControlledActor()) {
-			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
-			if (sizedifference_reverse >= Action_Grab) {
-				ControlAnother(prey, false);
-				prey = pred;
-				pred = GetControlledActor();
-				// Switch roles
-			}
-		}
+		
 
 		float MINIMUM_GRAB_SCALE = Action_Grab;
 		float MINIMUM_DISTANCE = MINIMUM_GRAB_DISTANCE;
+
+		if (pred->formID == 0x14 && IsTeammate(prey) && !GetControlledActor()) {
+			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
+			log:::info("SD check passed");
+			if (sizedifference_reverse >= Action_Grab) {
+				ControlAnother(prey, false);
+				log:::info("Controlling {}", prey->GetDisplayFullName());
+				prey = pred;
+				log:::info("New Prey {}", prey->GetDisplayFullName());
+				pred = GetControlledActor();
+				log:::info("New Pred {}", pred->GetDisplayFullName());
+				// Switch roles
+			}
+		}
 
 		if (HasSMT(pred)) {
 			MINIMUM_DISTANCE *= 1.75;
@@ -177,8 +183,11 @@ namespace Gts {
 		}
 
 		if (GetControlledActor()) {
+			log:::info("Controlled Actor", GetControlledActor());
 			prey = pred;
+			log:::info("Start New Prey: {}", prey->GetDisplayFullName());
 			pred = GetControlledActor();
+			log:::info("Start New Pred: {}", pred->GetDisplayFullName());
 		}
 
 		StaggerActor(pred, prey, 100.0f);
