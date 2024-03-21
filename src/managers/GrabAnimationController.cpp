@@ -138,7 +138,7 @@ namespace Gts {
 		float MINIMUM_GRAB_SCALE = Action_Grab;
 		float MINIMUM_DISTANCE = MINIMUM_GRAB_DISTANCE;
 
-		if (pred->formID == 0x14 && IsTeammate(prey) && !GetControlledActor()) {
+		if (pred->formID == 0x14 && IsTeammate(prey)) {
 			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
 			log::info("SD check passed");
 			if (sizedifference_reverse >= Action_Grab) {
@@ -177,6 +177,7 @@ namespace Gts {
 	void GrabAnimationController::StartGrab(Actor* pred, Actor* prey) {
 		auto& grabbing = GrabAnimationController::GetSingleton();
 		if (!grabbing.CanGrab(pred, prey)) {
+			log::info("Can Grab: False");
 			return;
 		}
 
