@@ -23,7 +23,6 @@ namespace Hooks {
 					float scale = get_giantess_scale(actor);
 					if (scale > 1e-4) {
 						result /= scale;
-						log::info("  - Changed to {} for {}", result, actor->GetDisplayFullName());
 					}
 				}
 			}

@@ -851,13 +851,33 @@ namespace Gts {
 		auto transient = Transient::GetSingleton().GetData(player);
 		if (transient) {
 			if (reset && target->formID == 0x14) {
+				if (target->IsInControl) {
+					DisableActorControls(target->IsInControl, true);
+				}
 				transient->IsInControl = nullptr;
 				log::info("Controlled actor reset");
 				return;
 			} else {
 				transient->IsInControl = target;
+				DisableActorControls(target->IsInControl, false);
 			}
 		}
+	}
+
+	void DisableActorControls(Actor* giant, bool Reset) {
+		auto RuntimeData = giant->GetActorRuntimeData();
+		if (!Reset) {
+			RuntimeData.boolFlags.set(BOOL_FLAGS::kAttackingDisabled);
+			RuntimeData.boolFlags.set(BOOL_FLAGS::kCastingDisabled);
+			RuntimeData.boolFlags.set(BOOL_FLAGS::kMovementBlocked);
+			log::info("Actor Control disabled");
+		} else {
+			RuntimeData.boolFlags.reset(BOOL_FLAGS::kAttackingDisabled);
+			RuntimeData.boolFlags.reset(BOOL_FLAGS::kCastingDisabled);
+			RuntimeData.boolFlags.reset(BOOL_FLAGS::kMovementBlocked);
+			log::info("Actor Control Enabled");
+		}
+		
 	}
 
 	Actor* GetPlayerOrControlled() {

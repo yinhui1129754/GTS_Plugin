@@ -160,7 +160,7 @@ exclusive = true
 
 [[InputEvent]]
 name = "PlayerThighSandwichEnter"
-keys = ["LALT", "C"]
+keys = ["LSHIFT", "C"]
 exclusive = true
 trigger = "continuous"
 duration = 3.0
