@@ -98,7 +98,7 @@ namespace Hooks {
 			REL::RelocationID(24068, 24068), REL::Relocate(0x5E, 0x5E),
 			[](TESIdleForm* a_this, ConditionCheckParams* params, void* unk3) {
 				log::info("IdleFormHooked");
-				auto* result = IdleFormHook(a_this, params, unk3);
+				
 
 				if (a_this) {
 					//log::info("Playing Idle: {}", a_this->animFileName); // prints Actors\Character\Behaviors\0_Master.hkx for example
@@ -107,9 +107,11 @@ namespace Hooks {
 					auto EventName = a_this->formEditorID.c_str();
 					if (EventName == "DefaultSheathe" || EventName == "JumpRoot" || EventName == "NonMountedDraw" || EventName == "NonMountedForceEquip") {
 						log::info("Returning nullptr");
-						return nullptr;
+						a_this = nullptr;
 					}
 				}
+
+				auto* result = IdleFormHook(a_this, params, unk3);
 				//Actor* action_ref = params->actionRef->As<RE::Actor>();
     			//TESObjectREFR* target_ref = params->targetRef;
 
