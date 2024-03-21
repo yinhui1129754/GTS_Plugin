@@ -54,7 +54,7 @@ namespace {
 
 	void VoreInputEvent_Follower(const InputEventData& data) {
 		Actor* player = PlayerCharacter::GetSingleton();
-		ForceFollowerAnimation(player);
+		ForceFollowerAnimation(player, FollowerAnimType::Vore);
 	}
 
 	void BuffAttributes(Actor* giant, float tinyscale) {
