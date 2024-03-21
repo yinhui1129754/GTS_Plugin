@@ -261,7 +261,7 @@ namespace Gts {
             float target_scale = get_target_scale(tiny);
 
             if (target_scale > limit) {
-                if ((target_scale - shrink*0.0045) <= limit) {
+                if ((target_scale - shrink*0.0045) <= limit || target_scale <= limit) {
                     set_target_scale(tiny, limit);
                     return;
                 }

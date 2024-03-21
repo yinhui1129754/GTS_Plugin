@@ -154,7 +154,7 @@ namespace {
 						float scale = get_visual_scale(receiver);
 
 						update_target_scale(receiver, -0.35 * scale, SizeEffectType::kShrink);
-						if (target < natural) {
+						if ((target <= natural) || (target - 0.35 * scale <= natural)) {
 							set_target_scale(receiver, natural); // to prevent becoming < natural scale
 						}
 						GRumble::For("CheatDeath", receiver, 240.0, 0.10, "NPC COM [COM ]", 1.50);
