@@ -131,13 +131,11 @@ namespace Gts {
 			return false;
 		}
 
-		
-
 		float pred_scale = get_visual_scale(pred);
 
 		float sizedifference = GetSizeDifference(pred, prey, true, false);
 
-		if (pred->formID == 0x14 && !GetControlledActor()) {
+		if (pred->formID == 0x14 && IsTeammate(prey) && !GetControlledActor()) {
 			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
 			if (sizedifference_reverse >= Action_Grab) {
 				ControlAnother(prey, false);

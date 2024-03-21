@@ -313,7 +313,7 @@ namespace {
 	}
 
 	void GrabAttackEvent(const InputEventData& data) { // Attack everyone in your hand
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
 
 		if (GetControlledActor()) {
 			player = GetControlledActor();
@@ -340,7 +340,7 @@ namespace {
 	}
 
 	void GrabVoreEvent(const InputEventData& data) { // Eat everyone in hand
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
 
 		if (GetControlledActor()) {
 			player = GetControlledActor();
@@ -365,7 +365,7 @@ namespace {
 	}
 
 	void GrabThrowEvent(const InputEventData& data) { // Throw everyone away
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
 
 		if (GetControlledActor()) {
 			player = GetControlledActor();
@@ -392,7 +392,7 @@ namespace {
 	}
 
 	void GrabReleaseEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
 
 		if (GetControlledActor()) {
 			player = GetControlledActor();
@@ -410,7 +410,7 @@ namespace {
 	}
 
 	void BreastsPutEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
 
 		if (GetControlledActor()) {
 			player = GetControlledActor();
@@ -423,7 +423,7 @@ namespace {
 		AnimationManager::StartAnim("Breasts_Put", player);
 	}
 	void BreastsRemoveEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
 
 		if (GetControlledActor()) {
 			player = GetControlledActor();
