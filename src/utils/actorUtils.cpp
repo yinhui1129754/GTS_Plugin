@@ -859,7 +859,7 @@ namespace Gts {
 				return;
 			} else {
 				transient->IsInControl = target;
-				DisableActorControls(target->IsInControl, false);
+				DisableActorControls(transient->IsInControl, false);
 			}
 		}
 	}
