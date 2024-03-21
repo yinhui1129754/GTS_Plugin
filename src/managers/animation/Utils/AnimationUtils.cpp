@@ -104,26 +104,18 @@ namespace Gts {
 		auto& Hugs = 		HugAnimationController::GetSingleton();
 		auto& Grabs = 		GrabAnimationController::GetSingleton();
 		auto& Sandwich =    ThighSandwichController::GetSingleton();
-		
-		std::vector<Actor*> preys_GiantPov = {};
-		std::vector<Actor*> preys_FollowerPov = {};
 
 		switch (Type) {
 			case FollowerAnimType::ButtCrush:
 				log::info("ButtCrush");
 				for (auto new_gts: ButtCrush.GetButtCrushTargets(giant, numberOfPrey)) {
-					if (new_gts.size() > 0) { // For safety
-						if (IsTeammate(new_gts)) {
-							preys_FollowerPov = ButtCrush.GetButtCrushTargets(new_gts, numberOfPrey);
-							if (preys_FollowerPov.size() > 0) {
-								for (auto new_tiny: preys_FollowerPov) { 
-									if (new_tiny->formID == 0x14) {
-										if (ButtCrush.CanButtCrush(new_gts, new_tiny)) {
-											ButtCrush.StartButtCrush(new_gts, new_tiny);
-											ControlAnother(new_gts, false);
-											return;
-										}
-									}
+					if (IsTeammate(new_gts)) {
+						for (auto new_tiny: ButtCrush.GetButtCrushTargets(new_gts, numberOfPrey)) { 
+							if (new_tiny->formID == 0x14) {
+								if (ButtCrush.CanButtCrush(new_gts, new_tiny)) {
+									ButtCrush.StartButtCrush(new_gts, new_tiny);
+									ControlAnother(new_gts, false);
+									return;
 								}
 							}
 						}
@@ -133,17 +125,15 @@ namespace Gts {
 		 	case FollowerAnimType::Hugs:
 				log::info("Hugs");
 				for (auto new_gts: Hugs.GetHugTargetsInFront(giant, numberOfPrey)) {
-					if (new_gts.size() > 0 && IsTeammate(new_gts)) {
+					if (IsTeammate(new_gts)) {
 						for (auto new_tiny: Hugs.GetHugTargetsInFront(new_gts, numberOfPrey)) { 
-							if (new_tiny.size() > 0) {
-								if (new_tiny->formID == 0x14) {
-									float sizedifference = GetSizeDifference(new_gts, new_tiny, true, true);
-									bool allow = (sizedifference >= Action_Hug && sizedifference < GetHugShrinkThreshold(new_gts));
-									if (allow && Hugs.CanHug(new_gts, new_tiny)) {
-										Hugs.StartHug(new_gts, new_tiny);
-										ControlAnother(new_gts, false);
-										return;
-									}
+							if (new_tiny->formID == 0x14) {
+								float sizedifference = GetSizeDifference(new_gts, new_tiny, true, true);
+								bool allow = (sizedifference >= Action_Hug && sizedifference < GetHugShrinkThreshold(new_gts));
+								if (allow && Hugs.CanHug(new_gts, new_tiny)) {
+									Hugs.StartHug(new_gts, new_tiny);
+									ControlAnother(new_gts, false);
+									return;
 								}
 							}
 						}
@@ -154,10 +144,9 @@ namespace Gts {
 				log::info("Grab");
 				for (auto new_gts: Grabs.GetGrabTargetsInFront(giant, numberOfPrey)) {
 					log::info("Found Gts: {}", new_gts->GetDisplayFullName());
-					if (new_gts.size() > 0 && IsTeammate(new_gts)) {
+					if (IsTeammate(new_gts)) {
 						for (auto new_tiny: Grabs.GetGrabTargetsInFront(new_gts, numberOfPrey)) { 
 							log::info("Found Tiny: {}", new_tiny->GetDisplayFullName());
-							if (new_tiny.size() > 0) {
 								if (new_tiny->formID == 0x14 && Grabs.CanGrab(new_gts, new_tiny)) {
 									log::info("Starting Hug");
 									Grabs.StartGrab(new_gts, new_tiny);
@@ -167,24 +156,17 @@ namespace Gts {
 							}
 						}
 					}
-				}
-			break;	
+				break;	
 		 	case FollowerAnimType::Vore: 
 				log::info("Vore");	
-				preys_GiantPov = Vore.GetVoreTargetsInFront(giant, numberOfPrey);
-				if (preys_GiantPov.size() > 0) { // For safety
-					for (auto new_gts: preys_GiantPov) {
-						if (IsTeammate(new_gts)) {
-							preys_FollowerPov = Vore.GetVoreTargetsInFront(new_gts, numberOfPrey);
-							if (preys_FollowerPov.size() > 0) {
-								for (auto new_tiny: preys_FollowerPov) { 
-									if (new_tiny->formID == 0x14) {
-										if (Vore.CanVore(new_gts, new_tiny)) {
-											Vore.StartVore(new_gts, new_tiny);
-											ControlAnother(new_gts, false);
-											return;
-										}
-									}
+				for (auto new_gts: Vore.GetVoreTargetsInFront(giant, numberOfPrey)) {
+					if (IsTeammate(new_gts)) {
+						for (auto new_tiny: Vore.GetVoreTargetsInFront(new_gts, numberOfPrey)) { 
+							if (new_tiny->formID == 0x14) {
+								if (Vore.CanVore(new_gts, new_tiny)) {
+									Vore.StartVore(new_gts, new_tiny);
+									ControlAnother(new_gts, false);
+									return;
 								}
 							}
 						}
@@ -193,20 +175,14 @@ namespace Gts {
 			break;
 		 	case FollowerAnimType::ThighSandwich: 
 				log::info("Thigh Sandwich");
-				preys_GiantPov = Sandwich.GetSandwichTargetsInFront(giant, numberOfPrey);
-				if (preys_GiantPov.size() > 0) { // For safety
-					for (auto new_gts: preys_GiantPov) {
-						if (IsTeammate(new_gts)) {
-							preys_FollowerPov = Sandwich.GetSandwichTargetsInFront(new_gts, numberOfPrey);
-							if (preys_FollowerPov.size() > 0) {
-								for (auto new_tiny: preys_FollowerPov) { 
-									if (new_tiny->formID == 0x14) {
-										if (Sandwich.CanSandwich(new_gts, new_tiny)) {
-											Sandwich.StartSandwiching(new_gts, new_tiny);
-											ControlAnother(new_gts, false);
-											return;
-										}
-									}
+				for (auto new_gts: Sandwich.GetSandwichTargetsInFront(giant, numberOfPrey)) {
+					if (IsTeammate(new_gts)) {
+						for (auto new_tiny: Sandwich.GetSandwichTargetsInFront(new_gts, numberOfPrey)) { 
+							if (new_tiny->formID == 0x14) {
+								if (Sandwich.CanSandwich(new_gts, new_tiny)) {
+									Sandwich.StartSandwiching(new_gts, new_tiny);
+									ControlAnother(new_gts, false);
+									return;
 								}
 							}
 						}
