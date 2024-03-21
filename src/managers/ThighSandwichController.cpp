@@ -162,7 +162,7 @@ namespace Gts {
 			float sizedifference = GetSizeDifference(giant, tiny, true, false);
 			float threshold = 6.0;
 
-			if (giant->IsDead() || sizedifference < threshold) {
+			if (giant->IsDead() || sizedifference < threshold || !IsThighSandwiching(giant)) {
 				EnableCollisions(tiny);
 				SetBeingHeld(tiny, false);
 				AllowToBeCrushed(tiny, true);
