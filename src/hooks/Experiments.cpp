@@ -3,6 +3,7 @@
 #include "data/transient.hpp"
 #include "hooks/Experiments.hpp"
 #include "scale/scale.hpp"
+#include "data/runtime.hpp"
 
 
 using namespace RE;
