@@ -94,6 +94,9 @@ namespace Gts {
 	bool SizeRaycastEnabled();
 	bool IsDebugEnabled();
 
+	void ControlAnother(Actor* target, bool reset);
+	Actor* GetControlledActor();
+
 
 
 	// Gts Bools end

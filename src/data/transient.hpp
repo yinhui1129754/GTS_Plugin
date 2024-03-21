@@ -48,12 +48,13 @@ namespace Gts {
 		bool FPProning;
 		bool Overkilled;
 		bool Protection;
-		bool was_sneaking;
 		
 
 		bool disable_collision;
 
 		float IsNotImmune;
+
+		Actor* IsInControl;
 
 		TESObjectREFR* disable_collision_with;
 		TESObjectREFR* Throw_Offender;

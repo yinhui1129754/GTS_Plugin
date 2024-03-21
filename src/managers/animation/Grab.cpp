@@ -314,6 +314,11 @@ namespace {
 
 	void GrabAttackEvent(const InputEventData& data) { // Attack everyone in your hand
 		auto player = PlayerCharacter::GetSingleton();
+
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
+
 		if (IsGtsBusy(player) && !IsUsingThighAnimations(player)) {
 			return;
 		}
@@ -336,6 +341,11 @@ namespace {
 
 	void GrabVoreEvent(const InputEventData& data) { // Eat everyone in hand
 		auto player = PlayerCharacter::GetSingleton();
+
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
+
 		if (!CanPerformAnimation(player, 3)) {
 			return;
 		}
@@ -356,6 +366,11 @@ namespace {
 
 	void GrabThrowEvent(const InputEventData& data) { // Throw everyone away
 		auto player = PlayerCharacter::GetSingleton();
+
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
+
 		if (IsGtsBusy(player) && !IsUsingThighAnimations(player)) {
 			return;
 		}
@@ -378,6 +393,11 @@ namespace {
 
 	void GrabReleaseEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
+
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
+
 		auto grabbedActor = Grab::GetHeldActor(player);
 		if (!grabbedActor) {
 			return;
@@ -391,6 +411,11 @@ namespace {
 
 	void BreastsPutEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
+
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
+
 		auto grabbedActor = Grab::GetHeldActor(player);
 		if (!grabbedActor || IsTransitioning(player)) {
 			return;
@@ -399,6 +424,11 @@ namespace {
 	}
 	void BreastsRemoveEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
+
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
+
 		auto grabbedActor = Grab::GetHeldActor(player);
 		if (!grabbedActor || IsTransitioning(player)) {
 			return;
@@ -428,6 +458,8 @@ namespace Gts {
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		SetBetweenBreasts(giant, false);
 		TaskManager::Cancel(name);
+
+		ControlAnother(giant, true);
 	}
 
 	void Grab::AttachActorTask(Actor* giant, Actor* tiny) {

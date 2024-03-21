@@ -131,9 +131,21 @@ namespace Gts {
 			return false;
 		}
 
+		
+
 		float pred_scale = get_visual_scale(pred);
 
 		float sizedifference = GetSizeDifference(pred, prey, true, false);
+
+		if (pred->formID == 0x14 && !GetControlledActor()) {
+			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
+			if (sizedifference_reverse >= Action_Grab) {
+				ControlAnother(prey, false);
+				prey = pred;
+				pred = GetControlledActor();
+				// Switch roles
+			}
+		}
 
 		float MINIMUM_GRAB_SCALE = Action_Grab;
 		float MINIMUM_DISTANCE = MINIMUM_GRAB_DISTANCE;
@@ -164,6 +176,11 @@ namespace Gts {
 		auto& grabbing = GrabAnimationController::GetSingleton();
 		if (!grabbing.CanGrab(pred, prey)) {
 			return;
+		}
+
+		if (GetControlledActor()) {
+			prey = pred;
+			pred = GetControlledActor();
 		}
 
 		StaggerActor(pred, prey, 100.0f);

@@ -642,6 +642,7 @@ namespace Gts {
 		if (!CanVore(pred, prey)) {
 			return;
 		}
+
 		float pred_scale = get_visual_scale(pred);
 		float prey_scale = get_visual_scale(prey);
 

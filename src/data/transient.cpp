@@ -83,11 +83,12 @@ namespace Gts {
 			bool FPProning = false;
 			bool Overkilled = false;
 			bool Protection = false;
-			bool was_sneaking = false;
 
 			bool disable_collision = false;
 
 			float IsNotImmune = 1.0;
+
+			Actor* IsInControl = nullptr;
 
 			TESObjectREFR* disable_collision_with = nullptr;
 			TESObjectREFR* Throw_Offender = nullptr;
@@ -146,12 +147,13 @@ namespace Gts {
 			result.FPProning = FPProning;
 			result.Overkilled = Overkilled;
 			result.Protection = Protection;
-			result.was_sneaking = was_sneaking;
 			
 
 			result.disable_collision = disable_collision;
 
 			result.IsNotImmune = IsNotImmune;
+
+			result.IsInControl = IsInControl;
 			
 
 			result.is_teammate = actor->formID != 0x14 && actor->IsPlayerTeammate();

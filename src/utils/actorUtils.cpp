@@ -846,6 +846,29 @@ namespace Gts {
 		return Runtime::GetBool("EnableDebugOverlay"); // used for debug mode of collisions and such
 	}
 
+	void ControlAnother(Actor* target, bool reset) {
+		Actor* player = PlayerCharacter::GetSingleton();
+		auto transient = Transient::GetSingleton().GetData(player);
+		if (transient) {
+			if (reset || target == player) {
+				transient->IsInControl = nullptr;
+				return;
+			} else {
+				transient->IsInControl = target;
+			}
+		}
+	}
+
+	Actor* GetControlledActor() {
+		Actor* player = PlayerCharacter::GetSingleton();
+		auto transient = Transient::GetSingleton().GetData(player);
+		Actor* controlled = nullptr;
+		if (transient) {
+			controlled = transient->IsInControl;
+		}
+		return controlled;
+	}
+
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
