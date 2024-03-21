@@ -288,7 +288,7 @@ namespace {
 		if (player->formID == 0x14 && IsFirstPerson()) {
 			return;
 		}
-		if (IsButtCrushing(player) && !IsChangingSize(player) && Runtime::HasPerk(player, "ButtCrush_GrowingDisaster")) {
+		if (IsButtCrushing(player) && !IsChangingSize(player) && Runtime::HasPerkTeam(player, "ButtCrush_GrowingDisaster")) {
 			float GrowthCount = GetGrowthLimit(player);
 			bool CanGrow = ButtCrush_IsAbleToGrow(player, GrowthCount);
 			if (CanGrow) {

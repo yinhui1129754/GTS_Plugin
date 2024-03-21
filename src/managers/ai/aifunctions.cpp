@@ -49,6 +49,7 @@ namespace Gts {
 		
 		if (tiny->formID == 0x14) {
 			tiny->KillImpl(giant, 1, true, true);
+			tiny->SetAlpha(0.0);
 		}
 		auto* eventsource = ScriptEventSourceHolder::GetSingleton();
 		if (eventsource) {

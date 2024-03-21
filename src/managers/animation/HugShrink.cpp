@@ -298,7 +298,7 @@ namespace {
 		}
 
 		if (Runtime::HasPerkTeam(player, "HugCrush_LovingEmbrace")) {
-			if (!IsHostile(huggedActor, player) && IsTeammate(huggedActor)) {
+			if (!IsHostile(huggedActor, player) && (IsTeammate(huggedActor) || huggedActor->formID == 0x14)) {
 				StartHealingAnimation(player, huggedActor);
 				return;
 			} else {
