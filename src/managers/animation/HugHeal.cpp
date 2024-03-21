@@ -68,6 +68,8 @@ namespace {
 		TaskManager::Cancel(name_normal);
 		TaskManager::Cancel(name_forced);
 		HugShrink::Release(giant);
+
+		ControlAnother(giant, true);
 	}
 
     bool Hugs_RestoreHealth(Actor* giantref, Actor* tinyref) {

@@ -218,8 +218,12 @@ namespace {
 
 
 	void ButtCrushStartEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
-		if (IsFirstPerson()) {
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
+
+		if (player->formID == 0x14 && IsFirstPerson()) {
 			return;
 		}
 		if (IsGtsBusy(player) || IsChangingSize(player) || !CanPerformAnimation(player, 2)) {
@@ -277,8 +281,11 @@ namespace {
 	}
 
 	void ButtCrushGrowEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
-		if (IsFirstPerson()) {
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
+		if (player->formID == 0x14 && IsFirstPerson()) {
 			return;
 		}
 		if (IsButtCrushing(player) && !IsChangingSize(player) && Runtime::HasPerk(player, "ButtCrush_GrowingDisaster")) {
@@ -293,7 +300,10 @@ namespace {
 	}
 
 	void ButtCrushAttackEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
 		if (IsButtCrushing(player)) {
 			AnimationManager::StartAnim("ButtCrush_Attack", player);
 		}

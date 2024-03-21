@@ -129,6 +129,22 @@ namespace Gts {
 		if (pred == prey) {
 			return false;
 		}
+
+		if (pred->formID == 0x14 && IsTeammate(prey)) {
+			float sizedifference_reverse = GetSizeDifference(prey, pred, true, true);
+
+			log::info("SD check passed");
+			if (GetSizeDifference(pred, prey, true, true) < Action_Hug && sizedifference_reverse >= Action_Hug && sizedifference_reverse < GetHugShrinkThreshold(pred)) {
+				ControlAnother(prey, false);
+				log::info("Controlling {}", prey->GetDisplayFullName());
+				prey = pred;
+				log::info("New Prey {}", prey->GetDisplayFullName());
+				pred = GetControlledActor();
+				log::info("New Pred {}", pred->GetDisplayFullName());
+				// Switch roles
+			}
+		}
+
 		if (prey->IsDead()) {
 			return false;
 		}
@@ -199,6 +215,14 @@ namespace Gts {
 			return;
 		}
 		static Timer HugTimer = Timer(12.0);
+
+		if (GetControlledActor()) {
+			prey = pred;
+			log::info("Start New Prey: {}", prey->GetDisplayFullName());
+			pred = GetControlledActor();
+			log::info("Start New Pred: {}", pred->GetDisplayFullName());
+		}
+
 		if (IsActionOnCooldown(pred, CooldownSource::Action_Hugs)) {
 			TiredSound(pred, "Hugs are on the cooldown");
 			return;

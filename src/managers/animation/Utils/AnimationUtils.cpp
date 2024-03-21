@@ -228,6 +228,8 @@ namespace Gts {
 		AnimationManager::StartAnim("Huggies_Spare", giant); // Start "Release" animation on Giant
 		
 		log::info("Starting abort animation, friendly: {}", Friendly);
+		
+		ControlAnother(giant, true);
 
 		if (Friendly) { // If friendly, we don't want to push/release actor
 			AnimationManager::StartAnim("Huggies_Spare", tiny);

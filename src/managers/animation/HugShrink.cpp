@@ -215,7 +215,10 @@ namespace {
 	}
 
 	void HugCrushEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
@@ -238,7 +241,10 @@ namespace {
 	}
 
 	void ForceHugCrushEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
@@ -255,7 +261,10 @@ namespace {
 	}
 
 	void HugShrinkEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
@@ -272,7 +281,10 @@ namespace {
 	}
 
 	void HugHealEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
@@ -300,7 +312,10 @@ namespace {
 		}
 	}
 	void HugReleaseEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (GetControlledActor()) {
+			player = GetControlledActor();
+		}
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (huggedActor) {
 			if (IsHugCrushing(player) || IsHugHealing(player)) {
