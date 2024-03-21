@@ -154,16 +154,16 @@ namespace Gts {
 				}
 			break;
 		 	case FollowerAnimType::Grab:
-				preys_GiantPov = Grab.GetGrabTargetsInFront(giant, numberOfPrey);
+				preys_GiantPov = Grabs.GetGrabTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
 						if (IsTeammate(new_gts)) {
-							preys_FollowerPov = ButtCrush.GetGrabTargetsInFront(new_gts, numberOfPrey);
+							preys_FollowerPov = Grabs.GetGrabTargetsInFront(new_gts, numberOfPrey);
 							if (preys_FollowerPov.size() > 0) {
 								for (auto new_tiny: preys_FollowerPov) { 
 									if (new_tiny->formID == 0x14) {
-										if (ButtCrush.CanGrab(new_gts, new_tiny)) {
-											ButtCrush.StartGrab(new_gts, new_tiny);
+										if (Grabs.CanGrab(new_gts, new_tiny)) {
+											Grabs.StartGrab(new_gts, new_tiny);
 											ControlAnother(new_gts, false);
 											return;
 										}
@@ -179,12 +179,12 @@ namespace Gts {
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
 						if (IsTeammate(new_gts)) {
-							preys_FollowerPov = ButtCrush.GetVoreTargetsInFront(new_gts, numberOfPrey);
+							preys_FollowerPov = Vore.GetVoreTargetsInFront(new_gts, numberOfPrey);
 							if (preys_FollowerPov.size() > 0) {
 								for (auto new_tiny: preys_FollowerPov) { 
 									if (new_tiny->formID == 0x14) {
-										if (ButtCrush.CanVore(new_gts, new_tiny)) {
-											ButtCrush.StartVore(new_gts, new_tiny);
+										if (Vore.CanVore(new_gts, new_tiny)) {
+											Vore.StartVore(new_gts, new_tiny);
 											ControlAnother(new_gts, false);
 											return;
 										}
@@ -200,12 +200,12 @@ namespace Gts {
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
 						if (IsTeammate(new_gts)) {
-							preys_FollowerPov = ButtCrush.GetSandwichTargetsInFront(new_gts, numberOfPrey);
+							preys_FollowerPov = Sandwich.GetSandwichTargetsInFront(new_gts, numberOfPrey);
 							if (preys_FollowerPov.size() > 0) {
 								for (auto new_tiny: preys_FollowerPov) { 
 									if (new_tiny->formID == 0x14) {
-										if (ButtCrush.CanSandwich(new_gts, new_tiny)) {
-											ButtCrush.StartSandwiching(new_gts, new_tiny);
+										if (Sandwich.CanSandwich(new_gts, new_tiny)) {
+											Sandwich.StartSandwiching(new_gts, new_tiny);
 											ControlAnother(new_gts, false);
 											return;
 										}
