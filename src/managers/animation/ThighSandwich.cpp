@@ -122,6 +122,7 @@ namespace {
 			} else {
 				Runtime::PlaySound("GtsCrushSound", giant, 1.0, 1.0);
 			}
+			ControlAnother(tiny, true);
 			sandwichdata.Remove(tiny);
 		}
 	}
@@ -260,6 +261,7 @@ namespace {
 		//sandwichdata.OverideShrinkRune(0.0);
 		for (auto tiny: sandwichdata.GetActors()) {
 			SetBeingHeld(tiny, false);
+			ControlAnother(tiny, true);
 			EnableCollisions(tiny);
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
@@ -339,9 +341,15 @@ namespace {
 		}
 	}
 
+	void ThighSandwichEnterEvent_Follower(const InputEventData& data) {
+		Actor* pred = PlayerCharacter::GetSingleton();
+		ForceFollowerAnimation(pred, FollowerAnimType::ThighSandwich);
+	}
+
 
 	void ThighSandwichAttackEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		Actor* player = GetPlayerOrControlled();
+		
 		if (IsGtsBusy(player)) {
 			float WasteStamina = 20.0;
 			if (Runtime::HasPerk(player, "KillerThighs")) {
@@ -358,7 +366,7 @@ namespace {
 	}
 
 	void ThighSandwichHeavyAttackEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
+		auto player = GetPlayerOrControlled();
 		if (IsGtsBusy(player)) {
 			float WasteStamina = 35.0;
 			if (Runtime::HasPerk(player, "KillerThighs")) {
@@ -376,7 +384,7 @@ namespace {
 
 	void ThighSandwichExitEvent(const InputEventData& data) {
 		if (!IsFreeCameraEnabled()) {
-			auto player = PlayerCharacter::GetSingleton();
+			auto player = GetPlayerOrControlled();
 			if (IsGtsBusy(player)) {
 				AnimationManager::StartAnim("ThighExit", player);
 			}
@@ -388,6 +396,7 @@ namespace Gts
 {
 	void AnimationThighSandwich::RegisterEvents() {
 		InputManager::RegisterInputEvent("ThighSandwichEnter", ThighSandwichEnterEvent);
+		InputManager::RegisterInputEvent("PlayerThighSandwichEnter", ThighSandwichEnterEvent_Follower);
 		InputManager::RegisterInputEvent("ThighSandwichAttack", ThighSandwichAttackEvent);
 		InputManager::RegisterInputEvent("ThighSandwichAttackHeavy", ThighSandwichHeavyAttackEvent);
 		InputManager::RegisterInputEvent("ThighSandwichExit", ThighSandwichExitEvent);

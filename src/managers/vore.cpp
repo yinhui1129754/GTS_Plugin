@@ -52,6 +52,11 @@ namespace {
 		}
 	}
 
+	void VoreInputEvent_Follower(const InputEventData& data) {
+		Actor* player = PlayerCharacter::GetSingleton();
+		ForceFollowerAnimation(player);
+	}
+
 	void BuffAttributes(Actor* giant, float tinyscale) {
 		if (!giant) {
 			return;
@@ -350,6 +355,7 @@ namespace Gts {
 
 	void Vore::DataReady() {
 		InputManager::RegisterInputEvent("Vore", VoreInputEvent);
+		InputManager::RegisterInputEvent("PlayerVore", VoreInputEvent_Follower);
 	}
 
 	void Vore::Update() {
@@ -579,20 +585,6 @@ namespace Gts {
 			return false;
 		}
 
-		if (pred->formID == 0x14 && IsTeammate(prey)) {
-			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
-			log::info("SD check passed");
-			if (sizedifference_reverse >= Action_Vore) {
-				ControlAnother(prey, false);
-				log::info("Controlling {}", prey->GetDisplayFullName());
-				prey = pred;
-				log::info("New Prey {}", prey->GetDisplayFullName());
-				pred = GetControlledActor();
-				log::info("New Pred {}", pred->GetDisplayFullName());
-				// Switch roles
-			}
-		}
-
 		auto transient = Transient::GetSingleton().GetData(prey);
 		if (prey->IsDead()) {
 			return false;
@@ -655,13 +647,6 @@ namespace Gts {
 	void Vore::StartVore(Actor* pred, Actor* prey) {
 		if (!CanVore(pred, prey)) {
 			return;
-		}
-
-		if (GetControlledActor()) {
-			prey = pred;
-			log::info("Start New Prey: {}", prey->GetDisplayFullName());
-			pred = GetControlledActor();
-			log::info("Start New Pred: {}", pred->GetDisplayFullName());
 		}
 
 		float pred_scale = get_visual_scale(pred);

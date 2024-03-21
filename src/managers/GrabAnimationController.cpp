@@ -131,20 +131,6 @@ namespace Gts {
 			return false;
 		}
 
-		if (pred->formID == 0x14 && IsTeammate(prey)) {
-			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
-			log::info("SD check passed");
-			if (sizedifference_reverse >= Action_Grab) {
-				ControlAnother(prey, false);
-				log::info("Controlling {}", prey->GetDisplayFullName());
-				prey = pred;
-				log::info("New Prey {}", prey->GetDisplayFullName());
-				pred = GetControlledActor();
-				log::info("New Pred {}", pred->GetDisplayFullName());
-				// Switch roles
-			}
-		}
-
 		float pred_scale = get_visual_scale(pred);
 
 		float sizedifference = GetSizeDifference(pred, prey, true, false);
@@ -182,13 +168,6 @@ namespace Gts {
 			return;
 		}
 
-		if (GetControlledActor()) {
-			prey = pred;
-			log::info("Start New Prey: {}", prey->GetDisplayFullName());
-			pred = GetControlledActor();
-			log::info("Start New Pred: {}", pred->GetDisplayFullName());
-		}
-		log::info("Trying to grab after Get check");
 		StaggerActor(pred, prey, 100.0f);
 
 		float shrinkrate = 0.18;

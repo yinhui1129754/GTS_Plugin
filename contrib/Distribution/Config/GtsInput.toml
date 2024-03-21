@@ -53,6 +53,16 @@ trigger = "once"
 
 # Start Vore Attempt.
 
+
+[[InputEvent]]
+name = "PlayerVore"
+keys = [ "LSHIFT", "V"]
+trigger = "continuous"
+duration = 3.00
+
+# Forces the followers to eat player if possible
+
+
 #========================================================
 #================ S T O M P S
 #========================================================
@@ -147,6 +157,16 @@ keys = ["LSHIFT", "C"]
 exclusive = true
 
 # Attempt to Start Thigh Sandwich animation with someone.
+
+[[InputEvent]]
+name = "PlayerThighSandwichEnter"
+keys = ["LALT", "C"]
+exclusive = true
+trigger = "continuous"
+duration = 3.0
+
+# Forces the follower to perform Thigh Sandiwch on player. 
+# In that case you can control the Follower actions through default key-binds below
 
 [[InputEvent]]
 name = "ThighSandwichAttackHeavy"
@@ -268,6 +288,14 @@ exclusive = false
 # Attempt to hug someone
 
 [[InputEvent]]
+name = "HugPlayer"
+keys = ["LSHIFT", "H"]
+exclusive = false
+
+# Force follower to hug the player if possible
+# In that case you can control the Follower actions through default key-binds below
+
+[[InputEvent]]
 name = "HugShrink"
 keys = ["LMB"]
 trigger = "release"
@@ -327,6 +355,16 @@ keys = ["LSHIFT", "B"]
 trigger = "release"
 duration = 0.0 
 # Start Butt/Breast Crush. If you have perk, it will look for closest actors to capture them. Else start normal butt crush.
+
+
+[[InputEvent]]
+name = "ButtCrushStart_Player"
+keys = ["LSHIFT", "B"]
+trigger = "continuous"
+duration = 3.0 
+# Start Butt/Knee/Breast Crush on the player if possible.
+# In that case you can control the Follower actions through default key-binds below
+
 
 [[InputEvent]]
 name = "ButtCrushGrow"
@@ -394,6 +432,14 @@ name = "GrabOther"
 keys = ["F"]
 duration = 0.25 
 # Grabs closest actor.
+
+[[InputEvent]]
+name = "GrabPlayer"
+keys = ["F"]
+trigger = "continuous"
+duration = 3.0
+# Force the follower to grab player if possibe.
+# In that case you can control the Follower actions through default key-binds below
 
 [[InputEvent]]
 name = "GrabAttack"

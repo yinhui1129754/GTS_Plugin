@@ -850,7 +850,7 @@ namespace Gts {
 		Actor* player = PlayerCharacter::GetSingleton();
 		auto transient = Transient::GetSingleton().GetData(player);
 		if (transient) {
-			if (reset) {
+			if (reset && target->formID == 0x14) {
 				transient->IsInControl = nullptr;
 				return;
 			} else {
@@ -859,12 +859,13 @@ namespace Gts {
 		}
 	}
 
-	Actor* GetControlledActor() {
-		Actor* player = PlayerCharacter::GetSingleton();
+	Actor* GetPlayerOrControlled() {
+		Actor* controlled = PlayerCharacter::GetSingleton();
 		auto transient = Transient::GetSingleton().GetData(player);
-		Actor* controlled = nullptr;
 		if (transient) {
-			controlled = transient->IsInControl;
+			if (transient->IsInControl != nullptr) {
+				return transient->IsInControl;
+			}
 		}
 		return controlled;
 	}

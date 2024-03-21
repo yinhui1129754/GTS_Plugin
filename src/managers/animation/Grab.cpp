@@ -312,12 +312,13 @@ namespace {
 		}
 	}
 
-	void GrabAttackEvent(const InputEventData& data) { // Attack everyone in your hand
+	void GrabOtherEvent_Follower(const InputEventData& data) { // Force Follower to grab player
 		Actor* player = PlayerCharacter::GetSingleton();
+		ForceFollowerAnimation(player, FollowerAnimType::Grab);
+	}
 
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+	void GrabAttackEvent(const InputEventData& data) { // Attack everyone in your hand
+		Actor* player = GetPlayerOrControlled();
 
 		if (IsGtsBusy(player) && !IsUsingThighAnimations(player)) {
 			return;
@@ -340,11 +341,7 @@ namespace {
 	}
 
 	void GrabVoreEvent(const InputEventData& data) { // Eat everyone in hand
-		Actor* player = PlayerCharacter::GetSingleton();
-
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 
 		if (!CanPerformAnimation(player, 3)) {
 			return;
@@ -365,11 +362,7 @@ namespace {
 	}
 
 	void GrabThrowEvent(const InputEventData& data) { // Throw everyone away
-		Actor* player = PlayerCharacter::GetSingleton();
-
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 
 		if (IsGtsBusy(player) && !IsUsingThighAnimations(player)) {
 			return;
@@ -392,11 +385,7 @@ namespace {
 	}
 
 	void GrabReleaseEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 
 		auto grabbedActor = Grab::GetHeldActor(player);
 		if (!grabbedActor) {
@@ -410,11 +399,7 @@ namespace {
 	}
 
 	void BreastsPutEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 
 		auto grabbedActor = Grab::GetHeldActor(player);
 		if (!grabbedActor || IsTransitioning(player)) {
@@ -423,11 +408,7 @@ namespace {
 		AnimationManager::StartAnim("Breasts_Put", player);
 	}
 	void BreastsRemoveEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 
 		auto grabbedActor = Grab::GetHeldActor(player);
 		if (!grabbedActor || IsTransitioning(player)) {
@@ -633,6 +614,7 @@ namespace Gts {
 	}
 
 	void Grab::RegisterEvents() {
+		InputManager::RegisterInputEvent("GrabPlayer", GrabOtherEvent_Follower);
 		InputManager::RegisterInputEvent("GrabOther", GrabOtherEvent);
 		InputManager::RegisterInputEvent("GrabAttack", GrabAttackEvent);
 		InputManager::RegisterInputEvent("GrabVore", GrabVoreEvent);

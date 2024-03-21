@@ -10,9 +10,18 @@ using namespace RE;
 using namespace Gts;
 
 namespace Gts {
+	enum class FollowerAnimType {
+		ThighSandwich,
+		ButtCrush,
+		Grab,
+		Hugs,
+		Vore,
+	};
+
 	void BlockFirstPerson(Actor* actor, bool block);
 
 	void Hugs_FixAnimationDesync(Actor* giant, Actor* tiny, bool reset);
+	void ForceFollowerAnimation(Actor* giant, FollowerAnimType Type);
 	void Vore_AttachToRightHandTask(Actor* giant, Actor* tiny);
 
 	void UpdateFriendlyHugs(Actor* giant, Actor* tiny, bool force);

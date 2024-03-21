@@ -214,11 +214,13 @@ namespace {
 		}
 	}
 
-	void HugCrushEvent(const InputEventData& data) {
+	void HugAttemptEvent_Follower(const InputEventData& data) {
 		Actor* player = PlayerCharacter::GetSingleton();
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		ForceFollowerAnimation(player, FollowerAnimType::Hugs);
+	}
+
+	void HugCrushEvent(const InputEventData& data) {
+		Actor* player = GetPlayerOrControlled();
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
@@ -241,10 +243,8 @@ namespace {
 	}
 
 	void ForceHugCrushEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
+
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
@@ -261,10 +261,7 @@ namespace {
 	}
 
 	void HugShrinkEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
@@ -281,10 +278,7 @@ namespace {
 	}
 
 	void HugHealEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* GetPlayerOrControlled();
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
@@ -312,10 +306,7 @@ namespace {
 		}
 	}
 	void HugReleaseEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (huggedActor) {
 			if (IsHugCrushing(player) || IsHugHealing(player)) {
@@ -566,6 +557,7 @@ namespace Gts {
 	}
 
 	void HugShrink::RegisterEvents() {
+		InputManager::RegisterInputEvent("HugPlayer", HugAttemptEvent_Follower);
 		InputManager::RegisterInputEvent("HugAttempt", HugAttemptEvent);
 		InputManager::RegisterInputEvent("HugRelease", HugReleaseEvent);
 		InputManager::RegisterInputEvent("HugShrink", HugShrinkEvent);

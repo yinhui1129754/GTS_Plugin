@@ -218,10 +218,7 @@ namespace {
 
 
 	void ButtCrushStartEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 
 		if (player->formID == 0x14 && IsFirstPerson()) {
 			return;
@@ -257,6 +254,11 @@ namespace {
 		}
 	}
 
+	void ButtCrushStartEvent_Follower(const InputEventData& data) {
+		Actor* player = PlayerCharacter::GetSingleton();
+		ForceFollowerAnimation(player, FollowerAnimType::ButtCrush);
+	}
+
 	void QuickButtCrushStartEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
 		if (IsFirstPerson()) {
@@ -281,10 +283,7 @@ namespace {
 	}
 
 	void ButtCrushGrowEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 		if (player->formID == 0x14 && IsFirstPerson()) {
 			return;
 		}
@@ -300,10 +299,7 @@ namespace {
 	}
 
 	void ButtCrushAttackEvent(const InputEventData& data) {
-		Actor* player = PlayerCharacter::GetSingleton();
-		if (GetControlledActor()) {
-			player = GetControlledActor();
-		}
+		Actor* player = GetPlayerOrControlled();
 		if (IsButtCrushing(player)) {
 			AnimationManager::StartAnim("ButtCrush_Attack", player);
 		}
@@ -323,6 +319,7 @@ namespace Gts
 		AnimationManager::RegisterEvent("GTSButtCrush_MoveBody_MixFrameToLoop", "ButtCrush", GTSButtCrush_MoveBody_MixFrameToLoop);
 
 		InputManager::RegisterInputEvent("ButtCrushStart", ButtCrushStartEvent);
+		InputManager::RegisterInputEvent("ButtCrushStart_Player", ButtCrushStartEvent_Follower);
 		InputManager::RegisterInputEvent("QuickButtCrushStart", QuickButtCrushStartEvent);
 		InputManager::RegisterInputEvent("ButtCrushGrow", ButtCrushGrowEvent);
 		InputManager::RegisterInputEvent("ButtCrushAttack", ButtCrushAttackEvent);

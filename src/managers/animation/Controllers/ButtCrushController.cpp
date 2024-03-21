@@ -185,20 +185,6 @@ namespace Gts {
 			return false;
 		}
 
-		if (pred->formID == 0x14 && IsTeammate(prey)) {
-			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
-			log::info("SD check passed");
-			if (sizedifference_reverse >= Action_Booty) {
-				ControlAnother(prey, false);
-				log::info("Controlling {}", prey->GetDisplayFullName());
-				prey = pred;
-				log::info("New Prey {}", prey->GetDisplayFullName());
-				pred = GetControlledActor();
-				log::info("New Pred {}", pred->GetDisplayFullName());
-				// Switch roles
-			}
-		}
-
 		if (prey->IsDead()) {
 			return false;
 		}
@@ -240,13 +226,6 @@ namespace Gts {
 		
 		if (!buttcrush.CanButtCrush(pred, prey)) {
 			return;
-		}
-
-		if (GetControlledActor()) {
-			prey = pred;
-			log::info("Start New Prey: {}", prey->GetDisplayFullName());
-			pred = GetControlledActor();
-			log::info("Start New Pred: {}", pred->GetDisplayFullName());
 		}
 
 		if (CanDoButtCrush(pred, false) && !IsBeingHeld(prey)) {

@@ -92,6 +92,129 @@ namespace Gts {
 		}
 	}
 
+	void ForceFollowerAnimation(Actor* giant, FollowerAnimType Type) {
+		switch case (type) {
+			std::size_t numberOfPrey = 1;
+
+			auto& Vore =        Vore::GetSingleton();
+			auto& ButtCrush = 	ButtCrushController::GetSingleton();
+			auto& Hugs = 		HugAnimationController::GetSingleton();
+			auto& Grabs = 		GrabAnimationController::GetSingleton();
+			auto& Sandwich =    ThighSandwichController::GetSingleton();
+			
+			std::vector<Actor*> preys_GiantPov = {};
+			std::vector<Actor*> preys_FollowerPov = {};
+
+			case FollowerAnimType::ButtCrush:
+				preys_GiantPov = ButtCrush.GetButtCrushTargets(giant, numberOfPrey);
+				if (preys_GiantPov.size() > 0) { // For safety
+					for (auto new_gts: preys_GiantPov) {
+						if (IsTeammate(new_gts)) {
+							preys_FollowerPov = ButtCrush.GetButtCrushTargets(new_gts, numberOfPrey);
+							if (preys_FollowerPov.size() > 0) {
+								for (auto new_tiny: preys_FollowerPov) { 
+									if (new_tiny->formID == 0x14) {
+										if (ButtCrush.CanButtCrush(new_gts, new_tiny)) {
+											ButtCrush.StartButtCrush(new_gts, new_tiny);
+											ControlAnother(new_gts, false);
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			break;	
+		} case FollowerAnimType::Hugs:
+			preys_GiantPov = Hugs.GetHugTargetsInFront(giant, numberOfPrey);
+				if (preys_GiantPov.size() > 0) { // For safety
+					for (auto new_gts: preys_GiantPov) {
+						if (IsTeammate(new_gts)) {
+							preys_FollowerPov = Hugs.GetHugTargetsInFront(new_gts, numberOfPrey);
+							if (preys_FollowerPov.size() > 0) {
+								for (auto new_tiny: preys_FollowerPov) { 
+									if (new_tiny->formID == 0x14) {
+										float sizedifference = GetSizeDifference(new_gts, new_tiny, true, true);
+										bool allow = (sizedifference >= Action_Hug && sizedifference < GetHugShrinkThreshold(new_gts));
+										if (allow && Hugs.CanHug(new_gts, new_tiny)) {
+											Hugs.StartHug(new_gts, new_tiny);
+											ControlAnother(new_gts, false);
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			break;
+		} case FollowerAnimType::Grab: {
+			preys_GiantPov = Grab.GetGrabTargetsInFront(giant, numberOfPrey);
+				if (preys_GiantPov.size() > 0) { // For safety
+					for (auto new_gts: preys_GiantPov) {
+						if (IsTeammate(new_gts)) {
+							preys_FollowerPov = ButtCrush.GetGrabTargetsInFront(new_gts, numberOfPrey);
+							if (preys_FollowerPov.size() > 0) {
+								for (auto new_tiny: preys_FollowerPov) { 
+									if (new_tiny->formID == 0x14) {
+										if (ButtCrush.CanGrab(new_gts, new_tiny)) {
+											ButtCrush.StartGrab(new_gts, new_tiny);
+											ControlAnother(new_gts, false);
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			break;	
+		} case FollowerAnimType::Vore: {
+			preys_GiantPov = Vore.GetVoreTargetsInFront(giant, numberOfPrey);
+				if (preys_GiantPov.size() > 0) { // For safety
+					for (auto new_gts: preys_GiantPov) {
+						if (IsTeammate(new_gts)) {
+							preys_FollowerPov = ButtCrush.GetVoreTargetsInFront(new_gts, numberOfPrey);
+							if (preys_FollowerPov.size() > 0) {
+								for (auto new_tiny: preys_FollowerPov) { 
+									if (new_tiny->formID == 0x14) {
+										if (ButtCrush.CanVore(new_gts, new_tiny)) {
+											ButtCrush.StartVore(new_gts, new_tiny);
+											ControlAnother(new_gts, false);
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			break;	
+		} case FollowerAnimType::ThighSandwich: {
+			preys_GiantPov = Sandwich.GetSandwichTargetsInFront(giant, numberOfPrey);
+				if (preys_GiantPov.size() > 0) { // For safety
+					for (auto new_gts: preys_GiantPov) {
+						if (IsTeammate(new_gts)) {
+							preys_FollowerPov = ButtCrush.GetSandwichTargetsInFront(new_gts, numberOfPrey);
+							if (preys_FollowerPov.size() > 0) {
+								for (auto new_tiny: preys_FollowerPov) { 
+									if (new_tiny->formID == 0x14) {
+										if (ButtCrush.CanSandwich(new_gts, new_tiny)) {
+											ButtCrush.StartSandwiching(new_gts, new_tiny);
+											ControlAnother(new_gts, false);
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			break;	
+		} 
+	}
+
 	void Vore_AttachToRightHandTask(Actor* giant, Actor* tiny) {
 		std::string name = std::format("CrawlVore_{}_{}", giant->formID, tiny->formID);
 		ActorHandle giantHandle = giant->CreateRefHandle();

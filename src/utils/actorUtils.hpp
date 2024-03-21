@@ -95,7 +95,7 @@ namespace Gts {
 	bool IsDebugEnabled();
 
 	void ControlAnother(Actor* target, bool reset);
-	Actor* GetControlledActor();
+	Actor* GetPlayerOrControlled();
 
 
 
