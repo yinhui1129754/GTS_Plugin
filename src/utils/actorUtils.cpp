@@ -867,10 +867,16 @@ namespace Gts {
 	void DisableActorControls(Actor* giant, bool Reset) {
 
 		if (!Reset) {
-			giant->GetActorRuntimeData().boolFlags.set(Actor::BOOL_FLAGS::kIsInKillMove);
+			//giant->GetActorRuntimeData().boolFlags.set(Actor::BOOL_FLAGS::kIsInKillMove);
+			//giant->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kShouldAnimGraphUpdate);
+			giant->StopInteractingQuick(true);
+			giant->EnableAI(false);
 			log::info("Actor Control disabled");
 		} else {
-			giant->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kIsInKillMove);
+			//giant->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kIsInKillMove);
+			//giant->GetActorRuntimeData().boolFlags.set(Actor::BOOL_FLAGS::kShouldAnimGraphUpdate);
+			giant->StopInteractingQuick(false);
+			giant->EnableAI(true);
 			log::info("Actor Control Enabled");
 		}
 		
