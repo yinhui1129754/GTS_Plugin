@@ -104,6 +104,7 @@ namespace Hooks {
 					//log::info("Playing Idle: {}", a_this->animFileName); // prints Actors\Character\Behaviors\0_Master.hkx for example
 					log::info("Playing Idle Name: {}", a_this->animEventName);
 					log::info("Playing formEditorID: {}", a_this->formEditorID.c_str());
+					log::Info("Playing pad2e: {}", a_this->pad2E);
 					auto* EventName = a_this->GetFormEditorID();
 					
 					if (EventName == "DefaultSheathe"|| EventName == "JumpRoot"|| EventName == "NonMountedDraw"|| EventName == "NonMountedForceEquip") {
