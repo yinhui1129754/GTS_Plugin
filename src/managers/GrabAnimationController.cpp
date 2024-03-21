@@ -181,7 +181,6 @@ namespace Gts {
 		}
 
 		if (GetControlledActor()) {
-			log::info("Controlled Actor", GetControlledActor());
 			prey = pred;
 			log::info("Start New Prey: {}", prey->GetDisplayFullName());
 			pred = GetControlledActor();
