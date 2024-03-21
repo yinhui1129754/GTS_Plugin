@@ -97,7 +97,7 @@ namespace Gts {
 	}
 
 	void ForceFollowerAnimation(Actor* giant, FollowerAnimType Type) {
-		std::size_t numberOfPrey = 1;
+		std::size_t numberOfPrey = 1000;
 
 		auto& Vore =        Vore::GetSingleton();
 		auto& ButtCrush = 	ButtCrushController::GetSingleton();
@@ -110,6 +110,7 @@ namespace Gts {
 
 		switch (Type) {
 			case FollowerAnimType::ButtCrush:
+				log::info("ButtCrush");
 				preys_GiantPov = ButtCrush.GetButtCrushTargets(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
@@ -131,6 +132,7 @@ namespace Gts {
 				}
 			break;	
 		 	case FollowerAnimType::Hugs:
+				log::info("Hugs");
 				preys_GiantPov = Hugs.GetHugTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
@@ -154,15 +156,21 @@ namespace Gts {
 				}
 			break;
 		 	case FollowerAnimType::Grab:
+				log::info("Grab");
 				preys_GiantPov = Grabs.GetGrabTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
+					log::info("Grab Size is > 0");
 					for (auto new_gts: preys_GiantPov) {
+						log::info("Found Gts: {}", new_gts->GetDisplayFullName());
 						if (IsTeammate(new_gts)) {
 							preys_FollowerPov = Grabs.GetGrabTargetsInFront(new_gts, numberOfPrey);
 							if (preys_FollowerPov.size() > 0) {
+								log::info("Grab Follower Size > 0");
 								for (auto new_tiny: preys_FollowerPov) { 
+									log::info("Found Tiny: {}", new_tiny->GetDisplayFullName());
 									if (new_tiny->formID == 0x14) {
 										if (Grabs.CanGrab(new_gts, new_tiny)) {
+											log::info("Starting Hug");
 											Grabs.StartGrab(new_gts, new_tiny);
 											ControlAnother(new_gts, false);
 											return;
@@ -175,6 +183,7 @@ namespace Gts {
 				}
 			break;	
 		 	case FollowerAnimType::Vore: 
+				log::info("Vore");	
 				preys_GiantPov = Vore.GetVoreTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
@@ -196,6 +205,7 @@ namespace Gts {
 				}
 			break;
 		 	case FollowerAnimType::ThighSandwich: 
+				log::info("Thigh Sandwich");
 				preys_GiantPov = Sandwich.GetSandwichTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
