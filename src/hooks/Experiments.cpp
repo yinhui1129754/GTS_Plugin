@@ -46,21 +46,18 @@ namespace {
 		TESIdleForm* Jump = Runtime::GetIdle("JumpRoot");
 		TESIdleForm* Sheathe = Runtime::GetIdle("DefaultSheathe");
 		TESIdleForm* Draw = Runtime::GetIdle("NonMountedDraw");
-		TESIdleForm* ForceEquip Runtime::GetIdle("NonMountedForceEquip");
+		TESIdleForm* ForceEquip = Runtime::GetIdle("NonMountedForceEquip");
 
-		switch (idle) {
-			case Jump: 
-				return true;
-			break;	
-			case Sheathe:
-				return true;
-			break;
-			case Draw:
-				return true;
-			break;
-			case ForceEquip:
-				return true;
-			break;
+		if (idle == Jump) {
+			return true;	
+		} else if (idle == Sheathe) {
+			return true;
+		} else if (idle == Draw) {
+			return true;
+		} else if (idle == ForceEquip) {
+			return true;
+		} else {
+			return false;
 		}
 
 		return false;
