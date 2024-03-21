@@ -162,7 +162,7 @@ namespace Gts {
 			std::unordered_map<std::string, RaceData> races;
 			std::unordered_map<std::string, KeywordData> keywords;
 			std::unordered_map<std::string, ContainerData> containers;
-			std::unordered_map<std::string, IdleData> data;
+			std::unordered_map<std::string, IdleData> idles;
 
 			std::unordered_set<std::string> logged;
 	};
