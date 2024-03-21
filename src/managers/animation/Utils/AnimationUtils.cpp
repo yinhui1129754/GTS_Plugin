@@ -142,10 +142,12 @@ namespace Gts {
 			break;
 		 	case FollowerAnimType::Grab:
 				log::info("Grab");
-				for (auto new_gts: Grabs.GetGrabTargetsInFront(giant, numberOfPrey)) {
+				std::vector<Actor*> FindGts = Grabs.GetGrabTargetsInFront(giant, numberOfPrey);
+				for (auto new_gts: FindGts) {
 					log::info("Found Gts: {}", new_gts->GetDisplayFullName());
 					if (IsTeammate(new_gts)) {
-						for (auto new_tiny: Grabs.GetGrabTargetsInFront(new_gts, numberOfPrey)) { 
+						std::vector<Actor*> FindTiny = Grabs.GetGrabTargetsInFront(new_gts, numberOfPrey);
+						for (auto new_tiny: FindTiny) { 
 							log::info("Found Tiny: {}", new_tiny->GetDisplayFullName());
 								if (new_tiny->formID == 0x14 && Grabs.CanGrab(new_gts, new_tiny)) {
 									log::info("Starting Hug");
