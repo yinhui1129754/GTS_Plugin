@@ -862,7 +862,7 @@ namespace Gts {
 
 	Actor* GetPlayerOrControlled() {
 		Actor* controlled = PlayerCharacter::GetSingleton();
-		auto transient = Transient::GetSingleton().GetData(player);
+		auto transient = Transient::GetSingleton().GetData(controlled);
 		if (transient) {
 			if (transient->IsInControl != nullptr) {
 				return transient->IsInControl;
