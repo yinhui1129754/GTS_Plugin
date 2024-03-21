@@ -188,7 +188,7 @@ namespace Gts {
 		if (pred->formID == 0x14 && IsTeammate(prey)) {
 			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
 			log::info("SD check passed");
-			if (sizedifference_reverse >= Action_ButtCrush) {
+			if (sizedifference_reverse >= Action_Booty) {
 				ControlAnother(prey, false);
 				log::info("Controlling {}", prey->GetDisplayFullName());
 				prey = pred;
