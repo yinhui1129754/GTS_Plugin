@@ -93,18 +93,18 @@ namespace Gts {
 	}
 
 	void ForceFollowerAnimation(Actor* giant, FollowerAnimType Type) {
-		switch case (type) {
-			std::size_t numberOfPrey = 1;
+		std::size_t numberOfPrey = 1;
 
-			auto& Vore =        Vore::GetSingleton();
-			auto& ButtCrush = 	ButtCrushController::GetSingleton();
-			auto& Hugs = 		HugAnimationController::GetSingleton();
-			auto& Grabs = 		GrabAnimationController::GetSingleton();
-			auto& Sandwich =    ThighSandwichController::GetSingleton();
-			
-			std::vector<Actor*> preys_GiantPov = {};
-			std::vector<Actor*> preys_FollowerPov = {};
+		auto& Vore =        Vore::GetSingleton();
+		auto& ButtCrush = 	ButtCrushController::GetSingleton();
+		auto& Hugs = 		HugAnimationController::GetSingleton();
+		auto& Grabs = 		GrabAnimationController::GetSingleton();
+		auto& Sandwich =    ThighSandwichController::GetSingleton();
+		
+		std::vector<Actor*> preys_GiantPov = {};
+		std::vector<Actor*> preys_FollowerPov = {};
 
+		switch (type) {
 			case FollowerAnimType::ButtCrush:
 				preys_GiantPov = ButtCrush.GetButtCrushTargets(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
@@ -126,8 +126,8 @@ namespace Gts {
 					}
 				}
 			break;	
-		} case FollowerAnimType::Hugs:
-			preys_GiantPov = Hugs.GetHugTargetsInFront(giant, numberOfPrey);
+		 	case FollowerAnimType::Hugs:
+				preys_GiantPov = Hugs.GetHugTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
 						if (IsTeammate(new_gts)) {
@@ -149,8 +149,8 @@ namespace Gts {
 					}
 				}
 			break;
-		} case FollowerAnimType::Grab: {
-			preys_GiantPov = Grab.GetGrabTargetsInFront(giant, numberOfPrey);
+		 	case FollowerAnimType::Grab:
+				preys_GiantPov = Grab.GetGrabTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
 						if (IsTeammate(new_gts)) {
@@ -170,8 +170,8 @@ namespace Gts {
 					}
 				}
 			break;	
-		} case FollowerAnimType::Vore: {
-			preys_GiantPov = Vore.GetVoreTargetsInFront(giant, numberOfPrey);
+		 	case FollowerAnimType::Vore: 
+				preys_GiantPov = Vore.GetVoreTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
 						if (IsTeammate(new_gts)) {
@@ -190,9 +190,9 @@ namespace Gts {
 						}
 					}
 				}
-			break;	
-		} case FollowerAnimType::ThighSandwich: {
-			preys_GiantPov = Sandwich.GetSandwichTargetsInFront(giant, numberOfPrey);
+			break;
+		 	case FollowerAnimType::ThighSandwich: 
+				preys_GiantPov = Sandwich.GetSandwichTargetsInFront(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
 					for (auto new_gts: preys_GiantPov) {
 						if (IsTeammate(new_gts)) {
@@ -211,9 +211,12 @@ namespace Gts {
 						}
 					}
 				}
-			break;	
-		} 
+			break;
+		}
 	}
+		
+	
+		 
 
 	void Vore_AttachToRightHandTask(Actor* giant, Actor* tiny) {
 		std::string name = std::format("CrawlVore_{}_{}", giant->formID, tiny->formID);
