@@ -37,6 +37,7 @@ namespace {
 		std::unordered_map<std::string, std::string> races;
 		std::unordered_map<std::string, std::string> keywords;
 		std::unordered_map<std::string, std::string> containers;
+		std::unorderem_map<std::string, std::string> idles;
 
 		RuntimeConfig(const toml::value& data) {
 			this->sounds = toml::find_or(data, "sounds", std::unordered_map<std::string, std::string>());
@@ -51,6 +52,7 @@ namespace {
 			this->races = toml::find_or(data, "races", std::unordered_map<std::string, std::string>());
 			this->keywords = toml::find_or(data, "keywords", std::unordered_map<std::string, std::string>());
 			this->containers = toml::find_or(data, "containers", std::unordered_map<std::string, std::string>());
+			this->idles = toml::find_or(data, "idles", std::unordered_map<std::string, std::string>());
 		}
 	};
 }
@@ -645,6 +647,20 @@ namespace Gts {
 			return instance;
 		}
 		return nullptr;
+	}
+
+	//Idles
+	TESIdleForm* Runtime::GetIdle(const std::string_view& tag) {
+		TESIdleForm* data = nullptr;
+		try {
+			data = Runtime::GetSingleton().idles.at(std::string(tag)).data;
+		}  catch (const std::out_of_range& oor) {
+			data = nullptr;
+			if (!Runtime::Logged("cont", tag)) {
+				log::warn("Idle: {} not found", tag);
+			}
+		}
+		return data;
 	}
 
 	// Team Functions

@@ -38,6 +38,33 @@ using namespace SKSE;
 //      ^ 50179
 
 namespace {
+	bool BlockAnimation(TESIdleForm* idle) {
+		if (!idle) {
+			return false;
+		}
+		TESIdleForm* Jump = Runtime::GetIdle("JumpRoot");
+		TESIdleForm* Sheathe = Runtime::GetIdle("DefaultSheathe");
+		TESIdleForm* Draw = Runtime::GetIdle("NonMountedDraw");
+		TESIdleForm* ForceEquip Runtime::GetIdle("NonMountedForceEquip");
+
+		switch (idle) {
+			case Jump: 
+				return true;
+			break;	
+			case Sheathe:
+				return true;
+			break;
+			case Draw:
+				return true;
+			break;
+			case ForceEquip:
+				return true;
+			break;
+		}
+
+		return false;
+	}
+
 	float affect_by_scale(TESObjectREFR* ref, float original) {
 		Actor* giant = skyrim_cast<Actor*>(ref);
 		if (giant) {
@@ -107,7 +134,7 @@ namespace Hooks {
 					log::info("Playing pad2e: {}", a_this->pad2E);
 					auto* EventName = a_this->GetFormEditorID();
 					
-					if (EventName == "DefaultSheathe"|| EventName == "JumpRoot"|| EventName == "NonMountedDraw"|| EventName == "NonMountedForceEquip") {
+					if (BlockAnimation(a_this)) {
 						log::info("Returning nullptr");
 						result = nullptr;
 					}

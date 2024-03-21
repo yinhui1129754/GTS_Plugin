@@ -57,6 +57,10 @@ namespace Gts {
 		TESObjectCONT* data;
 	};
 
+	struct IdleData {
+		TESIdleForm* data;
+	};
+
 	class Runtime : public EventListener {
 		public:
 			[[nodiscard]] static Runtime& GetSingleton() noexcept;
@@ -132,6 +136,9 @@ namespace Gts {
 			static TESObjectREFR* PlaceContainerAtPos(Actor* actor, NiPoint3 pos, const std::string_view& tag);
 			static TESObjectREFR* PlaceContainerAtPos(TESObjectREFR* object, NiPoint3 pos, const std::string_view& tag);
 
+			// Idles
+			static TESIdleForm* GetIdle(const std::string_view& tag);
+
 			// Team Functions
 			static bool HasMagicEffectTeam(Actor* actor, const std::string_view& tag);
 			static bool HasMagicEffectTeamOr(Actor* actor, const std::string_view& tag, const bool& default_value);
@@ -155,6 +162,7 @@ namespace Gts {
 			std::unordered_map<std::string, RaceData> races;
 			std::unordered_map<std::string, KeywordData> keywords;
 			std::unordered_map<std::string, ContainerData> containers;
+			std::unordered_map<std::string, IdleData> data;
 
 			std::unordered_set<std::string> logged;
 	};
