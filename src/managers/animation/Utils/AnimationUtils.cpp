@@ -111,9 +111,8 @@ namespace Gts {
 		switch (Type) {
 			case FollowerAnimType::ButtCrush:
 				log::info("ButtCrush");
-				preys_GiantPov = ButtCrush.GetButtCrushTargets(giant, numberOfPrey);
-				if (preys_GiantPov.size() > 0) { // For safety
-					for (auto new_gts: preys_GiantPov) {
+				for (auto new_gts: ButtCrush.GetButtCrushTargets(giant, numberOfPrey)) {
+					if (new_gts.size() > 0) { // For safety
 						if (IsTeammate(new_gts)) {
 							preys_FollowerPov = ButtCrush.GetButtCrushTargets(new_gts, numberOfPrey);
 							if (preys_FollowerPov.size() > 0) {
@@ -133,21 +132,17 @@ namespace Gts {
 			break;	
 		 	case FollowerAnimType::Hugs:
 				log::info("Hugs");
-				preys_GiantPov = Hugs.GetHugTargetsInFront(giant, numberOfPrey);
-				if (preys_GiantPov.size() > 0) { // For safety
-					for (auto new_gts: preys_GiantPov) {
-						if (IsTeammate(new_gts)) {
-							preys_FollowerPov = Hugs.GetHugTargetsInFront(new_gts, numberOfPrey);
-							if (preys_FollowerPov.size() > 0) {
-								for (auto new_tiny: preys_FollowerPov) { 
-									if (new_tiny->formID == 0x14) {
-										float sizedifference = GetSizeDifference(new_gts, new_tiny, true, true);
-										bool allow = (sizedifference >= Action_Hug && sizedifference < GetHugShrinkThreshold(new_gts));
-										if (allow && Hugs.CanHug(new_gts, new_tiny)) {
-											Hugs.StartHug(new_gts, new_tiny);
-											ControlAnother(new_gts, false);
-											return;
-										}
+				for (auto new_gts: Hugs.GetHugTargetsInFront(giant, numberOfPrey)) {
+					if (new_gts.size() > 0 && IsTeammate(new_gts)) {
+						for (auto new_tiny: Hugs.GetHugTargetsInFront(new_gts, numberOfPrey)) { 
+							if (new_tiny.size() > 0) {
+								if (new_tiny->formID == 0x14) {
+									float sizedifference = GetSizeDifference(new_gts, new_tiny, true, true);
+									bool allow = (sizedifference >= Action_Hug && sizedifference < GetHugShrinkThreshold(new_gts));
+									if (allow && Hugs.CanHug(new_gts, new_tiny)) {
+										Hugs.StartHug(new_gts, new_tiny);
+										ControlAnother(new_gts, false);
+										return;
 									}
 								}
 							}
@@ -157,25 +152,17 @@ namespace Gts {
 			break;
 		 	case FollowerAnimType::Grab:
 				log::info("Grab");
-				preys_GiantPov = Grabs.GetGrabTargetsInFront(giant, numberOfPrey);
-				if (preys_GiantPov.size() > 0) { // For safety
-					log::info("Grab Size is > 0");
-					for (auto new_gts: preys_GiantPov) {
-						log::info("Found Gts: {}", new_gts->GetDisplayFullName());
-						if (IsTeammate(new_gts)) {
-							preys_FollowerPov = Grabs.GetGrabTargetsInFront(new_gts, numberOfPrey);
-							if (preys_FollowerPov.size() > 0) {
-								log::info("Grab Follower Size > 0");
-								for (auto new_tiny: preys_FollowerPov) { 
-									log::info("Found Tiny: {}", new_tiny->GetDisplayFullName());
-									if (new_tiny->formID == 0x14) {
-										if (Grabs.CanGrab(new_gts, new_tiny)) {
-											log::info("Starting Hug");
-											Grabs.StartGrab(new_gts, new_tiny);
-											ControlAnother(new_gts, false);
-											return;
-										}
-									}
+				for (auto new_gts: Grabs.GetGrabTargetsInFront(giant, numberOfPrey)) {
+					log::info("Found Gts: {}", new_gts->GetDisplayFullName());
+					if (new_gts.size() > 0 && IsTeammate(new_gts)) {
+						for (auto new_tiny: Grabs.GetGrabTargetsInFront(new_gts, numberOfPrey)) { 
+							log::info("Found Tiny: {}", new_tiny->GetDisplayFullName());
+							if (new_tiny.size() > 0) {
+								if (new_tiny->formID == 0x14 && Grabs.CanGrab(new_gts, new_tiny)) {
+									log::info("Starting Hug");
+									Grabs.StartGrab(new_gts, new_tiny);
+									ControlAnother(new_gts, false);
+									return;
 								}
 							}
 						}
