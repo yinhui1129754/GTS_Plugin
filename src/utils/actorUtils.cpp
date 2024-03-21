@@ -852,6 +852,7 @@ namespace Gts {
 		if (transient) {
 			if (reset && target->formID == 0x14) {
 				transient->IsInControl = nullptr;
+				log::info("Controlled actor reset");
 				return;
 			} else {
 				transient->IsInControl = target;

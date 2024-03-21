@@ -58,7 +58,7 @@ trigger = "once"
 name = "PlayerVore"
 keys = [ "LSHIFT", "V"]
 trigger = "continuous"
-duration = 3.00
+duration = 3.0
 
 # Forces the followers to eat player if possible
 
@@ -291,6 +291,8 @@ exclusive = false
 name = "HugPlayer"
 keys = ["LSHIFT", "H"]
 exclusive = false
+trigger = "continuous"
+duration = 3.0
 
 # Force follower to hug the player if possible
 # In that case you can control the Follower actions through default key-binds below

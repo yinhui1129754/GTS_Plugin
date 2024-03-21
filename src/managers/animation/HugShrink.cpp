@@ -278,7 +278,7 @@ namespace {
 	}
 
 	void HugHealEvent(const InputEventData& data) {
-		Actor* GetPlayerOrControlled();
+		Actor* player = GetPlayerOrControlled();
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (!huggedActor) {
 			return;
