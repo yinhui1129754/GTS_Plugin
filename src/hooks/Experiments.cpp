@@ -103,7 +103,7 @@ namespace Hooks {
 				if (a_this) {
 					//log::info("Playing Idle: {}", a_this->animFileName); // prints Actors\Character\Behaviors\0_Master.hkx for example
 					log::info("Playing Idle Name: {}", a_this->animEventName);
-					log::info("Playing formEditorID: {}", a_this->formEditorID.c_str())
+					log::info("Playing formEditorID: {}", a_this->formEditorID.c_str());
 				}
 				//Actor* action_ref = params->actionRef->As<RE::Actor>();
     			//TESObjectREFR* target_ref = params->targetRef;
