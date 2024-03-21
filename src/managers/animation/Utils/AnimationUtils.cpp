@@ -106,7 +106,7 @@ namespace Gts {
 		auto& Sandwich =    ThighSandwichController::GetSingleton();
 
 		switch (Type) {
-			case FollowerAnimType::ButtCrush:
+			case FollowerAnimType::ButtCrush: {
 				log::info("ButtCrush");
 				for (auto new_gts: ButtCrush.GetButtCrushTargets(giant, numberOfPrey)) {
 					if (IsTeammate(new_gts)) {
@@ -122,7 +122,8 @@ namespace Gts {
 					}
 				}
 			break;	
-		 	case FollowerAnimType::Hugs:
+			}
+		 	case FollowerAnimType::Hugs: {
 				log::info("Hugs");
 				for (auto new_gts: Hugs.GetHugTargetsInFront(giant, numberOfPrey)) {
 					if (IsTeammate(new_gts)) {
@@ -140,7 +141,8 @@ namespace Gts {
 					}
 				}
 			break;
-		 	case FollowerAnimType::Grab:
+			}
+		 	case FollowerAnimType::Grab: {
 				log::info("Grab");
 				std::vector<Actor*> FindGts = Grabs.GetGrabTargetsInFront(giant, numberOfPrey);
 				for (auto new_gts: FindGts) {
@@ -159,7 +161,8 @@ namespace Gts {
 						}
 					}
 				break;	
-		 	case FollowerAnimType::Vore: 
+			}
+		 	case FollowerAnimType::Vore: {
 				log::info("Vore");	
 				for (auto new_gts: Vore.GetVoreTargetsInFront(giant, numberOfPrey)) {
 					if (IsTeammate(new_gts)) {
@@ -175,7 +178,8 @@ namespace Gts {
 					}
 				}
 			break;
-		 	case FollowerAnimType::ThighSandwich: 
+			}
+		 	case FollowerAnimType::ThighSandwich: {
 				log::info("Thigh Sandwich");
 				for (auto new_gts: Sandwich.GetSandwichTargetsInFront(giant, numberOfPrey)) {
 					if (IsTeammate(new_gts)) {
@@ -191,6 +195,7 @@ namespace Gts {
 					}
 				}
 			break;
+			}
 		}
 	}
 		
