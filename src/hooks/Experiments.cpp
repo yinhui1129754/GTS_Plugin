@@ -127,9 +127,11 @@ namespace Hooks {
 
 				if (a_this) {
 					//log::info("Playing Idle: {}", a_this->animFileName); // prints Actors\Character\Behaviors\0_Master.hkx for example
-					log::info("Playing Idle Name: {}", a_this->animEventName);
+					log::info("Playing Idle: {}", a_this->formID);
+					log::info("Playing Idle ID: {}", a_this->formID);
+					//log::info("Playing Idle Name: {}", a_this->animEventName);
 					log::info("Playing formEditorID: {}", a_this->formEditorID.c_str());
-					log::info("Playing pad2e: {}", a_this->pad2E);
+					//log::info("Playing pad2e: {}", a_this->pad2E); Always 0
 					auto* EventName = a_this->GetFormEditorID();
 					
 					if (BlockAnimation(a_this)) {
