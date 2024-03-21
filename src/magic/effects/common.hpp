@@ -32,7 +32,9 @@ namespace Gts {
 		// DLL Equivalent of AdvanceSkill from Papyrus, does the same thing
 		if (giant->formID == 0x14) {
 			log::info("Advancing skill, points: {}, Mult: {}, TimeScale: {}, Result: {}, * 60: {}", points, multiplier, TimeScale(), points * multiplier * TimeScale(), points * 60 * multiplier * TimeScale());
-			giant->UseSkill(Attribute, points * 60 * multiplier * TimeScale(), nullptr);
+			float Level = GetAV(giant, Attribute) + 1.0;
+			log::info("Level: {}", Level);
+			giant->UseSkill(Attribute, points * 20 * multiplier * Level * TimeScale(), nullptr);
 		}
 	}
 
