@@ -1,3 +1,4 @@
+#include "managers/animation/Controllers/ButtCrushController.hpp"
 #include "managers/animation/Controllers/HugController.hpp"
 #include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/animation/Utils/AnimationUtils.hpp"
@@ -7,7 +8,6 @@
 #include "managers/GrabAnimationController.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/animation/HugShrink.hpp"
-#include "managers/animation/ButtCrush.hpp"
 #include "managers/damage/LaunchActor.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/CrushManager.hpp"
@@ -108,7 +108,7 @@ namespace Gts {
 		std::vector<Actor*> preys_GiantPov = {};
 		std::vector<Actor*> preys_FollowerPov = {};
 
-		switch (type) {
+		switch (Type) {
 			case FollowerAnimType::ButtCrush:
 				preys_GiantPov = ButtCrush.GetButtCrushTargets(giant, numberOfPrey);
 				if (preys_GiantPov.size() > 0) { // For safety
