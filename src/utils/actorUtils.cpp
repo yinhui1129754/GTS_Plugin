@@ -851,37 +851,13 @@ namespace Gts {
 		auto transient = Transient::GetSingleton().GetData(player);
 		if (transient) {
 			if (reset && target->formID == 0x14) {
-				if (transient->IsInControl) {
-					DisableActorControls(transient->IsInControl, true);
-				}
 				transient->IsInControl = nullptr;
 				log::info("Controlled actor reset");
 				return;
 			} else {
 				transient->IsInControl = target;
-				DisableActorControls(transient->IsInControl, false);
 			}
 		}
-	}
-
-	void DisableActorControls(Actor* giant, bool Reset) {
-
-		if (!Reset) {
-			//giant->GetActorRuntimeData().boolFlags.set(Actor::BOOL_FLAGS::kIsInKillMove);
-			//giant->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kShouldAnimGraphUpdate);
-			giant->StopInteractingQuick(true);
-			//giant->EnableAI(false);
-			giant->StopMoving(1.0f);
-			log::info("Actor Control disabled");
-		} else {
-			//giant->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kIsInKillMove);
-			//giant->GetActorRuntimeData().boolFlags.set(Actor::BOOL_FLAGS::kShouldAnimGraphUpdate);
-			giant->StopInteractingQuick(false);
-			giant->StopMoving(0.0f);
-			//giant->EnableAI(true);
-			log::info("Actor Control Enabled");
-		}
-		
 	}
 
 	Actor* GetPlayerOrControlled() {

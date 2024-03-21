@@ -92,6 +92,24 @@ namespace Hooks {
 	   // TODO: Try This: ProcessVATSAttack(MagicCaster* a_caster, bool a_hasTargetAnim, TESObjectREFR* a_target, bool a_leftHand);
 	    //REL::Relocation<func_t> func{ RELOCATION_ID(40230, 41233) };
 		// return func(actor, a_caster, a_hasTargetAnim, a_target, a_leftHand);
+
+
+		static FunctionHook<TESIdleForm*(TESIdleForm* a_this, ConditionCheckParams* params, void* unk3)>IdleFormHook (        
+			REL::RelocationID(24068, 24068), REL::Relocate(0x5E, 0x5E),
+			[](TESIdleForm* a_this, ConditionCheckParams* params, void* unk3) {
+				log::info("IdleFormHooked");
+				auto* result = IdleFormHook(a_this, params, unk3);
+
+				if (a_this) {
+					log::info("Playing Idle: {}", a_this->animFileName);
+				}
+				//Actor* action_ref = params->actionRef->As<RE::Actor>();
+    			//TESObjectREFR* target_ref = params->targetRef;
+
+				return result;  
+            }
+        );
+
 		//							  																
 		//																							
 		//  HitFrameHandler::Handle_1407211B0 & BSTaskPool_HandleTask_1405C6EE0 -> Actor::sub_140627930 

@@ -69,7 +69,7 @@ namespace Hooks
 		//}
 		Hook_Stealth::Hook(trampoline);
 		Hook_Movement::Hook(trampoline);
-		//Hook_Experiments::Hook(trampoline);
+		Hook_Experiments::Hook(trampoline);
 		Hook_HeadTracking::Hook(trampoline);
 		//Hook_ActorRotation::Hook(trampoline);
 		HookCameraStates();
