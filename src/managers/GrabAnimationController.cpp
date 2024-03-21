@@ -131,13 +131,6 @@ namespace Gts {
 			return false;
 		}
 
-		float pred_scale = get_visual_scale(pred);
-
-		float sizedifference = GetSizeDifference(pred, prey, true, false);
-
-		float MINIMUM_GRAB_SCALE = Action_Grab;
-		float MINIMUM_DISTANCE = MINIMUM_GRAB_DISTANCE;
-
 		if (pred->formID == 0x14 && IsTeammate(prey)) {
 			float sizedifference_reverse = GetSizeDifference(prey, pred, true, false);
 			log::info("SD check passed");
@@ -151,6 +144,13 @@ namespace Gts {
 				// Switch roles
 			}
 		}
+
+		float pred_scale = get_visual_scale(pred);
+
+		float sizedifference = GetSizeDifference(pred, prey, true, false);
+
+		float MINIMUM_GRAB_SCALE = Action_Grab;
+		float MINIMUM_DISTANCE = MINIMUM_GRAB_DISTANCE;
 
 		if (HasSMT(pred)) {
 			MINIMUM_DISTANCE *= 1.75;
@@ -176,6 +176,7 @@ namespace Gts {
 
 	void GrabAnimationController::StartGrab(Actor* pred, Actor* prey) {
 		auto& grabbing = GrabAnimationController::GetSingleton();
+		log::info("trying to grab");
 		if (!grabbing.CanGrab(pred, prey)) {
 			log::info("Can Grab: False");
 			return;
@@ -187,7 +188,7 @@ namespace Gts {
 			pred = GetControlledActor();
 			log::info("Start New Pred: {}", pred->GetDisplayFullName());
 		}
-
+		log::info("Trying to grab after Get check");
 		StaggerActor(pred, prey, 100.0f);
 
 		float shrinkrate = 0.18;
