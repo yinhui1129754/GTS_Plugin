@@ -178,7 +178,7 @@ namespace Gts {
 					}
 				}
 			break;
-			}
+			} 
 		 	case FollowerAnimType::ThighSandwich: {
 				log::info("Thigh Sandwich");
 				for (auto new_gts: Sandwich.GetSandwichTargetsInFront(giant, numberOfPrey)) {
