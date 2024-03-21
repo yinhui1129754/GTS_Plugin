@@ -89,6 +89,9 @@ namespace {
 namespace Hooks {
 
 	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is commented out inside hooks.cpp
+	   // TODO: Try This: ProcessVATSAttack(MagicCaster* a_caster, bool a_hasTargetAnim, TESObjectREFR* a_target, bool a_leftHand);
+	    //REL::Relocation<func_t> func{ RELOCATION_ID(40230, 41233) };
+		// return func(actor, a_caster, a_hasTargetAnim, a_target, a_leftHand);
 		//							  																
 		//																							
 		//  HitFrameHandler::Handle_1407211B0 & BSTaskPool_HandleTask_1405C6EE0 -> Actor::sub_140627930 

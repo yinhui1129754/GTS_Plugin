@@ -870,13 +870,15 @@ namespace Gts {
 			//giant->GetActorRuntimeData().boolFlags.set(Actor::BOOL_FLAGS::kIsInKillMove);
 			//giant->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kShouldAnimGraphUpdate);
 			giant->StopInteractingQuick(true);
-			giant->EnableAI(false);
+			//giant->EnableAI(false);
+			giant->StopMoving(1.0f);
 			log::info("Actor Control disabled");
 		} else {
 			//giant->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kIsInKillMove);
 			//giant->GetActorRuntimeData().boolFlags.set(Actor::BOOL_FLAGS::kShouldAnimGraphUpdate);
 			giant->StopInteractingQuick(false);
-			giant->EnableAI(true);
+			giant->StopMoving(0.0f);
+			//giant->EnableAI(true);
 			log::info("Actor Control Enabled");
 		}
 		
