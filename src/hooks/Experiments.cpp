@@ -94,7 +94,7 @@ namespace Hooks {
 		// return func(actor, a_caster, a_hasTargetAnim, a_target, a_leftHand);
 
 
-		static FunctionHook<TESIdleForm*(TESIdleForm* a_this, ConditionCheckParams* params, void* unk3)>IdleFormHook (        
+		static CallHook<TESIdleForm*(TESIdleForm* a_this, ConditionCheckParams* params, void* unk3)>IdleFormHook (        
 			REL::RelocationID(24068, 24068), REL::Relocate(0x5E, 0x5E),
 			[](TESIdleForm* a_this, ConditionCheckParams* params, void* unk3) {
 				log::info("IdleFormHooked");
