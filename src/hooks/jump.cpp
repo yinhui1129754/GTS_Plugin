@@ -43,7 +43,7 @@ namespace Hooks {
 			REL::RelocationID(32143, 32887),
 			[](auto* graph, const auto& a_variableName, auto a_in) {
 				if (a_variableName == "GTS_Busy") {
-					if (a_in > 1) {
+					if (a_in > 0) {
 						auto actor = skyrim_cast<Actor*>(graph);
 						if (actor) {
 							if (actor->formID == 0x14) {
