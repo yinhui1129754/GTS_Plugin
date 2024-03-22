@@ -10,9 +10,10 @@ using namespace RE;
 using namespace SKSE;
 
 namespace {
-    const float KillMove_Threshold = 1.15f;
+    const float KillMove_Threshold_High = 1.25f;
+    const float KillMove_Threshold_Low = 0.75;
 
-	// Actions taht we want to prevent
+	// Actions that we want to prevent
 	const auto DefaultSheathe = 			0x46BB2;
 	const auto JumpRoot =					0x88302;
 	const auto NonMountedDraw = 			0x1000992;
@@ -61,9 +62,9 @@ namespace {
 				log::info("KillMove: Performer: {}, Victim: {}", performer->GetDisplayFullName(), victim->GetDisplayFullName());
 				Actor* victimref = skyrim_cast<Actor*>(victim);
 				if (victimref) {
-					float size_difference = GetSizeDifference(victimref, performer, SizeType::GiantessScale, true, false);
+					float size_difference = GetSizeDifference(performer, victimref, SizeType::GiantessScale, true, false);
 					log::info("Victimref found, size_difference: {}", size_difference);
-					if (size_difference > KillMove_Threshold) {
+					if (size_difference > KillMove_Threshold_High || size_difference < KillMove_Threshold_Low) {
 						Block = true;
 					}
 				}
@@ -82,15 +83,14 @@ namespace {
 
 		Actor* performer = params->actionRef->As<RE::Actor>();
 
-		if (performer) { //  && performer->formID != 0x14
-			log::info("Performer: {}", performer->GetDisplayFullName());
-
+		if (performer) {
 			if (PreventKillMove(Form, params, performer, params->targetRef)) {
 				log::info("KILLMOVE PREVENTED");
 				return true;
 			}
 
-			if (!IsGtsBusy(performer)) {
+			if (performer->formID != 0x14 && !IsGtsBusy(performer)) {
+                // Do not affect the player: we already disable player controls through other hook
 				return false;
 			}
 
@@ -133,21 +133,14 @@ namespace Hooks {
 				auto* result = IdleFormHook(a_this, params, unk3);
 
 				if (a_this) {
-					//log::info("Playing Idle: {}", a_this->animFileName); // prints Actors\Character\Behaviors\0_Master.hkx for example
-					//log::info("Playing Idle ID: {}", a_this->formID);
-					//log::info("Playing Idle Name: {}", a_this->animEventName);
-					//log::info("Playing formEditorID: {}", a_this->formEditorID.c_str());
-					//log::info("Playing pad2e: {}", a_this->pad2E); Always 0
 					auto* EventName = a_this->GetFormEditorID();
 					
 					if (BlockAnimation(a_this, params)) {
+                        log::info("Performer: {}", params->actionRef->GetDisplayFullName());
 						log::info("Returning nullptr");
 						result = nullptr;
 					}
 				}
-
-				//Actor* action_ref = params->actionRef->As<RE::Actor>();
-    			//TESObjectREFR* target_ref = params->targetRef;
 
 				return result;  
             }
