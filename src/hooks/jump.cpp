@@ -42,19 +42,6 @@ namespace Hooks {
 		static FunctionHook<bool(IAnimationGraphManagerHolder* graph, const BSFixedString& a_variableName, const float a_in)> SkyrimSetGraphVarFloat( 
 			REL::RelocationID(32143, 32887),
 			[](auto* graph, const auto& a_variableName, auto a_in) {
-				if (a_variableName == "GTS_Busy") {
-					auto actor = skyrim_cast<Actor*>(graph);
-					if (actor) {
-						log::info("Actor: {}, value: {}", actor->GetDisplayFullName(), a_in);
-						if (actor->formID == 0x14 && a_in > 0) {
-							ControlAnother(actor, true); // Reset controlled actor
-							log::info("Resetting controlled actor: By Player");
-						} else if (GetPlayerOrControlled() == actor && a_in < 1) {
-							ControlAnother(actor, true); // Reset controlled actor
-							log::info("Resetting controlled actor: By Other");
-						}
-					}
-				}
 				if (a_variableName == "VelocityZ") {
 					if (a_in < 0) {
 						auto actor = skyrim_cast<Actor*>(graph);
@@ -72,26 +59,45 @@ namespace Hooks {
 					}
 				} 
 				return SkyrimSetGraphVarFloat(graph, a_variableName, a_in);
-			});
+			}
+		);
 
-
-
-		
-		static CallHook<float(Actor* actor)> SkyrimJumpHeight(RELOCATION_ID(36271, 37257),  REL::Relocate(0x190, 0x17F),
-		// SE: find offset : 0x1405d2110 - 0x1405d1f80  
-		// So offset is = 0x190 .  36271 = 5D1F80
-		[](auto* actor) {
-		    float result = SkyrimJumpHeight(actor);
-			//log::info("Original jump height: {}", result);
-		    if (actor) {
-				if (actor->formID == 0x14) {
-					float scale = std::clamp(get_giantess_scale(actor), 0.8f, 99999.0f);
-					result *= scale;
+		static FunctionHook<bool(IAnimationGraphManagerHolder* graph, const BSFixedString& a_variableName, bool a_in)> SkyrimSetGraphVarBool( 
+			REL::RELOCATION_ID(32141, 32885),
+			[](auto* graph, const auto& a_variableName, auto a_in) {
+				if (a_variableName == "GTS_Busy") {
+					auto actor = skyrim_cast<Actor*>(graph);
+					if (actor) {
+						log::info("Actor: {}, value: {}", actor->GetDisplayFullName(), a_in);
+						if (actor->formID == 0x14 && a_in > 0) {
+							ControlAnother(actor, true); // Reset controlled actor
+							log::info("Resetting controlled actor: By Player");
+						} else if (GetPlayerOrControlled() == actor && a_in < 1) {
+							ControlAnother(actor, true); // Reset controlled actor
+							log::info("Resetting controlled actor: By Other");
+						}
+					}
 				}
-				//log::info("Value: {}", result);
-		    }
-		    return result;
-		});
+				return SkyrimSetGraphVarBool(graph, a_variableName, a_in);
+			}
+		);
+
+		static CallHook<float(Actor* actor)> SkyrimJumpHeight(RELOCATION_ID(36271, 37257),  REL::Relocate(0x190, 0x17F),
+			// SE: find offset : 0x1405d2110 - 0x1405d1f80  
+			// So offset is = 0x190 .  36271 = 5D1F80
+			[](auto* actor) {
+				float result = SkyrimJumpHeight(actor);
+				//log::info("Original jump height: {}", result);
+				if (actor) {
+					if (actor->formID == 0x14) {
+						float scale = std::clamp(get_giantess_scale(actor), 0.8f, 99999.0f);
+						result *= scale;
+					}
+					//log::info("Value: {}", result);
+				}
+				return result;
+			}
+		);
 	}
 
 	
