@@ -33,6 +33,11 @@ namespace {
         if (!player) {
             return true;
         }
+		if (GetPlayerOrControlled()->formID != 0x14) {
+			if (IsThighSandwiching(GetPlayerOrControlled())) { // Disallow player movement if we have control over other actor and actor does thigh sandwich
+				return false;
+			}
+		}
 		if (!AnimationsInstalled(player)) { // Don't mess with movement if user didn't install anims correctly
 			return true;
 		}

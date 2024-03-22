@@ -264,6 +264,11 @@ namespace {
 		if (IsFirstPerson()) {
 			return;
 		}
+		if (GetPlayerOrControlled()->formID != 0x14) {
+			if (IsBeingHeld(GetPlayerOrControlled(), player)) {
+				return;
+			}
+		}
 		if (!CanPerformAnimation(player, 2) || IsGtsBusy(player)) {
 			return;
 		}

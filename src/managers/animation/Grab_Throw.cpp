@@ -237,7 +237,10 @@ namespace {
 				//log::info("Speed: {}", Runtime::GetFloat("cameraAlternateX") * 100);
 
 				//PushActorAway(giant, tiny, direction, speed * 100);
-				PushActorAway(giant, tiny, 1);
+				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
+				if (tiny_is_object) {
+					ApplyHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 100.0);
+				}
 				//ApplyHavokImpulse(tiny, direction.x, direction.y, direction.z, Runtime::GetFloat("cameraAlternateX") * 100);//speed * 100);
 				return false;
 			} else {
