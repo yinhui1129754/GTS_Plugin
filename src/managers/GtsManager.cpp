@@ -7,6 +7,7 @@
 #include "managers/cameras/camutil.hpp"
 #include "managers/ai/headtracking.hpp"
 #include "managers/RipClothManager.hpp"
+#include "managers/animation/Grab.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/InputManager.hpp"
 #include "magic/effects/common.hpp"
