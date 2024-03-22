@@ -41,15 +41,25 @@ using namespace SKSE;
 namespace {
 	const float KillMove_Threshold = 1.25f;
 
+	// Actions taht we want to prevent
+	const auto DefaultSheathe = 			0x46BB2;
+	const auto JumpRoot =					0x88302;
+	const auto NonMountedDraw = 			0x1000992;
+	const auto NonMountedForceEquip = 		0x1000993;
+	const auto JumpStandingStart =        	0x884A2;   // 558242
+	const auto JumpDirectionalStart =       0x884A3;   // 558243
+
+	// Killmoves that we want to prevent
+	const auto KillMoveFrontSideRoot =      0x24CD4;
+	const auto KillMoveDragonToNPC =        0xC1F20;
+	const auto KillMoveRootDragonFlight =   0xC9A1B;
+	const auto KillMoveBackSideRoot =       0xE8458;
+	const auto KillMoveFrontSideRoot00 =    0x100e8B;
+	const auto KillMoveBackSideRoot00 =     0x100F16;
+
 	bool IsKillMove(FormID idle, ConditionCheckParams* params) {
 		// KillMoves
-		const auto KillMoveFrontSideRoot =      0x24CD4;
-		const auto KillMoveDragonToNPC =        0xC1F20;
-		const auto KillMoveRootDragonFlight =   0xC9A1B;
-		const auto KillMoveBackSideRoot =       0xE8458;
-		const auto KillMoveFrontSideRoot00 =    0x100e8B;
-		const auto KillMoveBackSideRoot00 =     0x100F16;
-
+		
 		bool KillMove = false;
 		bool Block = false;
 
@@ -110,7 +120,7 @@ namespace {
 				log::info("Target_ref: {}", target_ref->GetDisplayFullName());
 			}
 
-			if (IsKillMove(Form)) {
+			if (IsKillMove(Form, params)) {
 				log::info("ATTEMPTED KILLMOVE");
 				return true;
 			}
@@ -118,13 +128,6 @@ namespace {
 			if (!IsGtsBusy(performer)) {
 				return false;
 			}
-
-			const auto DefaultSheathe = 			0x46BB2;
-			const auto JumpRoot =					0x88302;
-			const auto NonMountedDraw = 			0x1000992;
-			const auto NonMountedForceEquip = 		0x1000993;
-			const auto JumpStandingStart =        	0x884A2;   // 558242
-			const auto JumpDirectionalStart =       0x884A3;   // 558243
 
 			switch (Form) {
 				case DefaultSheathe:
