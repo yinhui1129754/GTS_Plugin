@@ -75,7 +75,7 @@ namespace {
 	}
 
 	bool CanDoDamage(Actor* giant, Actor* tiny) {
-		if (IsBeingHeld(tiny)) {
+		if (IsBeingHeld(giant, tiny)) {
 			return false;
 		}
 		bool NPC = Persistent::GetSingleton().NPCEffectImmunity;
@@ -95,7 +95,7 @@ namespace {
 
 	void ApplyLaunchTo(Actor* giant, Actor* tiny, float force, float launch_power) {
 		auto profiler = Profilers::Profile("Other: Launch Actors Decide");
-		if (IsBeingHeld(tiny)) {
+		if (IsBeingHeld(giant, tiny)) {
 			return;
 		}
 		if (IsBeingGrinded(tiny)) {

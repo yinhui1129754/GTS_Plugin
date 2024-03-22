@@ -443,8 +443,16 @@ namespace Gts {
 		return jumping;
 	}
 
-	bool IsBeingHeld(Actor* tiny) {
+	bool IsBeingHeld(Actor* giant, Actor* tiny) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
+		auto grabbed = Grab::GetHeldActor(giant);
+		
+		if (grabbed) {
+			if (grabbed == tiny) {
+				return true;
+			}
+		}
+
 		if (transient) {
 			return transient->being_held && !tiny->IsDead();
 		}
@@ -1897,7 +1905,7 @@ namespace Gts {
 		if (InBleedout(tiny)) {
 			return;
 		}
-		if (IsBeingHeld(tiny)) {
+		if (IsBeingHeld(giant, tiny)) {
 			return;
 		}
 		if (!AllowStagger(giant, tiny)) {

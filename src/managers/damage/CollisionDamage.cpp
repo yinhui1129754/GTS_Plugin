@@ -84,7 +84,7 @@ namespace {
 	}
 
 	bool CanDoDamage(Actor* giant, Actor* tiny) {
-		if (IsBeingHeld(tiny)) {
+		if (IsBeingHeld(giant, tiny)) {
 			return false;
 		}
 		bool NPC = Persistent::GetSingleton().NPCEffectImmunity;

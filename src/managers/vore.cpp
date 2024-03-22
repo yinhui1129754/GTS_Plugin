@@ -589,7 +589,7 @@ namespace Gts {
 		if (prey->IsDead()) {
 			return false;
 		}
-		
+
 		if (IsBeingHeld(prey) || IsGtsBusy(pred)) {
 			return false;
 		}

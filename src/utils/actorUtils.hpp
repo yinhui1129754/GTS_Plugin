@@ -45,7 +45,7 @@ namespace Gts {
 	bool IsHuggingFriendly(Actor* actor);
 	bool IsTransitioning(Actor* actor);
 	bool IsJumping(Actor* actor);
-	bool IsBeingHeld(Actor* tiny);
+	bool IsBeingHeld(Actor* giant, Actor* tiny);
 	bool IsBetweenBreasts(Actor* actor);
 	bool IsTransferingTiny(Actor* actor);
 	bool IsUsingThighAnimations(Actor* actor);
