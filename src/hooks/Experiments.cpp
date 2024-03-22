@@ -84,6 +84,12 @@ namespace {
 		if (performer) { //  && performer->formID != 0x14
 			log::info("Performer: {}", performer->GetDisplayFullName());
 
+			TESObjectREFR* target_ref = params->targetRef;
+
+			if (target_ref) {
+				log::info("Target_ref: {}", target_ref->GetDisplayFullName());
+			}
+
 			if (IsKillMove(Form)) {
 				log::info("ATTEMPTED KILLMOVE");
 				return true;
@@ -99,14 +105,6 @@ namespace {
 			const auto NonMountedForceEquip = 		0x1000993;
 			const auto JumpStandingStart =        	0x884A2;   // 558242
 			const auto JumpDirectionalStart =       0x884A3;   // 558243
-
-			TESObjectREFR* target_ref = params->targetRef;
-
-			if (target_ref) {
-				log::info("Target_ref: {}", target_ref->GetDisplayFullName());
-			}
-
-			
 
 			switch (Form) {
 				case DefaultSheathe:
