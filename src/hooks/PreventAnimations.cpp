@@ -89,7 +89,7 @@ namespace {
 				return true;
 			}
 
-			if (performer->formID != 0x14 && !IsGtsBusy(performer)) {
+			if (performer->formID == 0x14 || !IsGtsBusy(performer)) {
                 // Do not affect the player: we already disable player controls through other hook
 				return false;
 			}
@@ -129,6 +129,8 @@ namespace Hooks {
 			// 24068 = 0x140358250 [SE] ; 0x140358250 - 0x1403582ae = 0x5E
 			// 24571 = 0x14036ee00 [AE] ; 0x14036ee00 - 0x14036ee53 = 0x53
 			[](TESIdleForm* a_this, ConditionCheckParams* params, void* unk3) {
+                // When we don't want specific anims to happen
+                // This hook prevents them from playing (KillMoves and Sheathe/Unsheathe/Jump anims)
 				
 				auto* result = IdleFormHook(a_this, params, unk3);
 

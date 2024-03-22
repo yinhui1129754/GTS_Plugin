@@ -138,7 +138,7 @@ namespace Gts {
 		}
 		float giantScale = get_visual_scale(giant);
 		if (giant->formID != 0x14) {
-			if (GetPlayerOrControlled()->formID != 0x14 && this->SandwichTimer.ShouldRun()) {
+			if (GetPlayerOrControlled()->formID == 0x14 && this->SandwichTimer.ShouldRun()) {
 				this->ManageAi(giant);
 			}
 		}

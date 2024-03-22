@@ -261,9 +261,11 @@ namespace {
 		for (auto tiny: sandwichdata.GetActors()) {
 			SetBeingHeld(tiny, false);
 			PushActorAway(&data.giant, tiny, 1.0);
-			ForceRagdoll(tiny, true);
 			EnableCollisions(tiny);
 		}
+		sandwichdata.MoveActors(false);
+		sandwichdata.ReleaseAll();
+
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 	}
 
@@ -277,14 +279,10 @@ namespace {
 	void GTSSandwich_DropDown(AnimationEventData& data) {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		for (auto tiny: sandwichdata.GetActors()) {
-			SetBeingHeld(tiny, false);
-			EnableCollisions(tiny);
 			AllowToBeCrushed(tiny, true);
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich_Idle", "KillerThighs", false, 0.25);
-		sandwichdata.MoveActors(false);
-		sandwichdata.ReleaseAll();
 	}
 
 	void GTSSandwich_ExitAnim(AnimationEventData& data) {
