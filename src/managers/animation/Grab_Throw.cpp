@@ -187,6 +187,8 @@ namespace {
 			NiPoint3 endThrow = tiny->GetPosition();
 			double endTime = Time::WorldTimeElapsed();
 
+			PushActorAway(giant, tiny, 1);
+
 			if ((endTime - startTime) > 1e-4) {
 				// Time has elapsed
 				SetBeingHeld(tiny, false);
