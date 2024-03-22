@@ -278,6 +278,8 @@ namespace {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		for (auto tiny: sandwichdata.GetActors()) {
 			SetBeingHeld(tiny, false);
+			EnableCollisions(tiny);
+			AllowToBeCrushed(tiny, true);
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich_Idle", "KillerThighs", false, 0.25);

@@ -138,7 +138,7 @@ namespace Gts {
 		}
 		float giantScale = get_visual_scale(giant);
 		if (giant->formID != 0x14) {
-			if (this->SandwichTimer.ShouldRun()) {
+			if (GetPlayerOrControlled()->formID != 0x14 && this->SandwichTimer.ShouldRun()) {
 				this->ManageAi(giant);
 			}
 		}
@@ -160,13 +160,14 @@ namespace Gts {
 
 			float tinyScale = get_visual_scale(tiny);
 			float sizedifference = GetSizeDifference(giant, tiny, true, false);
-			float threshold = 6.0;
+			float threshold = Action_Sandwich;
 
 			if (giant->IsDead() || sizedifference < threshold || !IsThighSandwiching(giant)) {
 				EnableCollisions(tiny);
 				SetBeingHeld(tiny, false);
 				AllowToBeCrushed(tiny, true);
 				PushActorAway(giant, tiny, 1.0);
+				ForceRagdoll(tiny_is_actor, true);
 				Cprint("{} slipped out of {} thighs", tiny->GetDisplayFullName(), giant->GetDisplayFullName());
 				this->tinies.erase(tiny->formID); // Disallow button abuses to keep tiny when on low scale
 			}

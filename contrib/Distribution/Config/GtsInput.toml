@@ -58,7 +58,7 @@ trigger = "once"
 name = "PlayerVore"
 keys = [ "LSHIFT", "V"]
 trigger = "continuous"
-duration = 3.0
+duration = 1.0
 
 # Forces the followers to eat player if possible
 
@@ -163,7 +163,7 @@ name = "PlayerThighSandwichEnter"
 keys = ["LSHIFT", "C"]
 exclusive = true
 trigger = "continuous"
-duration = 3.0
+duration = 1.0
 
 # Forces the follower to perform Thigh Sandiwch on player. 
 # In that case you can control the Follower actions through default key-binds below
@@ -283,6 +283,7 @@ duration = 0.0
 [[InputEvent]]
 name = "HugAttempt"
 keys = ["LSHIFT", "H"]
+trigger = "release"
 exclusive = false
 
 # Attempt to hug someone
@@ -292,7 +293,7 @@ name = "HugPlayer"
 keys = ["LSHIFT", "H"]
 exclusive = false
 trigger = "continuous"
-duration = 3.0
+duration = 1.0
 
 # Force follower to hug the player if possible
 # In that case you can control the Follower actions through default key-binds below
@@ -363,7 +364,7 @@ duration = 0.0
 name = "ButtCrushStart_Player"
 keys = ["LSHIFT", "B"]
 trigger = "continuous"
-duration = 3.0 
+duration = 1.0 
 # Start Butt/Knee/Breast Crush on the player if possible.
 # In that case you can control the Follower actions through default key-binds below
 
@@ -439,7 +440,7 @@ duration = 0.25
 name = "GrabPlayer"
 keys = ["F"]
 trigger = "continuous"
-duration = 3.0
+duration = 1.0
 # Force the follower to grab player if possibe.
 # In that case you can control the Follower actions through default key-binds below
 

@@ -84,6 +84,11 @@ namespace {
 		if (performer) { //  && performer->formID != 0x14
 			log::info("Performer: {}", performer->GetDisplayFullName());
 
+			if (IsKillMove(Form)) {
+				log::info("ATTEMPTED KILLMOVE");
+				return true;
+			}
+
 			if (!IsGtsBusy(performer)) {
 				return false;
 			}
@@ -101,9 +106,7 @@ namespace {
 				log::info("Target_ref: {}", target_ref->GetDisplayFullName());
 			}
 
-			if (IsKillMove(Form)) {
-				log::info("Is killmove");
-			}
+			
 
 			switch (Form) {
 				case DefaultSheathe:
