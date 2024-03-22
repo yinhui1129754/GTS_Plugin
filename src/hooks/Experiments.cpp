@@ -246,7 +246,7 @@ namespace Hooks {
 
 				return result;
 			}
-		)
+		);
 
 		static CallHook<TESIdleForm*(TESIdleForm* a_this, ConditionCheckParams* params, void* unk3)>IdleFormHook (        
 			REL::RelocationID(24068, 24068), REL::Relocate(0x5E, 0x5E),
