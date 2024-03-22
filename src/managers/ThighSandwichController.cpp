@@ -285,7 +285,7 @@ namespace Gts {
 			return false;
 		}
 
-		if (IsBeingHeld(prey) || IsGtsBusy(pred)) {
+		if (IsBeingHeld(pred, prey) || IsGtsBusy(pred)) {
 			return false;
 		}
 
@@ -324,7 +324,7 @@ namespace Gts {
 		if (!sandwiching.CanSandwich(pred, prey)) {
 			return;
 		}
-		if (IsBeingHeld(prey)) {
+		if (IsBeingHeld(pred, prey)) {
 			return;
 		}
 		ShrinkUntil(pred, prey, 6.0, 0.20, true);

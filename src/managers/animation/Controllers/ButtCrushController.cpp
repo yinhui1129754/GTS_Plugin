@@ -228,7 +228,7 @@ namespace Gts {
 			return;
 		}
 
-		if (CanDoButtCrush(pred, false) && !IsBeingHeld(prey)) {
+		if (CanDoButtCrush(pred, false) && !IsBeingHeld(pred, prey)) {
 			prey->NotifyAnimationGraph("GTS_EnterFear");
 			auto camera = PlayerCamera::GetSingleton();
 			

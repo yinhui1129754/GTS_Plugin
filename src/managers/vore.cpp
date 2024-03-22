@@ -590,7 +590,7 @@ namespace Gts {
 			return false;
 		}
 
-		if (IsBeingHeld(prey) || IsGtsBusy(pred)) {
+		if (IsBeingHeld(pred, prey) || IsGtsBusy(pred)) {
 			return false;
 		}
 
