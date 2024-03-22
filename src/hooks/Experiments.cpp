@@ -101,6 +101,35 @@ namespace {
 		return Block;
 	}
 
+	bool BlockAnimation(TESIdleForm* idle, Actor* A_1, TESObjectREFR* A_2) {
+		if (!idle) {
+			return false;
+		}
+		auto Form = idle->formID;
+		switch (Form) {
+			case DefaultSheathe:
+				return true;
+			break;	
+			case JumpRoot:
+				return true;
+			break;	
+			case NonMountedDraw:
+				return true;
+			break;	
+			case NonMountedForceEquip:
+				return true;
+			break;	
+			case JumpStandingStart:
+				return true;	
+			break;	
+			case JumpDirectionalStart:
+				return true;	
+			break;
+			return false;
+		}
+		return false;
+	}
+
 	bool BlockAnimation(TESIdleForm* idle, ConditionCheckParams* params) {
 		if (!idle) {
 			return false;
@@ -202,7 +231,22 @@ namespace Hooks {
 	   // TODO: Try This: ProcessVATSAttack(MagicCaster* a_caster, bool a_hasTargetAnim, TESObjectREFR* a_target, bool a_leftHand);
 	    //REL::Relocation<func_t> func{ RELOCATION_ID(40230, 41233) };
 		// return func(actor, a_caster, a_hasTargetAnim, a_target, a_leftHand);
+		static FunctionHook<bool(TESIdleForm* a_this, Actor* a_actor, TESObjectREFR* a_target, bool a_checkParentIdle)>FormBoolHook (
+			REL::RelocationID(24069, 24572),
+			[](TESIdleForm* a_this, Actor* a_actor, TESObjectREFR* a_target, bool a_checkParentIdle) {
+				bool result = FormBoolHook(a_this, a_actor, a_target, a_checkParentIdle);
 
+				log::info("Bool Hook Hooked!");
+				log::info("Anim: {}", a_this->GetFormEditorID());
+				if (a_actor && BlockAnimation(a_this, a_actor, a_target)) {
+					log::info("Animation Disallowed: {}", a_this->GetFormEditorID());
+				}
+
+				result = false;
+
+				return result;
+			}
+		)
 
 		static CallHook<TESIdleForm*(TESIdleForm* a_this, ConditionCheckParams* params, void* unk3)>IdleFormHook (        
 			REL::RelocationID(24068, 24068), REL::Relocate(0x5E, 0x5E),
@@ -210,7 +254,7 @@ namespace Hooks {
 				
 				auto* result = IdleFormHook(a_this, params, unk3);
 
-				if (a_this) {
+				/*if (a_this) {
 					//log::info("Playing Idle: {}", a_this->animFileName); // prints Actors\Character\Behaviors\0_Master.hkx for example
 					log::info("Playing Idle ID: {}", a_this->formID);
 					//log::info("Playing Idle Name: {}", a_this->animEventName);
@@ -222,9 +266,8 @@ namespace Hooks {
 						log::info("Returning nullptr");
 						result = nullptr;
 					}
-				}
+				}*/
 
-				
 				//Actor* action_ref = params->actionRef->As<RE::Actor>();
     			//TESObjectREFR* target_ref = params->targetRef;
 
