@@ -133,6 +133,7 @@ namespace Hooks {
                 // This hook prevents them from playing (KillMoves and Sheathe/Unsheathe/Jump anims)
 				
 				auto* result = IdleFormHook(a_this, params, unk3);
+				log::info("AnimHook running");
 
 				if (a_this) {
 					auto* EventName = a_this->GetFormEditorID();
