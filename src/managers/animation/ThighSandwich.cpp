@@ -260,7 +260,7 @@ namespace {
 		//sandwichdata.OverideShrinkRune(0.0);
 		for (auto tiny: sandwichdata.GetActors()) {
 			SetBeingHeld(tiny, false);
-			PushActorAway(giant, tiny, 1.0);
+			PushActorAway(&data.giant, tiny, 1.0);
 			ForceRagdoll(tiny, true);
 			EnableCollisions(tiny);
 		}
