@@ -59,7 +59,7 @@ namespace {
 			log::info("Trying Killmove, seeking for Actors");
 			if (victim) {
 				log::info("KillMove: Performer: {}, Victim: {}", performer->GetDisplayFullName(), victim->GetDisplayFullName());
-				Actor* victimref = skyrim_cast<Actor*>(victimref);
+				Actor* victimref = skyrim_cast<Actor*>(victim);
 				if (victimref) {
 					float size_difference = GetSizeDifference(victimref, performer, SizeType::GiantessScale, true, false);
 					log::info("Victimref found, size_difference: {}", size_difference);
