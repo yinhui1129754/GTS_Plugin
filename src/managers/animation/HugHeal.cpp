@@ -68,8 +68,6 @@ namespace {
 		TaskManager::Cancel(name_normal);
 		TaskManager::Cancel(name_forced);
 		HugShrink::Release(giant);
-
-		ControlAnother(giant, true);
 	}
 
     bool Hugs_RestoreHealth(Actor* giantref, Actor* tinyref) {
@@ -129,7 +127,7 @@ namespace {
 			auto giantref = gianthandle.get().get();
 			auto tinyref = tinyhandle.get().get();
 
-			float sizedifference = GetSizeDifference(giantref, tinyref, false, true);
+			float sizedifference = GetSizeDifference(giantref, tinyref, SizeCheckMethod::VisualScale, false, true);
 			float threshold = 3.0;
 			float stamina = 0.35;
 

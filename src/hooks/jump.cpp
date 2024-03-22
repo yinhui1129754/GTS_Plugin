@@ -42,6 +42,17 @@ namespace Hooks {
 		static FunctionHook<bool(IAnimationGraphManagerHolder* graph, const BSFixedString& a_variableName, const float a_in)> SkyrimSetGraphVarFloat( 
 			REL::RelocationID(32143, 32887),
 			[](auto* graph, const auto& a_variableName, auto a_in) {
+				if (a_variableName == "GTS_Busy") {
+					if (a_in > 1) {
+						auto actor = skyrim_cast<Actor*>(graph);
+						if (actor) {
+							if (actor->formID == 0x14) {
+								ControlAnother(actor, true); // Reset controlled actor
+								log::info("Resetting controlled actor!");
+							}
+						}
+					}
+				}
 				if (a_variableName == "VelocityZ") {
 					if (a_in < 0) {
 						auto actor = skyrim_cast<Actor*>(graph);

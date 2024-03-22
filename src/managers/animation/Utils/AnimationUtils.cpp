@@ -129,7 +129,7 @@ namespace Gts {
 					if (IsTeammate(new_gts)) {
 						for (auto new_tiny: Hugs.GetHugTargetsInFront(new_gts, numberOfPrey)) { 
 							if (new_tiny->formID == 0x14) {
-								float sizedifference = GetSizeDifference(new_gts, new_tiny, true, true);
+								float sizedifference = GetSizeDifference(new_gts, new_tiny, SizeCheckMethod::VisualScale, true, true);
 								bool allow = (sizedifference >= Action_Hug && sizedifference < GetHugShrinkThreshold(new_gts));
 								if (allow && Hugs.CanHug(new_gts, new_tiny)) {
 									Hugs.StartHug(new_gts, new_tiny);
@@ -337,8 +337,6 @@ namespace Gts {
 		AnimationManager::StartAnim("Huggies_Spare", giant); // Start "Release" animation on Giant
 		
 		log::info("Starting abort animation, friendly: {}", Friendly);
-		
-		ControlAnother(giant, true);
 
 		if (Friendly) { // If friendly, we don't want to push/release actor
 			AnimationManager::StartAnim("Huggies_Spare", tiny);

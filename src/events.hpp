@@ -19,6 +19,11 @@ namespace Gts {
 		Breasts,
 	};
 
+	enum class SizeCheckMethod {
+		GiantessScale,
+		VisualScale,
+	};
+
 	enum class ShrinkSource {
 		other,
 		magic,

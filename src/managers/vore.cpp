@@ -608,7 +608,7 @@ namespace Gts {
 			MINIMUM_DISTANCE *= 1.75;
 		}
 		float pred_scale = get_visual_scale(pred);
-		float sizedifference = GetSizeDifference(pred, prey, true, false);
+		float sizedifference = GetSizeDifference(pred, prey, SizeCheckMethod::VisualScale, true, false);
 
 		float prey_distance = (pred->GetPosition() - prey->GetPosition()).Length();
 
@@ -675,7 +675,7 @@ namespace Gts {
 		}
 
 		
-		if (GetSizeDifference(pred, prey, false, false) < Action_Vore) {
+		if (GetSizeDifference(pred, prey, SizeCheckMethod::VisualScale, false, false) < Action_Vore) {
 			if (pred->IsSneaking() && !IsCrawling(pred)) {
 				ShrinkUntil(pred, prey, 10.8, 0.14, true); // Shrink if we have SMT to allow 'same-size' vore
 			} else {

@@ -122,7 +122,6 @@ namespace {
 			} else {
 				Runtime::PlaySound("GtsCrushSound", giant, 1.0, 1.0);
 			}
-			ControlAnother(tiny, true);
 			sandwichdata.Remove(tiny);
 		}
 	}
@@ -261,7 +260,8 @@ namespace {
 		//sandwichdata.OverideShrinkRune(0.0);
 		for (auto tiny: sandwichdata.GetActors()) {
 			SetBeingHeld(tiny, false);
-			ControlAnother(tiny, true);
+			PushActorAway(giant, tiny, 1.0);
+			ForceRagdoll(tiny, true);
 			EnableCollisions(tiny);
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);

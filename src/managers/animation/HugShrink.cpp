@@ -436,7 +436,7 @@ namespace Gts {
 			}
 
 			float threshold = GetHugShrinkThreshold(giantref);
-			float sizedifference = GetSizeDifference(giantref, tinyref, false, true);
+			float sizedifference = GetSizeDifference(giantref, tinyref, SizeCheckMethod::VisualScale, false, true);
 
 			ShutUp(tinyref);
 			ShutUp(giantref);

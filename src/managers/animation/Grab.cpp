@@ -439,8 +439,6 @@ namespace Gts {
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		SetBetweenBreasts(giant, false);
 		TaskManager::Cancel(name);
-
-		ControlAnother(giant, true);
 	}
 
 	void Grab::AttachActorTask(Actor* giant, Actor* tiny) {

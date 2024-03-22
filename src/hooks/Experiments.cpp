@@ -39,7 +39,9 @@ using namespace SKSE;
 //      ^ 50179
 
 namespace {
-	bool IsKillMove(FormID idle) {
+	const float KillMove_Threshold = 1.25f;
+
+	bool IsKillMove(FormID idle, ConditionCheckParams* params) {
 		// KillMoves
 		const auto KillMoveFrontSideRoot =      0x24CD4;
 		const auto KillMoveDragonToNPC =        0xC1F20;
@@ -48,28 +50,46 @@ namespace {
 		const auto KillMoveFrontSideRoot00 =    0x100e8B;
 		const auto KillMoveBackSideRoot00 =     0x100F16;
 
+		bool KillMove = false;
+		bool Block = false;
+
 		switch (idle) {
 			case KillMoveFrontSideRoot:
-				return true;
+				KillMove = true;
 			break;	
 			case KillMoveDragonToNPC:
-				return true;
+				KillMove = true;
 			break;
 			case KillMoveRootDragonFlight:
-				return true;
+				KillMove = true;
 			break;
 			case KillMoveBackSideRoot:
-				return true;
+				KillMove = true;
 			break;
 			case KillMoveFrontSideRoot00:
-				return true;
+				KillMove = true;
 			break;
 			case KillMoveBackSideRoot00:
-				return true;
+				KillMove = true;
 			break;
 		}
 
-		return false;
+		if (KillMove) {
+			Actor* performer = params->actionRef->As<RE::Actor>();
+			TESObjectREFR* victim = params->targetRef;
+
+			log::info("Trying Killmove, seeking for Actors");
+
+			if (performer && victim) {
+				log::info("KillMove: Performer: {}, Victim: {}");
+				float size_difference = GetSizeDifference(victim, performer, SizeCheckMethod::GiantessScale, true, false);
+				if (size_difference > KillMove_Threshold) {
+					Block = true;
+				}
+			}
+		}
+
+		return Block;
 	}
 
 	bool BlockAnimation(TESIdleForm* idle, ConditionCheckParams* params) {

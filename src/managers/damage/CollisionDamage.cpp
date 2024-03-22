@@ -294,7 +294,7 @@ namespace Gts {
 
 		auto& sizemanager = SizeManager::GetSingleton();
 
-		float size_difference = GetSizeDifference(giant, tiny, false, true);
+		float size_difference = GetSizeDifference(giant, tiny, SizeCheckMethod::VisualScale, false, true);
 
 		if (!Allow_Damage(giant, tiny, Cause, size_difference)) {
 			return; 

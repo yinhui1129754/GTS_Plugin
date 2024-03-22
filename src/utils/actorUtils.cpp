@@ -922,7 +922,7 @@ namespace Gts {
 		return GetDamageMultiplier(giant) * GetDamageResistance(tiny);
 	}
 
-	float GetSizeDifference(Actor* giant, Actor* tiny, bool Check_SMT, bool HH) {
+	float GetSizeDifference(Actor* giant, Actor* tiny, SizeCheckMethod method, bool Check_SMT, bool HH) {
 		float hh_gts = 0.0; 
 		float hh_tiny = 0.0;
 
@@ -930,9 +930,18 @@ namespace Gts {
 			hh_gts = HighHeelManager::GetHHOffset(giant)[2] * 0.01;
 			hh_tiny = HighHeelManager::GetHHOffset(tiny)[2] * 0.01;
 		}
+		
 
-		float GiantScale = (get_visual_scale(giant) + hh_gts) * GetSizeFromBoundingBox(giant);
-		float TinyScale = (get_visual_scale(tiny) + hh_tiny) * GetSizeFromBoundingBox(tiny);
+		switch (method) {
+			case SizeCheckMethod::GiantessScale: 
+				GiantScale = get_giantess_scale(giant) + hh_gts;
+				TinyScale = get_giantess_scale(tiny) + hh_tiny;
+			break;
+			case SizeCheckMethod::VisualScale: 
+				GiantScale = (get_visual_scale(giant) + hh_gts) * GetSizeFromBoundingBox(giant);
+				TinyScale = (get_visual_scale(tiny) + hh_tiny) * GetSizeFromBoundingBox(tiny);
+			break;
+		}
 
 		if (Check_SMT) {
 			if (HasSMT(giant)) {
@@ -1045,7 +1054,7 @@ namespace Gts {
 				if (otherActor != giant) {
 					if (otherActor->Is3DLoaded() && !otherActor->IsDead()) {
 						float tinyScale = get_visual_scale(otherActor) * GetSizeFromBoundingBox(otherActor);
-						float difference = GetSizeDifference(giant, otherActor, true, false);
+						float difference = GetSizeDifference(giant, otherActor, SizeCheckMethod::VisualScale, true, false);
 						if (difference > 5.8 || huggedActor) {
 							NiPoint3 actorLocation = otherActor->GetPosition();
 							if ((actorLocation - NodePosition).Length() < CheckDistance) {
@@ -2114,7 +2123,7 @@ namespace Gts {
 
 		float Adjustment = GetSizeFromBoundingBox(tiny);
 
-		float sizedifference = GetSizeDifference(giant, tiny, true, false);
+		float sizedifference = GetSizeDifference(giant, tiny, SizeCheckMethod::VisualScale, true, false);
 		if (DarkArts1) {
 			giant->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, 8.0);
 		}
@@ -2347,7 +2356,7 @@ namespace Gts {
 	}
 
 	void ChanceToScare(Actor* giant, Actor* tiny) {
-		float sizedifference = GetSizeDifference(giant, tiny, true, true);
+		float sizedifference = GetSizeDifference(giant, tiny, SizeCheckMethod::VisualScale, true, true);
 		if (sizedifference > 1.6 && !tiny->IsDead()) {
 			int rng = rand() % 1600;
 			rng /= sizedifference;
