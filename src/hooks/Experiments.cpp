@@ -46,11 +46,20 @@ namespace {
 
 		auto Form = idle->formID;
 
-		auto DefaultSheathe = 			0x46BB2;
-		auto JumpRoot =					0x88302;
-		auto NonMountedDraw = 			0x1000992;
-		auto NonMountedForceEquip = 	0x1000993;
-		auto JumpStandingStart =        0x884A2;   // 558242
+		const auto DefaultSheathe = 			0x46BB2;
+		const auto JumpRoot =					0x88302;
+		const auto NonMountedDraw = 			0x1000992;
+		const auto NonMountedForceEquip = 		0x1000993;
+		const auto JumpStandingStart =        	0x884A2;   // 558242
+
+		// KillMoves
+
+		const auto KillMoveFrontSideRoot =      0x24CD4;
+		const auto KillMoveDragonToNPC =        0xC1F20;
+		const auto KillMoveRootDragonFlight =   0xC9A1B;
+		const auto KillMoveBackSideRoot =       0xE8458;
+		const auto KillMoveFrontSideRoot00 =    0x100e8B;
+		const auto KillMoveBackSideRoot00 =     0x100F16;
 
 		switch (Form) {
 			case DefaultSheathe:
