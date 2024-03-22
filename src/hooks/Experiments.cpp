@@ -43,18 +43,17 @@ namespace {
 		if (!idle) {
 			return false;
 		}
-		TESIdleForm* Jump = Runtime::GetIdle("JumpRoot");
-		TESIdleForm* Sheathe = Runtime::GetIdle("DefaultSheathe");
-		TESIdleForm* Draw = Runtime::GetIdle("NonMountedDraw");
-		TESIdleForm* ForceEquip = Runtime::GetIdle("NonMountedForceEquip");
-
-		if (idle == Jump) {
+		auto JumpLand = 689444;
+		auto MountedDraw = 16779659;
+		auto NonMountedDraw = 16779666;
+		auto DefaultSheathe = 289714;
+		if (idle == JumpLand) {
 			return true;	
-		} else if (idle == Sheathe) {
+		} else if (idle == MountedDraw) {
 			return true;
-		} else if (idle == Draw) {
+		} else if (idle == NonMountedDraw) {
 			return true;
-		} else if (idle == ForceEquip) {
+		} else if (idle == DefaultSheathe) {
 			return true;
 		} else {
 			return false;

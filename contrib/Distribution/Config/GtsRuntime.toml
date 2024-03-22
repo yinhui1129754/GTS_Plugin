@@ -434,9 +434,3 @@ Dropbox_Undead = "GTS.esp|6BC9BC"
 Dropbox_Mechanical = "GTS.esp|6C1ABE"
 Dropbox_Soul = "GTS.esp|6C1ABD"
 Dropbox_Bug = "GTS.esp|6C1ABF"
-
-[idles]
-DefaultSheathe = "Skyrim.esm|046BB2"
-JumpRoot = "Skyrim.esm|088302"
-NonMountedDraw = "Skyrim.esm|000992"
-NonMountedForceEquip = "Skyrim.esm|000993"
