@@ -41,6 +41,15 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
+	void ManageActorControl() { // Rough control other fix
+		Actor* target = GetPlayerOrControlled();
+		if (target->formID != 0x14) {
+			if (!IsGtsBusy(target)) {
+				ControlAnother(target, true);
+			}
+		}
+	}
+
 	void UpdateFalling() {
 		Actor* player = PlayerCharacter::GetSingleton();
 		if (player && player->IsInMidair()) {
@@ -286,6 +295,7 @@ void GtsManager::Update() {
 	auto profiler = Profilers::Profile("Manager: Update()");
 
 	UpdateFalling();
+	ManageActorControl();
 
 	for (auto actor: find_actors()) {
 		if (!actor) {
