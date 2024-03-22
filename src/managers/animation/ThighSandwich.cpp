@@ -264,7 +264,6 @@ namespace {
 			EnableCollisions(tiny);
 		}
 		sandwichdata.MoveActors(false);
-		sandwichdata.ReleaseAll();
 
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 	}
@@ -281,6 +280,9 @@ namespace {
 		for (auto tiny: sandwichdata.GetActors()) {
 			AllowToBeCrushed(tiny, true);
 		}
+		
+		sandwichdata.ReleaseAll();
+
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich_Idle", "KillerThighs", false, 0.25);
 	}

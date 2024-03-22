@@ -45,6 +45,7 @@ namespace Hooks {
 				if (a_variableName == "GTS_Busy") {
 					auto actor = skyrim_cast<Actor*>(graph);
 					if (actor) {
+						log::info("Actor: {}, value: {}", actor->GetDisplayFullName(), a_in);
 						if (actor->formID == 0x14 && a_in > 0) {
 							ControlAnother(actor, true); // Reset controlled actor
 							log::info("Resetting controlled actor: By Player");
