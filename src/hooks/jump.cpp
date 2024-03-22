@@ -63,7 +63,7 @@ namespace Hooks {
 		);
 
 		static FunctionHook<bool(IAnimationGraphManagerHolder* graph, const BSFixedString& a_variableName, bool a_in)> SkyrimSetGraphVarBool( 
-			REL::RELOCATION_ID(32141, 32885),
+			REL::RelocationID(32141, 32885),
 			[](auto* graph, const auto& a_variableName, auto a_in) {
 				if (a_variableName == "GTS_Busy") {
 					auto actor = skyrim_cast<Actor*>(graph);
