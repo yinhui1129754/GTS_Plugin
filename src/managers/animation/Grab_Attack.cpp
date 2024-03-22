@@ -120,7 +120,7 @@ namespace {
 				bonus = 3.0;
 			}
 
-            if (CanDoDamage(giant, grabbedActor)) {
+            if (CanDoDamage(giant, grabbedActor, false)) {
                 InflictSizeDamage(giant, grabbedActor, damage);
                 SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // don't do damage and just add flat debuff
 			    SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // do it twice
