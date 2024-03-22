@@ -214,6 +214,7 @@ namespace Gts {
 						auto tiny = tinyHandle.get().get();
 						float scale = get_visual_scale(tiny);
 						TransferInventory(tiny, giant, scale, false, true, DamageSource::Crushed, true);
+						// Actor Reset is done inside TransferInventory:StartResetTask!
 					});
 
 					if (tiny->formID != 0x14) {

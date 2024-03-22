@@ -297,6 +297,9 @@ namespace Gts {
 	}
 
 	void StartResetTask(Actor* tiny) {
+		if (tiny->formID == 0x14) {
+			return; //Don't reset Player
+		}
 		std::string name = std::format("ResetActor_{}", tiny->formID);
 		float Start = Time::WorldTimeElapsed();
 		ActorHandle tinyhandle = tiny->CreateRefHandle();
