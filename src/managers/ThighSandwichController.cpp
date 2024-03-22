@@ -172,7 +172,7 @@ namespace Gts {
 				this->tinies.erase(tiny->formID); // Disallow button abuses to keep tiny when on low scale
 			}
 
-			if (this->Suffocate) {
+			if (this->Suffocate && CanDoDamage(giant, tiny, false)) {
 				float sizedifference = giantScale/tinyScale;
 				float damage = Damage_ThighSandwich_DOT * sizedifference * TimeScale();
 				float hp = GetAV(tiny, ActorValue::kHealth);

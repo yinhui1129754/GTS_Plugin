@@ -83,24 +83,6 @@ namespace {
 		return false;
 	}
 
-	bool CanDoDamage(Actor* giant, Actor* tiny) {
-		if (IsBeingHeld(giant, tiny)) {
-			return false;
-		}
-		bool NPC = Persistent::GetSingleton().NPCEffectImmunity;
-		bool PC = Persistent::GetSingleton().PCEffectImmunity;
-		if (NPC && giant->formID == 0x14 && (IsTeammate(tiny))) {
-			return false; // Protect NPC's against player size-related effects
-		}
-		if (NPC && (IsTeammate(giant)) && (IsTeammate(tiny))) {
-			return false; // Disallow NPC's to damage each-other if they're following Player
-		}
-		if (PC && (IsTeammate(giant)) && tiny->formID == 0x14) {
-			return false; // Protect Player against friendly NPC's damage
-		}
-		return true;
-	}
-
 	void ModVulnerability(Actor* giant, Actor* tiny, float damage) {
 		if (!Runtime::HasPerkTeam(giant, "GrowingPressure")) {
 			return;
@@ -288,7 +270,7 @@ namespace Gts {
 		if (giant == tiny) {
 			return;
 		}
-		if (!CanDoDamage(giant, tiny) || IsBetweenBreasts(giant)) { // disallow if 
+		if (!CanDoDamage(giant, tiny, true) || IsBetweenBreasts(giant)) { // disallow if 
 			return;
 		}
 

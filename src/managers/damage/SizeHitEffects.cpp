@@ -28,10 +28,11 @@ using namespace std;
 
 namespace {
 	void StaggerImmunity(Actor* attacker, Actor* receiver) {
-		float sizedifference = GetSizeDifference(receiver, attacker, SizeType::VisualScale, true, true);
+		float sizedifference = GetSizeDifference(receiver, attacker, SizeType::GiantessScale, true, true);
 		auto charCont = receiver->GetCharController();
 		if (charCont) {
 			receiver->SetGraphVariableFloat("GiantessScale", sizedifference); // Manages Stagger Resistance inside Behaviors.
+			// Prevent stagger anims from playing on GTS, Behaviors read GiantessScale value and disallow stagger is value is > 1.5
 		}
 	}
 

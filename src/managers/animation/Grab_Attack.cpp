@@ -120,12 +120,15 @@ namespace {
 				bonus = 3.0;
 			}
 
-			InflictSizeDamage(giant, grabbedActor, damage);
-
+            if (CanDoDamage(giant, grabbedActor)) {
+                InflictSizeDamage(giant, grabbedActor, damage);
+                SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // don't do damage and just add flat debuff
+			    SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // do it twice
+            }
+			
 			GRumble::Once("GrabAttack", giant, 5.0 * bonus, 0.05, "NPC L Hand [LHnd]");
 
-			SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // don't do damage and just add flat debuff
-			SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // do it twice
+			
 
 			ModSizeExperience(giant, experience);
 			AddSMTDuration(giant, 1.0);

@@ -10,7 +10,7 @@ using namespace RE;
 using namespace SKSE;
 
 namespace {
-    const float KillMove_Threshold_High = 2.00f; // If GTS/Tiny size ration is > than 2 times = disallow killmove 
+    const float KillMove_Threshold_High = 2.00f; // If GTS/Tiny size ratio is > than 2 times = disallow killmove on Tiny
     const float KillMove_Threshold_Low = 0.75f; // If Tiny/GTS size ratio is < than 0.75 = disallow killmove on GTS
 
 	// Actions that we want to prevent

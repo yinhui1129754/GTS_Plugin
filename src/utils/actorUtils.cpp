@@ -854,6 +854,26 @@ namespace Gts {
 		return Runtime::GetBool("EnableDebugOverlay"); // used for debug mode of collisions and such
 	}
 
+	bool CanDoDamage(Actor* giant, Actor* tiny, bool HoldCheck) {
+		if (HoldCheck) {
+			if (IsBeingHeld(giant, tiny)) {
+				return false;
+			}
+		}
+		bool NPC = Persistent::GetSingleton().NPCEffectImmunity;
+		bool PC = Persistent::GetSingleton().PCEffectImmunity;
+		if (NPC && giant->formID == 0x14 && (IsTeammate(tiny))) {
+			return false; // Protect NPC's against player size-related effects
+		}
+		if (NPC && (IsTeammate(giant)) && (IsTeammate(tiny))) {
+			return false; // Disallow NPC's to damage each-other if they're following Player
+		}
+		if (PC && (IsTeammate(giant)) && tiny->formID == 0x14) {
+			return false; // Protect Player against friendly NPC's damage
+		}
+		return true;
+	}
+
 	void ControlAnother(Actor* target, bool reset) {
 		Actor* player = PlayerCharacter::GetSingleton();
 		auto transient = Transient::GetSingleton().GetData(player);

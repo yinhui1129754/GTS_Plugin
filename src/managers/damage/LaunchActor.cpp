@@ -74,25 +74,6 @@ namespace {
 		return power;
 	}
 
-	bool CanDoDamage(Actor* giant, Actor* tiny) {
-		if (IsBeingHeld(giant, tiny)) {
-			return false;
-		}
-		bool NPC = Persistent::GetSingleton().NPCEffectImmunity;
-		bool PC = Persistent::GetSingleton().PCEffectImmunity;
-		if (NPC && giant->formID == 0x14 && (IsTeammate(tiny))) {
-			return false; // Protect NPC's against player size-related effects
-		}
-		if (NPC && (IsTeammate(giant)) && (IsTeammate(tiny))) {
-			return false; // Disallow NPC's to damage each-other if they're following Player
-		}
-		if (PC && (IsTeammate(giant)) && tiny->formID == 0x14) {
-			return false; // Protect Player against friendly NPC's damage
-		}
-		return true;
-	}
-
-
 	void ApplyLaunchTo(Actor* giant, Actor* tiny, float force, float launch_power) {
 		auto profiler = Profilers::Profile("Other: Launch Actors Decide");
 		if (IsBeingHeld(giant, tiny)) {
@@ -141,7 +122,7 @@ namespace {
 
 			ApplyActionCooldown(tiny, CooldownSource::Damage_Launch);
 
-			if (Runtime::HasPerkTeam(giant, "LaunchDamage") && CanDoDamage(giant, tiny)) {
+			if (Runtime::HasPerkTeam(giant, "LaunchDamage") && CanDoDamage(giant, tiny, true)) {
 				float damage = LAUNCH_DAMAGE * sizeRatio * force * DamageMult;
 				InflictSizeDamage(giant, tiny, damage);
 				if (OwnsPerk) { // Apply only when we have DisastrousTremor perk

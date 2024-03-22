@@ -93,6 +93,7 @@ namespace Gts {
 	bool IsFreeCameraEnabled();
 	bool SizeRaycastEnabled();
 	bool IsDebugEnabled();
+	bool CanDoDamage(Actor* giant, Actor* tiny, bool HoldCheck);
 
 	void ControlAnother(Actor* target, bool reset);
 	Actor* GetPlayerOrControlled();

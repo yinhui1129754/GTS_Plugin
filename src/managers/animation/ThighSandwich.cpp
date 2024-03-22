@@ -103,7 +103,12 @@ namespace {
 		if (HasSMT(giant)) {
 			damage *= 1.5;
 		}
-		InflictSizeDamage(giant, tiny, damage);
+
+		if (CanDoDamage(giant, tiny, false)) {
+			InflictSizeDamage(giant, tiny, damage);
+		}
+
+		
 
 		float experience = std::clamp(damage/200, 0.0f, 0.20f);
 		ModSizeExperience(giant, experience);
