@@ -72,7 +72,7 @@ namespace {
 		return false;
 	}
 
-	bool BlockAnimation(TESIdleForm* idle) {
+	bool BlockAnimation(TESIdleForm* idle, ConditionCheckParams* params) {
 		if (!idle) {
 			return false;
 		}
@@ -195,7 +195,7 @@ namespace Hooks {
 					//log::info("Playing pad2e: {}", a_this->pad2E); Always 0
 					auto* EventName = a_this->GetFormEditorID();
 					
-					if (BlockAnimation(a_this)) {
+					if (BlockAnimation(a_this, params)) {
 						log::info("Returning nullptr");
 						result = nullptr;
 					}
