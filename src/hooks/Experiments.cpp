@@ -39,7 +39,7 @@ using namespace SKSE;
 //      ^ 50179
 
 namespace {
-	bool IsKillMove(TESForm* idle) {
+	bool IsKillMove(FormID* idle) {
 		// KillMoves
 		const auto KillMoveFrontSideRoot =      0x24CD4;
 		const auto KillMoveDragonToNPC =        0xC1F20;
