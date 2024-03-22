@@ -42,13 +42,6 @@ namespace Hooks
 				Actor* giant = GetCharContActor(controller);
 				float scale = 1.0;
 				if (giant) {
-                    if (giant->formID == 0x14) {
-                        log::info("Giant found: {}", giant->GetDisplayFullName());
-                        log::info("HavokPush");
-                        log::info("a_from: {}", Vector2Str(a_from));
-                        log::info("time: {}", time);
-                    }
-					
 					scale = GetPushMult(giant);
 				}
 				hkVector4 Push = hkVector4(a_from) * scale;
