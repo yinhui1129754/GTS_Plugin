@@ -39,6 +39,39 @@ using namespace SKSE;
 //      ^ 50179
 
 namespace {
+	bool IsKillMove(TESForm* idle) {
+		// KillMoves
+		const auto KillMoveFrontSideRoot =      0x24CD4;
+		const auto KillMoveDragonToNPC =        0xC1F20;
+		const auto KillMoveRootDragonFlight =   0xC9A1B;
+		const auto KillMoveBackSideRoot =       0xE8458;
+		const auto KillMoveFrontSideRoot00 =    0x100e8B;
+		const auto KillMoveBackSideRoot00 =     0x100F16;
+
+		switch (idle) {
+			case KillMoveFrontSideRoot:
+				return true;
+			break;	
+			case KillMoveDragonToNPC:
+				return true;
+			break;
+			case KillMoveRootDragonFlight:
+				return true;
+			break;
+			case KillMoveBackSideRoot:
+				return true;
+			break;
+			case KillMoveFrontSideRoot00:
+				return true;
+			break;
+			case KillMoveBackSideRoot00:
+				return true;
+			break;
+		}
+
+		return false;
+	}
+
 	bool BlockAnimation(TESIdleForm* idle) {
 		if (!idle) {
 			return false;
@@ -51,15 +84,22 @@ namespace {
 		const auto NonMountedDraw = 			0x1000992;
 		const auto NonMountedForceEquip = 		0x1000993;
 		const auto JumpStandingStart =        	0x884A2;   // 558242
+		const auto JumpDirectionalStart =       0x884A3;   // 558243
 
-		// KillMoves
+		Actor* performer = params->actionRef->As<RE::Actor>();
+    	TESObjectREFR* target_ref = params->targetRef;
 
-		const auto KillMoveFrontSideRoot =      0x24CD4;
-		const auto KillMoveDragonToNPC =        0xC1F20;
-		const auto KillMoveRootDragonFlight =   0xC9A1B;
-		const auto KillMoveBackSideRoot =       0xE8458;
-		const auto KillMoveFrontSideRoot00 =    0x100e8B;
-		const auto KillMoveBackSideRoot00 =     0x100F16;
+		if (performer) {
+			log::info("Performer: {}", performer->GetDisplayFullName());
+		}
+
+		if (target_ref) {
+			log::info("Target_ref: {}", target_ref->GetDisplayFullName());
+		}
+
+		if (IsKillMove(Form)) {
+			log::info("Is killmove");
+		}
 
 		switch (Form) {
 			case DefaultSheathe:
@@ -77,21 +117,11 @@ namespace {
 			case JumpStandingStart:
 				return true;	
 			break;	
+			case JumpDirectionalStart:
+				return true;	
+			break;
 			return false;
 		}
-
-		/*if (Form == DefaultSheathe) {
-			return true;	
-		} else if (Form == JumpRoot) {
-			return true;
-		} else if (Form == NonMountedDraw) {
-			return true;
-		} else if (Form == NonMountedForceEquip) {
-			return true;
-		} else {
-			return false;
-		}*/
-
 		return false;
 	}
 
