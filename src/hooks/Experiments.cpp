@@ -50,9 +50,28 @@ namespace {
 		auto JumpRoot =					0x88302;
 		auto NonMountedDraw = 			0x1000992;
 		auto NonMountedForceEquip = 	0x1000993;
+		auto JumpStandingStart =        0x884A2;   // 558242
 
-		
-		if (Form == DefaultSheathe) {
+		switch (Form) {
+			case DefaultSheathe:
+				return true;
+			break;	
+			case JumpRoot:
+				return true;
+			break;	
+			case NonMountedDraw:
+				return true;
+			break;	
+			case NonMountedForceEquip:
+				return true;
+			break;	
+			case JumpStandingStart:
+				return true;	
+			break;	
+			return false;
+		}
+
+		/*if (Form == DefaultSheathe) {
 			return true;	
 		} else if (Form == JumpRoot) {
 			return true;
@@ -62,7 +81,7 @@ namespace {
 			return true;
 		} else {
 			return false;
-		}
+		}*/
 
 		return false;
 	}
