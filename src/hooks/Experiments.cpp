@@ -79,47 +79,53 @@ namespace {
 
 		auto Form = idle->formID;
 
-		const auto DefaultSheathe = 			0x46BB2;
-		const auto JumpRoot =					0x88302;
-		const auto NonMountedDraw = 			0x1000992;
-		const auto NonMountedForceEquip = 		0x1000993;
-		const auto JumpStandingStart =        	0x884A2;   // 558242
-		const auto JumpDirectionalStart =       0x884A3;   // 558243
-
 		Actor* performer = params->actionRef->As<RE::Actor>();
-    	TESObjectREFR* target_ref = params->targetRef;
 
-		if (performer) {
+		if (performer) { //  && performer->formID != 0x14
 			log::info("Performer: {}", performer->GetDisplayFullName());
-		}
 
-		if (target_ref) {
-			log::info("Target_ref: {}", target_ref->GetDisplayFullName());
-		}
+			if (!IsGtsBusy(performer)) {
+				return false;
+			}
 
-		if (IsKillMove(Form)) {
-			log::info("Is killmove");
-		}
+			const auto DefaultSheathe = 			0x46BB2;
+			const auto JumpRoot =					0x88302;
+			const auto NonMountedDraw = 			0x1000992;
+			const auto NonMountedForceEquip = 		0x1000993;
+			const auto JumpStandingStart =        	0x884A2;   // 558242
+			const auto JumpDirectionalStart =       0x884A3;   // 558243
 
-		switch (Form) {
-			case DefaultSheathe:
-				return true;
-			break;	
-			case JumpRoot:
-				return true;
-			break;	
-			case NonMountedDraw:
-				return true;
-			break;	
-			case NonMountedForceEquip:
-				return true;
-			break;	
-			case JumpStandingStart:
-				return true;	
-			break;	
-			case JumpDirectionalStart:
-				return true;	
-			break;
+			TESObjectREFR* target_ref = params->targetRef;
+
+			if (target_ref) {
+				log::info("Target_ref: {}", target_ref->GetDisplayFullName());
+			}
+
+			if (IsKillMove(Form)) {
+				log::info("Is killmove");
+			}
+
+			switch (Form) {
+				case DefaultSheathe:
+					return true;
+				break;	
+				case JumpRoot:
+					return true;
+				break;	
+				case NonMountedDraw:
+					return true;
+				break;	
+				case NonMountedForceEquip:
+					return true;
+				break;	
+				case JumpStandingStart:
+					return true;	
+				break;	
+				case JumpDirectionalStart:
+					return true;	
+				break;
+				return false;
+			}
 			return false;
 		}
 		return false;
