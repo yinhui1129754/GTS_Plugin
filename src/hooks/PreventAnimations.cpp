@@ -126,6 +126,10 @@ namespace Hooks {
 	void Hook_PreventAnimations::Hook(Trampoline& trampoline) { 
         static FunctionHook<TESIdleForm*(TESIdleForm* a_this, ConditionCheckParams* params, void* unk3)>IdleFormHook (        
 			REL::RelocationID(24067, 24570),
+			// 24067 = sub_140358150 (SE)
+			// 24570 = FUN_14036ec80 (AE)
+			// OLD HOOKS BELOW (used CallHook on these, but for some reason it's not called on AE, so we hook function itself)
+
 			//REL::RelocationID(24068, 24571), REL::Relocate(0x5E, 0x53),
 			// 24068 = 0x140358250 [SE] ; 0x140358250 - 0x1403582ae = 0x5E
 			// 24571 = 0x14036ee00 [AE] ; 0x14036ee00 - 0x14036ee53 = 0x53
@@ -134,7 +138,6 @@ namespace Hooks {
                 // This hook prevents them from playing (KillMoves and Sheathe/Unsheathe/Jump anims)
 				
 				auto* result = IdleFormHook(a_this, params, unk3);
-				log::info("AnimHook running");
 
 				if (a_this) {
 					auto* EventName = a_this->GetFormEditorID();
