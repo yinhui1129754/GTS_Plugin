@@ -133,7 +133,7 @@ namespace Gts {
 				if (tiny->IsDead()) {
 					return;
 				}
-				if (IsBeingHeld(pred, tiny)) {
+				if (IsBeingHeld(giant, tiny)) {
 					return;
 				}
 				float GiantScale = get_visual_scale(giant);
