@@ -162,9 +162,7 @@ namespace Gts {
 
 	void GrabAnimationController::StartGrab(Actor* pred, Actor* prey) {
 		auto& grabbing = GrabAnimationController::GetSingleton();
-		log::info("trying to grab");
 		if (!grabbing.CanGrab(pred, prey)) {
-			log::info("Can Grab: False");
 			return;
 		}
 

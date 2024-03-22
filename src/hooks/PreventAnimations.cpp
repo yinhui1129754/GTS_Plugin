@@ -57,13 +57,10 @@ namespace {
 		}
 
 		if (KillMove) {
-			log::info("Trying Killmove, seeking for Actors");
 			if (victim) {
-				log::info("KillMove: Performer: {}, Victim: {}", performer->GetDisplayFullName(), victim->GetDisplayFullName());
 				Actor* victimref = skyrim_cast<Actor*>(victim);
 				if (victimref) {
 					float size_difference = GetSizeDifference(performer, victimref, SizeType::GiantessScale, true, false);
-					log::info("Victimref found, size_difference: {}", size_difference);
 					if (size_difference > KillMove_Threshold_High || size_difference < KillMove_Threshold_Low) {
 						Block = true;
 					}
@@ -128,13 +125,14 @@ namespace Hooks {
 			REL::RelocationID(24067, 24570),
 			// 24067 = sub_140358150 (SE)
 			// 24570 = FUN_14036ec80 (AE)
+
 			// OLD HOOKS BELOW (used CallHook on these, but for some reason it's not called on AE, so we hook function itself)
 
 			//REL::RelocationID(24068, 24571), REL::Relocate(0x5E, 0x53),
 			// 24068 = 0x140358250 [SE] ; 0x140358250 - 0x1403582ae = 0x5E
 			// 24571 = 0x14036ee00 [AE] ; 0x14036ee00 - 0x14036ee53 = 0x53
 			[](TESIdleForm* a_this, ConditionCheckParams* params, void* unk3) {
-                // When we don't want specific anims to happen
+                // Return nullptr When we don't want specific anims to happen
                 // This hook prevents them from playing (KillMoves and Sheathe/Unsheathe/Jump anims)
 				
 				auto* result = IdleFormHook(a_this, params, unk3);

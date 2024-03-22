@@ -44,7 +44,7 @@ namespace {
 	void ManageActorControl() { // Rough control other fix
 		Actor* target = GetPlayerOrControlled();
 		if (target->formID != 0x14) {
-			if (!IsGtsBusy(target)) {
+			if (!IsGtsBusy(target) && !IsBeingHeld(PlayerCharacter::GetSingleton())) {
 				ControlAnother(target, true);
 			}
 		}
