@@ -28,7 +28,7 @@ using namespace std;
 
 namespace {
 	void StaggerImmunity(Actor* attacker, Actor* receiver) {
-		float sizedifference = GetSizeDifference(receiver, attacker, SizeCheckMethod::VisualScale, true, true);
+		float sizedifference = GetSizeDifference(receiver, attacker, SizeType::VisualScale, true, true);
 		auto charCont = receiver->GetCharController();
 		if (charCont) {
 			receiver->SetGraphVariableFloat("GiantessScale", sizedifference); // Manages Stagger Resistance inside Behaviors.
@@ -197,7 +197,7 @@ namespace {
 	}
 
 	void ApplyToTinies(Actor* attacker, Actor* receiver, float damage) {
-		float sizedifference = GetSizeDifference(receiver, attacker, SizeCheckMethod::VisualScale, true, true);
+		float sizedifference = GetSizeDifference(receiver, attacker, SizeType::VisualScale, true, true);
 		DropTinyChance(receiver, -damage, sizedifference);
 		TinyAsShield(receiver, -damage);
 	}

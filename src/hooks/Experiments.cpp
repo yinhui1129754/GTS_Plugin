@@ -57,7 +57,7 @@ namespace {
 	const auto KillMoveFrontSideRoot00 =    0x100e8B;
 	const auto KillMoveBackSideRoot00 =     0x100F16;
 
-	bool IsKillMove(FormID idle, ConditionCheckParams* params) {
+	bool IsKillMove(FormID idle, ConditionCheckParams* params, Actor* performer) {
 		// KillMoves
 		
 		bool KillMove = false;
@@ -85,14 +85,13 @@ namespace {
 		}
 
 		if (KillMove) {
-			Actor* performer = params->actionRef->As<RE::Actor>();
-			TESObjectREFR* victim = params->targetRef;
+			Actor* victim = params->targetRef->As<RE::Actor>();
 
 			log::info("Trying Killmove, seeking for Actors");
 
-			if (performer && victim) {
+			if (victim) {
 				log::info("KillMove: Performer: {}, Victim: {}");
-				float size_difference = GetSizeDifference(victim, performer, SizeCheckMethod::GiantessScale, true, false);
+				float size_difference = GetSizeDifference(victim, performer, SizeType::GiantessScale, true, false);
 				if (size_difference > KillMove_Threshold) {
 					Block = true;
 				}
@@ -114,13 +113,7 @@ namespace {
 		if (performer) { //  && performer->formID != 0x14
 			log::info("Performer: {}", performer->GetDisplayFullName());
 
-			TESObjectREFR* target_ref = params->targetRef;
-
-			if (target_ref) {
-				log::info("Target_ref: {}", target_ref->GetDisplayFullName());
-			}
-
-			if (IsKillMove(Form, params)) {
+			if (IsKillMove(Form, params, performer)) {
 				log::info("ATTEMPTED KILLMOVE");
 				return true;
 			}

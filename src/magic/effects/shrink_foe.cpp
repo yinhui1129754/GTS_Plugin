@@ -110,7 +110,7 @@ namespace Gts {
 		if (!target) {
 			return;
 		}
-		float sizediff = GetSizeDifference(caster, target, SizeCheckMethod::VisualScale, true, false);
+		float sizediff = GetSizeDifference(caster, target, SizeType::VisualScale, true, false);
 		if (this->power >= 18.00 && sizediff > 4.0) {
 			StaggerActor(caster, target, 100.0f);
 		}

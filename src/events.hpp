@@ -19,7 +19,7 @@ namespace Gts {
 		Breasts,
 	};
 
-	enum class SizeCheckMethod {
+	enum class SizeType {
 		GiantessScale,
 		VisualScale,
 	};

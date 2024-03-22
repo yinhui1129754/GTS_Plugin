@@ -27,7 +27,7 @@ namespace Gts {
 			return;
 		}
 		
-		StaggerActor(caster, target, 0.25f * GetSizeDifference(caster, target, SizeCheckMethod::VisualScale, true, false));
+		StaggerActor(caster, target, 0.25f * GetSizeDifference(caster, target, SizeType::VisualScale, true, false));
 		Attacked(target, caster);
 		
 	}
@@ -51,7 +51,7 @@ namespace Gts {
 			return; // Disallow shrinking Essentials
 		}
 
-		float size_difference = GetSizeDifference(caster, target, SizeCheckMethod::VisualScale, true, false);
+		float size_difference = GetSizeDifference(caster, target, SizeType::VisualScale, true, false);
 
 		if (HasSMT(caster)) {
 			size_difference += SMT_BONUS;

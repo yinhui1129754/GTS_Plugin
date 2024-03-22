@@ -129,7 +129,7 @@ namespace Gts {
 					if (IsTeammate(new_gts)) {
 						for (auto new_tiny: Hugs.GetHugTargetsInFront(new_gts, numberOfPrey)) { 
 							if (new_tiny->formID == 0x14) {
-								float sizedifference = GetSizeDifference(new_gts, new_tiny, SizeCheckMethod::VisualScale, true, true);
+								float sizedifference = GetSizeDifference(new_gts, new_tiny, SizeType::VisualScale, true, true);
 								bool allow = (sizedifference >= Action_Hug && sizedifference < GetHugShrinkThreshold(new_gts));
 								if (allow && Hugs.CanHug(new_gts, new_tiny)) {
 									Hugs.StartHug(new_gts, new_tiny);
