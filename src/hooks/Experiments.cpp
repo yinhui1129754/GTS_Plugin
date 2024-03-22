@@ -43,17 +43,22 @@ namespace {
 		if (!idle) {
 			return false;
 		}
-		auto JumpLand = 689444;
-		auto MountedDraw = 16779659;
-		auto NonMountedDraw = 16779666;
-		auto DefaultSheathe = 289714;
-		if (idle == JumpLand) {
+
+		auto Form = idle->formID;
+
+		auto DefaultSheathe = 			0x46BB2;
+		auto JumpRoot =					0x88302;
+		auto NonMountedDraw = 			0x1000992;
+		auto NonMountedForceEquip = 	0x1000993;
+
+		
+		if (Form == DefaultSheathe) {
 			return true;	
-		} else if (idle == MountedDraw) {
+		} else if (Form == JumpRoot) {
 			return true;
-		} else if (idle == NonMountedDraw) {
+		} else if (Form == NonMountedDraw) {
 			return true;
-		} else if (idle == DefaultSheathe) {
+		} else if (Form == NonMountedForceEquip) {
 			return true;
 		} else {
 			return false;
@@ -126,7 +131,7 @@ namespace Hooks {
 
 				if (a_this) {
 					//log::info("Playing Idle: {}", a_this->animFileName); // prints Actors\Character\Behaviors\0_Master.hkx for example
-					log::info("Playing Idle: {}", a_this->formID);
+					log::info("Playing Idle: {}", a_this);
 					log::info("Playing Idle ID: {}", a_this->formID);
 					//log::info("Playing Idle Name: {}", a_this->animEventName);
 					log::info("Playing formEditorID: {}", a_this->formEditorID.c_str());
