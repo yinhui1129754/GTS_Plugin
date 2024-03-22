@@ -69,10 +69,10 @@ namespace Hooks {
 					auto actor = skyrim_cast<Actor*>(graph);
 					if (actor) {
 						log::info("Actor: {}, value: {}", actor->GetDisplayFullName(), a_in);
-						if (actor->formID == 0x14 && a_in > 0) {
+						if (actor->formID == 0x14 && a_in) {
 							ControlAnother(actor, true); // Reset controlled actor
 							log::info("Resetting controlled actor: By Player");
-						} else if (GetPlayerOrControlled() == actor && a_in < 1) {
+						} else if (GetPlayerOrControlled() == actor && !a_in) {
 							ControlAnother(actor, true); // Reset controlled actor
 							log::info("Resetting controlled actor: By Other");
 						}
