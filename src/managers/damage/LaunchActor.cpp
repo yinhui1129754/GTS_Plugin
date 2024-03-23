@@ -141,15 +141,13 @@ namespace {
 				if (tinyHandle) {
 					double endTime = Time::WorldTimeElapsed();
 					auto tinyref = tinyHandle.get().get();
-					//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tinyref);
-					//if (tiny_is_object) {
 					if ((endTime - startTime) > 0.08) {
 						ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, Force);
 						return false;
 					}
 					return true;
-					//}
 				}
+				return true;
 			});
 		}
 	}
