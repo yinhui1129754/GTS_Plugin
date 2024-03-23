@@ -2980,6 +2980,13 @@ namespace Gts {
 		return func(body, a_impulse);
 	}
 
+	void SetAngularImpulse(bhkRigidBody* body, const hkVector4& a_impulse)
+	{
+		using func_t = decltype(&SetAngularImpulse);
+		REL::Relocation<func_t> func{ RELOCATION_ID(76262, 78092) };
+		return func(this, a_impulse);
+	}
+
 	std::int16_t GetItemCount(InventoryChanges* changes, RE::TESBoundObject* a_obj)
 	{
 		using func_t = decltype(&GetItemCount);
