@@ -104,7 +104,7 @@ namespace Gts {
 			if (hitName.find("Bow") == std::string::npos) {
 				shake_camera(attacker, size_difference * 0.20, 0.35);
 			}
-			PushForward(attacker, receiver, pushpower * 0.6);
+			PushForward(attacker, receiver, pushpower * 25.0);
 			//log::info("Size difference is met, pushing actor away");
 		}
 	}

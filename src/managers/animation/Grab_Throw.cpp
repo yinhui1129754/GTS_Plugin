@@ -113,10 +113,10 @@ namespace {
 
 				
 				// If we pass checks, launch actor
-				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
-				//if (tiny_is_object) {
-					PushActorAway(giant, tiny, direction, speed * 0.05);
-				//}
+				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
+				if (tiny_is_object) {
+					ApplyManualHavokImpulse(giant, tiny, direction, speed * 100);
+				}
 				return false;
 			} 
 			return true;
@@ -160,7 +160,7 @@ namespace {
 	void Throw_RayCastTask(Actor* giant, Actor* tiny, float speed) {
 		// currently does nothing
 		// Throw_DoCollisionDamage(victim_ref, aggressor_ref, speed);
-		// Idea is to 
+		// Idea is to apply damage when actor collides with the ground/rock and inflict damage based on how long it took to hit something
 	}
 
 	void Throw_RegisterForThrowDamage(Actor* giant, Actor* tiny, float speed) {
@@ -279,6 +279,8 @@ namespace {
 
 				SetBeingHeld(tiny, false);
 				EnableCollisions(tiny);
+
+				PushActorAway(giant, tiny, 1.0);
 
 				auto charcont = tiny->GetCharController();
 				if (charcont) {

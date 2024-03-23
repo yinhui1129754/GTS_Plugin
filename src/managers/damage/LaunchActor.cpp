@@ -135,22 +135,22 @@ namespace {
 			}
 			NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
 			float Force = startpower * GetLaunchPower(giant, sizeRatio) * force * power;
-			
-			PushActorAway(giant, tiny, Push, Force);
+
+			PushActorAway(giant, tiny, 1.0);
 
 			std::string name = std::format("LaunchOther_{}", tiny->formID);
 
 			ActorHandle tinyHandle = tiny->CreateRefHandle();
 
-			/*TaskManager::RunOnce(name, [=](auto& update){
+			TaskManager::RunOnce(name, [=](auto& update){
 				if (tinyHandle) {
 					auto tinyref = tinyHandle.get().get();
 					TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tinyref);
 					if (tiny_is_object) {
-						ApplyHavokImpulse(tiny_is_object, 0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
+						ApplyManualHavokImpulse(tiny_is_object, Push, Force);
 					}
 				}
-			});*/
+			});
 		}
 	}
 

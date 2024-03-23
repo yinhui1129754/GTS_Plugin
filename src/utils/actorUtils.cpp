@@ -1404,6 +1404,7 @@ namespace Gts {
 	}
 
 	void PushActorAway(Actor* source, Actor* receiver, float afKnockBackForce) {
+		// Force < 1.0 can introduce weird sliding issues to Actors, not recommended to pass force < 1.0
 		if (receiver->IsDead()) {
 			return;
 		}
@@ -1416,12 +1417,9 @@ namespace Gts {
 						if (source->Is3DLoaded()) {
 							NiPoint3 direction = receiver->GetPosition() - source->GetPosition();
 							direction = direction / direction.Length();
-							if (afKnockBackForce <= 1.0) {
-								afKnockBackForce = 1.0;
-							}
 							typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
 							REL::Relocation<DefPushActorAway> RealPushActorAway{ RELOCATION_ID(38858, 39895) };
-							RealPushActorAway(nullptr, receiver, direction, afKnockBackForce);
+							RealPushActorAway(ai, receiver, direction, afKnockBackForce);
 						}
 					}
 				}
@@ -1430,6 +1428,7 @@ namespace Gts {
 	}
 
 	void PushActorAway(Actor* source, Actor* receiver, NiPoint3 direction, float force) {
+		// Force < 1.0 can introduce weird sliding issues to Actors, not recommended to pass force < 1.0
 		if (receiver->IsDead()) {
 			return;
 		}
@@ -1440,13 +1439,10 @@ namespace Gts {
 				if (ai->InHighProcess()) {
 					if (receiver->Is3DLoaded()) {
 						if (source->Is3DLoaded()) {
-							if (force <= 1.0) {
-								force = 1.0;
-							}
 							log::info("Pushing {} with force of {}", receiver->GetDisplayFullName(), force);
 							typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
 							REL::Relocation<DefPushActorAway> RealPushActorAway{ RELOCATION_ID(38858, 39895) };
-							RealPushActorAway(nullptr, receiver, direction, force);
+							RealPushActorAway(ai, receiver, direction, force);
 						}
 					}
 				}
@@ -1457,6 +1453,17 @@ namespace Gts {
 	void KnockAreaEffect(TESObjectREFR* source, float afMagnitude, float afRadius) {
 		CallFunctionOn(source, "ObjectReference", "KnockAreaEffect", afMagnitude, afRadius);
 	}
+	
+	void ApplyManualHavokImpulse(TESObjectREFR* target, float afX, float afY, float afZ, float afMagnitude) {
+		hkVector4 impulse = hkVector4(afX, afY, afZ, afMagnitude);
+		auto rbs = GetActorRB(target);
+		for (auto body: rbs) {
+			if (body) {
+				SetLinearImpulse(body, impulse);
+			}
+		}
+	}
+
 	void ApplyHavokImpulse(TESObjectREFR* target, float afX, float afY, float afZ, float afMagnitude) {
 		CallFunctionOn(target, "ObjectReference", "ApplyHavokImpulse", afX, afY, afZ, afMagnitude);
 	}
@@ -1993,7 +2000,7 @@ namespace Gts {
 		double startTime = Time::WorldTimeElapsed();
 		ActorHandle tinyHandle = tinyref->CreateRefHandle();
 		ActorHandle gianthandle = giantref->CreateRefHandle();
-		//PushActorAway(giantref, tinyref, 1);
+		PushActorAway(giantref, tinyref, 1);
 
 		std::string name = std::format("PushTowards_{}_{}", giantref->formID, tinyref->formID);
 		// Do this next frame (or rather until some world time has elapsed)
@@ -2042,11 +2049,11 @@ namespace Gts {
 					}
 				}
 				// If we pass checks, launch actor instead
-				PushActorAway(giantref, tinyref, direction, speed * 2.0 * power);
-				/*TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
+
+				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				if (tiny_is_object) {
-					ApplyHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 2.0 * power);
-				}*/
+					ApplyManualHavokImpulse(tiny_is_object, direction, speed * 2.0 * power);
+				}
 				return false;
 			} else {
 				return true;
@@ -2059,7 +2066,7 @@ namespace Gts {
 		ActorHandle tinyHandle = tinyref->CreateRefHandle();
 		ActorHandle gianthandle = giantref->CreateRefHandle();
 		std::string taskname = std::format("PushOther_{}", tinyref->formID);
-		//PushActorAway(giantref, tinyref, 1);
+		PushActorAway(giantref, tinyref, 1);
 		TaskManager::Run(taskname, [=](auto& update) {
 			if (!gianthandle) {
 				return false;
@@ -2078,20 +2085,16 @@ namespace Gts {
 			RE::NiPoint3 direction = globalForwardVector;
 			double endTime = Time::WorldTimeElapsed();
 
-			PushActorAway(giant, tiny, direction, power);
-
-			return false;
-
-			/*if ((endTime - startTime) > 0.08) {
+			if ((endTime - startTime) > 0.08) {
 				// Time has elapsed
 				TESObjectREFR* tiny_as_object = skyrim_cast<TESObjectREFR*>(tiny);
 				if (tiny_as_object) {
-					ApplyHavokImpulse(tiny_as_object, direction.x, direction.y, direction.z, power);
+					ApplyManualHavokImpulse(tiny_as_object, direction, power);
 				}
 				return false;
 			} else {
 				return true;
-			}*/
+			}
 		});
 	}
 
