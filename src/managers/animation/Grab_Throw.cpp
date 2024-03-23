@@ -40,8 +40,15 @@ namespace {
 	const std::string_view LNode = "NPC L Foot [Lft ]";
 
 	void Throw_Actor(ActorHandle gianthandle, ActorHandle tinyHandle, NiPoint3 startCoords, NiPoint3 endCoords, std::string_view TaskName) {
-		
+
 		double startTime = Time::WorldTimeElapsed();
+
+		auto charcont = tinyHandle.get().get()->GetCharController();
+		if (charcont) {
+			charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
+		}
+
+		PushActorAway(giantHandle.get().get(), tinyHandle.get().get(), 1.0);
 		TaskManager::Run(TaskName, [=](auto& update){
 			if (!gianthandle) {
 				return false;
@@ -74,8 +81,6 @@ namespace {
 				SetBeingHeld(tiny, false);
 				EnableCollisions(tiny);
 
-				PushActorAway(giant, tiny, 1.0);
-
 				NiPoint3 vector = endCoords - startCoords;
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
@@ -87,14 +92,7 @@ namespace {
 					ApplyHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 100.0);
 				}
 				return false;
-			} else if ((endTime - startTime) < 0.10) {
-				log::info("Time < 0.10");
-				auto charcont = tiny->GetCharController();
-				if (charcont) {
-					charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
-				}
-				return true;
-			}
+			} 
 			return true;
 		});
 	}

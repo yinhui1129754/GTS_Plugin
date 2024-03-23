@@ -245,8 +245,8 @@ namespace {
 			float result = std::clamp(pushResult, 0.01f, 1.0f);
 
             tranData->push_force = result;
-			log::info("Recording Push Force:{} - {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName());
-			log::info("----Value: {}", result);
+			//log::info("Recording Push Force:{} - {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName());
+			//log::info("----Value: {}", result);
         } 
 	}
 }
