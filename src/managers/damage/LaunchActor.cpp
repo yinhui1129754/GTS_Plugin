@@ -47,13 +47,6 @@ namespace {
 	const float BASE_CHECK_DISTANCE = 20.0f;
 
 
-	void SetLinearImpulse(bhkRigidBody* body, const hkVector4& a_impulse)
-	{
-		using func_t = decltype(&SetLinearImpulse);
-		REL::Relocation<func_t> func{ RELOCATION_ID(76261, 78091) };
-		return func(body, a_impulse);
-	}
-
 	float GetLaunchThreshold(Actor* giant) {
 		float threshold = 8.0;
 		if (Runtime::HasPerkTeam(giant, "LaunchPerk")) {

@@ -2955,6 +2955,13 @@ namespace Gts {
 		StaggerActor_Directional(tiny, power, giant);
 	}
 
+	void SetLinearImpulse(bhkRigidBody* body, const hkVector4& a_impulse)
+	{
+		using func_t = decltype(&SetLinearImpulse);
+		REL::Relocation<func_t> func{ RELOCATION_ID(76261, 78091) };
+		return func(body, a_impulse);
+	}
+
 	std::int16_t GetItemCount(InventoryChanges* changes, RE::TESBoundObject* a_obj)
 	{
 		using func_t = decltype(&GetItemCount);

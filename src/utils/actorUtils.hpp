@@ -269,6 +269,7 @@ namespace Gts {
   	void ApplyDamage(Actor* giant, Actor* tiny, float damage);
 	void SetObjectRotation_X(TESObjectREFR* ref, float X);
 	void StaggerActor_Directional(Actor* giant, float power, Actor* tiny);
+	void SetLinearImpulse(bhkRigidBody* body, const hkVector4& a_impulse);
 
 	std::int16_t GetItemCount(InventoryChanges* changes, RE::TESBoundObject* a_obj);
 	int GetCombatState(Actor* actor);
