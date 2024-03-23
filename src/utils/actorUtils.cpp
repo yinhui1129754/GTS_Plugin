@@ -2070,7 +2070,7 @@ namespace Gts {
 			if (!tinyHandle) {
 				return false;
 			}
-			Actor* giant = gianthandle.get().get();
+			Actor* giant = giantHandle.get().get();
 
 			if (!giant->Is3DLoaded()) {
 				return true;
