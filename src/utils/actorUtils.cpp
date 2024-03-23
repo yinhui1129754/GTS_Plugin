@@ -1409,6 +1409,10 @@ namespace Gts {
 			return;
 		}
 
+		if (afKnockBackForce < 1.0) {
+			afKnockBackForce = 1.0;
+		} 
+
 		if (source) {
 			auto ai = source->GetActorRuntimeData().currentProcess;
 			if (ai) {
@@ -1438,10 +1442,8 @@ namespace Gts {
 		for (auto bools: {true, false}) {
 			auto collision = target->Get3D(bools)->GetCollisionObject();
 			if (collision) {
-				log::info("Collision found! : {}", bools);
 				auto rigidbody = collision->GetRigidBody();
 				if (rigidbody) {
-					log::info("Rigid body found");
 					auto body = rigidbody->AsBhkRigidBody();
 					if (body) {
 						SetLinearImpulse(body, impulse);
@@ -2006,6 +2008,7 @@ namespace Gts {
 				float timeTaken = endTime - startTime;
 				float speed = distanceTravelled / timeTaken;
 				NiPoint3 direction = vector / vector.Length();
+
 				if (sizecheck) {
 					float giantscale = get_visual_scale(giant);
 					float tinyscale = get_visual_scale(tiny) * GetSizeFromBoundingBox(tiny);
@@ -2029,6 +2032,9 @@ namespace Gts {
 				}
 
 				float Time = (1.0 / Time::GetTimeMultiplier());
+				log::info("Sending Direction: {}", Vector2Str(direction));
+				log::info("Sending Speed: {}, Power. {}, Time: {}", speed, power, time);
+				log::info("endTime - startTime: {}", endTime - startTime);
 				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 2.0 * power * Time);
 
 				return false;
@@ -2080,7 +2086,6 @@ namespace Gts {
 			Actor* giant = gianthandle.get().get();
 			Actor* tiny = tinyHandle.get().get();
 			
-
 			auto playerRotation = giant->GetCurrent3D()->world.rotate;
 			RE::NiPoint3 localForwardVector{ 0.f, 1.f, 0.f };
 			RE::NiPoint3 globalForwardVector = playerRotation * localForwardVector;
@@ -2089,11 +2094,7 @@ namespace Gts {
 			double endTime = Time::WorldTimeElapsed();
 
 			if ((endTime - startTime) > 0.08) {
-				// Time has elapsed
-				//TESObjectREFR* tiny_as_object = skyrim_cast<TESObjectREFR*>(tiny);
-				//if (tiny_as_object) {
-					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, power);
-				//}
+				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, power);
 				return false;
 			} else {
 				return true;

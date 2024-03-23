@@ -132,7 +132,7 @@ namespace {
 				float timeTaken = endTime - startTime;
 				speed *= get_visual_scale(giant) * GetSizeFromBoundingBox(giant);//distanceTravelled / timeTaken;
 
-				float Time = Time::GetTimeMultiplier();
+				float Time = (1.0 / Time::GetTimeMultiplier());
 				log::info("Time Mult: {}", Time);
 				// Calculate power of throw
 
