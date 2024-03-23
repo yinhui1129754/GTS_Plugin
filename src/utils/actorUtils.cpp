@@ -1432,19 +1432,9 @@ namespace Gts {
 	}
 	
 	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float Multiplier) {
-		float Time = (1.0 / Time::GetTimeMultiplier());
-
-		hkVector4 impulse = hkVector4(afX * Multiplier * Time, afY * Multiplier * Time, afZ * Multiplier * Time, 1.0);
+		hkVector4 impulse = hkVector4(afX * Multiplier, afY * Multiplier, afZ * Multiplier, 1.0);
 		log::info("Multiplier: {}", Multiplier);
-		log::info("Time Multiplier: {}", Time);
-		//auto rbs = GetActorRB(target);
-		/*for (auto body: rbs) {
-			if (body) {
-				SetLinearImpulse(body, impulse);
-			}
-		}*/
 
-		//BShkbAnimationGraph -> hkbCharacter -> hkbRagdollDriver -> ragdoll
 		for (auto bools: {true, false}) {
 			auto collision = target->Get3D(bools)->GetCollisionObject();
 			if (collision) {
@@ -2017,7 +2007,7 @@ namespace Gts {
 			double endTime = Time::WorldTimeElapsed();
 
 
-			if ((endTime - startTime) > 1e-4) {
+			if ((endTime - startTime) > 0.08) {
 				// Time has elapsed
 
 				NiPoint3 vector = endCoords - startCoords;
@@ -2046,11 +2036,13 @@ namespace Gts {
 						return false; //Only Stagger
 					}
 				}
+
+				float Time = (1.0 / Time::GetTimeMultiplier());
 				// If we pass checks, launch actor instead
 
 				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				//if (tiny_is_object) {
-					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 2.0 * power);
+					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 2.0 * power * Time);
 				//}
 				return false;
 			} else {

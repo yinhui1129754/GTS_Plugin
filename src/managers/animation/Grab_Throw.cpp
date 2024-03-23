@@ -69,7 +69,7 @@ namespace {
 
 			double endTime = Time::WorldTimeElapsed();
 
-			if ((endTime - startTime) > 1e-4) {
+			if ((endTime - startTime) > 0.08) {
 				// Time has elapsed
 
 				NiPoint3 direction = NiPoint3();
@@ -108,14 +108,12 @@ namespace {
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
 				float speed = distanceTravelled / timeTaken;
+
+				float Time = Time::GetTimeMultiplier();
+				log::info("Time Mult: {}", Time);
 				// Calculate power of throw
 
-				
-				// If we pass checks, launch actor
-				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
-				//if (tiny_is_object) {
-					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 30);
-				//}
+				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 30 / Time);
 				return false;
 			} 
 			return true;
