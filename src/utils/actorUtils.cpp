@@ -1403,7 +1403,7 @@ namespace Gts {
 		return results;
 	}
 
-	void PushActorAway(TESObjectREFR* source, Actor* receiver, float afKnockBackForce) {
+	void PushActorAway(Actor* source, Actor* receiver, float afKnockBackForce) {
 		if (receiver->IsDead()) {
 			return;
 		}
@@ -1429,7 +1429,7 @@ namespace Gts {
 		}
 	}
 
-	void PushActorAway(TESObjectREFR* source, Actor* receiver, NiPoint3 direction, float force) {
+	void PushActorAway(Actor* source, Actor* receiver, NiPoint3 direction, float force) {
 		if (receiver->IsDead()) {
 			return;
 		}
