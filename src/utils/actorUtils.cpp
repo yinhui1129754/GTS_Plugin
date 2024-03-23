@@ -1474,6 +1474,7 @@ namespace Gts {
 					auto body = rigidbody->AsBhkRigidBody();
 					if (body) {
 						SetLinearImpulse(body, impulse);
+						body->SetAngularImpulse(impulse);
 						log::info("Bdy found, Applying impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
 					}
 				}
