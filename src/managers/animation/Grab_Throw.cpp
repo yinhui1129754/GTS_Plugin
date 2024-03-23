@@ -104,7 +104,7 @@ namespace {
 					direction = giantRot * (customDirection / customDirection.Length());
 				} else { // Else use normal calculations for the throw
 				    if (IsCrawling(giant)) { // Strongest throw, needs custom throw direction again
-						speed = 1000.0;
+						speed = 800.0;
 
 						float angle_x = Runtime::GetFloat("cameraAlternateX"); // 10
 						float angle_y = Runtime::GetFloat("cameraAlternateY");//0.0;
@@ -124,8 +124,8 @@ namespace {
 						direction = giantRot * (customDirection / customDirection.Length());
 					} else {
 						speed = 300.0; // Slight Sneak throw
+						direction = vector / vector.Length();
 					}
-					direction = vector / vector.Length();
 				}
 
 				float distanceTravelled = vector.Length();
