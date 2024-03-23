@@ -13,6 +13,7 @@ namespace Gts {
 			static float WorldTimeDelta();
 			static double WorldTimeElapsed();
 			static std::uint64_t FramesElapsed();
+			static float GetTimeMultiplier();
 			static void MultiplyGameTime(float modifier);
 			[[nodiscard]] static Time& GetSingleton() noexcept;
 			void Update();
