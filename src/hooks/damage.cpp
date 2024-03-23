@@ -235,7 +235,7 @@ namespace {
 			float giant_scale = get_visual_scale(giant);
 			
 			if (HasSMT(giant)) {
-			    giant_scale *= 2.0;
+			    giant_scale *= 2.5;
 		    }
 
 			float difference = giant_scale/tiny_scale;

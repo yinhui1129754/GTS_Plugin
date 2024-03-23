@@ -120,7 +120,7 @@ namespace Gts {
     const float Radius_Default_Idle = 6.2f;
 
     const float Radius_Walk_Default = 6.6f;
-    const float Radius_Jump_Default = 10.0f; 
+    const float Radius_Jump_Default = 18.0f; 
 
     const float Radius_Stomp = 6.6f;
     const float Radius_Stomp_Strong = 7.0f;
