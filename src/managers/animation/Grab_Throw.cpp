@@ -69,16 +69,17 @@ namespace {
 
 			double endTime = Time::WorldTimeElapsed();
 
-			if ((endTime - startTime) > 0.08) {
+			if ((endTime - startTime) > 0.05) {
 				// Time has elapsed
 
 				NiPoint3 direction = NiPoint3();
 				NiPoint3 vector = endCoords - startCoords;
+				float speed = 400.0; // Standing throw default
 
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
-					float angle_x = 10; //Runtime::GetFloat("cameraAlternateX"); // 60
-					float angle_y = 110;//Runtime::GetFloat("cameraAlternateY");//10.0;
+					float angle_x = Runtime::GetFloat("cameraAlternateX"); // 10
+					float angle_y = Runtime::GetFloat("cameraAlternateY");//110.0;
 					float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
 
 					// Conversion to radians
@@ -102,18 +103,23 @@ namespace {
 					NiMatrix3 giantRot = giant->GetCurrent3D()->world.rotate;
 					direction = giantRot * (customDirection / customDirection.Length());
 				} else { // Else use normal calculations for the throw
+				    if (IsCrawling(giant)) { // Strongest throw
+						speed = 600.0;
+					} else {
+						speed = 180.0; // Slight throw
+					}
 					direction = vector / vector.Length();
 				}
 
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
-				float speed = distanceTravelled / timeTaken;
+				speed *= get_visual_scale(giant) * GetSizeFromBoundingBox(giant);//distanceTravelled / timeTaken;
 
 				float Time = Time::GetTimeMultiplier();
 				log::info("Time Mult: {}", Time);
 				// Calculate power of throw
 
-				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 30 / Time);
+				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * Time);
 				return false;
 			} 
 			return true;
