@@ -82,6 +82,7 @@ namespace {
 				EnableCollisions(tiny);
 
 				NiPoint3 direction = NiPoint3();
+				NiPoint3 vector = endCoords - startCoords;
 
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
@@ -113,7 +114,6 @@ namespace {
 					direction = vector / vector.Length();
 				}
 
-				NiPoint3 vector = endCoords - startCoords;
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
 				float speed = distanceTravelled / timeTaken;
