@@ -145,10 +145,10 @@ namespace {
 			TaskManager::RunOnce(name, [=](auto& update){
 				if (tinyHandle) {
 					auto tinyref = tinyHandle.get().get();
-					TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tinyref);
-					if (tiny_is_object) {
-						ApplyManualHavokImpulse(tiny_is_object, Push.x, Push.y, Push.z, Force);
-					}
+					//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tinyref);
+					//if (tiny_is_object) {
+						ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, Force);
+					//}
 				}
 			});
 		}

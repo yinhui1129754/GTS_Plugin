@@ -1454,7 +1454,7 @@ namespace Gts {
 		CallFunctionOn(source, "ObjectReference", "KnockAreaEffect", afMagnitude, afRadius);
 	}
 	
-	void ApplyManualHavokImpulse(TESObjectREFR* target, float afX, float afY, float afZ, float afMagnitude) {
+	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float afMagnitude) {
 		hkVector4 impulse = hkVector4(afX, afY, afZ, afMagnitude);
 		auto rbs = GetActorRB(target);
 		for (auto body: rbs) {
@@ -2050,10 +2050,10 @@ namespace Gts {
 				}
 				// If we pass checks, launch actor instead
 
-				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
-				if (tiny_is_object) {
-					ApplyManualHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 2.0 * power);
-				}
+				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
+				//if (tiny_is_object) {
+					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 2.0 * power);
+				//}
 				return false;
 			} else {
 				return true;
@@ -2087,10 +2087,10 @@ namespace Gts {
 
 			if ((endTime - startTime) > 0.08) {
 				// Time has elapsed
-				TESObjectREFR* tiny_as_object = skyrim_cast<TESObjectREFR*>(tiny);
-				if (tiny_as_object) {
-					ApplyManualHavokImpulse(tiny_as_object, direction.x, direction.y, direction.z, power);
-				}
+				//TESObjectREFR* tiny_as_object = skyrim_cast<TESObjectREFR*>(tiny);
+				//if (tiny_as_object) {
+					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, power);
+				//}
 				return false;
 			} else {
 				return true;
