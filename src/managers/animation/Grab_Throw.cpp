@@ -50,13 +50,13 @@ namespace {
 
 		PushActorAway(giantHandle.get().get(), tinyHandle.get().get(), 1.0);
 		TaskManager::Run(TaskName, [=](auto& update){
-			if (!gianthandle) {
+			if (!giantHandle) {
 				return false;
 			}
 			if (!tinyHandle) {
 				return false;
 			}
-			Actor* giant = gianthandle.get().get();
+			Actor* giant = giantHandle.get().get();
 			Actor* tiny = tinyHandle.get().get();
 			
 			// Wait for 3D to be ready
