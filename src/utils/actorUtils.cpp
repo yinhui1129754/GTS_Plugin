@@ -2033,7 +2033,7 @@ namespace Gts {
 
 				float Time = (1.0 / Time::GetTimeMultiplier());
 				log::info("Sending Direction: {}", Vector2Str(direction));
-				log::info("Sending Speed: {}, Power. {}, Time: {}", speed, power, time);
+				log::info("Sending Speed: {}, Power. {}, Time: {}", speed, power, Time);
 				log::info("endTime - startTime: {}", endTime - startTime);
 				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 2.0 * power * Time);
 
@@ -2093,7 +2093,7 @@ namespace Gts {
 			RE::NiPoint3 direction = globalForwardVector;
 			double endTime = Time::WorldTimeElapsed();
 
-			if ((endTime - startTime) > 0.08) {
+			if ((endTime - startTime) > 0.05) {
 				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, power);
 				return false;
 			} else {
