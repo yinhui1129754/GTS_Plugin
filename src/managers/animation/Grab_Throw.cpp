@@ -146,6 +146,8 @@ namespace {
 		auto bone = find_node(giant, "NPC L Hand [LHnd]"); 
 		if (bone) {
 			NiPoint3 startCoords = bone->world.translate;
+			NiPoint3 endCoords = NiPoint3();
+
 			double startTime = Time::WorldTimeElapsed();
 			ActorHandle tinyHandle = otherActor->CreateRefHandle();
 			ActorHandle gianthandle = giant->CreateRefHandle();
@@ -161,8 +163,7 @@ namespace {
 				charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fall down.
 			}
 
-			NiPoint3 endCoords = bone->world.translate;
-			// Do this next frame (or rather until some world time has elapsed)
+			// Run task that will actually launch the Tiny
 			TaskManager::Run([=](auto& update){
 				if (!gianthandle) {
 					return false;
@@ -187,8 +188,12 @@ namespace {
 					return true;
 				}
 
-				NiPoint3 endThrow = tiny->GetPosition();
 				double endTime = Time::WorldTimeElapsed();
+				if (endCoords().length() <= 0) {
+					log::info("length is <=0, recording coords: {}", Vector2Str(bone->world.translate));
+					endCoords = bone->world.translate;
+					log::info("new coords: {}", Vector2Str(endCoords));
+				}
 
 				if ((endTime - startTime) >= 0.10) {
 					log::info("Time > 0.10");
@@ -196,7 +201,16 @@ namespace {
 					SetBeingHeld(tiny, false);
 					EnableCollisions(tiny);
 
-					PushTowards(giant, iny, "NPC L Hand [LHnd]", 50, false);
+					NiPoint3 vector = endCoords - startCoords;
+					float distanceTravelled = vector.Length();
+					float timeTaken = endTime - startTime;
+					float speed = distanceTravelled / timeTaken;
+					NiPoint3 direction = vector / vector.Length();
+					// If we pass checks, launch actor instead
+					TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
+					if (tiny_is_object) {
+						ApplyHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 100.0);
+					}
 					return false;
 				} else if ((endTime - startTime) < 0.10) {
 					log::info("Time < 0.10");
