@@ -210,6 +210,7 @@ namespace Gts {
 	void DoDamageEffect(Actor* giant, float damage, float radius, int random, float bonedamage, FootEvent kind, float crushmult, DamageSource Cause);
 
 	void PushTowards(Actor* giantref, Actor* tinyref, std::string_view bone, float power, bool sizecheck);
+	void PushTowards_Task(ActorHandle giantHandle, ActorHandle tinyHandle, NiPoint3 startCoords, NiPoint3 endCoords, std::string_view TaskName, bool sizecheck);
 	void PushTowards(Actor* giantref, Actor* tinyref, NiAVObject* bone, float power, bool sizecheck);
 	void PushForward(Actor* giantref, Actor* tinyref, float power);
 	void TinyCalamityExplosion(Actor* giant, float radius);

@@ -140,7 +140,7 @@ namespace {
 				if (tinyHandle) {
 					double endTime = Time::WorldTimeElapsed();
 					auto tinyref = tinyHandle.get().get();
-					if ((endTime - startTime) > 0.08) {
+					if ((endTime - startTime) > 0.05) {
 						ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, 1.0);
 						return false;
 					}

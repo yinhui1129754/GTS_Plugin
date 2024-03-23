@@ -18,6 +18,7 @@ using namespace RE;
 using namespace Gts;
 
 namespace {
+
 	float GetScareThreshold(Actor* giant) {
 		float threshold = 2.5;
 		if (giant->IsSneaking()) { // If we sneak/prone/crawl = make threshold bigger so it's harder to scare actors
@@ -60,7 +61,7 @@ namespace Gts {
 			eventsource->SendEvent(&event);
 		}
 
-		
+		tiny->InitHavok(); // Hopefully will fix occasional Ragdoll issues
 	}
 
 	// butt crush related things

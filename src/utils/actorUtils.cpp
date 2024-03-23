@@ -1983,33 +1983,25 @@ namespace Gts {
 		}
 	}
 
-	void PushTowards(Actor* giantref, Actor* tinyref, NiAVObject* bone, float power, bool sizecheck) {
-		NiPoint3 startCoords = bone->world.translate;
-		double startTime = Time::WorldTimeElapsed();
-		ActorHandle tinyHandle = tinyref->CreateRefHandle();
-		ActorHandle gianthandle = giantref->CreateRefHandle();
-		PushActorAway(giantref, tinyref, 1);
+	void PushTowards_Task(ActorHandle giantHandle, ActorHandle tinyHandle, NiPoint3 startCoords, NiPoint3 endCoords, std::string_view TaskName, bool sizecheck) {
 
-		std::string name = std::format("PushTowards_{}_{}", giantref->formID, tinyref->formID);
-		// Do this next frame (or rather until some world time has elapsed)
-		TaskManager::Run(name, [=](auto& update){
-			if (!gianthandle) {
+		double startTime = Time::WorldTimeElapsed();
+
+		TaskManager::Run(TaskName, [=](auto& update){
+			if (!giantHandle) {
 				return false;
 			}
 			if (!tinyHandle) {
 				return false;
 			}
-			Actor* giant = gianthandle.get().get();
+			Actor* giant = giantHandle.get().get();
 			Actor* tiny = tinyHandle.get().get();
 			
-
 			NiPoint3 endCoords = bone->world.translate;
 			double endTime = Time::WorldTimeElapsed();
 
-
-			if ((endTime - startTime) > 0.08) {
-				// Time has elapsed
-
+			if ((endTime - startTime) > 0.05) {
+				// Enough time has elapsed
 				NiPoint3 vector = endCoords - startCoords;
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
@@ -2038,16 +2030,38 @@ namespace Gts {
 				}
 
 				float Time = (1.0 / Time::GetTimeMultiplier());
-				// If we pass checks, launch actor instead
+				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 2.0 * power * Time);
 
-				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
-				//if (tiny_is_object) {
-					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 2.0 * power * Time);
-				//}
 				return false;
-			} else {
-				return true;
 			}
+			return true;
+		});
+	}
+
+	void PushTowards(Actor* giantref, Actor* tinyref, NiAVObject* bone, float power, bool sizecheck) {
+		NiPoint3 startCoords = bone->world.translate;
+		
+		ActorHandle tinyHandle = tinyref->CreateRefHandle();
+		ActorHandle giantHandle = giantref->CreateRefHandle();
+
+		PushActorAway(giantref, tinyref, 1);
+
+		std::string name = std::format("PushTowards_{}_{}", giantref->formID, tinyref->formID);
+		std::string TaskName = std::format("PushTowards_Job_{}_{}", giantref->formID, tinyref->formID);
+		// Do this next frame (or rather until some world time has elapsed)
+		TaskManager::Run(name, [=](auto& update){
+			if (!giantHandle) {
+				return false;
+			}
+			if (!tinyHandle) {
+				return false;
+			}
+			
+			NiPoint3 endCoords = bone->world.translate;
+			// Because of delayed nature (and because coordinates become constant once we pass them to TaskManager)
+			// i don't have any better idea than to do it through task + task, don't kill me
+			PushTowards_Task(giantHandle, tinyHandle, startCoords, endCoords, TaskName, sizecheck);
+			return false;
 		});
 	}
 

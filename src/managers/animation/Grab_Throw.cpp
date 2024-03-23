@@ -74,12 +74,12 @@ namespace {
 
 				NiPoint3 direction = NiPoint3();
 				NiPoint3 vector = endCoords - startCoords;
-				float speed = 1200.0; // Standing throw default
+				float speed = 800.0; // Standing throw default
 
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
-					float angle_x = Runtime::GetFloat("cameraAlternateX"); // 10
-					float angle_y = Runtime::GetFloat("cameraAlternateY");//110.0;
+					float angle_x = 10; // Runtime::GetFloat("cameraAlternateX"); // 10
+					float angle_y = 0; // Runtime::GetFloat("cameraAlternateY");//110.0;
 					float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
 
 					// Conversion to radians
@@ -103,10 +103,27 @@ namespace {
 					NiMatrix3 giantRot = giant->GetCurrent3D()->world.rotate;
 					direction = giantRot * (customDirection / customDirection.Length());
 				} else { // Else use normal calculations for the throw
-				    if (IsCrawling(giant)) { // Strongest throw
-						speed = 1800.0;
+				    if (IsCrawling(giant)) { // Strongest throw, needs custom throw direction again
+						speed = 1000.0;
+
+						float angle_x = Runtime::GetFloat("cameraAlternateX"); // 10
+						float angle_y = Runtime::GetFloat("cameraAlternateY");//110.0;
+						float angle_z = Runtime::GetFloat("combatCameraAlternateX"); // 0
+
+						// Conversion to radians
+						const float PI = 3.141592653589793;
+						float angle_x_rad = angle_x * 180.0 / PI;
+						float angle_y_rad = angle_y * 180.0 / PI;
+						float angle_z_rad = angle_z * 180.0 / PI;
+
+						NiMatrix3 customRot = NiMatrix3(angle_x_rad, angle_y_rad, angle_z_rad);
+						NiPoint3 forward = NiPoint3(0.0, 0.0, 1.0);
+						NiPoint3 customDirection = customRot * forward;
+
+						NiMatrix3 giantRot = giant->GetCurrent3D()->world.rotate;
+						direction = giantRot * (customDirection / customDirection.Length());
 					} else {
-						speed = 800.0; // Slight throw
+						speed = 300.0; // Slight Sneak throw
 					}
 					direction = vector / vector.Length();
 				}
