@@ -1439,7 +1439,7 @@ namespace Gts {
 		hkVector4 impulse = hkVector4(afX * Multiplier, afY * Multiplier, afZ * Multiplier, 1.0);
 		log::info("Multiplier: {}", Multiplier);
 
-		if (impulse.Length() < 1e-4) {
+		if (impulse.Length3() < 1e-4) {
 			log::info("Havok prevented, length is invalid");
 			return;
 		}
