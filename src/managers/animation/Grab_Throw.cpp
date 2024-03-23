@@ -143,118 +143,73 @@ namespace {
 		auto giant = &data.giant;
 		auto otherActor = Grab::GetHeldActor(&data.giant);
 
-		NiPoint3 startThrow = otherActor->GetPosition();
-		double startTime = Time::WorldTimeElapsed();
-		ActorHandle tinyHandle = otherActor->CreateRefHandle();
-		ActorHandle gianthandle = giant->CreateRefHandle();
+		auto bone = find_node(giant, "NPC L Hand [LHnd]"); 
+		if (bone) {
+			NiPoint3 startCoords = bone->world.translate;
+			double startTime = Time::WorldTimeElapsed();
+			ActorHandle tinyHandle = otherActor->CreateRefHandle();
+			ActorHandle gianthandle = giant->CreateRefHandle();
 
-		Grab::DetachActorTask(giant);
-		Grab::Release(giant);
+			Grab::DetachActorTask(giant);
+			Grab::Release(giant);
 
-		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
-		giant->SetGraphVariableInt("GTS_Grab_State", 0);
+			giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
+			giant->SetGraphVariableInt("GTS_Grab_State", 0);
 
-		auto charcont = otherActor->GetCharController();
-		if (charcont) {
-			charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fall down.
+			auto charcont = otherActor->GetCharController();
+			if (charcont) {
+				charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fall down.
+			}
+
+			NiPoint3 endCoords = bone->world.translate;
+			// Do this next frame (or rather until some world time has elapsed)
+			TaskManager::Run([=](auto& update){
+				if (!gianthandle) {
+					return false;
+				}
+				if (!tinyHandle) {
+					return false;
+				}
+				Actor* giant = gianthandle.get().get();
+				Actor* tiny = tinyHandle.get().get();
+				
+				// Wait for 3D to be ready
+				if (!giant->Is3DLoaded()) {
+					return true;
+				}
+				if (!giant->GetCurrent3D()) {
+					return true;
+				}
+				if (!tiny->Is3DLoaded()) {
+					return true;
+				}
+				if (!tiny->GetCurrent3D()) {
+					return true;
+				}
+
+				NiPoint3 endThrow = tiny->GetPosition();
+				double endTime = Time::WorldTimeElapsed();
+
+				if ((endTime - startTime) >= 0.10) {
+					log::info("Time > 0.10");
+					// Time has elapsed
+					SetBeingHeld(tiny, false);
+					EnableCollisions(tiny);
+
+					PushTowards(giant, iny, "NPC L Hand [LHnd]", 50, false);
+					return false;
+				} else if ((endTime - startTime) < 0.10) {
+					log::info("Time < 0.10");
+					auto charcont = tiny->GetCharController();
+					if (charcont) {
+						charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
+					}
+					return true;
+				} else {
+					return true;
+				}
+			});
 		}
-
-		// Do this next frame (or rather until some world time has elapsed)
-		TaskManager::Run([=](auto& update){
-			if (!gianthandle) {
-				return false;
-			}
-			if (!tinyHandle) {
-				return false;
-			}
-			Actor* giant = gianthandle.get().get();
-			Actor* tiny = tinyHandle.get().get();
-			
-			// Wait for 3D to be ready
-			if (!giant->Is3DLoaded()) {
-				return true;
-			}
-			if (!giant->GetCurrent3D()) {
-				return true;
-			}
-			if (!tiny->Is3DLoaded()) {
-				return true;
-			}
-			if (!tiny->GetCurrent3D()) {
-				return true;
-			}
-
-			NiPoint3 endThrow = tiny->GetPosition();
-			double endTime = Time::WorldTimeElapsed();
-
-			PushActorAway(giant, tiny, 1);
-
-			if ((endTime - startTime) < 0.05) {
-				auto charcont = tiny->GetCharController();
-				if (charcont) {
-					charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
-				}
-				return true;
-			} else if ((endTime - startTime) > 0.05) {
-				// Time has elapsed
-				SetBeingHeld(tiny, false);
-				EnableCollisions(tiny);
-
-				NiPoint3 vector = endThrow - startThrow;
-				float distanceTravelled = vector.Length();
-				float timeTaken = endTime - startTime;
-				float speed = distanceTravelled / timeTaken;
-				// NiPoint3 direction = vector / vector.Length();
-
-				//Throw_RegisterForThrowDamage(giant, tiny, speed * 12);
-
-				// Angles in degrees
-				// Sermit: Please just adjust these
-
-
-
-				float angle_x = 0;//Runtime::GetFloat("cameraAlternateX"); // 60
-				float angle_y = 10; //Runtime::GetFloat("cameraAlternateY");//10.0;
-				float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
-
-				// Conversion to radians
-				const float PI = 3.141592653589793;
-				float angle_x_rad = angle_x * 180.0 / PI;
-				float angle_y_rad = angle_y * 180.0 / PI;
-				float angle_z_rad = angle_z * 180.0 / PI;
-
-				// Work out direction from angles and an initial (forward) vector;
-				//
-				// If all angles are zero then it goes forward
-				// angle_x is pitch
-				// angle_y is yaw
-				// angle_z is roll
-				//
-				// The order of operation is pitch > yaw > roll
-				NiMatrix3 customRot = NiMatrix3(angle_x_rad, angle_y_rad, angle_z_rad);
-				NiPoint3 forward = NiPoint3(0.0, 0.0, 1.0);
-				NiPoint3 customDirection = customRot * forward;
-
-				// Convert to giant local space
-				// Only use rotation not translaion or scale since those will mess everything up
-				NiMatrix3 giantRot = giant->GetCurrent3D()->world.rotate;
-				NiPoint3 direction = giantRot * (customDirection / customDirection.Length());
-				//log::info("forward : {}", Vector2Str(forward));
-				//log::info("customDirection : {}", Vector2Str(customDirection));
-				//log::info("Direction : {}", Vector2Str(direction));
-				//log::info("Speed: {}", Runtime::GetFloat("cameraAlternateX") * 100);
-
-				//PushActorAway(giant, tiny, direction, speed * 100);
-				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
-				if (tiny_is_object) {
-					ApplyHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 100.0);
-				}
-				//ApplyHavokImpulse(tiny, direction.x, direction.y, direction.z, Runtime::GetFloat("cameraAlternateX") * 100);//speed * 100);
-				return false;
-			} else {
-				return true;
-			}
-		});
 	}
 
 	void GTSGrab_Throw_ThrowActor(AnimationEventData& data) { // Throw frame 1

@@ -2001,8 +2001,10 @@ namespace Gts {
 		ActorHandle tinyHandle = tinyref->CreateRefHandle();
 		ActorHandle gianthandle = giantref->CreateRefHandle();
 		PushActorAway(giantref, tinyref, 1);
+
+		std::string name = std::format("PushTowards_{}_{}", giantref->formID, tinyref->formID);
 		// Do this next frame (or rather until some world time has elapsed)
-		TaskManager::Run([=](auto& update){
+		TaskManager::Run(name, [=](auto& update){
 			if (!gianthandle) {
 				return false;
 			}
