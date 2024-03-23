@@ -69,7 +69,7 @@ namespace {
 
 			double endTime = Time::WorldTimeElapsed();
 
-			if ((endTime - startTime) > 0.08) {
+			if (IsRagdolled(tiny)) {
 				// Time has elapsed
 
 				NiPoint3 direction = NiPoint3();
