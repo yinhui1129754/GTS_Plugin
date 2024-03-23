@@ -133,7 +133,7 @@ namespace Gts {
 			TESPackage* FleeFrom = skyrim_cast<TESPackage*>(Flee_From_Form);
 			if (FleeFrom) {
 				log::info("Flee From: True");
-				tiny->GetActorBase()->aiPackages.packages.push_front(FreeFrom);
+				tiny->GetActorBase()->aiPackages.packages.push_front(FleeFrom);
 				//tiny->PutCreatedPackage(FleeFrom, true, false, true); 
 			}
 		}
