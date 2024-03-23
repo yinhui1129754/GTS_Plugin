@@ -127,7 +127,6 @@ namespace {
 				}
 			}
 			NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
-			float Force = startpower * GetLaunchPower(giant, sizeRatio) * force * power;
 
 			PushActorAway(giant, tiny, 1.0);
 
@@ -142,7 +141,7 @@ namespace {
 					double endTime = Time::WorldTimeElapsed();
 					auto tinyref = tinyHandle.get().get();
 					if ((endTime - startTime) > 0.08) {
-						ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, Force);
+						ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, 1.0);
 						return false;
 					}
 					return true;
