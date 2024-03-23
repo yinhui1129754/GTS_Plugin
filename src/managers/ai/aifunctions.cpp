@@ -133,6 +133,7 @@ namespace Gts {
 			TESPackage* FleeFrom = skyrim_cast<TESPackage*>(Flee_From_Form);
 			if (FleeFrom) {
 				log::info("Flee From: True");
+				tiny->PutCreatedPackage(FleeFrom, true, false, true); 
 			}
 		}
 
@@ -143,7 +144,7 @@ namespace Gts {
 				log::info("Flee To: True");
 			}
 
-			tiny->PutCreatedPackage(FleeTo, true, false, true); 
+			//tiny->PutCreatedPackage(FleeTo, true, false, true); 
 			log::info("Putting existing package");
 		}
 	}
