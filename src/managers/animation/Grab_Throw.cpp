@@ -110,7 +110,7 @@ namespace {
 					NiMatrix3 giantRot = giant->GetCurrent3D()->world.rotate;
 					direction = giantRot * (customDirection / customDirection.Length());
 				} else { // Else use normal calculations for the throw
-					NiPoint3 direction = vector / vector.Length();
+					direction = vector / vector.Length();
 				}
 
 				NiPoint3 vector = endCoords - startCoords;
