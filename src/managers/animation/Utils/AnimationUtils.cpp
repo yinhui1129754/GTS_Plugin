@@ -142,20 +142,17 @@ namespace Gts {
 			}
 		 	case FollowerAnimType::Grab: {
 				for (auto new_gts: FindTeammates()) {
-					log::info("Found Gts: {}", new_gts->GetDisplayFullName());
 					if (IsTeammate(new_gts)) {
 						std::vector<Actor*> FindTiny = Grabs.GetGrabTargetsInFront(new_gts, numberOfPrey);
 						for (auto new_tiny: FindTiny) { 
-							log::info("Found Tiny: {}", new_tiny->GetDisplayFullName());
-								if (new_tiny->formID == 0x14 && Grabs.CanGrab(new_gts, new_tiny)) {
-									log::info("Starting Hug");
-									Grabs.StartGrab(new_gts, new_tiny);
-									ControlAnother(new_gts, false);
-									return;
-								}
+							if (new_tiny->formID == 0x14 && Grabs.CanGrab(new_gts, new_tiny)) {
+								Grabs.StartGrab(new_gts, new_tiny);
+								ControlAnother(new_gts, false);
+								return;
 							}
 						}
 					}
+				}
 				break;	
 			}
 		 	case FollowerAnimType::Vore: {	

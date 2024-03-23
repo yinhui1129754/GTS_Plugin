@@ -116,6 +116,7 @@ namespace {
 				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				//if (tiny_is_object) {
 					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 100);
+					PushActorAway(giant, tiny, 1.0);
 				//}
 				return false;
 			} 
@@ -280,7 +281,7 @@ namespace {
 				SetBeingHeld(tiny, false);
 				EnableCollisions(tiny);
 
-				PushActorAway(giant, tiny, 1.0);
+				//PushActorAway(giant, tiny, 1.0);
 
 				auto charcont = tiny->GetCharController();
 				if (charcont) {
