@@ -1123,7 +1123,7 @@ namespace Gts {
 							//eventually it reaches 100% chance to ragdoll an actor (at ~x3.0 size difference)
 
 							if (difference > 1.35 && (roll || otherActor->IsDead())) {
-								PushTowards(giant, otherActor, node, pushForce * pushpower, true);
+								PushTowards(giant, otherActor, node, pushForce * pushpower * 0.10, true);
 							} else if (difference > 0.88 * Threshold) {
 								float push = std::clamp(0.25f * (difference - 0.25f), 0.25f, 1.0f);
 								StaggerActor(giant, otherActor, push);
