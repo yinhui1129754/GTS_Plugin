@@ -109,13 +109,15 @@ namespace {
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
 				float speed = distanceTravelled / timeTaken;
+
+				direction *= (speed * 100);
 				// Calculate power of throw
 
 				
 				// If we pass checks, launch actor
 				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				//if (tiny_is_object) {
-					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 100);
+					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, 1.0);
 				//}
 				return false;
 			} 

@@ -1467,7 +1467,7 @@ namespace Gts {
 		for (auto bools: {true, false}) {
 			auto collision = target->Get3D(bools)->GetCollisionObject();
 			if (collision) {
-				log::info("Collisin found! : {}", bools);
+				log::info("Collision found! : {}", bools);
 				auto rigidbody = collision->GetRigidBody();
 				if (rigidbody) {
 					log::info("Rigid body found");
