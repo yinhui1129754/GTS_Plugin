@@ -189,7 +189,7 @@ namespace {
 
 				double endTime = Time::WorldTimeElapsed();
 				NiPoint3 endCoords = NiPoint3();
-				if (endCoords.length() <= 0) {
+				if (endCoords.Length() <= 0) {
 					log::info("length is <=0, recording coords: {}", Vector2Str(bone->world.translate));
 					endCoords = bone->world.translate;
 					log::info("new coords: {}", Vector2Str(endCoords));
