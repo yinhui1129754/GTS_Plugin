@@ -130,7 +130,7 @@ namespace Gts {
 		TESForm* Flee_To_Form = TESForm::LookupByID<TESForm>(0x000C7039);
 		if (Flee_From_Form) {
 			log::info("Flee To found!");
-			TESPackage* FleeFrom = skyrim_cast<TESForm*>(Flee_From_Form);
+			TESPackage* FleeFrom = skyrim_cast<TESPackage*>(Flee_From_Form);
 			if (FleeFrom) {
 				log::info("Flee From: True");
 			}
@@ -138,7 +138,7 @@ namespace Gts {
 
 		if (Flee_To_Form) {
 			log::info("Flee From found, trying cast");
-			TESPackage* FleeTo = skyrim_cast<TESForm*>(Flee_To_Form);
+			TESPackage* FleeTo = skyrim_cast<TESPackage*>(Flee_To_Form);
 			if (FleeTo) {
 				log::info("Flee To: True");
 			}
