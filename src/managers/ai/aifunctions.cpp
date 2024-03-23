@@ -126,27 +126,25 @@ namespace Gts {
 
 	void InitiateFlee(Actor* tiny) {
 
-		TESPackage* FleeFrom = nullptr; 
-		TESPackage* FleeTo = nullptr;
-
 		TESForm* Flee_From_Form = TESForm::LookupByID<TESForm>(0x000197F1);
 		TESForm* Flee_To_Form = TESForm::LookupByID<TESForm>(0x000C7039);
 		if (Flee_From_Form) {
 			log::info("Flee To found!");
-			FleeFrom = skyrim_cast<TESForm*>(Flee_From_Form);
+			TESPackage* FleeFrom = skyrim_cast<TESForm*>(Flee_From_Form);
+			if (FleeFrom) {
+				log::info("Flee From: True");
+			}
 		}
 
 		if (Flee_To_Form) {
-			log::info("Flee From found!");
-			FleeTo = skyrim_cast<TESForm*>(Flee_To_Form);
-		}
-		if (FleeTo) {
-			log::info("Flee To does exist");
+			log::info("Flee From found, trying cast");
+			TESPackage* FleeTo = skyrim_cast<TESForm*>(Flee_To_Form);
+			if (FleeTo) {
+				log::info("Flee To: True");
+			}
+
 			tiny->PutCreatedPackage(FleeTo, true, false, true); 
 			log::info("Putting existing package");
-		}
-		if (FleeFrom) {
-			log::info("Flee From does exist");
 		}
 	}
 
