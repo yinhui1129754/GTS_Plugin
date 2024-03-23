@@ -74,7 +74,7 @@ namespace {
 
 				NiPoint3 direction = NiPoint3();
 				NiPoint3 vector = endCoords - startCoords;
-				float speed = 400.0; // Standing throw default
+				float speed = 1200.0; // Standing throw default
 
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
@@ -104,9 +104,9 @@ namespace {
 					direction = giantRot * (customDirection / customDirection.Length());
 				} else { // Else use normal calculations for the throw
 				    if (IsCrawling(giant)) { // Strongest throw
-						speed = 600.0;
+						speed = 1800.0;
 					} else {
-						speed = 180.0; // Slight throw
+						speed = 800.0; // Slight throw
 					}
 					direction = vector / vector.Length();
 				}

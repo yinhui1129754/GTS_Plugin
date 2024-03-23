@@ -7,6 +7,7 @@
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
+#include "ActionSettings.hpp"
 #include "data/transient.hpp"
 #include "utils/looting.hpp"
 #include "data/runtime.hpp"
@@ -287,7 +288,7 @@ namespace Gts {
         MoveItems(giantHandle, tinyHandle, tiny->formID);
 
         Attacked(tiny, giant);
-
+        
         PrintDeathSource(giant, tiny, DamageSource::Collision);
 
         float OldScale;
@@ -318,7 +319,7 @@ namespace Gts {
         giant->GetGraphVariableFloat("GiantessScale", OldScale); // record old slace
         giant->SetGraphVariableFloat("GiantessScale", 1.0); // Needed to allow Stagger to play, else it won't work
 
-        PushForward(giant, tiny, 1000);
+        PushForward(giant, tiny, 800);
         AddSMTDuration(giant, 2.5);
         StaggerActor(giant, 0.5); // play stagger on the player
 
@@ -407,8 +408,10 @@ namespace Gts {
 				}
 
 				if (Collision_AllowTinyCalamityCrush(giant, tiny)) {
+                    StartCombat(tiny, giant);
                     TinyCalamity_ExplodeActor(giant, tiny);
 				} else {
+                    StartCombat(tiny, giant);
                     TinyCalamity_StaggerActor(giant, tiny, giantHp);
 				}
 			}
