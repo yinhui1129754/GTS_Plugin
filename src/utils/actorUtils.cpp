@@ -2434,20 +2434,7 @@ namespace Gts {
 				if (!IsScared) {
 					auto combat = tiny->GetActorRuntimeData().combatController;
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
-					if (!combat) {
-						return;
-					}
-					auto cell = tiny->GetParentCell();
-					if (cell) {
-						auto TinyRef = skyrim_cast<TESObjectREFR*>(tiny);
-						if (TinyRef) {
-							auto GiantRef = skyrim_cast<TESObjectREFR*>(giant);
-							if (GiantRef) {
-								log::info("Scared {}", tiny->GetDisplayFullName());
-								tiny->InitiateFlee(nullptr, false, true, false, nullptr, nullptr, 400.0, 465.0 * sizedifference);
-							}
-						}
-					}
+					InitiateFlee(tiny);
 				}
 			}
 		}
