@@ -1421,7 +1421,7 @@ namespace Gts {
 							}
 							typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
 							REL::Relocation<DefPushActorAway> RealPushActorAway{ RELOCATION_ID(38858, 39895) };
-							RealPushActorAway(ai, receiver, direction, afKnockBackForce);
+							RealPushActorAway(nullptr, receiver, direction, afKnockBackForce);
 						}
 					}
 				}
@@ -1446,7 +1446,7 @@ namespace Gts {
 							log::info("Pushing {} with force of {}", receiver->GetDisplayFullName(), force);
 							typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
 							REL::Relocation<DefPushActorAway> RealPushActorAway{ RELOCATION_ID(38858, 39895) };
-							RealPushActorAway(ai, receiver, direction, force);
+							RealPushActorAway(nullptr, receiver, direction, force);
 						}
 					}
 				}
