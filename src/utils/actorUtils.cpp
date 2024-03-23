@@ -1409,7 +1409,7 @@ namespace Gts {
 		}
 
 		if (source) {
-			auto ai = receiver->GetActorRuntimeData().currentProcess;
+			auto ai = source->GetActorRuntimeData().currentProcess;
 			if (ai) {
 				if (ai->InHighProcess()) {
 					if (receiver->Is3DLoaded()) {
@@ -1435,7 +1435,7 @@ namespace Gts {
 		}
 
 		if (source) {
-			auto ai = receiver->GetActorRuntimeData().currentProcess;
+			auto ai = source->GetActorRuntimeData().currentProcess;
 			if (ai) {
 				if (ai->InHighProcess()) {
 					if (receiver->Is3DLoaded()) {
