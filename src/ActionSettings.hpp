@@ -178,7 +178,7 @@ namespace Gts {
     const float Radius_Crawl_Vore_ButtImpact = 20.0f;
 
     ///////Sneaking
-    const float Radius_Sneak_HandSwipe = 18.0f;
+    const float Radius_Sneak_HandSwipe = 20.0f;
     const float Radius_Sneak_KneeCrush = 16.0f;
     const float Radius_Sneak_HandSlam = 10.0f;
     const float Radius_Sneak_HandSlam_Strong = 10.0f;
@@ -189,7 +189,7 @@ namespace Gts {
     const float Radius_Sneak_FingerGrind_Finisher = 5.0f;
 
     ///////Kicks
-    const float Radius_Kick = 20.0f;
+    const float Radius_Kick = 22.0f;
     /////////////////////////////////////////////////////
 
 }
