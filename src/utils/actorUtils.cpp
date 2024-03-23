@@ -1427,35 +1427,14 @@ namespace Gts {
 		}
 	}
 
-	void PushActorAway(Actor* source, Actor* receiver, NiPoint3 direction, float force) {
-		// Force < 1.0 can introduce weird sliding issues to Actors, not recommended to pass force < 1.0
-		if (receiver->IsDead()) {
-			return;
-		}
-
-		if (source) {
-			auto ai = source->GetActorRuntimeData().currentProcess;
-			if (ai) {
-				if (ai->InHighProcess()) {
-					if (receiver->Is3DLoaded()) {
-						if (source->Is3DLoaded()) {
-							log::info("Pushing {} with force of {}", receiver->GetDisplayFullName(), force);
-							typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
-							REL::Relocation<DefPushActorAway> RealPushActorAway{ RELOCATION_ID(38858, 39895) };
-							RealPushActorAway(ai, receiver, direction, force);
-						}
-					}
-				}
-			}
-		}
-	}
-
 	void KnockAreaEffect(TESObjectREFR* source, float afMagnitude, float afRadius) {
 		CallFunctionOn(source, "ObjectReference", "KnockAreaEffect", afMagnitude, afRadius);
 	}
 	
-	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float afMagnitude) {
-		hkVector4 impulse = hkVector4(afX, afY, afZ, afMagnitude);
+	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float Multiplier) {
+		Multiplier /= Time::GetTimeMultiplier();
+		log::info("Time Multiplier: {}", Time::GetTimeMultiplier());
+		hkVector4 impulse = hkVector4(afX * Multiplier, afY * Multiplier, afZ * Multiplier, 1.0);
 		//auto rbs = GetActorRB(target);
 		/*for (auto body: rbs) {
 			if (body) {
@@ -1474,7 +1453,6 @@ namespace Gts {
 					auto body = rigidbody->AsBhkRigidBody();
 					if (body) {
 						SetLinearImpulse(body, impulse);
-						body->SetAngularImpulse(impulse);
 						log::info("Bdy found, Applying impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
 					}
 				}
@@ -2984,7 +2962,7 @@ namespace Gts {
 	{
 		using func_t = decltype(&SetAngularImpulse);
 		REL::Relocation<func_t> func{ RELOCATION_ID(76262, 78092) };
-		return func(this, a_impulse);
+		return func(body, a_impulse);
 	}
 
 	std::int16_t GetItemCount(InventoryChanges* changes, RE::TESBoundObject* a_obj)

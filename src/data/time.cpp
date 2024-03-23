@@ -25,6 +25,10 @@ namespace Gts {
 		return Time::GetSingleton().framesElapsed;
 	}
 
+	float Time::GetTimeMultiplier() {
+		return (*g_SGTM);
+	}
+
 	void Time::MultiplyGameTime(float modifier) {
 		*g_SGTM = modifier;
 		using func_t = decltype(MultiplyGameTime);

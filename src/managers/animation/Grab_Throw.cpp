@@ -69,7 +69,7 @@ namespace {
 
 			double endTime = Time::WorldTimeElapsed();
 
-			if ((endTime - startTime) >= 0.10) {
+			//if ((endTime - startTime) >= 0.10) {
 				log::info("Time > 0.10");
 				// Time has elapsed
 
@@ -79,8 +79,8 @@ namespace {
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
 					float angle_x = Runtime::GetFloat("cameraAlternateX"); // 60
-					float angle_y = Runtime::GetFloat("cameraAlternateY");//10.0;
-					float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
+					float angle_y = 110;//Runtime::GetFloat("cameraAlternateY");//10.0;
+					float angle_z = 10;//::GetFloat("combatCameraAlternateX"); // 0
 
 					// Conversion to radians
 					const float PI = 3.141592653589793;
@@ -109,19 +109,17 @@ namespace {
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
 				float speed = distanceTravelled / timeTaken;
-
-				direction *= (speed * 100);
 				// Calculate power of throw
 
 				
 				// If we pass checks, launch actor
 				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				//if (tiny_is_object) {
-					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, 1.0);
+					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 30);
 				//}
 				return false;
-			} 
-			return true;
+			//} 
+			//return true;
 		});
 	}
 	

@@ -153,9 +153,8 @@ namespace Gts {
 
 	std::vector<hkpRigidBody*> GetActorRBs(Actor* actor);
 	void PushActorAway(Actor* source, Actor* receiver, float afKnockbackForce);
-	void PushActorAway(Actor* source, Actor* receiver, NiPoint3 direction, float force);
 	void KnockAreaEffect(TESObjectREFR* source, float afMagnitude, float afRadius);
-	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float afMagnitude);
+	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float Multiplier);
 	void ApplyHavokImpulse(TESObjectREFR* target, float afX, float afY, float afZ, float afMagnitude);
 
 	void CompleteDragonQuest(Actor* tiny, bool vore, bool dead);
