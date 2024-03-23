@@ -1440,8 +1440,8 @@ namespace Gts {
 				if (ai->InHighProcess()) {
 					if (receiver->Is3DLoaded()) {
 						if (source->Is3DLoaded()) {
-							if (afKnockBackForce <= 1.0) {
-								afKnockBackForce = 1.0;
+							if (force <= 1.0) {
+								force = 1.0;
 							}
 							log::info("Pushing {} with force of {}", receiver->GetDisplayFullName(), force);
 							typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
