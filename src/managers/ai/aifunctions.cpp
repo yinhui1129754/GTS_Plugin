@@ -143,7 +143,7 @@ namespace Gts {
 			TESPackage* FleeTo = skyrim_cast<TESPackage*>(Flee_To_Form);
 			if (FleeTo) {
 				log::info("Flee To: True");
-				//tiny->GetActorBase().aiPackages.packages.push_front(FreeTo);
+				tiny->GetActorBase().aiPackages.packages.push_front(FreeTo);
 			}
 
 			//tiny->PutCreatedPackage(FleeTo, true, false, true); 
