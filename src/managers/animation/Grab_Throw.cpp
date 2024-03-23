@@ -43,12 +43,6 @@ namespace {
 
 		double startTime = Time::WorldTimeElapsed();
 
-		auto charcont = tinyHandle.get().get()->GetCharController();
-		if (charcont) {
-			charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
-		}
-
-		PushActorAway(giantHandle.get().get(), tinyHandle.get().get(), 1.0);
 		TaskManager::Run(TaskName, [=](auto& update){
 			if (!giantHandle) {
 				return false;
@@ -78,16 +72,14 @@ namespace {
 			if ((endTime - startTime) >= 0.10) {
 				log::info("Time > 0.10");
 				// Time has elapsed
-				SetBeingHeld(tiny, false);
-				EnableCollisions(tiny);
 
 				NiPoint3 direction = NiPoint3();
 				NiPoint3 vector = endCoords - startCoords;
 
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
-					float angle_x = 60;//Runtime::GetFloat("cameraAlternateX"); // 60
-					float angle_y = 10; //Runtime::GetFloat("cameraAlternateY");//10.0;
+					float angle_x = Runtime::GetFloat("cameraAlternateX"); // 60
+					float angle_y = Runtime::GetFloat("cameraAlternateY");//10.0;
 					float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
 
 					// Conversion to radians
@@ -284,8 +276,18 @@ namespace {
 				}
 
 				NiPoint3 endCoords = bone->world.translate;
-				Throw_Actor(gianthandle, tinyhandle, startCoords, endCoords, pass_name);
 
+				SetBeingHeld(tiny, false);
+				EnableCollisions(tiny);
+
+				PushActorAway(giant, tiny, 1.0);
+
+				auto charcont = tiny->GetCharController();
+				if (charcont) {
+					charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
+				}
+				Throw_Actor(gianthandle, tinyhandle, startCoords, endCoords, pass_name);
+				
 				return false;
 				});
 			}
