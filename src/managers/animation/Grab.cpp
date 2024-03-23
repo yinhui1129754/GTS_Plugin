@@ -157,6 +157,8 @@ namespace {
 		if (grabbedActor) {
 			DisableCollisions(grabbedActor, &data.giant);
 			SetBeingHeld(grabbedActor, true);
+
+			StaggerActor(&data.giant, grabbedActor, 100.0f);
 		}
 		StartLHandRumble("GrabL", data.giant, 0.5, 0.10);
 	}

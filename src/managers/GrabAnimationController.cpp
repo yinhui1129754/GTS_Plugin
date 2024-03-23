@@ -166,8 +166,6 @@ namespace Gts {
 			return;
 		}
 
-		StaggerActor(pred, prey, 100.0f);
-
 		float shrinkrate = 0.18;
 
 		if (pred->IsSneaking()) {

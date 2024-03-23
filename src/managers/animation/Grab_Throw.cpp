@@ -81,11 +81,45 @@ namespace {
 				SetBeingHeld(tiny, false);
 				EnableCollisions(tiny);
 
+				NiPoint3 direction = NiPoint3();
+
+				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
+
+					float angle_x = 60;//Runtime::GetFloat("cameraAlternateX"); // 60
+					float angle_y = 10; //Runtime::GetFloat("cameraAlternateY");//10.0;
+					float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
+
+					// Conversion to radians
+					const float PI = 3.141592653589793;
+					float angle_x_rad = angle_x * 180.0 / PI;
+					float angle_y_rad = angle_y * 180.0 / PI;
+					float angle_z_rad = angle_z * 180.0 / PI;
+
+					// Work out direction from angles and an initial (forward) vector;
+					//
+					// If all angles are zero then it goes forward
+					// angle_x is pitch
+					// angle_y is yaw
+					// angle_z is roll
+					//
+					// The order of operation is pitch > yaw > roll
+					NiMatrix3 customRot = NiMatrix3(angle_x_rad, angle_y_rad, angle_z_rad);
+					NiPoint3 forward = NiPoint3(0.0, 0.0, 1.0);
+					NiPoint3 customDirection = customRot * forward;
+
+					NiMatrix3 giantRot = giant->GetCurrent3D()->world.rotate;
+					direction = giantRot * (customDirection / customDirection.Length());
+				} else { // Else use normal calculations for the throw
+					NiPoint3 direction = vector / vector.Length();
+				}
+
 				NiPoint3 vector = endCoords - startCoords;
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
 				float speed = distanceTravelled / timeTaken;
-				NiPoint3 direction = vector / vector.Length();
+				// Calculate power of throw
+
+				
 				// If we pass checks, launch actor instead
 				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				if (tiny_is_object) {
