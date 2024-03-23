@@ -115,7 +115,7 @@ namespace {
 				// If we pass checks, launch actor
 				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				if (tiny_is_object) {
-					ApplyManualHavokImpulse(giant, tiny, direction, speed * 100);
+					ApplyManualHavokImpulse(giant, tiny, direction.x, direction.y, direction.z, speed * 100);
 				}
 				return false;
 			} 

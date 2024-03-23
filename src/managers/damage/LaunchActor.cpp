@@ -147,7 +147,7 @@ namespace {
 					auto tinyref = tinyHandle.get().get();
 					TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tinyref);
 					if (tiny_is_object) {
-						ApplyManualHavokImpulse(tiny_is_object, Push, Force);
+						ApplyManualHavokImpulse(tiny_is_object, Push.x, Push.y, Push.z, Force);
 					}
 				}
 			});

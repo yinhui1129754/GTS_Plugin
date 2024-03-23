@@ -2052,7 +2052,7 @@ namespace Gts {
 
 				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				if (tiny_is_object) {
-					ApplyManualHavokImpulse(tiny_is_object, direction, speed * 2.0 * power);
+					ApplyManualHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 2.0 * power);
 				}
 				return false;
 			} else {
@@ -2089,7 +2089,7 @@ namespace Gts {
 				// Time has elapsed
 				TESObjectREFR* tiny_as_object = skyrim_cast<TESObjectREFR*>(tiny);
 				if (tiny_as_object) {
-					ApplyManualHavokImpulse(tiny_as_object, direction, power);
+					ApplyManualHavokImpulse(tiny_as_object, direction.x, direction.y, direction.z, power);
 				}
 				return false;
 			} else {
