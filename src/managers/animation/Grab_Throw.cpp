@@ -104,11 +104,11 @@ namespace {
 					direction = giantRot * (customDirection / customDirection.Length());
 				} else { // Else use normal calculations for the throw
 				    if (IsCrawling(giant)) { // Strongest throw, needs custom throw direction again
-						speed = 800.0;
+						speed = 700.0;
 
-						float angle_x = Runtime::GetFloat("cameraAlternateX"); // 10
-						float angle_y = Runtime::GetFloat("cameraAlternateY");//0.0;
-						float angle_z = Runtime::GetFloat("combatCameraAlternateX"); // 0
+						float angle_x = 0;//Runtime::GetFloat("cameraAlternateX"); // 0
+						float angle_y = 0.008; // Runtime::GetFloat("cameraAlternateY");//0.008;
+						float angle_z = 0.0;// Runtime::GetFloat("combatCameraAlternateX"); // 0
 
 						// Conversion to radians
 						const float PI = 3.141592653589793;

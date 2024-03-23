@@ -1439,6 +1439,11 @@ namespace Gts {
 		hkVector4 impulse = hkVector4(afX * Multiplier, afY * Multiplier, afZ * Multiplier, 1.0);
 		log::info("Multiplier: {}", Multiplier);
 
+		if (impulse.Length() < 1e-4) {
+			log::info("Havok prevented, length is invalid");
+			return;
+		}
+
 		for (auto bools: {true, false}) {
 			auto collision = target->Get3D(bools)->GetCollisionObject();
 			if (collision) {
@@ -1985,7 +1990,7 @@ namespace Gts {
 		}
 	}
 
-	void PushTowards_Task(ActorHandle giantHandle, ActorHandle tinyHandle, NiPoint3 startCoords, NiPoint3 endCoords, std::string_view TaskName, float power, bool sizecheck) {
+	void PushTowards_Task(ActorHandle giantHandle, ActorHandle tinyHandle, const NiPoint3& startCoords, const NiPoint3& endCoords, std::string_view TaskName, float power, bool sizecheck) {
 
 		double startTime = Time::WorldTimeElapsed();
 
@@ -2003,6 +2008,8 @@ namespace Gts {
 
 			if ((endTime - startTime) > 0.05) {
 				// Enough time has elapsed
+
+				log::info("Received Coords: Start: {}, End: {}", Vector2Str(startCoords), Vector2Str(endCoords));
 				NiPoint3 vector = endCoords - startCoords;
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
@@ -2063,6 +2070,7 @@ namespace Gts {
 			}
 			
 			NiPoint3 endCoords = bone->world.translate;
+			log::info("Passing coords: Start: {}, End: {}", Vector2Str(startCoords), Vector2Str(endCoords));
 			// Because of delayed nature (and because coordinates become constant once we pass them to TaskManager)
 			// i don't have any better idea than to do it through task + task, don't kill me
 			PushTowards_Task(giantHandle, tinyHandle, startCoords, endCoords, TaskName, power, sizecheck);
