@@ -1464,11 +1464,20 @@ namespace Gts {
 		}*/
 
 		//BShkbAnimationGraph -> hkbCharacter -> hkbRagdollDriver -> ragdoll
-
-		auto charcont = target->GetCharController();
-		if (charcont) {
-			charcont->SetLinearVelocityImpl(impulse); // Needed so Actors won't fly forward or somewhere else
-			log::info("Apply impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
+		for (auto bools: {true, false}) {
+			auto collision = target->Get3D(bools)->GetCollisionObject();
+			if (collision) {
+				log::info("Collisin found! : {}", bools);
+				auto rigidbody = collision->GetRigidBody();
+				if (rigidbody) {
+					log::info("Rigid body found");
+					auto body = rigidbody->AsBhkRigidBody();
+					if (body) {
+						SetLinearImpulse(body, impulse);
+						log::info("Bdy found, Applying impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
+					}
+				}
+			}
 		}
 	}
 
