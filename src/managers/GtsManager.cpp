@@ -73,15 +73,6 @@ namespace {
 
 	void FixActorFade(Actor* actor) {
 		auto profiler = Profilers::Profile("Manager: Fade Fix");
-		if (actor->formID == 0x14) {
-			auto ai = actor->GetActorRuntimeData().currentProcess;
-			if (ai) {
-				if (ai->high) {
-					ai->high->fadeState.set(FADE_STATE::kNormal);
-					ai->high->fadeAlpha = 1.0f;
-				}
-			}
-		}
 		if (get_visual_scale(actor) < 1.5) {
 			return;
 		}
