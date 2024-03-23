@@ -1983,7 +1983,7 @@ namespace Gts {
 		}
 	}
 
-	void PushTowards_Task(ActorHandle giantHandle, ActorHandle tinyHandle, NiPoint3 startCoords, NiPoint3 endCoords, std::string_view TaskName, bool sizecheck) {
+	void PushTowards_Task(ActorHandle giantHandle, ActorHandle tinyHandle, NiPoint3 startCoords, NiPoint3 endCoords, std::string_view TaskName, float power, bool sizecheck) {
 
 		double startTime = Time::WorldTimeElapsed();
 
@@ -1997,7 +1997,6 @@ namespace Gts {
 			Actor* giant = giantHandle.get().get();
 			Actor* tiny = tinyHandle.get().get();
 			
-			NiPoint3 endCoords = bone->world.translate;
 			double endTime = Time::WorldTimeElapsed();
 
 			if ((endTime - startTime) > 0.05) {
@@ -2060,7 +2059,7 @@ namespace Gts {
 			NiPoint3 endCoords = bone->world.translate;
 			// Because of delayed nature (and because coordinates become constant once we pass them to TaskManager)
 			// i don't have any better idea than to do it through task + task, don't kill me
-			PushTowards_Task(giantHandle, tinyHandle, startCoords, endCoords, TaskName, sizecheck);
+			PushTowards_Task(giantHandle, tinyHandle, startCoords, endCoords, TaskName, power, sizecheck);
 			return false;
 		});
 	}

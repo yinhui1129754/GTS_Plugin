@@ -79,7 +79,7 @@ namespace {
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
 					float angle_x = 10; // Runtime::GetFloat("cameraAlternateX"); // 10
-					float angle_y = 0; // Runtime::GetFloat("cameraAlternateY");//110.0;
+					float angle_y = 0; // Runtime::GetFloat("cameraAlternateY");//0.0;
 					float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
 
 					// Conversion to radians
@@ -107,7 +107,7 @@ namespace {
 						speed = 1000.0;
 
 						float angle_x = Runtime::GetFloat("cameraAlternateX"); // 10
-						float angle_y = Runtime::GetFloat("cameraAlternateY");//110.0;
+						float angle_y = Runtime::GetFloat("cameraAlternateY");//0.0;
 						float angle_z = Runtime::GetFloat("combatCameraAlternateX"); // 0
 
 						// Conversion to radians
