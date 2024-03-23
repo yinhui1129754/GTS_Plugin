@@ -2058,6 +2058,8 @@ namespace Gts {
 
 		PushActorAway(giantref, tinyref, 1);
 
+		double startTime = Time::WorldTimeElapsed();
+
 		std::string name = std::format("PushTowards_{}_{}", giantref->formID, tinyref->formID);
 		std::string TaskName = std::format("PushTowards_Job_{}_{}", giantref->formID, tinyref->formID);
 		// Do this next frame (or rather until some world time has elapsed)
@@ -2068,13 +2070,28 @@ namespace Gts {
 			if (!tinyHandle) {
 				return false;
 			}
-			
-			NiPoint3 endCoords = bone->world.translate;
-			log::info("Passing coords: Start: {}, End: {}", Vector2Str(startCoords), Vector2Str(endCoords));
-			// Because of delayed nature (and because coordinates become constant once we pass them to TaskManager)
-			// i don't have any better idea than to do it through task + task, don't kill me
-			PushTowards_Task(giantHandle, tinyHandle, startCoords, endCoords, TaskName, power, sizecheck);
-			return false;
+			Actor* giant = gianthandle.get().get();
+
+			if (!giant->Is3DLoaded()) {
+				return true;
+			}
+			if (!giant->GetCurrent3D()) {
+				return true;
+			} 
+
+			double endTime = Time::WorldTimeElapsed();
+
+			if ((endTime - startTime) > 1e-4) {
+
+				NiPoint3 endCoords = bone->world.translate;
+
+				log::info("Passing coords: Start: {}, End: {}", Vector2Str(startCoords), Vector2Str(endCoords));
+				// Because of delayed nature (and because coordinates become constant once we pass them to TaskManager)
+				// i don't have any better idea than to do it through task + task, don't kill me
+				PushTowards_Task(giantHandle, tinyHandle, startCoords, endCoords, TaskName, power, sizecheck);
+				return false;
+			}
+			return true;
 		});
 	}
 
