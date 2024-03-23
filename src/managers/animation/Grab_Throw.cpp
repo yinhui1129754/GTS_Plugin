@@ -69,8 +69,7 @@ namespace {
 
 			double endTime = Time::WorldTimeElapsed();
 
-			//if ((endTime - startTime) >= 0.10) {
-				log::info("Time > 0.10");
+			if ((endTime - startTime) > 1e-4) {
 				// Time has elapsed
 
 				NiPoint3 direction = NiPoint3();
@@ -78,9 +77,9 @@ namespace {
 
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
-					float angle_x = Runtime::GetFloat("cameraAlternateX"); // 60
+					float angle_x = 10; //Runtime::GetFloat("cameraAlternateX"); // 60
 					float angle_y = 110;//Runtime::GetFloat("cameraAlternateY");//10.0;
-					float angle_z = 10;//::GetFloat("combatCameraAlternateX"); // 0
+					float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
 
 					// Conversion to radians
 					const float PI = 3.141592653589793;
@@ -118,8 +117,8 @@ namespace {
 					ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 30);
 				//}
 				return false;
-			//} 
-			//return true;
+			} 
+			return true;
 		});
 	}
 	
@@ -284,7 +283,7 @@ namespace {
 
 				auto charcont = tiny->GetCharController();
 				if (charcont) {
-					charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
+					charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Stop actor moving in space, just in case
 				}
 				Throw_Actor(gianthandle, tinyhandle, startCoords, endCoords, pass_name);
 				

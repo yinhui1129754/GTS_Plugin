@@ -5,7 +5,7 @@ using namespace RE;
 
 namespace {
 	inline static float* g_delta_time = (float*)REL::RelocationID(523660, 410199).address();
-	inline static float* g_SGTM = (float*)RELOCATION_ID(511883, 388443).address();
+	inline static float* g_SGTM = (float*)REL::RelocationID(511883, 388443).address();
 }
 
 namespace Gts {
