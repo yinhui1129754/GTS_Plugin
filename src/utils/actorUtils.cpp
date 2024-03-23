@@ -2545,10 +2545,11 @@ namespace Gts {
 
 	void ShrinkUntil(Actor* giant, Actor* tiny, float expected, float halflife, bool animation) {
 		if (HasSMT(giant)) {
-			float Adjustment = GetSizeFromBoundingBox(tiny);
-			float predscale = get_visual_scale(giant);
-			float preyscale = get_target_scale(tiny) * Adjustment;
-			float targetScale = predscale/expected;
+			float Adjustment_Gts = GetSizeFromBoundingBox(giant);
+			float Adjustment_Tiny = GetSizeFromBoundingBox(tiny);
+			float predscale = get_visual_scale(giant) * Adjustment_Gts;
+			float preyscale = get_target_scale(tiny) * Adjustment_Tiny;
+			float targetScale = predscale/(expected * Adjustment_Tiny);
 
 			if (preyscale > targetScale) { // Apply ONLY if target is bigger than requirement
 
@@ -2562,7 +2563,7 @@ namespace Gts {
 
 				set_target_scale(tiny, targetScale);
 				StartCombat(tiny, giant);
-				AddSMTPenalty(giant, 5.0 * Adjustment);
+				AddSMTPenalty(giant, 5.0 * Adjustment_Tiny);
 			}
 		}
 	}
