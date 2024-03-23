@@ -39,6 +39,67 @@ namespace {
     const std::string_view RNode = "NPC R Foot [Rft ]";
 	const std::string_view LNode = "NPC L Foot [Lft ]";
 
+	void Throw_Actor(ActorHandle gianthandle, ActorHandle tinyHandle, NiPoint3 startCoords, NiPoint3 endCoords, std::string_view TaskName) {
+		
+		double startTime = Time::WorldTimeElapsed();
+		TaskManager::Run(TaskName, [=](auto& update){
+			if (!gianthandle) {
+				return false;
+			}
+			if (!tinyHandle) {
+				return false;
+			}
+			Actor* giant = gianthandle.get().get();
+			Actor* tiny = tinyHandle.get().get();
+			
+			// Wait for 3D to be ready
+			if (!giant->Is3DLoaded()) {
+				return true;
+			}
+			if (!giant->GetCurrent3D()) {
+				return true;
+			}
+			if (!tiny->Is3DLoaded()) {
+				return true;
+			}
+			if (!tiny->GetCurrent3D()) {
+				return true;
+			}
+
+			double endTime = Time::WorldTimeElapsed();
+
+			if ((endTime - startTime) >= 0.10) {
+				log::info("Time > 0.10");
+				// Time has elapsed
+				SetBeingHeld(tiny, false);
+				EnableCollisions(tiny);
+
+				PushActorAway(giant, tiny, 1.0);
+
+				NiPoint3 vector = endCoords - startCoords;
+				float distanceTravelled = vector.Length();
+				float timeTaken = endTime - startTime;
+				float speed = distanceTravelled / timeTaken;
+				NiPoint3 direction = vector / vector.Length();
+				// If we pass checks, launch actor instead
+				TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
+				if (tiny_is_object) {
+					ApplyHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 100.0);
+				}
+				return false;
+			} else if ((endTime - startTime) < 0.10) {
+				log::info("Time < 0.10");
+				auto charcont = tiny->GetCharController();
+				if (charcont) {
+					charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
+				}
+				return true;
+			}
+			return true;
+		});
+	}
+	
+
 	void Throw_DoCollisionDamage(TESObjectREFR* victim_ref, TESObjectREFR* aggressor_ref, float speed) {
 		float damage = speed * Damage_Throw_Collision;
 
@@ -143,36 +204,38 @@ namespace {
 		auto giant = &data.giant;
 		auto otherActor = Grab::GetHeldActor(&data.giant);
 
-		auto bone = find_node(giant, "NPC L Hand [LHnd]"); 
-		if (bone) {
-			NiPoint3 startCoords = bone->world.translate;
-			NiPoint3 endCoords = NiPoint3();
+		Grab::DetachActorTask(giant);
+		Grab::Release(giant);
 
-			double startTime = Time::WorldTimeElapsed();
-			ActorHandle tinyHandle = otherActor->CreateRefHandle();
-			ActorHandle gianthandle = giant->CreateRefHandle();
+		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
+		giant->SetGraphVariableInt("GTS_Grab_State", 0);
 
-			Grab::DetachActorTask(giant);
-			Grab::Release(giant);
-
-			giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
-			giant->SetGraphVariableInt("GTS_Grab_State", 0);
+		if (otherActor) {
 
 			auto charcont = otherActor->GetCharController();
 			if (charcont) {
 				charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fall down.
 			}
 
-			// Run task that will actually launch the Tiny
-			TaskManager::Run([=](auto& update){
+			auto bone = find_node(giant, "NPC L Hand [LHnd]"); 
+			if (bone) {
+				NiPoint3 startCoords = bone->world.translate;
+
+				ActorHandle gianthandle = giant->CreateRefHandle();
+				ActorHandle tinyhandle = otherActor->CreateRefHandle();
+
+				std::string name = std::format("Throw_{}_{}", giant->formID, otherActor->formID);
+				std::string pass_name = std::format("ThrowOther_{}_{}", giant->formID, otherActor->formID);
+				// Run task that will actually launch the Tiny
+				TaskManager::Run(name, [=](auto& update){
 				if (!gianthandle) {
 					return false;
 				}
-				if (!tinyHandle) {
+				if (!tinyhandle) {
 					return false;
 				}
 				Actor* giant = gianthandle.get().get();
-				Actor* tiny = tinyHandle.get().get();
+				Actor* tiny = tinyhandle.get().get();
 				
 				// Wait for 3D to be ready
 				if (!giant->Is3DLoaded()) {
@@ -188,45 +251,15 @@ namespace {
 					return true;
 				}
 
-				double endTime = Time::WorldTimeElapsed();
-				
-				if (endCoords.Length() <= 0) {
-					log::info("length is <=0, recording coords: {}", Vector2Str(bone->world.translate));
-					endCoords += bone->world.translate;
-					log::info("new coords: {}", Vector2Str(endCoords));
-				}
-				if ((endTime - startTime) >= 0.10) {
-					log::info("Time > 0.10");
-					// Time has elapsed
-					SetBeingHeld(tiny, false);
-					EnableCollisions(tiny);
+				NiPoint3 endCoords = bone->world.translate;
+				Throw_Actor(gianthandle, tinyhandle, startCoords, endCoords, pass_name);
 
-					PushActorAway(giant, tiny, 1.0);
-
-					NiPoint3 vector = endCoords - startCoords;
-					float distanceTravelled = vector.Length();
-					float timeTaken = endTime - startTime;
-					float speed = distanceTravelled / timeTaken;
-					NiPoint3 direction = vector / vector.Length();
-					// If we pass checks, launch actor instead
-					TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
-					if (tiny_is_object) {
-						ApplyHavokImpulse(tiny_is_object, direction.x, direction.y, direction.z, speed * 100.0);
-					}
-					return false;
-				} else if ((endTime - startTime) < 0.10) {
-					log::info("Time < 0.10");
-					auto charcont = tiny->GetCharController();
-					if (charcont) {
-						charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
-					}
-					return true;
-				} else {
-					return true;
-				}
-			});
+				return false;
+				});
+			}
 		}
 	}
+	
 
 	void GTSGrab_Throw_ThrowActor(AnimationEventData& data) { // Throw frame 1
 		auto giant = &data.giant;
