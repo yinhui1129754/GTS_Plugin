@@ -70,11 +70,18 @@ namespace {
 			double endTime = Time::WorldTimeElapsed();
 
 			if ((endTime - startTime) > 0.05) {
-				// Time has elapsed
+				// Enough Time has elapsed
+
+				float Scale = get_visual_scale(giant) * GetSizeFromBoundingBox(giant);
+
+				// Calculate power of throw
 
 				NiPoint3 direction = NiPoint3();
 				NiPoint3 vector = endCoords - startCoords;
-				float speed = 800.0; // Standing throw default
+
+				float distanceTravelled = vector.Length();
+				float timeTaken = endTime - startTime;
+				float speed = (distanceTravelled/timeTaken) * 36; // Standing throw default power
 
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
@@ -102,9 +109,9 @@ namespace {
 
 					NiMatrix3 giantRot = giant->GetCurrent3D()->world.rotate;
 					direction = giantRot * (customDirection / customDirection.Length());
-				} else { // Else use normal calculations for the throw
+				} else {
 				    if (IsCrawling(giant)) { // Strongest throw, needs custom throw direction again
-						speed = 700.0;
+						speed *= 0.66; // Hand travels fast so it's a good idea to decrease its power
 
 						float angle_x = 0;//Runtime::GetFloat("cameraAlternateX"); // 0
 						float angle_y = 0.008; // Runtime::GetFloat("cameraAlternateY");//0.008;
@@ -122,19 +129,15 @@ namespace {
 
 						NiMatrix3 giantRot = giant->GetCurrent3D()->world.rotate;
 						direction = giantRot * (customDirection / customDirection.Length());
-					} else {
-						speed = 300.0; // Slight Sneak throw
+					} else { // Else perform Slight Sneak Throw calc
 						direction = vector / vector.Length();
+						speed *= 0.33; // Hand also travels fast and we don't want this anim to feel strong
 					}
 				}
 
-				float distanceTravelled = vector.Length();
-				float timeTaken = endTime - startTime;
-				speed *= get_visual_scale(giant) * GetSizeFromBoundingBox(giant);//distanceTravelled / timeTaken;
-
-				float Time = (1.0 / Time::GetTimeMultiplier());
+				float Time = (1.0 / Time::GetTimeMultiplier()); // read SGTM value and / speed by it, so tinies still fly far even with sgtm 0.15
 				log::info("Time Mult: {}", Time);
-				// Calculate power of throw
+
 
 				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * Time);
 				return false;

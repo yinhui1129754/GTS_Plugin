@@ -1436,6 +1436,8 @@ namespace Gts {
 	}
 	
 	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float Multiplier) {
+		// For this function to work, actor must be pushed away first. 
+		// It may be a good idea to wait about 0.05 sec before callind it after actor has been pushed, else it may not work
 		hkVector4 impulse = hkVector4(afX * Multiplier, afY * Multiplier, afZ * Multiplier, 1.0);
 		log::info("Multiplier: {}", Multiplier);
 

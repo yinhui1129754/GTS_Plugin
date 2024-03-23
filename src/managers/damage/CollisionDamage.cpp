@@ -304,7 +304,7 @@ namespace Gts {
 
 		float damage_result = (damage * size_difference * damagebonus) * (normaldamage * sprintdamage) * (highheelsdamage * weightdamage) * vulnerability;
 
-		TinyCalamity_ShrinkActor(giant, tiny, damage_result);
+		TinyCalamity_ShrinkActor(giant, tiny, damage_result * GetDamageSetting());
 
 		if (giant->IsSneaking()) {
 			damage_result *= 0.70;
