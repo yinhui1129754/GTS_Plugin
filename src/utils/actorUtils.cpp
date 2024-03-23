@@ -1456,10 +1456,22 @@ namespace Gts {
 	
 	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float afMagnitude) {
 		hkVector4 impulse = hkVector4(afX, afY, afZ, afMagnitude);
-		auto rbs = GetActorRB(target);
-		for (auto body: rbs) {
+		//auto rbs = GetActorRB(target);
+		/*for (auto body: rbs) {
 			if (body) {
 				SetLinearImpulse(body, impulse);
+			}
+		}*/
+
+		//BShkbAnimationGraph -> hkbCharacter -> hkbRagdollDriver -> ragdoll
+
+		auto ragDoll = GetRagdoll(target);
+		for (auto rb: ragDoll->rigidBodies) {
+			if (rb) {
+				auto ms = rb->GetMotionState();
+				if (ms) {
+					rb->motion.SetLinearVelocity(impulse);
+				}
 			}
 		}
 	}
