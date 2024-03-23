@@ -280,8 +280,6 @@ namespace {
 				SetBeingHeld(tiny, false);
 				EnableCollisions(tiny);
 
-				PushActorAway(giant, tiny, 1.0);
-
 				auto charcont = tiny->GetCharController();
 				if (charcont) {
 					charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
