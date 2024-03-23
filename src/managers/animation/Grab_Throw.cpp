@@ -146,7 +146,6 @@ namespace {
 		auto bone = find_node(giant, "NPC L Hand [LHnd]"); 
 		if (bone) {
 			NiPoint3 startCoords = bone->world.translate;
-			NiPoint3 endCoords = NiPoint3();
 
 			double startTime = Time::WorldTimeElapsed();
 			ActorHandle tinyHandle = otherActor->CreateRefHandle();
@@ -189,7 +188,8 @@ namespace {
 				}
 
 				double endTime = Time::WorldTimeElapsed();
-				if (endCoords().length() <= 0) {
+				NiPoint3 endCoords = NiPoint3();
+				if (endCoords.length() <= 0) {
 					log::info("length is <=0, recording coords: {}", Vector2Str(bone->world.translate));
 					endCoords = bone->world.translate;
 					log::info("new coords: {}", Vector2Str(endCoords));
