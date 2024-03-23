@@ -115,7 +115,7 @@ namespace {
 				// If we pass checks, launch actor
 				//TESObjectREFR* tiny_is_object = skyrim_cast<TESObjectREFR*>(tiny);
 				//if (tiny_is_object) {
-					PushActorAway(giant, tiny, direction, speed * 100.0);
+					PushActorAway(giant, tiny, direction, speed);
 				//}
 				return false;
 			} 
