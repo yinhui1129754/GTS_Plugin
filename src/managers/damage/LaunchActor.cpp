@@ -134,7 +134,9 @@ namespace {
 				}
 			}
 			NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
-			PushActorAway(giant, tiny, NiPoint3(0,0, Push), push);
+			float Force = startpower * GetLaunchPower(giant, sizeRatio) * force * power;
+			
+			PushActorAway(giant, tiny, Push, Force);
 
 			std::string name = std::format("LaunchOther_{}", tiny->formID);
 
