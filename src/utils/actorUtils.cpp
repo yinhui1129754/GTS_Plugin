@@ -1465,14 +1465,10 @@ namespace Gts {
 
 		//BShkbAnimationGraph -> hkbCharacter -> hkbRagdollDriver -> ragdoll
 
-		auto ragDoll = GetRagdoll(target);
-		for (auto rb: ragDoll->rigidBodies) {
-			if (rb) {
-				auto ms = rb->GetMotionState();
-				if (ms) {
-					rb->motion.SetLinearVelocity(impulse);
-				}
-			}
+		auto charcont = target->GetCharController();
+		if (charcont) {
+			charcont->SetLinearVelocityImpl(impulse); // Needed so Actors won't fly forward or somewhere else
+			log::info("Apply impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
 		}
 	}
 
