@@ -189,7 +189,13 @@ namespace {
 
 			PushActorAway(giant, tiny, 1);
 
-			if ((endTime - startTime) > 0.05) {
+			if ((endTime - startTime) < 0.05) {
+				auto charcont = tiny->GetCharController();
+				if (charcont) {
+					charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fly forward or somewhere else
+				}
+				return true;
+			} else if ((endTime - startTime) > 0.05) {
 				// Time has elapsed
 				SetBeingHeld(tiny, false);
 				EnableCollisions(tiny);
@@ -207,7 +213,7 @@ namespace {
 
 
 
-				float angle_x = 60;//Runtime::GetFloat("cameraAlternateX"); // 60
+				float angle_x = 0;//Runtime::GetFloat("cameraAlternateX"); // 60
 				float angle_y = 10; //Runtime::GetFloat("cameraAlternateY");//10.0;
 				float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
 
