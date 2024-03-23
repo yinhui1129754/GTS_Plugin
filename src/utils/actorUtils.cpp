@@ -1432,9 +1432,9 @@ namespace Gts {
 	}
 	
 	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float Multiplier) {
-		Multiplier /= Time::GetTimeMultiplier();
-		log::info("Time Multiplier: {}", Time::GetTimeMultiplier());
-		hkVector4 impulse = hkVector4(afX * Multiplier, afY * Multiplier, afZ * Multiplier, 1.0);
+		float Time = (1.0 / Time::GetTimeMultiplier());
+		hkVector4 impulse = hkVector4(afX * Multiplier * Time, afY * Multiplier * Time, afZ * Multiplier * Time, 1.0);
+		log::info("Time Multiplier: {}", Time);
 		//auto rbs = GetActorRB(target);
 		/*for (auto body: rbs) {
 			if (body) {
