@@ -36,7 +36,7 @@ namespace {
     void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force, float scale) {
 		const float start_power = 0.4;
 
-		force *= start_power * GetLaunchPower_Object(scale);
+		force *= start_power * GetLaunchPower_Object(scale, true);
 
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			force *= 1.5;
@@ -50,7 +50,7 @@ namespace {
 				if (rigidbody) {
 					auto body = rigidbody->AsBhkRigidBody();
 					if (body) {
-						log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
+						//log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
 						SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
 					}
 				}
@@ -61,16 +61,25 @@ namespace {
 
 
 namespace Gts {
-    float GetLaunchPower_Object(float sizeRatio) {
+    float GetLaunchPower_Object(float sizeRatio, bool Launch) {
 		// https://www.desmos.com/calculator/wh0vwgljfl
-		SoftPotential launch {
-			.k = 1.6,
-			.n = 0.82,
+		if (Launch) {
+			SoftPotential launch {
+				.k = 1.6,
+				.n = 0.62,
+				.s = 0.6,
+				.a = 0.0,
+			};
+			return soft_power(sizeRatio, launch);
+		} else {
+			SoftPotential kick {
+			.k = 1.42,
+			.n = 0.72,
 			.s = 0.6,
 			.a = 0.0,
-		};
-		float power = soft_power(sizeRatio, launch);
-		return power;
+			};
+			return soft_power(sizeRatio, kick);
+		}
 	}
 
     void PushObjectsUpwards(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power) {
@@ -101,7 +110,7 @@ namespace Gts {
                                 float distance = (point - objectlocation).Length();
                                 if (distance <= maxFootDistance) {
                                     float force = 1.0 - distance / maxFootDistance;
-                                    float push = start_power * GetLaunchPower_Object(giantScale) * force * power;
+                                    float push = start_power * GetLaunchPower_Object(giantScale, false) * force * power;
                                     auto Object1 = objectref->Get3D1(false);
                                     if (Object1) {
                                         auto collision = Object1->GetCollisionObject();
@@ -178,7 +187,6 @@ namespace Gts {
 				if (!gianthandle) {
 					return false;
 				}
-				log::info("Starting Push task");
 				auto giantref = gianthandle.get().get();
 				float Finish = Time::WorldTimeElapsed();
 				float timepassed = Finish - Start;
