@@ -57,31 +57,6 @@ namespace {
 		return threshold;
 	}
 
-	void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force) {
-		const float start_power = 0.4;
-
-		force *= start_power * GetLaunchPower_Object(get_visual_scale(giant));
-
-		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
-			force *= 1.5;
-		}
-
-		NiAVObject* Node = object->Get3D1(false);
-		if (Node) {
-			auto collision = Node->GetCollisionObject();
-			if (collision) {
-				auto rigidbody = collision->GetRigidBody();
-				if (rigidbody) {
-					auto body = rigidbody->AsBhkRigidBody();
-					if (body) {
-						log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
-						SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
-					}
-				}
-			}
-		}
-	}
-
 	void ApplyLaunchTo(Actor* giant, Actor* tiny, float force, float launch_power) {
 		auto profiler = Profilers::Profile("Other: Launch Actors Decide");
 		if (IsBeingHeld(giant, tiny)) {

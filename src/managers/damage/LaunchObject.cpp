@@ -33,7 +33,35 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
-    	float GetLaunchPower_Object(float sizeRatio) {
+    void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force, float scale) {
+		const float start_power = 0.4;
+
+		force *= start_power * GetLaunchPower_Object(scale);
+
+		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
+			force *= 1.5;
+		}
+
+		NiAVObject* Node = object->Get3D1(false);
+		if (Node) {
+			auto collision = Node->GetCollisionObject();
+			if (collision) {
+				auto rigidbody = collision->GetRigidBody();
+				if (rigidbody) {
+					auto body = rigidbody->AsBhkRigidBody();
+					if (body) {
+						log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
+						SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
+					}
+				}
+			}
+		}
+	}
+}
+
+
+namespace Gts {
+    float GetLaunchPower_Object(float sizeRatio) {
 		// https://www.desmos.com/calculator/wh0vwgljfl
 		SoftPotential launch {
 			.k = 1.42,
@@ -44,10 +72,7 @@ namespace {
 		float power = soft_power(sizeRatio, launch);
 		return power;
 	}
-}
 
-
-namespace Gts {
     void LaunchObjects(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power) {
 		auto profiler = Profilers::Profile("Other: Launch Objects");
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
@@ -115,7 +140,7 @@ namespace Gts {
 
         if (Kick) { // Offset pos down
             float HH = HighHeelManager::GetHHOffset(giant).Length();
-			NodePosition.z -= HH;
+			point.z -= HH;
 		}
 
 
@@ -154,7 +179,7 @@ namespace Gts {
 
 				if (timepassed > 1e-4) {
 					NiPoint3 EndPos = Bone->world.translate;
-					ApplyPhysicsToObject(giantref, object, EndPos - StartPos, force);
+					ApplyPhysicsToObject(giantref, object, EndPos - StartPos, force, giantScale);
 					return false; // end it
 				}
 				return true;
