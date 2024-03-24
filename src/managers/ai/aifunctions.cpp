@@ -27,7 +27,7 @@ namespace {
     	NiPoint3* rotate = &point;
 
 		NiPoint3 pos = NiPoint3();//tiny->GetPosition();
-		NiPoint3 position = &pos;
+		NiPoint3* position = &pos;
 
 		if (weapon_L) {
 			TESBoundObject* left = weapon_L->As<RE::TESBoundObject>();
