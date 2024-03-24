@@ -215,18 +215,19 @@ namespace Gts {
 
         TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
 
-		RE::TES::GetSingleton()->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR* a_ref) {
-            Actor* IsActor = skyrim_cast<Actor*>(a_ref);
+		RE::TES::GetSingleton()->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
+            bool IsActor = a_ref.Is(FormType::ActorCharacter);
             if (!IsActor) { // we don't want to apply it to actors
-                NiPoint3 objectlocation = a_ref->GetPosition();
+                NiPoint3 objectlocation = a_ref.GetPosition();
                 float distance = (point - objectlocation).Length();
                 if (distance <= maxDistance) {
-                    ObjectRefHandle handle = a_ref->CreateRefHandle();
+                    ObjectRefHandle handle = a_ref.CreateRefHandle();
                     if (handle) {
                         Objects.push_back(handle);
                     }
                 }
             }
+        return RE::BSContainer::ForEachResult::kContinue;    
         });
 
 		return Objects;
