@@ -213,7 +213,7 @@ namespace Gts {
 		std::vector<ObjectRefHandle> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
-		TES::GetSingleton()->ForEachReferenceInRange(giant, maxDistance, ([&]RE::TESObjectREFR& objectref) {
+		TES::GetSingleton()->ForEachReferenceInRange(giant, maxDistance, [&](RE::TESObjectREFR& objectref) {
             if (objectref) {
                 Actor* NonRef = skyrim_cast<Actor*>(objectref);
                 if (!NonRef) { // we don't want to apply it to actors
