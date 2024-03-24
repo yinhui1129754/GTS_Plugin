@@ -130,7 +130,10 @@ namespace Gts {
 		TESForm* Flee_To_Form = TESForm::LookupByID<TESForm>(0x000C7039);
 
 		auto ai = tiny->GetActorRuntimeData().currentProcess;
-
+		if (ai) {
+			ai->ClearMuzzleFlashes();
+			tiny->EvaluatePackage(false, false);
+		}
 		
 
 		if (Flee_From_Form) {
@@ -138,8 +141,9 @@ namespace Gts {
 			TESPackage* FleeFrom = skyrim_cast<TESPackage*>(Flee_From_Form);
 			if (FleeFrom) {
 				log::info("Flee From: True");
-				//tiny->GetActorBase()->aiPackages.packages.push_front(FleeFrom);
-				tiny->PutCreatedPackage(FleeFrom, true, false, true); 
+				tiny->GetActorBase()->aiPackages.packages.push_front(FleeFrom);
+				//tiny->PutCreatedPackage(FleeFrom, true, false, true); 
+				log::info("Package Name: {}", FleeFrom->GetObjectTypeName());
 			}
 		}
 
@@ -148,20 +152,15 @@ namespace Gts {
 			TESPackage* FleeTo = skyrim_cast<TESPackage*>(Flee_To_Form);
 			if (FleeTo) {
 				log::info("Flee To: True");
-				//tiny->GetActorBase()->aiPackages.packages.push_front(FleeTo);
-				tiny->PutCreatedPackage(FleeTo, true, false, true); 
+				tiny->GetActorBase()->aiPackages.packages.push_front(FleeTo);
+				//tiny->PutCreatedPackage(FleeTo, true, false, true); 
+				log::info("Package Name: {}", FleeFrom->GetObjectTypeName());
 			}
 
 			//tiny->EvaluatePackage(false, false);
 			//tiny->PutCreatedPackage(FleeTo, true, false, true); 
 			log::info("Putting existing package");
 		}
-
-		if (ai) {
-			ai->ClearMuzzleFlashes();
-			tiny->EvaluatePackage(false, false);
-		}
-
 	}
 
 	void ScareActors(Actor* giant) {
