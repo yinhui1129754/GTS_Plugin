@@ -556,7 +556,7 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
-		NiPoint3 point = node->world.translate;
+		NiPoint3 point = Bone->world.translate;
 		float maxDistance = radius * giantScale;
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
@@ -607,13 +607,13 @@ namespace Gts {
 			for (auto object: refs) {
 				if (object) {
 					objectRef = Object.get().get();
-					LauchActor::GetSingleton().PushObjectsTowards(giant, object, Bone, power);
+					LaunchActor::GetSingleton().PushObjectsTowards(giant, object, Bone, power);
 				}
 			}
 		}
 	}
 
-	LaunchActor::std::vector<ObjectRefHandle> GetNearbyObjects(Actor* giant) {
+	std::vector<ObjectRefHandle> LaunchActor::GetNearbyObjects(Actor* giant) {
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
 		if (!AllowLaunch) {
 			return {};
