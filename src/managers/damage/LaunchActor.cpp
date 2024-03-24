@@ -606,8 +606,8 @@ namespace Gts {
 		if (refs.size() > 0) {
 			for (auto object: refs) {
 				if (object) {
-					objectRef = Object.get().get();
-					LaunchActor::GetSingleton().PushObjectsTowards(giant, object, Bone, power, radius);
+					TESObjectREFR* objectRef = Object.get().get();
+					LaunchActor::GetSingleton().PushObjectsTowards(giant, object, bone, power, radius);
 				}
 			}
 		}
