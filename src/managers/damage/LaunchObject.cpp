@@ -154,22 +154,28 @@ namespace Gts {
 			point.z -= HH * 0.7;
 		}
 
-
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
 			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 200, {0.5, 0.0, 0.5, 1.0});
 		}
 
+		int nodeCollisions = 0;
 		float force = 0.25;
 
-        float distance = (point - object->GetPosition()).Length();
+		VisitNodes(object->Get3D1(false), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
+			float distance = (point - a_obj.world.translate).Length();
+			if (distance < maxDistance) {
+				nodeCollisions += 1;
+				return false;
+			}
+			return true;
+		});
 
-		if (distance < maxDistance) {
+		if (nodeCollisions > 0) {
 			float Start = Time::WorldTimeElapsed();
-
-            NiPoint3 StartPos = Bone->world.translate;
 			ActorHandle gianthandle = giant->CreateRefHandle();
-
 			std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
+
+			NiPoint3 StartPos = Bone->world.translate;
 
 			TaskManager::Run(name, [=](auto& progressData) {
 				if (!gianthandle) {

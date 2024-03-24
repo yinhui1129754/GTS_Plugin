@@ -18,36 +18,6 @@ using namespace RE;
 using namespace Gts;
 
 namespace {
-
-	void DropWeapon(Actor* tiny) {
-		TESForm* weapon_L = tiny->GetEquippedObject(true);
-		TESForm* weapon_R = tiny->GetEquippedObject(false);
-
-		NiPoint3 point = NiPoint3();
-    	NiPoint3* rotate = &point;
-
-		NiPoint3 pos = NiPoint3();//tiny->GetPosition();
-		NiPoint3* position = &pos;
-
-				
-		if (weapon_L) {
-			TESBoundObject* left = weapon_L->As<RE::TESBoundObject>();
-			log::info("Seeking for left");
-			if (left) {
-				log::info("Dropping weapon L");
-				tiny->RemoveItem(left, 1.0, ITEM_REMOVE_REASON::kDropping, nullptr, nullptr, position, rotate);
-			}
-		}
-		if (weapon_R) {
-			TESBoundObject* right = weapon_R->As<RE::TESBoundObject>();
-			log::info("Seeking for right");
-			if (right) {
-				log::info("Dropping weapon R");
-				tiny->RemoveItem(right, 1.0, ITEM_REMOVE_REASON::kDropping, nullptr, nullptr, position, rotate);
-			}
-		}
-	}
-
 	float GetScareThreshold(Actor* giant) {
 		float threshold = 2.5;
 		if (giant->IsSneaking()) { // If we sneak/prone/crawl = make threshold bigger so it's harder to scare actors
@@ -174,14 +144,15 @@ namespace Gts {
 				return false;
 			}
 			float Finish = Time::WorldTimeElapsed();
+
 			auto tinyRef = tinyHandle.get().get();
+			auto giantRef = giantHandle.get().get();
 
 			float timepassed = Finish - Start;
 			if (IsMoving(tinyRef)) {
 				int FallChance = rand() % 1600;
-				if (FallChance <= 120 && !IsRagdolled(tinyRef)) {
-					PushActorAway(tinyRef, tinyRef, 1.0);
-					DropWeapon(tinyRef);
+				if (FallChance <= 2 && !IsRagdolled(tinyRef)) {
+					PushActorAway(giantRef, tinyRef, 1.0);
 				}
 			}
 			
