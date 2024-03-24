@@ -19,31 +19,13 @@ using namespace Gts;
 
 namespace {
 
-	void DropWeapon(Actor* tiny) {
-		TESForm* weapon_L = tiny->GetEquippedObject(true);
-		TESForm* weapon_R = tiny->GetEquippedObject(false);
-
-		NiPoint3 point = NiPoint3();
-    	NiPoint3* rotate = &point;
-
-		NiPoint3 pos = NiPoint3();//tiny->GetPosition();
-		NiPoint3* position = &pos;
-
-		if (weapon_L) {
-			TESBoundObject* left = weapon_L->As<RE::TESBoundObject>();
-			log::info("Seeking for left");
-			if (left) {
-				log::info("Dropping weapon L");
-				tiny->DropObject(left, nullptr, 1.0, position, rotate);
-			}
-		}
-		if (weapon_R) {
-			TESBoundObject* right = weapon_R->As<RE::TESBoundObject>();
-			log::info("Seeking for right");
-			if (right) {
-				log::info("Dropping weapon R");
-				tiny->DropObject(right, nullptr, 1.0, position, rotate);
-			}
+	void DropWeapon(Actor* giant, Actor* tiny) {
+		auto* eventsource = ScriptEventSourceHolder::GetSingleton();
+		if (eventsource) {
+			auto event = DisarmedEvent();
+			event.source = giant;
+			event.target = tiny;
+			eventsource->SendEvent(&event);
 		}
 	}
 
@@ -159,6 +141,7 @@ namespace Gts {
 		float Start = Time::WorldTimeElapsed();
 		std::string name = std::format("ScareAway_{}", tiny->formID);
 		ActorHandle tinyHandle = tiny->CreateRefHandle();
+		ActorHandle giantHandle = giant->CreateRefHandle();
 
 		duration *= GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
 
@@ -168,15 +151,18 @@ namespace Gts {
 			if (!tinyHandle) {
 				return false;
 			}
+			if (!giantHandle) {
+				return false;
+			}
 			float Finish = Time::WorldTimeElapsed();
 			auto tinyRef = tinyHandle.get().get();
 
 			float timepassed = Finish - Start;
-			if (IsMoving(tiny)) {
+			if (IsMoving(tinyRef)) {
 				int FallChance = rand() % 1600;
-				if (FallChance <= 120 && !IsRagdolled(tiny)) {
-					PushActorAway(tiny, tiny, 1.0);
-					DropWeapon(tiny);
+				if (FallChance <= 120 && !IsRagdolled(tinyRef)) {
+					PushActorAway(tinyRef, tinyRef, 1.0);
+					DropWeapon(tinyRef);
 				}
 			}
 			
