@@ -129,12 +129,11 @@ namespace Gts {
 		TESForm* Flee_From_Form = TESForm::LookupByID<TESForm>(0x000197F1);
 		TESForm* Flee_To_Form = TESForm::LookupByID<TESForm>(0x000C7039);
 
-		float packages = 0.0;
+		auto ai = tiny->GetActorRuntimeData().currentProcess;
 
-		for (auto Packages: tiny->GetActorBase()->aiPackages.packages) {
-			log::info("Found PAckages: {}", Packages->formID);
-			packages += 1;
-			log::info("Packages: {}", packages);
+		if (ai) {
+			ai->ClearMuzzleFlashes();
+			tiny->EvaluatePackage(false, false);
 		}
 
 		if (Flee_From_Form) {
@@ -156,17 +155,11 @@ namespace Gts {
 				tiny->PutCreatedPackage(FleeTo, true, false, true); 
 			}
 
-
-			tiny->EvaluatePackage(true, true);
+			//tiny->EvaluatePackage(false, false);
 			//tiny->PutCreatedPackage(FleeTo, true, false, true); 
 			log::info("Putting existing package");
 		}
-		packages = 0.0;
-		for (auto Packages_After: tiny->GetActorBase()->aiPackages.packages) {
-			log::info("Found Packages After: {}", Packages_After->formID);
-			packages += 1;
-			log::info("New Packages: {}", packages);
-		}
+
 	}
 
 	void ScareActors(Actor* giant) {
