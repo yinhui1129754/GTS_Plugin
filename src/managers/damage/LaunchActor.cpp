@@ -602,12 +602,12 @@ namespace Gts {
 		}
 	}
 
-	void LaunchActor::PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone) { // Another way to do it
+	void LaunchActor::PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power) { // Another way to do it
 		if (refs.size() > 0) {
 			for (auto object: refs) {
 				if (object) {
 					objectRef = Object.get().get();
-					ApplyPhysicsToObject(giant, objectRef, bone);
+					LauchActor::GetSingleton().PushObjectsTowards(giant, object, Bone, power);
 				}
 			}
 		}

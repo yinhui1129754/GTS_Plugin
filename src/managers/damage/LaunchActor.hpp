@@ -32,7 +32,7 @@ namespace Gts {
 			void LaunchRight(Actor* giant, float radius, float power);
 
 			static void PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power);
-			void PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone);
+			void PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power);
 			std::vector<ObjectRefHandle> GetNearbyObjects(Actor* giant);
 	};
 }
