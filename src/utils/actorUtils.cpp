@@ -2433,6 +2433,9 @@ namespace Gts {
 				log::info("Allow: {}", IsScared);
 				if (!IsScared && GetAV(tiny, ActorValue::kConfidence) > 0) {
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
+					if (IsMoving(tiny)) {
+						PushActorAway(giant, tiny, 1.0);
+					}
 					ForceFlee(giant, tiny, 2.0);
 				}
 			}
