@@ -68,7 +68,7 @@ namespace {
 		return power;
 	}
 
-	std::vector<TESObjectREFR*> GetNearbyObjects(Actor* giant, std::vector<NiPoint3> footPoints, float maxDistance) {
+	std::vector<TESObjectREFR*> GetNearbyObjects(Actor* giant, NiPoint3 point, float maxDistance) {
 		auto cell = giant->GetParentCell();
 		float giantScale = get_visual_scale(giant);
 
@@ -82,11 +82,9 @@ namespace {
 					Actor* NonRef = skyrim_cast<Actor*>(objectref);
 					if (!NonRef) { // we don't want to apply it to actors
 						NiPoint3 objectlocation = objectref->GetPosition();
-						for (auto point: footPoints) {
-							float distance = (point - objectlocation).Length();
-							if (distance <= maxFootDistance) {
-								Objects.push_back(object);
-							}
+						float distance = (point - objectlocation).Length();
+						if (distance <= maxDistance) {
+							Objects.push_back(object);
 						}
 					}
 				}
@@ -105,9 +103,9 @@ namespace {
 			force *= 1.5;
 		}
 
-		auto Object1 = objectref->Get3D1(false);
-		if (Object1) {
-			auto collision = Object1->GetCollisionObject();
+		NiAVObject* Node = object->Get3D1(false);
+		if (Node) {
+			auto collision = Node->GetCollisionObject();
 			if (collision) {
 				auto rigidbody = collision->GetRigidBody();
 				if (rigidbody) {
@@ -571,7 +569,7 @@ namespace Gts {
 		}
 	}
 
-	void LaunchActor::PushObjectsTowards(Actor* giant, NiAVObject* Bone, std::vector<NiPoint3> footPoints, float maxFootDistance, float power) {
+	void LaunchActor::PushObjectsTowards(Actor* giant, NiAVObject* Bone, NiPoint3 point, float maxDistance, float power) {
 		auto profiler = Profilers::Profile("Other: Launch Objects");
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
 		if (!AllowLaunch) {
@@ -584,15 +582,15 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
+		float CheckDistance = 220 * giantScale;
+
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-			for (auto point: footPoints) {
-				DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 200, {0.5, 0.0, 0.5, 1.0});
-			}
+			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 200, {0.5, 0.0, 0.5, 1.0});
 		}
 
 		if (cell) {
-			auto data = cell->GetRuntimeData();
-			for (auto object: GetNearbyObjects(giant, footPoints, maxFootDistance)) {
+
+			for (auto object: GetNearbyObjects(giant, point, CheckDistance)) {
 				
 				log::info("Seeking Nearbly objects");
 				int nodeCollisions = 0;

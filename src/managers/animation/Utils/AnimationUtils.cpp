@@ -1063,11 +1063,13 @@ namespace Gts {
 			SMT = true; // set SMT to true
 		}
 
-		LaunchActor::PushObjectsTowards(giant, node, node->world.translate, radius, pushpower);
+		
 
 		NiPoint3 NodePosition = node->world.translate;
 		float maxDistance = radius * giantScale;
 		float CheckDistance = 220 * giantScale;
+
+		LaunchActor::PushObjectsTowards(giant, node, NodePosition, maxDistance, pushpower);
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || giant->IsPlayerTeammate() || Runtime::InFaction(giant, "FollowerFaction"))) {
 			DebugAPI::DrawSphere(glm::vec3(NodePosition.x, NodePosition.y, NodePosition.z), maxDistance, 400.0);
