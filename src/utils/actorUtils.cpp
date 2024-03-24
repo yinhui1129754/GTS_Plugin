@@ -2424,7 +2424,8 @@ namespace Gts {
 	void ChanceToScare(Actor* giant, Actor* tiny) {
 		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
 		if (sizedifference > 1.25 && !tiny->IsDead()) {
-			int rng = rand() % (1000 / sizedifference);
+			int rng = rand() % 1000;
+			rng /= sizedifference;
 			if (rng <= 1.0 * sizedifference) {
 				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
 				if (!IsScared && GetAV(tiny, ActorValue::kConfidence) > 0) {
