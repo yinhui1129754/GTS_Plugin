@@ -23,7 +23,7 @@ namespace {
 		TESBoundObject* weapon_L = tiny->GetEquippedObject(true)->As<RE::TESBoundObject>();
 		TESBoundObject* weapon_R = tiny->GetEquippedObject(false)->As<RE::TESBoundObject>();
 
-		NiPoint3& coords = NiPoint3(0.0, 0.0, 0.0);
+		NiPoint3& coords = NiPoint3();
 
 		if (weapon_L) {
 			log::info("Dropping weapon L");
