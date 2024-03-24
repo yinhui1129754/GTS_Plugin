@@ -19,6 +19,20 @@ using namespace Gts;
 
 namespace {
 
+	void DropWeapon(Actor* tiny) {
+		TESBoundObject* weapon_L = tiny->GetEquippedObject(true)->As<RE::TESBoundObject>();
+		TESBoundObject* weapon_R = tiny->GetEquippedObject(false)->As<RE::TESBoundObject>();
+
+		if (weapon_L) {
+			log::info("Dropping weapon L");
+			tiny->DropObject(weapon_L, nullptr, 1.0, NiPoint3(), NiPoint3());
+		}
+		if (weapon_r) {
+			log::info("Dropping weapon R");
+			tiny->DropObject(weapon_R, nullptr, 1.0, NiPoint3(), NiPoint3());
+		}
+	}
+
 	float GetScareThreshold(Actor* giant) {
 		float threshold = 2.5;
 		if (giant->IsSneaking()) { // If we sneak/prone/crawl = make threshold bigger so it's harder to scare actors
@@ -145,8 +159,9 @@ namespace Gts {
 			float timepassed = Finish - Start;
 			if (IsMoving(tiny)) {
 				int FallChance = rand() % 1600;
-				if (FallChance <= 4 && !IsRagdolled(tiny)) {
+				if (FallChance <= 120 && !IsRagdolled(tiny)) {
 					PushActorAway(tiny, tiny, 1.0);
+					DropWeapon(tiny);
 				}
 			}
 			
