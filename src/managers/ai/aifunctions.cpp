@@ -124,7 +124,7 @@ namespace Gts {
 		}
 	}
 
-	void InitiateFlee(Actor* tiny) {
+	void InitiateFlee(Actor* tiny) { // Doesn't work sadly, both methods can't scare actors to run away from gts
 
 		TESForm* Flee_From_Form = TESForm::LookupByID<TESForm>(0x000197F1);
 		TESForm* Flee_To_Form = TESForm::LookupByID<TESForm>(0x000C7039);
@@ -133,7 +133,8 @@ namespace Gts {
 			TESPackage* FleeFrom = skyrim_cast<TESPackage*>(Flee_From_Form);
 			if (FleeFrom) {
 				log::info("Flee From: True");
-				tiny->PutCreatedPackage(FleeFrom, true, true, true); 
+				tiny->GetActorBase()->aiPackages.packages.push_front(FleeFrom);
+				//tiny->PutCreatedPackage(FleeFrom, true, false, true); 
 			}
 		}
 
@@ -142,8 +143,13 @@ namespace Gts {
 			TESPackage* FleeTo = skyrim_cast<TESPackage*>(Flee_To_Form);
 			if (FleeTo) {
 				log::info("Flee To: True");
-				tiny->PutCreatedPackage(FleeTo, true, true, true); 
+				tiny->GetActorBase()->aiPackages.packages.push_front(FleeTo);
 			}
+
+
+			tiny->EvaluatePackage(true, true);
+			//tiny->PutCreatedPackage(FleeTo, true, false, true); 
+			log::info("Putting existing package");
 		}
 	}
 
