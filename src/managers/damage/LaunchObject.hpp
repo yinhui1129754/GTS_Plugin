@@ -14,7 +14,7 @@ using namespace RE;
 // Module for accurate size-related damage
 
 namespace Gts {
-        float GetLaunchPower_Object(float sizeRatio);
+        float GetLaunchPower_Object(float sizeRatio, bool Launch);
         
         void PushObjectsUpwards(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power);
         void PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power, float radius, bool Kick);
