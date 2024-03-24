@@ -19,13 +19,45 @@ using namespace Gts;
 
 namespace {
 
-	void DropWeapon(Actor* giant, Actor* tiny) {
-		auto* eventsource = ScriptEventSourceHolder::GetSingleton();
-		if (eventsource) {
-			auto event = DisarmedEvent();
-			event.source = giant;
-			event.target = tiny;
-			eventsource->SendEvent(&event);
+	void DropWeapon(Actor* tiny) {
+		TESForm* weapon_L = tiny->GetEquippedObject(true);
+		TESForm* weapon_R = tiny->GetEquippedObject(false);
+
+		NiPoint3 point = NiPoint3();
+    	NiPoint3* rotate = &point;
+
+		NiPoint3 pos = NiPoint3();//tiny->GetPosition();
+		NiPoint3* position = &pos;
+
+		auto ai = tiny->GetActorRuntimeData().currentProcess;
+		if (ai) {
+			if (ai->middleHigh) {
+				QueuedItem* Item = ai->middleHigh.itemstoEquipUnequip;
+				log::info("Seeking for item");
+				if (Item) {
+					log::info("Seeking for ExtraData");
+					ExtraDataList* Data = Item.equipParams.equipParams;
+					if (Data) {
+						log::info("Data found");
+						if (weapon_L) {
+							TESBoundObject* left = weapon_L->As<RE::TESBoundObject>();
+							log::info("Seeking for left");
+							if (left) {
+								log::info("Dropping weapon L");
+								tiny->DropObject(left, Data, 1.0, position, rotate);
+							}
+						}
+						if (weapon_R) {
+							TESBoundObject* right = weapon_R->As<RE::TESBoundObject>();
+							log::info("Seeking for right");
+							if (right) {
+								log::info("Dropping weapon R");
+								tiny->DropObject(right, Data, 1.0, position, rotate);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
