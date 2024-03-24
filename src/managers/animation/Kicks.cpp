@@ -2,6 +2,7 @@
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/emotions/EmotionManager.hpp"
 #include "managers/damage/CollisionDamage.hpp"
+#include "managers/damage/LaunchObject.hpp"
 #include "managers/damage/LaunchActor.hpp"
 #include "managers/animation/Kicks.hpp"
 #include "managers/GtsSizeManager.hpp"
@@ -44,7 +45,7 @@ namespace {
 			auto Leg = find_node(giant, node);
 			if (Leg) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, DamageSource::KickedLeft);
-				LaunchActor::GetSingleton().PushObjects(Objects, giant, Leg, pushpower, Radius_Kick);
+				LaunchActor::GetSingleton().PushObjects(Objects, giant, Leg, pushpower, Radius_Kick, true);
 			}
 			return true;
 		});
@@ -64,7 +65,7 @@ namespace {
 			auto Leg = find_node(giant, node);
 			if (Leg) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, DamageSource::KickedRight);
-				LaunchActor::GetSingleton().PushObjects(Objects, giant, Leg, pushpower, Radius_Kick);
+				LaunchActor::GetSingleton().PushObjects(Objects, giant, Leg, pushpower, Radius_Kick, true);
 			}
 			return true;
 		});

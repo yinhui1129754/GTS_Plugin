@@ -1063,9 +1063,14 @@ namespace Gts {
 			SMT = true; // set SMT to true
 		}
 
-		
-
 		NiPoint3 NodePosition = node->world.translate;
+
+		if (Cause == DamageSource::KickedLeft || Cause == DamageSource::KickedRight) {
+			// Apply Down offset in that case
+			float HH = HighHeelManager::GetHHOffset(giant);
+			NodePosition.z -= HH;
+		}
+
 		float maxDistance = radius * giantScale;
 		float CheckDistance = 220 * giantScale;
 

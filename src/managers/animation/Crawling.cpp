@@ -2,6 +2,7 @@
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/animation/Utils/CrawlUtils.hpp"
 #include "managers/damage/CollisionDamage.hpp"
+#include "managers/damage/LaunchObject.hpp"
 #include "managers/damage/LaunchActor.hpp"
 #include "managers/animation/Crawling.hpp"
 #include "managers/GtsSizeManager.hpp"
@@ -151,7 +152,7 @@ namespace {
 		std::string name = std::format("HandCollide_R_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
 
-		std::vector<ObjectRefHandle> Objects = LaunchActor::GetSingleton().GetNearbyObjects(actor);
+		std::vector<ObjectRefHandle> Objects = GetNearbyObjects(actor);
 
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
@@ -162,11 +163,11 @@ namespace {
 			auto Arm = find_node(giant, "NPC R Hand [RHnd]");
 			if (Uarm) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Uarm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeRight);
-				LaunchActor::GetSingleton().PushObjects(Objects, giant, Uarm, pushpower, Radius_Sneak_HandSwipe);
+				PushObjects(Objects, giant, Uarm, pushpower, Radius_Sneak_HandSwipe, false);
 			}
 			if (Arm) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Arm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeRight);
-				LaunchActor::GetSingleton().PushObjects(Objects, giant, Arm, pushpower, Radius_Sneak_HandSwipe);
+				PushObjects(Objects, giant, Arm, pushpower, Radius_Sneak_HandSwipe, false);
 			}
 			return true;
 		});
@@ -176,7 +177,7 @@ namespace {
 		std::string name = std::format("HandCollide_L_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
 
-		std::vector<ObjectRefHandle> Objects = LaunchActor::GetSingleton().GetNearbyObjects(actor);
+		std::vector<ObjectRefHandle> Objects = GetNearbyObjects(actor);
 
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
@@ -187,11 +188,11 @@ namespace {
 			auto Arm = find_node(giant, "NPC L Hand [LHnd]");
 			if (Uarm) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Uarm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeLeft);
-				LaunchActor::GetSingleton().PushObjects(Objects, giant, Uarm, pushpower, Radius_Sneak_HandSwipe);
+				PushObjects(Objects, giant, Uarm, pushpower, Radius_Sneak_HandSwipe, false);
 			}
 			if (Arm) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Arm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeLeft);
-				LaunchActor::GetSingleton().PushObjects(Objects, giant, Arm, pushpower, Radius_Sneak_HandSwipe);
+				PushObjects(Objects, giant, Arm, pushpower, Radius_Sneak_HandSwipe, false);
 			}
 			return true;
 		});
