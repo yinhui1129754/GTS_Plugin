@@ -34,7 +34,7 @@ namespace {
 			log::info("Seeking for left");
 			if (left) {
 				log::info("Dropping weapon L");
-				tiny->DropObject(weapon_L, nullptr, 1.0, position, rotate);
+				tiny->DropObject(left, nullptr, 1.0, position, rotate);
 			}
 		}
 		if (weapon_R) {
@@ -42,7 +42,7 @@ namespace {
 			log::info("Seeking for right");
 			if (right) {
 				log::info("Dropping weapon R");
-				tiny->DropObject(weapon_R, nullptr, 1.0, position, rotate);
+				tiny->DropObject(right, nullptr, 1.0, position, rotate);
 			}
 		}
 	}
