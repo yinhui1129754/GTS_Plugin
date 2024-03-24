@@ -236,7 +236,7 @@ namespace Gts {
 			}
 
 			NiPoint3 giantLocation = giant->GetPosition();
-			LaunchObjects(giant, CrawlPoints, maxDistance, power);
+			PushObjectsUpwards(giant, CrawlPoints, maxDistance, power);
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {
@@ -335,7 +335,7 @@ namespace Gts {
 			}
 
 			NiPoint3 giantLocation = giant->GetPosition();
-			LaunchObjects(giant, footPoints, maxFootDistance, power);
+			PushObjectsUpwards(giant, footPoints, maxFootDistance, power);
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {
@@ -435,8 +435,7 @@ namespace Gts {
 			}
 
 			NiPoint3 giantLocation = giant->GetPosition();
-
-			LaunchObjects(giant, footPoints, maxFootDistance, power);
+			PushObjectsUpwards(giant, footPoints, maxFootDistance, power);
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {

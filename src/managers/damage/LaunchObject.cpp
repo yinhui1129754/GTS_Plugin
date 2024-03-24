@@ -64,8 +64,8 @@ namespace Gts {
     float GetLaunchPower_Object(float sizeRatio) {
 		// https://www.desmos.com/calculator/wh0vwgljfl
 		SoftPotential launch {
-			.k = 1.42,
-			.n = 0.62,
+			.k = 1.6,
+			.n = 0.82,
 			.s = 0.6,
 			.a = 0.0,
 		};
@@ -73,7 +73,7 @@ namespace Gts {
 		return power;
 	}
 
-    void LaunchObjects(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power) {
+    void PushObjectsUpwards(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power) {
 		auto profiler = Profilers::Profile("Other: Launch Objects");
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
 		if (!AllowLaunch) {
@@ -82,7 +82,7 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
-		float start_power = 0.4;
+		float start_power = 0.5;
 
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			power *= 1.5;
@@ -124,9 +124,6 @@ namespace Gts {
         }
     }
             
-        
-	
-
     void PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power, float radius, bool Kick) {
 		auto profiler = Profilers::Profile("Other: Launch Objects");
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;

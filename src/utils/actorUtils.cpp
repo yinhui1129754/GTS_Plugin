@@ -2010,7 +2010,6 @@ namespace Gts {
 			if ((endTime - startTime) > 0.05) {
 				// Enough time has elapsed
 
-				log::info("Received Coords: Start: {}, End: {}", Vector2Str(startCoords), Vector2Str(endCoords));
 				NiPoint3 vector = endCoords - startCoords;
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
@@ -2040,9 +2039,6 @@ namespace Gts {
 				}
 
 				float Time = (1.0 / Time::GetTimeMultiplier());
-				log::info("Sending Direction: {}", Vector2Str(direction));
-				log::info("Sending Speed: {}, Power. {}, Time: {}", speed, power, Time);
-				log::info("endTime - startTime: {}", endTime - startTime);
 				ApplyManualHavokImpulse(tiny, direction.x, direction.y, direction.z, speed * 2.0 * power * Time);
 
 				return false;
@@ -2433,7 +2429,7 @@ namespace Gts {
 				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
 				if (!IsScared && GetAV(tiny, ActorValue::kConfidence) > 0) {
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
-					ForceFlee(giant, tiny, 3.0);
+					ForceFlee(giant, tiny, 5.0);
 				}
 			}
 		}

@@ -17,10 +17,17 @@ namespace {
 			transient->MovementSlowdown = 1.0;
 		}
 	}
-	void SetMovementSlowdown(Actor* tiny, float value) {
+	void SetMovementSlowdown(Actor* giant, Actor* tiny) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
-			transient->MovementSlowdown = value;
+			float slow = 0.75;
+			if (Runtime::HasPerkTeam(giant, "FastShrink")) {
+				slow += 0.05;
+			}
+			if (Runtime::HasPerkTeam(giant, "LethalShrink")) {
+				slow += 0.05;
+			}
+			transient->MovementSlowdown = slow;
 		}
 	}
 }
@@ -79,7 +86,7 @@ namespace Gts {
 		if (this->power >= 18.00 && sizediff > 4.0) {
 			StaggerActor(caster, target, 100.0f);
 		}
-		SetMovementSlowdown(target, 0.75);
+		SetMovementSlowdown(caster, target);
 	}
 
 	void ShrinkFoe::OnUpdate() {

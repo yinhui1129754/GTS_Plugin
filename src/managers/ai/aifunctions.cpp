@@ -148,6 +148,8 @@ namespace Gts {
 			auto tinyRef = tinyHandle.get().get();
 			auto giantRef = giantHandle.get().get();
 
+			ApplyActionCooldown(tinyRef, CooldownSource::Action_ScareOther);
+
 			float timepassed = Finish - Start;
 			if (IsMoving(tinyRef)) {
 				int FallChance = rand() % 1600;
