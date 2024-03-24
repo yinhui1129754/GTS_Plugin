@@ -80,7 +80,6 @@ namespace Gts {
 			return;
 		}
 
-		auto cell = giant->GetParentCell();
 		float giantScale = get_visual_scale(giant);
 
 		float start_power = 0.4;
@@ -90,29 +89,27 @@ namespace Gts {
 		}
 		std::vector<ObjectRefHandle> Refs = GetNearbyObjects(giant);
 
-        for (auto Refs: GetNearbyObjects(giant))  {
-            for (auto object: Refs) {
-				if (object) {
-					TESObjectREFR* objectRef = object.get().get();
-                    if (objectref) {
-                        Actor* NonRef = skyrim_cast<Actor*>(objectref);
-                        if (!NonRef) { // we don't want to apply it to actors
-                            NiPoint3 objectlocation = objectref->GetPosition();
-                            for (auto point: footPoints) {
-                                float distance = (point - objectlocation).Length();
-                                if (distance <= maxFootDistance) {
-                                    float force = 1.0 - distance / maxFootDistance;
-                                    float push = start_power * GetLaunchPower_Object(giantScale) * force * power;
-                                    auto Object1 = objectref->Get3D1(false);
-                                    if (Object1) {
-                                        auto collision = Object1->GetCollisionObject();
-                                        if (collision) {
-                                            auto rigidbody = collision->GetRigidBody();
-                                            if (rigidbody) {
-                                                auto body = rigidbody->AsBhkRigidBody();
-                                                if (body) {
-                                                    SetLinearImpulse(body, hkVector4(0, 0, push, push));
-                                                }
+        for (auto object: Refs) {
+            if (object) {
+                TESObjectREFR* objectRef = object.get().get();
+                if (objectref) {
+                    Actor* NonRef = skyrim_cast<Actor*>(objectref);
+                    if (!NonRef) { // we don't want to apply it to actors
+                        NiPoint3 objectlocation = objectref->GetPosition();
+                        for (auto point: footPoints) {
+                            float distance = (point - objectlocation).Length();
+                            if (distance <= maxFootDistance) {
+                                float force = 1.0 - distance / maxFootDistance;
+                                float push = start_power * GetLaunchPower_Object(giantScale) * force * power;
+                                auto Object1 = objectref->Get3D1(false);
+                                if (Object1) {
+                                    auto collision = Object1->GetCollisionObject();
+                                    if (collision) {
+                                        auto rigidbody = collision->GetRigidBody();
+                                        if (rigidbody) {
+                                            auto body = rigidbody->AsBhkRigidBody();
+                                            if (body) {
+                                                SetLinearImpulse(body, hkVector4(0, 0, push, push));
                                             }
                                         }
                                     }
