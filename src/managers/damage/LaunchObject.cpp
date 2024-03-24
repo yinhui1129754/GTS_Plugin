@@ -214,9 +214,9 @@ namespace Gts {
 		NiPoint3 point = giant->GetPosition();
 
 		TES::GetSingleton()->ForEachReferenceInRange(giant, maxDistance, [&](RE::TESObjectREFR& a_ref) {
-            TESObjectREFR* ref = a_ref;
-            Actor* NonRef = skyrim_cast<Actor*>(ref);
-            if (!NonRef) { // we don't want to apply it to actors
+            TESObjectREFR* ref = a_ref*;
+            Actor* IsActor = skyrim_cast<Actor*>(ref);
+            if (!IsActor) { // we don't want to apply it to actors
                 NiPoint3 objectlocation = ref->GetPosition();
                 float distance = (point - objectlocation).Length();
                 if (distance <= maxDistance) {
