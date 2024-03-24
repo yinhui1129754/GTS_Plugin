@@ -124,29 +124,9 @@ namespace Gts {
 		}
 	}
 
-	void InitiateFlee(Actor* tiny, float duration) { // Doesn't work sadly, both methods can't scare actors to run away from gts
-		float Start = Time::WorldTimeElapsed();
-
-		std::string name = std::format("ScareOther_{}", tiny->formID);
-		ActorHandle tinyHandle = tiny->CreateRefHandle();
-
-		int OldConfidence = static_cast<int>(tiny->GetActorBase()->GetConfidenceLevel());
-		tiny->GetActorBase()->SetConfidenceLevel(ACTOR_CONFIDENCE::kCowardly);
-		TaskManager::Run(name,[=](auto& progressData) {
-			if (!tinyHandle) {
-				return false;
-			}
-
-			auto tinyref = tinyHandle.get().get();
-			float Finish = Time::WorldTimeElapsed();
-
-			float timepassed = Finish - Start;
-			if (timepassed > duration) {
-				tiny->GetActorBase()->SetConfidenceLevel(static_cast<ACTOR_CONFIDENCE>(OldConfidence));
-				return false;
-			}
-			return true;
-		});
+	void InitiateFlee(Actor* giant, Actor* tiny) { // Doesn't work sadly, both methods can't scare actors to run away from gts
+		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
+		tiny->InitiateFlee(giant, false, true, true, nullptr, tiny, 100.0, 465.0 * sizedifference);
 	}
 
 	void ScareActors(Actor* giant) {
@@ -187,7 +167,7 @@ namespace Gts {
 									auto cell = tiny->GetParentCell();
 									if (cell) {
 										if (!combat) {
-											tiny->InitiateFlee(TinyRef, true, true, true, cell, TinyRef, 100.0, 465.0 * sizedifference);
+											tiny->InitiateFlee(giant, true, true, true, cell, tiny, 100.0, 465.0 * sizedifference);
 										}
 									}
 								}
