@@ -154,7 +154,7 @@ namespace Gts {
 				log::info("Flee To: True");
 				tiny->GetActorBase()->aiPackages.packages.push_front(FleeTo);
 				//tiny->PutCreatedPackage(FleeTo, true, false, true); 
-				log::info("Package Name: {}", FleeFrom->GetObjectTypeName());
+				log::info("Package Name: {}", FleeTo->GetObjectTypeName());
 			}
 
 			//tiny->EvaluatePackage(false, false);
