@@ -192,7 +192,7 @@ namespace Gts {
 			for (auto object: refs) {
 				if (object) {
 					auto objectRef = object.get().get();
-					GetSingleton().PushObjectsTowards(giant, objectRef, bone, power, radius, Kick);
+					PushObjectsTowards(giant, objectRef, bone, power, radius, Kick);
 				}
 			}
 		}
