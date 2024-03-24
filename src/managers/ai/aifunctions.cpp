@@ -1,3 +1,4 @@
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/ai/aifunctions.hpp"
 #include "managers/GtsSizeManager.hpp"
