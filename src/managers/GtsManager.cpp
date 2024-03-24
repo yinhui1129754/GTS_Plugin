@@ -80,7 +80,7 @@ namespace {
 			auto node = find_node(actor, "skeleton_female.nif");
 			NiAVObject* skeleton = node;
 
-			actor->GetActorRuntimeData().boolBits.set(BOOL_BITS::kUseEmotion);
+			actor->GetActorRuntimeData().boolBits.set(Actor::BOOL_BITS::kUseEmotion);
 			/*auto ref = actor->GetCharController();
 			if (ref) {
 				log::info("LOD Distance of {} is {}", actor->GetDisplayFullName(), ref->lodDistance);
