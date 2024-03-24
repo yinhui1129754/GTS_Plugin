@@ -2584,6 +2584,7 @@ namespace Gts {
 				if (animation) {
 					Animation_TinyCalamity::AddToData(giant, tiny, expected);
 					AnimationManager::StartAnim("Calamity_ShrinkOther", giant);
+					tiny->StopMoving(1.2);
 					return;
 				}
 

@@ -131,10 +131,7 @@ namespace Gts {
 
 		auto ai = tiny->GetActorRuntimeData().currentProcess;
 
-		if (ai) {
-			ai->ClearMuzzleFlashes();
-			tiny->EvaluatePackage(false, false);
-		}
+		
 
 		if (Flee_From_Form) {
 			log::info("Flee To found!");
@@ -158,6 +155,11 @@ namespace Gts {
 			//tiny->EvaluatePackage(false, false);
 			//tiny->PutCreatedPackage(FleeTo, true, false, true); 
 			log::info("Putting existing package");
+		}
+
+		if (ai) {
+			ai->ClearMuzzleFlashes();
+			tiny->EvaluatePackage(false, false);
 		}
 
 	}
