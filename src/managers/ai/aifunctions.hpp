@@ -17,6 +17,6 @@ namespace Gts {
 	void ModGrowthCount(Actor* giant, float value, bool reset);
 	void SetBonusSize(Actor* giant, float value, bool reset);
 	
-	void InitiateFlee(Actor* tiny);
+	void InitiateFlee(Actor* tiny, float duration);
 	void ScareActors(Actor* giant);
 }

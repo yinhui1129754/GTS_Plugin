@@ -124,43 +124,29 @@ namespace Gts {
 		}
 	}
 
-	void InitiateFlee(Actor* tiny) { // Doesn't work sadly, both methods can't scare actors to run away from gts
+	void InitiateFlee(Actor* tiny, float duration) { // Doesn't work sadly, both methods can't scare actors to run away from gts
+		float Start = Time::WorldTimeElapsed();
 
-		TESForm* Flee_From_Form = TESForm::LookupByID<TESForm>(0x000197F1);
-		TESForm* Flee_To_Form = TESForm::LookupByID<TESForm>(0x000C7039);
+		std::string name = std::format("ScareOther_{}", tiny->formID);
+		ActorHandle tinyHandle = tiny->CreateRefHandle();
 
-		auto ai = tiny->GetActorRuntimeData().currentProcess;
-		if (ai) {
-			ai->ClearMuzzleFlashes();
-			tiny->EvaluatePackage(false, false);
-		}
-		
-
-		if (Flee_From_Form) {
-			log::info("Flee To found!");
-			TESPackage* FleeFrom = skyrim_cast<TESPackage*>(Flee_From_Form);
-			if (FleeFrom) {
-				log::info("Flee From: True");
-				tiny->GetActorBase()->aiPackages.packages.push_front(FleeFrom);
-				//tiny->PutCreatedPackage(FleeFrom, true, false, true); 
-				log::info("Package Name: {}", FleeFrom->GetObjectTypeName());
-			}
-		}
-
-		if (Flee_To_Form) {
-			log::info("Flee From found, trying cast");
-			TESPackage* FleeTo = skyrim_cast<TESPackage*>(Flee_To_Form);
-			if (FleeTo) {
-				log::info("Flee To: True");
-				tiny->GetActorBase()->aiPackages.packages.push_front(FleeTo);
-				//tiny->PutCreatedPackage(FleeTo, true, false, true); 
-				log::info("Package Name: {}", FleeTo->GetObjectTypeName());
+		int OldConfidence = static_cast<int>(tiny->GetActorBase()->GetConfidenceLevel());
+		tiny->GetActorBase()->SetConfidenceLevel(ACTOR_CONFIDENCE::kCowardly);
+		TaskManager::Run(name,[=](auto& progressData) {
+			if (!tinyHandle) {
+				return false;
 			}
 
-			//tiny->EvaluatePackage(false, false);
-			//tiny->PutCreatedPackage(FleeTo, true, false, true); 
-			log::info("Putting existing package");
-		}
+			auto tinyref = tinyHandle.get().get();
+			float Finish = Time::WorldTimeElapsed();
+
+			float timepassed = Finish - Start;
+			if (timepassed > duration) {
+				tiny->GetActorBase()->SetConfidenceLevel(static_cast<ACTOR_CONFIDENCE>(OldConfidence));
+				return false;
+			}
+			return true;
+		});
 	}
 
 	void ScareActors(Actor* giant) {
