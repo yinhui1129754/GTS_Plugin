@@ -32,7 +32,7 @@ namespace {
 		auto ai = tiny->GetActorRuntimeData().currentProcess;
 		if (ai) {
 			if (ai->middleHigh) {
-				QueuedItem* Item = ai->middleHigh.itemstoEquipUnequip;
+				QueuedItem* Item = ai->middleHigh->itemstoEquipUnequip;
 				log::info("Seeking for item");
 				if (Item) {
 					log::info("Seeking for ExtraData");
