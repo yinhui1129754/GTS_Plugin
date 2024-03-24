@@ -124,6 +124,34 @@ namespace Gts {
 		}
 	}
 
+	void ForceFlee(Actor* giant, Actor* tiny, float duration) {
+		float oldConfidence = GetAV(tiny, ActorValue::kConfidence);
+
+		float Start = Time::WorldTimeElapsed();
+		std::string name = std::format("ScareAway_{}", tiny->formID);
+		ActorHandle tinyHandle = tiny->CreateRefHandle();
+
+		duration *= GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
+
+		SetAV(tiny, ActorValue::kConfidence, 0.0);
+
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			float Finish = Time::WorldTimeElapsed();
+			auto tinyRef = tinyHandle.get().get();
+
+			float timepassed = Finish - Start;
+			
+			if (timepassed >= duration) {
+				SetAV(tinyRef, ActorValue::kConfidence, oldConfidence);
+				return false; // end it
+			}
+			return true;
+		});
+	}
+
 	void ScareActors(Actor* giant) {
 		auto profiler = Profilers::Profile("ActorUtils: ScareActors");
 		if (!Persistent::GetSingleton().actors_panic) {

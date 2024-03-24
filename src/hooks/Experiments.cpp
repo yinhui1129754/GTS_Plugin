@@ -91,38 +91,6 @@ namespace Hooks {
 
 	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is commented out inside hooks.cpp
 
-		static FunctionHook<void(NiAVObject* a_obj3D, hkVector4& a_pos, float a_force, const HitData* a_hitData)>ExplosionImpulseHook (        
-			REL::RelocationID(25468, 26005), 
-			[](NiAVObject* a_obj3D, hkVector4& a_pos, float a_force, const HitData* a_hitData) {
-				log::info("ExplosionImpulse hook running, force: {}", a_force);
-				auto Owner = a_obj3D->GetUserData();
-				if (Owner) {
-					log::info("Owner is: {}", Owner->GetDisplayFullName());
-				}
-				if (a_hitData) {
-					log::info("Hit Data found");
-					Actor* aggressor = a_hitData->aggressor.get().get();
-					Actor* target = a_hitData->target.get().get();
-
-					if (aggressor) {
-						log::info("Aggressor: {}", aggressor->GetDisplayFullName());
-					}
-					if (target) {
-						log::info("Target: {}", target->GetDisplayFullName());
-					}
-
-					if (aggressor && target) {
-						log::info("Both targets found");
-						float size_difference = GetSizeDifference(target, aggressor, SizeType::GiantessScale, false, false);
-						if (size_difference >= 2.0) {
-							a_force = 0.0;
-							log::info("Changed force to 0");
-						}
-					}
-				}
-				return ExplosionImpulseHook(a_obj3D, a_pos, a_force, a_hitData);  
-            }
-        );
 		// return func(actor, a_caster, a_hasTargetAnim, a_target, a_leftHand);
 
 		//							  																

@@ -2424,8 +2424,8 @@ namespace Gts {
 
 	void ChanceToScare(Actor* giant, Actor* tiny) {
 		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
-		if (sizedifference > 1.6 && !tiny->IsDead()) {
-			int rng = rand() % 1600;
+		if (sizedifference > 1.25 && !tiny->IsDead()) {
+			int rng = rand() % 1400;
 			rng /= sizedifference;
 			if (rng <= 1.0 * sizedifference) {
 				log::info("Trying to scare {}", tiny->GetDisplayFullName());
@@ -2434,7 +2434,7 @@ namespace Gts {
 				if (!IsScared) {
 					auto combat = tiny->GetActorRuntimeData().combatController;
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
-					//InitiateFlee(giant, tiny);
+					ForceFlee(giant, tiny, 2.0);
 				}
 			}
 		}
