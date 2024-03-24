@@ -213,14 +213,15 @@ namespace Gts {
 		std::vector<ObjectRefHandle> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
-		TES::GetSingleton()->ForEachReferenceInRange(giant, maxDistance, [&](RE::TESObjectREFR& a_ref) {
-            TESObjectREFR* ref = a_ref*;
-            Actor* IsActor = skyrim_cast<Actor*>(ref);
+        TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
+
+		RE::TES::GetSingleton()->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR* a_ref) {
+            Actor* IsActor = skyrim_cast<Actor*>(a_ref);
             if (!IsActor) { // we don't want to apply it to actors
-                NiPoint3 objectlocation = ref->GetPosition();
+                NiPoint3 objectlocation = a_ref->GetPosition();
                 float distance = (point - objectlocation).Length();
                 if (distance <= maxDistance) {
-                    ObjectRefHandle handle = ref->CreateRefHandle();
+                    ObjectRefHandle handle = a_ref->CreateRefHandle();
                     if (handle) {
                         Objects.push_back(handle);
                     }
