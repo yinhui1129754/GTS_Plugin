@@ -36,7 +36,7 @@ namespace {
 				log::info("Seeking for item");
 				if (Item) {
 					log::info("Seeking for ExtraData");
-					ExtraDataList* Data = Item.equipParams.equipParams;
+					ExtraDataList* Data = Item.equipParams.extraDataList;
 					if (Data) {
 						log::info("Data found");
 						if (weapon_L) {
