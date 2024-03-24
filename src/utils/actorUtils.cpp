@@ -2422,6 +2422,9 @@ namespace Gts {
 	}
 
 	void ChanceToScare(Actor* giant, Actor* tiny) {
+		if (tiny->formID == 0x14 || IsTeammate(tiny)) {
+			return;
+		}
 		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
 		if (sizedifference > 1.25 && !tiny->IsDead()) {
 			int rng = rand() % 1000;
