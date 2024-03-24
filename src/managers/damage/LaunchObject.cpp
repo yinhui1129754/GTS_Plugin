@@ -114,7 +114,7 @@ namespace Gts {
 		float maxDistance = radius * giantScale;
 
         if (Kick) { // Offset pos down
-            float HH = HighHeelManager::GetHHOffset(giant);
+            float HH = HighHeelManager::GetHHOffset(giant).Length();
 			NodePosition.z -= HH;
 		}
 
