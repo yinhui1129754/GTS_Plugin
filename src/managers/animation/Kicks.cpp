@@ -33,6 +33,9 @@ namespace {
 	void StartDamageAt_L(Actor* actor, float power, float crush, float pushpower, std::string_view node) {
 		std::string name = std::format("LegKick_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
+
+		std::vector<ObjectRefHandle> Objects = LaunchActor::GetSingleton().GetNearbyObjects(actor);
+
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
 				return false;
@@ -41,6 +44,7 @@ namespace {
 			auto Leg = find_node(giant, node);
 			if (Leg) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, DamageSource::KickedLeft);
+				LaunchActor::GetSingleton().PushObjects(giant, Objects, Leg);
 			}
 			return true;
 		});
@@ -49,6 +53,9 @@ namespace {
 	void StartDamageAt_R(Actor* actor, float power, float crush, float pushpower, std::string_view node) {
 		std::string name = std::format("LegKick_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
+
+		std::vector<ObjectRefHandle> Objects = LaunchActor::GetSingleton().GetNearbyObjects(actor);
+
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
 				return false;
@@ -57,6 +64,7 @@ namespace {
 			auto Leg = find_node(giant, node);
 			if (Leg) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, DamageSource::KickedRight);
+				LaunchActor::GetSingleton().PushObjects(giant, Objects, Leg);
 			}
 			return true;
 		});

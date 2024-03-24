@@ -68,34 +68,8 @@ namespace {
 		return power;
 	}
 
-	std::vector<TESObjectREFR*> GetNearbyObjects(Actor* giant, NiPoint3 point, float maxDistance) {
-		auto cell = giant->GetParentCell();
-		float giantScale = get_visual_scale(giant);
-
-		std::vector<TESObjectREFR*> Objects = {};
-
-		if (cell) {
-			auto data = cell->GetRuntimeData();
-			for (auto object: data.references) {
-				auto objectref = object.get();
-				if (objectref) {
-					Actor* NonRef = skyrim_cast<Actor*>(objectref);
-					if (!NonRef) { // we don't want to apply it to actors
-						NiPoint3 objectlocation = objectref->GetPosition();
-						float distance = (point - objectlocation).Length();
-						if (distance <= maxDistance) {
-							Objects.push_back(objectref);
-						}
-					}
-				}
-			}
-		}
-
-		return Objects;
-	}
-
 	void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force) {
-		const float start_power = 0.1;
+		const float start_power = 0.4;
 
 		force *= start_power * GetLaunchPower_Object(get_visual_scale(giant));
 
@@ -569,7 +543,7 @@ namespace Gts {
 		}
 	}
 
-	void LaunchActor::PushObjectsTowards(Actor* giant, NiAVObject* Bone, NiPoint3 point, float maxDistance, float power) {
+	void LaunchActor::PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power) {
 		auto profiler = Profilers::Profile("Other: Launch Objects");
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
 		if (!AllowLaunch) {
@@ -582,52 +556,97 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
-		float CheckDistance = 220 * giantScale;
+		NiPoint3 point = node->world.translate;
+		float maxDistance = radius * giantScale;
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
 			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 200, {0.5, 0.0, 0.5, 1.0});
 		}
 
-		for (auto object: GetNearbyObjects(giant, point, CheckDistance)) {
-			
-			log::info("Seeking Nearbly objects");
-			int nodeCollisions = 0;
-			float force = 0.0;
+		int nodeCollisions = 0;
+		float force = 0.0;
 
-			VisitNodes(object->Get3D1(false), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
-				float distance = (point - a_obj.world.translate).Length();
-				if (distance < maxDistance) {
-					nodeCollisions += 1;
-					force = 1.0 - distance / maxDistance;
+		VisitNodes(object->Get3D1(false), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
+			float distance = (point - a_obj.world.translate).Length();
+			if (distance < maxDistance) {
+				nodeCollisions += 1;
+				force = 1.0 - distance / maxDistance;
+				return false;
+			}
+			return true;
+		});
+
+		if (nodeCollisions > 0) {
+			float Start = Time::WorldTimeElapsed();
+			ActorHandle gianthandle = giant->CreateRefHandle();
+			std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
+
+			NiPoint3 StartPos = Bone->world.translate;
+
+			TaskManager::Run(name, [=](auto& progressData) {
+				if (!gianthandle) {
 					return false;
+				}
+				log::info("Starting Push task");
+				auto giantref = gianthandle.get().get();
+				float Finish = Time::WorldTimeElapsed();
+				float timepassed = Finish - Start;
+
+				if (timepassed > 1e-4) {
+					NiPoint3 EndPos = Bone->world.translate;
+					ApplyPhysicsToObject(giantref, object, EndPos - StartPos, force);
+					return false; // end it
 				}
 				return true;
 			});
+		}
+	}
 
-			if (nodeCollisions > 0) {
-				float Start = Time::WorldTimeElapsed();
-				ActorHandle gianthandle = giant->CreateRefHandle();
-				std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
-
-				NiPoint3 StartPos = Bone->world.translate;
-
-				TaskManager::Run(name, [=](auto& progressData) {
-					if (!gianthandle) {
-						return false;
-					}
-					log::info("Starting Push task");
-					auto giantref = gianthandle.get().get();
-					float Finish = Time::WorldTimeElapsed();
-					float timepassed = Finish - Start;
-
-					if (timepassed > 1e-4) {
-						NiPoint3 EndPos = Bone->world.translate;
-						ApplyPhysicsToObject(giantref, object, EndPos - StartPos, force);
-						return false; // end it
-					}
-					return true;
-				});
+	void LaunchActor::PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone) { // Another way to do it
+		if (refs.size() > 0) {
+			for (auto object: refs) {
+				if (object) {
+					objectRef = Object.get().get();
+					ApplyPhysicsToObject(giant, objectRef, bone);
+				}
 			}
 		}
 	}
+
+	LaunchActor::std::vector<ObjectRefHandle> GetNearbyObjects(Actor* giant) {
+		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
+		if (!AllowLaunch) {
+			return {};
+		}
+		auto cell = giant->GetParentCell();
+		float giantScale = get_visual_scale(giant);
+
+		float maxDistance = 280 * giantScale;
+
+		std::vector<ObjectRefHandle> Objects = {};
+		NiPoint3 point = giant->GetPosition();
+
+		if (cell) {
+			auto data = cell->GetRuntimeData();
+			for (auto object: data.references) {
+				auto objectref = object.get();
+				if (objectref) {
+					Actor* NonRef = skyrim_cast<Actor*>(objectref);
+					if (!NonRef) { // we don't want to apply it to actors
+						NiPoint3 objectlocation = objectref->GetPosition();
+						float distance = (point - objectlocation).Length();
+						if (distance <= maxDistance) {
+							ObjectRefHandle handle = objectref->CreateRefHandle();
+							if (handle) {
+								Objects.push_back(handle);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return Objects;
+	}
+
 }

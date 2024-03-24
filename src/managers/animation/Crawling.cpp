@@ -145,10 +145,14 @@ namespace {
 	}
 
 	/////////////////////////////////////////////////////////Swipe Attacks//////////////////////////////////////////
+	
 
 	void TriggerHandCollision_Right(Actor* actor, float power, float crush, float pushpower) {
 		std::string name = std::format("HandCollide_R_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
+
+		std::vector<ObjectRefHandle> Objects = LaunchActor::GetSingleton().GetNearbyObjects(actor);
+
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
 				return false;
@@ -158,9 +162,11 @@ namespace {
 			auto Arm = find_node(giant, "NPC R Hand [RHnd]");
 			if (Uarm) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Uarm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeRight);
+				LaunchActor::GetSingleton().PushObjects(giant, Objects, uarm);
 			}
 			if (Arm) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Arm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeRight);
+				LaunchActor::GetSingleton().PushObjects(giant, Objects, arm);
 			}
 			return true;
 		});
@@ -169,6 +175,9 @@ namespace {
 	void TriggerHandCollision_Left(Actor* actor, float power, float crush, float pushpower) {
 		std::string name = std::format("HandCollide_L_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
+
+		std::vector<ObjectRefHandle> Objects = LaunchActor::GetSingleton().GetNearbyObjects(actor);
+
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
 				return false;
@@ -178,9 +187,11 @@ namespace {
 			auto Arm = find_node(giant, "NPC L Hand [LHnd]");
 			if (Uarm) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Uarm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeLeft);
+				LaunchActor::GetSingleton().PushObjects(giant, Objects, uarm);
 			}
 			if (Arm) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Arm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeLeft);
+				LaunchActor::GetSingleton().PushObjects(giant, Objects, arm);
 			}
 			return true;
 		});
