@@ -1439,10 +1439,9 @@ namespace Gts {
 		// For this function to work, actor must be pushed away first. 
 		// It may be a good idea to wait about 0.05 sec before callind it after actor has been pushed, else it may not work
 		hkVector4 impulse = hkVector4(afX * Multiplier, afY * Multiplier, afZ * Multiplier, 1.0);
-		log::info("Multiplier: {}", Multiplier);
 
-		if (impulse.Length3() < 1e-4) {
-			log::info("Havok prevented, length is invalid");
+		if (impulse.Length3() < 1e-4 || impulse.SqrLength3() < 1e-4) {
+			//log::info("Havok prevented, length is invalid");
 			return;
 		}
 
@@ -1454,7 +1453,7 @@ namespace Gts {
 					auto body = rigidbody->AsBhkRigidBody();
 					if (body) {
 						SetLinearImpulse(body, impulse);
-						log::info("Bdy found, Applying impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
+						//log::info("Bdy found, Applying impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
 					}
 				}
 			}
@@ -2425,18 +2424,12 @@ namespace Gts {
 	void ChanceToScare(Actor* giant, Actor* tiny) {
 		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
 		if (sizedifference > 1.25 && !tiny->IsDead()) {
-			int rng = rand() % 1400;
-			rng /= sizedifference;
+			int rng = rand() % (1000 / sizedifference);
 			if (rng <= 1.0 * sizedifference) {
-				log::info("Trying to scare {}", tiny->GetDisplayFullName());
 				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
-				log::info("Allow: {}", IsScared);
 				if (!IsScared && GetAV(tiny, ActorValue::kConfidence) > 0) {
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
-					if (IsMoving(tiny)) {
-						PushActorAway(giant, tiny, 1.0);
-					}
-					ForceFlee(giant, tiny, 2.0);
+					ForceFlee(giant, tiny, 3.0);
 				}
 			}
 		}

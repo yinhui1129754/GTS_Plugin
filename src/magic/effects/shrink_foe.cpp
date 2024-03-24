@@ -11,52 +11,17 @@
 #include "data/time.hpp"
 
 namespace {
-	void ResetShrinkWeakness(Actor* tiny) {
+	void ResetMovementSlowdown(Actor* tiny) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
-			transient->ShrinkWeakness = 1.0;
+			transient->MovementSlowdown = 1.0;
 		}
 	}
-	void AddShrinkWeakness(Actor* tiny, float value) {
+	void SetMovementSlowdown(Actor* tiny, float value) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
-			transient->ShrinkWeakness += value;
+			transient->MovementSlowdown = value;
 		}
-	}
-	float GetShrinkWeakness(Actor* tiny) {
-		auto transient = Transient::GetSingleton().GetData(tiny);
-		if (transient) {
-			return transient->ShrinkWeakness;
-		}
-		return 1.0;
-	}
-
-	void DecreaseWeaknessTask(Actor* tiny) {
-		float Start = Time::WorldTimeElapsed();
-		std::string name = std::format("ShrinkDebuff_{}", tiny->formID);
-		ActorHandle tinyhandle = tiny->CreateRefHandle();
-		TaskManager::Run(name, [=](auto& progressData) {
-			if (!tinyhandle) {
-				return false;
-			}
-			float Finish = Time::WorldTimeElapsed();
-			auto tinyref = tinyhandle.get().get();
-			float timepassed = Finish - Start;
-			if (timepassed >= 2.00) {
-				AddShrinkWeakness(tinyref, -0.018 * TimeScale());
-				if (GetShrinkWeakness(tinyref) <= 1.0) {
-					ResetShrinkWeakness(tinyref);
-					return false; // Cancel task
-				}
-				return true; // end it
-			}
-			return true;
-		});
-	}
-
-	void CancelWeaknessTask(Actor* tiny) {
-		std::string name = std::format("ShrinkDebuff_{}", tiny->formID);
-		TaskManager::Cancel(name);
 	}
 }
 
@@ -114,7 +79,7 @@ namespace Gts {
 		if (this->power >= 18.00 && sizediff > 4.0) {
 			StaggerActor(caster, target, 100.0f);
 		}
-		//CancelWeaknessTask(target);
+		SetMovementSlowdown(target, 0.75);
 	}
 
 	void ShrinkFoe::OnUpdate() {
@@ -174,14 +139,15 @@ namespace Gts {
 
 		ChanceToScare(caster, target);
 
-		if (ShrinkToNothing(caster, target)) {
+		if (ShrinkToNothing(caster, target)) { // STN when size difference is met
 		}
 	}
 
 	void ShrinkFoe::OnFinish() {
 		auto Caster = GetCaster();
 		auto Target = GetTarget();
-		//DecreaseWeaknessTask(Target);
+
 		Task_TrackSizeTask(Caster, Target, "Spell");
+		ResetMovementSlowdown(Target);
 	}
 }

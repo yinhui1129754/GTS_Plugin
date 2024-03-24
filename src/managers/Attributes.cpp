@@ -30,6 +30,14 @@ namespace {
 		}
 	}
 
+	float GetMovementSlowdown(Actor* tiny) {
+		auto transient = Transient::GetSingleton().GetData(tiny);
+		if (transient) {
+			return transient->MovementSlowdown;
+		}
+		return 1.0;
+	}
+
 
 	void ManagePerkBonuses(Actor* actor) {
 		auto& SizeManager = SizeManager::GetSingleton();
@@ -177,6 +185,9 @@ namespace Gts {
 				float PerkSpeed = 1.0;
 				auto actorData = Persistent::GetSingleton().GetData(actor);
 				float Bonus = 1.0;
+
+				float Slowdown = GetMovementSlowdown(actor);
+
 				if (actorData) {
 					Bonus = actorData->smt_run_speed;
 				}
@@ -184,11 +195,11 @@ namespace Gts {
 					PerkSpeed = clamp(0.80, 1.0, speed_mult_walk);
 				}
 
-				float power = 1.0 * (Bonus/2.2 + 1.0)/MS_mult/MS_mult_limit/Multy/bonusspeed/PerkSpeed;
+				float power = 1.0 * Slowdown * (Bonus/2.2 + 1.0)/MS_mult/MS_mult_limit/Multy/bonusspeed/PerkSpeed;
 				if (scale > 1.0) {
 					return power;
 				} else {
-					return scale * (Bonus/2.2 + 1.0);
+					return scale * Slowdown * (Bonus/2.2 + 1.0);
 				}
 			}
 			case ActorValue::kAttackDamageMult: {

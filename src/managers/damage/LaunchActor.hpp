@@ -27,7 +27,6 @@ namespace Gts {
 
 			void FindLaunchActors(Actor* giant, float radius, float min_radius, float power, NiAVObject* node);
 
-			
 			void LaunchLeft(Actor* giant, float radius, float power);
 			void LaunchRight(Actor* giant, float radius, float power);
 	};

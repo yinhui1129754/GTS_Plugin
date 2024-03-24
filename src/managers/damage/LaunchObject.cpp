@@ -92,24 +92,26 @@ namespace Gts {
         for (auto object: Refs) {
             if (object) {
                 TESObjectREFR* objectref = object.get().get();
-                if (objectref) {
-                    Actor* NonRef = skyrim_cast<Actor*>(objectref);
-                    if (!NonRef) { // we don't want to apply it to actors
-                        NiPoint3 objectlocation = objectref->GetPosition();
-                        for (auto point: footPoints) {
-                            float distance = (point - objectlocation).Length();
-                            if (distance <= maxFootDistance) {
-                                float force = 1.0 - distance / maxFootDistance;
-                                float push = start_power * GetLaunchPower_Object(giantScale) * force * power;
-                                auto Object1 = objectref->Get3D1(false);
-                                if (Object1) {
-                                    auto collision = Object1->GetCollisionObject();
-                                    if (collision) {
-                                        auto rigidbody = collision->GetRigidBody();
-                                        if (rigidbody) {
-                                            auto body = rigidbody->AsBhkRigidBody();
-                                            if (body) {
-                                                SetLinearImpulse(body, hkVector4(0, 0, push, push));
+                if (objectref && objectref->Is3DLoaded()) {
+                    if (objectref->GetCurrent3D()) {
+                        bool IsActor = objectref->Is(FormType::ActorCharacter);
+                        if (!IsActor) { // we don't want to apply it to actors
+                            NiPoint3 objectlocation = objectref->GetPosition();
+                            for (auto point: footPoints) {
+                                float distance = (point - objectlocation).Length();
+                                if (distance <= maxFootDistance) {
+                                    float force = 1.0 - distance / maxFootDistance;
+                                    float push = start_power * GetLaunchPower_Object(giantScale) * force * power;
+                                    auto Object1 = objectref->Get3D1(false);
+                                    if (Object1) {
+                                        auto collision = Object1->GetCollisionObject();
+                                        if (collision) {
+                                            auto rigidbody = collision->GetRigidBody();
+                                            if (rigidbody) {
+                                                auto body = rigidbody->AsBhkRigidBody();
+                                                if (body) {
+                                                    SetLinearImpulse(body, hkVector4(0, 0, push, push));
+                                                }
                                             }
                                         }
                                     }

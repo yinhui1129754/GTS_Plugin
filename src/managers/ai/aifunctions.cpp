@@ -143,6 +143,12 @@ namespace Gts {
 			auto tinyRef = tinyHandle.get().get();
 
 			float timepassed = Finish - Start;
+			if (IsMoving(tiny)) {
+				int FallChance = rand() % 1600;
+				if (FallChance <= 4 && !IsRagdolled(tiny)) {
+					PushActorAway(tiny, tiny, 1.0);
+				}
+			}
 			
 			if (timepassed >= duration) {
 				SetAV(tinyRef, ActorValue::kConfidence, oldConfidence);

@@ -2,6 +2,7 @@
 #include "managers/damage/SizeHitEffects.hpp"
 #include "managers/hitmanager.hpp"
 #include "managers/Attributes.hpp"
+#include "utils/actorUtils.hpp"
 #include "data/runtime.hpp"
 #include "data/persistent.hpp"
 #include "data/plugin.hpp"
@@ -40,6 +41,9 @@ namespace {
 			} if (IsBetweenBreasts(Controlled)) {
 				return false;
 			}
+		}
+		if (IsFreeCameraEnabled()) {
+			return true;
 		}
 		if (!AnimationsInstalled(player)) { // Don't mess with movement if user didn't install anims correctly
 			return true;

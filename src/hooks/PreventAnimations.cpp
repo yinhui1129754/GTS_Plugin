@@ -86,6 +86,11 @@ namespace {
 				return true;
 			}
 
+			if (performer->formID == 0x14 && IsGtsBusy(performer) && IsFreeCameraEnabled()) {
+				return true; // The only case when we alter anims for Player. 
+				// Needed because it's problematic to disallow specific controls through controls.hpp
+			}
+
 			if (performer->formID == 0x14 || !IsGtsBusy(performer)) {
                 // Do not affect the player: we already disable player controls through other hook
 				return false;

@@ -96,7 +96,7 @@ namespace Gts {
 			float WorldFov_Default = 0;
 			float FpFov_Default = 0;
 			float ButtCrushGrowthAmount = 0;
-			float ShrinkWeakness = 1.0;
+			float MovementSlowdown = 1.0;
 			float Rotation_X = 0.0;
 
 			// Volume scales cubically
@@ -139,7 +139,7 @@ namespace Gts {
 			result.WorldFov_Default = WorldFov_Default;
 			result.FpFov_Default = FpFov_Default;
 			result.ButtCrushGrowthAmount = ButtCrushGrowthAmount;
-			result.ShrinkWeakness = ShrinkWeakness;
+			result.MovementSlowdown = MovementSlowdown;
 			result.Rotation_X = Rotation_X;
 			result.OverrideCamera = OverrideCamera;
 			result.WasReanimated = WasReanimated;

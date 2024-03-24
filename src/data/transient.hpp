@@ -27,7 +27,7 @@ namespace Gts {
 		float WorldFov_Default;
 		float FpFov_Default;
 		float ButtCrushGrowthAmount;
-		float ShrinkWeakness;
+		float MovementSlowdown;
 		float Rotation_X;
 		
 
