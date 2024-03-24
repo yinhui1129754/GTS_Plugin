@@ -97,7 +97,7 @@ namespace {
 	void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force) {
 		const float start_power = 0.1;
 
-		force *= start_power * GetLaunchPower_Object(giantScale);
+		force *= start_power * GetLaunchPower_Object(get_visual_scale(giant));
 
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			force *= 1.5;
@@ -588,47 +588,45 @@ namespace Gts {
 			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 200, {0.5, 0.0, 0.5, 1.0});
 		}
 
-		if (cell) {
+		for (auto object: GetNearbyObjects(giant, point, CheckDistance)) {
+			
+			log::info("Seeking Nearbly objects");
+			int nodeCollisions = 0;
+			float force = 0.0;
 
-			for (auto object: GetNearbyObjects(giant, point, CheckDistance)) {
-				
-				log::info("Seeking Nearbly objects");
-				int nodeCollisions = 0;
-				float force = 0.0;
+			VisitNodes(object->Get3D1(), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
+				float distance = (point - a_obj.world.translate).Length();
+				if (distance < maxDistance) {
+					nodeCollisions += 1;
+					force = 1.0 - distance / maxDistance;
+					return false;
+				}
+				return true;
+			});
 
-				VisitNodes(object->Get3D1(), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
-					float distance = (point - a_obj.world.translate).Length();
-					if (distance < maxDistance) {
-						nodeCollisions += 1;
-						force = 1.0 - distance / maxDistance;
+			if (nodeCollisions > 0) {
+				float Start = Time::WorldTimeElapsed();
+				ActorHandle gianthandle = giant->CreateRefHandle();
+				std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
+
+				NiPoint3 StartPos = Bone->world.translate;
+
+				TaskManager::Run(name, [=](auto& progressData) {
+					if (!gianthandle) {
 						return false;
+					}
+					log::info("Starting Push task");
+					auto giantref = gianthandle.get().get();
+					float Finish = Time::WorldTimeElapsed();
+					float timepassed = Finish - Start;
+
+					if (timepassed > 1e-4) {
+						NiPoint3 EndPos = Bone->world.translate;
+						ApplyPhysicsToObject(giantref, object, EndPos - StartPos, force);
+						return false; // end it
 					}
 					return true;
 				});
-
-				if (nodeCollisions > 0) {
-					float Start = Time::WorldTimeElapsed();
-					ActorHandle gianthandle = giant->CreateRefHandle();
-					std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
-
-					NiPoint3 StartPos = Bone->world.translate;
-
-					TaskManager::Run(name, [=](auto& progressData) {
-						if (!gianthandle) {
-							return false;
-						}
-						log::info("Starting Push task");
-						auto giantref = gianthandle.get().get();
-						float timepassed = Finish - Start;
-
-						if (timepassed > 1e-4) {
-							NiPoint3 EndPos = Bone->world.translate;
-							ApplyPhysicsToObject(giantref, object, EndPos - StartPos, force);
-							return false; // end it
-						}
-						return true;
-					});
-				}
 			}
 		}
 	}
