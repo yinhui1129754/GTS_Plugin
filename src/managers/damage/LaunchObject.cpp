@@ -134,7 +134,13 @@ namespace Gts {
 
 		if (!Bone) {
 			return;
-		}
+		} 
+        if (!object->Is3DLoaded()) {
+			return;
+        }
+        if (!object->GetCurrent3D()) {
+            return;
+        }
 
 		float giantScale = get_visual_scale(giant);
 
@@ -182,7 +188,7 @@ namespace Gts {
 		}
 	}
 
-	void PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick) { // Another way to do it
+	void PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick) {
 		if (refs.size() > 0) {
 			for (auto object: refs) {
 				if (object) {
