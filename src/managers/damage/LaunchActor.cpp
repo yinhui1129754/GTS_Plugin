@@ -84,7 +84,7 @@ namespace {
 						NiPoint3 objectlocation = objectref->GetPosition();
 						float distance = (point - objectlocation).Length();
 						if (distance <= maxDistance) {
-							Objects.push_back(object);
+							Objects.push_back(objectref);
 						}
 					}
 				}
@@ -585,7 +585,7 @@ namespace Gts {
 		float CheckDistance = 220 * giantScale;
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 200, {0.5, 0.0, 0.5, 1.0});
+			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 200, {0.5, 0.0, 0.5, 1.0});
 		}
 
 		if (cell) {
@@ -596,8 +596,8 @@ namespace Gts {
 				int nodeCollisions = 0;
 				float force = 0.0;
 
-				VisitNodes(object, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
-					float distance = (NodePosition - a_obj.world.translate).Length();
+				VisitNodes(object->Get3D1(), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
+					float distance = (point - a_obj.world.translate).Length();
 					if (distance < maxDistance) {
 						nodeCollisions += 1;
 						force = 1.0 - distance / maxDistance;
