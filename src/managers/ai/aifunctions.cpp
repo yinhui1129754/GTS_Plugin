@@ -136,7 +136,7 @@ namespace Gts {
 		SetAV(tiny, ActorValue::kConfidence, 0.0);
 
 		TaskManager::Run(name, [=](auto& progressData) {
-			if (!gianthandle) {
+			if (!tinyHandle) {
 				return false;
 			}
 			float Finish = Time::WorldTimeElapsed();
