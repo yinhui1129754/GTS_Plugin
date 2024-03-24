@@ -594,7 +594,7 @@ namespace Gts {
 			int nodeCollisions = 0;
 			float force = 0.0;
 
-			VisitNodes(object->Get3D1(), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
+			VisitNodes(object->Get3D1(false), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
 				float distance = (point - a_obj.world.translate).Length();
 				if (distance < maxDistance) {
 					nodeCollisions += 1;
