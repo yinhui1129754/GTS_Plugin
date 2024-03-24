@@ -94,7 +94,11 @@ namespace Hooks {
 		static FunctionHook<void(NiAVObject* a_obj3D, hkVector4& a_pos, float a_force, const HitData* a_hitData)>ExplosionImpulseHook (        
 			REL::RelocationID(25468, 26005), 
 			[](NiAVObject* a_obj3D, hkVector4& a_pos, float a_force, const HitData* a_hitData) {
-				log::info("ExplosionImpulse hook running");
+				log::info("ExplosionImpulse hook running, force: {}", a_force);
+				auto Owner = a_obj3D->GetUserData();
+				if (Owner) {
+					log::info("Owner is: {}", Owner->GetDisplayFullName());
+				}
 				if (a_hitData) {
 					log::info("Hit Data found");
 					Actor* aggressor = a_hitData->aggressor.get().get();
