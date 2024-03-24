@@ -91,7 +91,7 @@ namespace Gts {
 
         for (auto object: Refs) {
             if (object) {
-                TESObjectREFR* objectRef = object.get().get();
+                TESObjectREFR* objectref = object.get().get();
                 if (objectref) {
                     Actor* NonRef = skyrim_cast<Actor*>(objectref);
                     if (!NonRef) { // we don't want to apply it to actors
