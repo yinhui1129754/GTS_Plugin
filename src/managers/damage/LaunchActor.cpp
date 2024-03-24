@@ -46,6 +46,7 @@ namespace {
 	const float LAUNCH_KNOCKBACK = 0.02f;
 	const float BASE_CHECK_DISTANCE = 20.0f;
 
+	
 
 	float GetLaunchThreshold(Actor* giant) {
 		float threshold = 8.0;
@@ -65,6 +66,59 @@ namespace {
 		};
 		float power = soft_power(sizeRatio, launch);
 		return power;
+	}
+
+	std::vector<TESObjectREFR*> GetNearbyObjects(Actor* giant, std::vector<NiPoint3> footPoints, float maxDistance) {
+		auto cell = giant->GetParentCell();
+		float giantScale = get_visual_scale(giant);
+
+		std::vector<TESObjectREFR*> Objects = {};
+
+		if (cell) {
+			auto data = cell->GetRuntimeData();
+			for (auto object: data.references) {
+				auto objectref = object.get();
+				if (objectref) {
+					Actor* NonRef = skyrim_cast<Actor*>(objectref);
+					if (!NonRef) { // we don't want to apply it to actors
+						NiPoint3 objectlocation = objectref->GetPosition();
+						for (auto point: footPoints) {
+							float distance = (point - objectlocation).Length();
+							if (distance <= maxFootDistance) {
+								Objects.push_back(object);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return Objects;
+	}
+
+	void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force) {
+		const float start_power = 0.1;
+
+		force *= start_power * GetLaunchPower_Object(giantScale);
+
+		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
+			force *= 1.5;
+		}
+
+		auto Object1 = objectref->Get3D1(false);
+		if (Object1) {
+			auto collision = Object1->GetCollisionObject();
+			if (collision) {
+				auto rigidbody = collision->GetRigidBody();
+				if (rigidbody) {
+					auto body = rigidbody->AsBhkRigidBody();
+					if (body) {
+						log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
+						SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
+					}
+				}
+			}
+		}
 	}
 
 	void ApplyLaunchTo(Actor* giant, Actor* tiny, float force, float launch_power) {
@@ -512,6 +566,70 @@ namespace Gts {
 							}
 						}
 					}
+				}
+			}
+		}
+	}
+
+	void LaunchActor::PushObjectsTowards(Actor* giant, NiAVObject* Bone, std::vector<NiPoint3> footPoints, float maxFootDistance, float power) {
+		auto profiler = Profilers::Profile("Other: Launch Objects");
+		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
+		if (!AllowLaunch) {
+			return;
+		}
+
+		if (!Bone) {
+			return;
+		}
+
+		float giantScale = get_visual_scale(giant);
+
+		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
+			for (auto point: footPoints) {
+				DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 200, {0.5, 0.0, 0.5, 1.0});
+			}
+		}
+
+		if (cell) {
+			auto data = cell->GetRuntimeData();
+			for (auto object: GetNearbyObjects(giant, footPoints, maxFootDistance)) {
+				
+				log::info("Seeking Nearbly objects");
+				int nodeCollisions = 0;
+				float force = 0.0;
+
+				VisitNodes(object, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
+					float distance = (NodePosition - a_obj.world.translate).Length();
+					if (distance < maxDistance) {
+						nodeCollisions += 1;
+						force = 1.0 - distance / maxDistance;
+						return false;
+					}
+					return true;
+				});
+
+				if (nodeCollisions > 0) {
+					float Start = Time::WorldTimeElapsed();
+					ActorHandle gianthandle = giant->CreateRefHandle();
+					std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
+
+					NiPoint3 StartPos = Bone->world.translate;
+
+					TaskManager::Run(name, [=](auto& progressData) {
+						if (!gianthandle) {
+							return false;
+						}
+						log::info("Starting Push task");
+						auto giantref = gianthandle.get().get();
+						float timepassed = Finish - Start;
+
+						if (timepassed > 1e-4) {
+							NiPoint3 EndPos = Bone->world.translate;
+							ApplyPhysicsToObject(giantref, object, EndPos - StartPos, force);
+							return false; // end it
+						}
+						return true;
+					});
 				}
 			}
 		}

@@ -2431,8 +2431,7 @@ namespace Gts {
 				log::info("Trying to scare {}", tiny->GetDisplayFullName());
 				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
 				log::info("Allow: {}", IsScared);
-				if (!IsScared) {
-					auto combat = tiny->GetActorRuntimeData().combatController;
+				if (!IsScared && GetAV(tiny, ActorValue::kConfidence) > 0) {
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
 					ForceFlee(giant, tiny, 2.0);
 				}

@@ -1063,6 +1063,8 @@ namespace Gts {
 			SMT = true; // set SMT to true
 		}
 
+		PushObjectsTowards(giant, node, node->world.translate, radius, pushpower);
+
 		NiPoint3 NodePosition = node->world.translate;
 		float maxDistance = radius * giantScale;
 		float CheckDistance = 220 * giantScale;

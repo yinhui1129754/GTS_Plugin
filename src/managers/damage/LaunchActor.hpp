@@ -30,5 +30,7 @@ namespace Gts {
 			
 			void LaunchLeft(Actor* giant, float radius, float power);
 			void LaunchRight(Actor* giant, float radius, float power);
+
+			void PushObjectsTowards(Actor* giant, NiAVObject* Bone, std::vector<NiPoint3> footPoints, float maxFootDistance, float power) ;
 	};
 }
