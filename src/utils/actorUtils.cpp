@@ -2434,7 +2434,7 @@ namespace Gts {
 				if (!IsScared) {
 					auto combat = tiny->GetActorRuntimeData().combatController;
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
-					InitiateFlee(giant, tiny);
+					//InitiateFlee(giant, tiny);
 				}
 			}
 		}

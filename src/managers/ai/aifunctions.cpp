@@ -124,12 +124,6 @@ namespace Gts {
 		}
 	}
 
-	void InitiateFlee(Actor* giant, Actor* tiny) { // Doesn't work sadly, both methods can't scare actors to run away from gts
-		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
-		tiny->InitiateFlee(tiny, false, true, true, nullptr, giant, 180.0, 465.0 * sizedifference);
-		tiny->InitiateFlee(tiny, false, true, false, nullptr, giant, 180.0, 465.0 * sizedifference);
-	}
-
 	void ScareActors(Actor* giant) {
 		auto profiler = Profilers::Profile("ActorUtils: ScareActors");
 		if (!Persistent::GetSingleton().actors_panic) {
@@ -143,7 +137,9 @@ namespace Gts {
 				if (IsBeingHeld(giant, tiny)) {
 					return;
 				}
-				float sizedifference = std::clamp(GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true), 0.10f, 12.0f);
+				float GiantScale = get_visual_scale(giant);
+				float TinyScale = get_visual_scale(tiny);
+				float sizedifference = std::clamp(GiantScale/TinyScale, 0.10f, 12.0f);
 				float distancecheck = 128.0 * GetMovementModifier(giant);
 				float threshold = GetScareThreshold(giant);
 				if (sizedifference >= threshold) {
@@ -166,7 +162,7 @@ namespace Gts {
 									auto cell = tiny->GetParentCell();
 									if (cell) {
 										if (!combat) {
-											tiny->InitiateFlee(tiny, true, true, true, cell, giant, 100.0, 465.0 * sizedifference);
+											tiny->InitiateFlee(TinyRef, true, true, true, cell, TinyRef, 100.0, 465.0 * sizedifference);
 										}
 									}
 								}

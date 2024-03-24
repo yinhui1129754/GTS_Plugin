@@ -172,7 +172,7 @@ namespace Gts {
 
 		Attacked(target, caster); // make it work like a hostile spell
 
-		ChanceToScare(caster, target);
+		//ChanceToScare(caster, target);
 
 		if (ShrinkToNothing(caster, target)) {
 		}
