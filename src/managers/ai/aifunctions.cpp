@@ -128,13 +128,22 @@ namespace Gts {
 
 		TESForm* Flee_From_Form = TESForm::LookupByID<TESForm>(0x000197F1);
 		TESForm* Flee_To_Form = TESForm::LookupByID<TESForm>(0x000C7039);
+
+		float packages = 0.0;
+
+		for (auto Packages: tiny->GetActorBase()->aiPackages.packages) {
+			log::info("Found PAckages: {}", Packages->formID);
+			packages += 1;
+			log::info("Packages: {}", packages);
+		}
+
 		if (Flee_From_Form) {
 			log::info("Flee To found!");
 			TESPackage* FleeFrom = skyrim_cast<TESPackage*>(Flee_From_Form);
 			if (FleeFrom) {
 				log::info("Flee From: True");
-				tiny->GetActorBase()->aiPackages.packages.push_front(FleeFrom);
-				//tiny->PutCreatedPackage(FleeFrom, true, false, true); 
+				//tiny->GetActorBase()->aiPackages.packages.push_front(FleeFrom);
+				tiny->PutCreatedPackage(FleeFrom, true, false, true); 
 			}
 		}
 
@@ -143,13 +152,20 @@ namespace Gts {
 			TESPackage* FleeTo = skyrim_cast<TESPackage*>(Flee_To_Form);
 			if (FleeTo) {
 				log::info("Flee To: True");
-				tiny->GetActorBase()->aiPackages.packages.push_front(FleeTo);
+				//tiny->GetActorBase()->aiPackages.packages.push_front(FleeTo);
+				tiny->PutCreatedPackage(FleeTo, true, false, true); 
 			}
 
 
 			tiny->EvaluatePackage(true, true);
 			//tiny->PutCreatedPackage(FleeTo, true, false, true); 
 			log::info("Putting existing package");
+		}
+		packages = 0.0;
+		for (auto Packages_After: tiny->GetActorBase()->aiPackages.packages) {
+			log::info("Found Packages After: {}", Packages_After->formID);
+			packages += 1;
+			log::info("New Packages: {}", packages);
 		}
 	}
 
