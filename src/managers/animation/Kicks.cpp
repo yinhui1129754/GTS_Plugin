@@ -44,7 +44,7 @@ namespace {
 			auto Leg = find_node(giant, node);
 			if (Leg) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, DamageSource::KickedLeft);
-				LaunchActor::GetSingleton().PushObjects(Objects, giant, Leg, pushpower);
+				LaunchActor::GetSingleton().PushObjects(Objects, giant, Leg, pushpower, Radius_Kick);
 			}
 			return true;
 		});
@@ -64,7 +64,7 @@ namespace {
 			auto Leg = find_node(giant, node);
 			if (Leg) {
 				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, DamageSource::KickedRight);
-				LaunchActor::GetSingleton().PushObjects(Objects, giant, Leg, pushpower);
+				LaunchActor::GetSingleton().PushObjects(Objects, giant, Leg, pushpower, Radius_Kick);
 			}
 			return true;
 		});

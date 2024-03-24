@@ -543,7 +543,7 @@ namespace Gts {
 		}
 	}
 
-	void LaunchActor::PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power) {
+	void LaunchActor::PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power, float radius) {
 		auto profiler = Profilers::Profile("Other: Launch Objects");
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
 		if (!AllowLaunch) {
@@ -602,12 +602,12 @@ namespace Gts {
 		}
 	}
 
-	void LaunchActor::PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power) { // Another way to do it
+	void LaunchActor::PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power, float radius) { // Another way to do it
 		if (refs.size() > 0) {
 			for (auto object: refs) {
 				if (object) {
 					objectRef = Object.get().get();
-					LaunchActor::GetSingleton().PushObjectsTowards(giant, object, Bone, power);
+					LaunchActor::GetSingleton().PushObjectsTowards(giant, object, Bone, power, radius);
 				}
 			}
 		}
