@@ -189,7 +189,7 @@ namespace Gts {
     const float Radius_Sneak_FingerGrind_Finisher = 5.0f;
 
     ///////Kicks
-    const float Radius_Kick = 22.0f;
+    const float Radius_Kick = 18.0f;
     /////////////////////////////////////////////////////
 
 }

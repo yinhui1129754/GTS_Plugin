@@ -143,7 +143,7 @@ namespace Gts {
 
         if (Kick) { // Offset pos down
             float HH = HighHeelManager::GetHHOffset(giant).Length();
-			point.z -= HH;
+			point.z -= HH * 0.7;
 		}
 
 
@@ -151,25 +151,17 @@ namespace Gts {
 			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 200, {0.5, 0.0, 0.5, 1.0});
 		}
 
-		int nodeCollisions = 0;
-		float force = 0.0;
+		float force = 0.25;
 
-		VisitNodes(object->Get3D1(false), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
-			float distance = (point - a_obj.world.translate).Length();
-			if (distance < maxDistance) {
-				nodeCollisions += 1;
-				force = 1.0 - distance / maxDistance;
-				return false;
-			}
-			return true;
-		});
+        float distance = (point - object->GetPosition()).Length();
 
-		if (nodeCollisions > 0) {
+		if (distance < maxDistance) {
 			float Start = Time::WorldTimeElapsed();
-			ActorHandle gianthandle = giant->CreateRefHandle();
-			std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
 
-			NiPoint3 StartPos = Bone->world.translate;
+            NiPoint3 StartPos = Bone->world.translate;
+			ActorHandle gianthandle = giant->CreateRefHandle();
+
+			std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
 
 			TaskManager::Run(name, [=](auto& progressData) {
 				if (!gianthandle) {
@@ -208,14 +200,15 @@ namespace Gts {
 		}
 		float giantScale = get_visual_scale(giant);
 
-		float maxDistance = 280 * giantScale;
+		float maxDistance = 220 * giantScale;
 
 		std::vector<ObjectRefHandle> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
+        const auto TES = RE::TES::GetSingleton();
         TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
-
-		RE::TES::GetSingleton()->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
+        
+		TES->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
             bool IsActor = a_ref.Is(FormType::ActorCharacter);
             if (!IsActor) { // we don't want to apply it to actors
                 NiPoint3 objectlocation = a_ref.GetPosition();
@@ -227,7 +220,7 @@ namespace Gts {
                     }
                 }
             }
-        return RE::BSContainer::ForEachResult::kContinue;    
+            return RE::BSContainer::ForEachResult::kContinue;    
         });
 
 		return Objects;
