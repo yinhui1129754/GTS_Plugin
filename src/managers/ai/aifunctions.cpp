@@ -20,19 +20,30 @@ using namespace Gts;
 namespace {
 
 	void DropWeapon(Actor* tiny) {
-		TESBoundObject* weapon_L = tiny->GetEquippedObject(true)->As<RE::TESBoundObject>();
-		TESBoundObject* weapon_R = tiny->GetEquippedObject(false)->As<RE::TESBoundObject>();
+		TESForm* weapon_L = tiny->GetEquippedObject(true);
+		TESForm* weapon_R = tiny->GetEquippedObject(false);
 
 		NiPoint3 point = NiPoint3();
-    	NiPoint3* coords = &point;
+    	NiPoint3* rotate = &point;
+
+		NiPoint3 pos = NiPoint3();//tiny->GetPosition();
+		NiPoint3 position = &pos;
 
 		if (weapon_L) {
-			log::info("Dropping weapon L");
-			tiny->DropObject(weapon_L, nullptr, 1.0, coords, coords);
+			TESBoundObject* left = weapon_L->As<RE::TESBoundObject>();
+			log::info("Seeking for left");
+			if (left) {
+				log::info("Dropping weapon L");
+				tiny->DropObject(weapon_L, nullptr, 1.0, position, rotate);
+			}
 		}
 		if (weapon_R) {
-			log::info("Dropping weapon R");
-			tiny->DropObject(weapon_R, nullptr, 1.0, coords, coords);
+			TESBoundObject* right = weapon_R->As<RE::TESBoundObject>();
+			log::info("Seeking for right");
+			if (right) {
+				log::info("Dropping weapon R");
+				tiny->DropObject(weapon_R, nullptr, 1.0, position, rotate);
+			}
 		}
 	}
 

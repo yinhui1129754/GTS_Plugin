@@ -2426,8 +2426,8 @@ namespace Gts {
 			return;
 		}
 		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
-		if (sizedifference > 1.25 && !tiny->IsDead()) {
-			int rng = rand() % 1000;
+		if (sizedifference > 1.15 && !tiny->IsDead()) {
+			int rng = rand() % 600;
 			rng /= sizedifference;
 			if (rng <= 1.0 * sizedifference) {
 				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
