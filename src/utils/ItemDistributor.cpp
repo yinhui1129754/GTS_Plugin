@@ -204,7 +204,7 @@ namespace Gts {
 
         if (rng <= ChanceToAdd) { // Add only if RNG returns true
             log::info("RNG Rolled true, adding items");
-            return SelectItemsFromPool(type, Level * 100.0 * DropMult);
+            return SelectItemsFromPool(type, Level * 100.0);
         }
         return {};
     }
