@@ -168,7 +168,7 @@ namespace Gts {
 
             auto factory = IFormFactory::GetConcreteFormFactoryByType<TESLevItem>();
             if (factory) {
-                std::vector<const RE::LEVELED_OBJECT*> Item;
+                std::vector<LEVELED_OBJECT*> Item;
                 for (auto result: SelectItemsFromPool(type, Level * 100)) {
                     Item.push_back(result);
                 }
