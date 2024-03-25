@@ -15,12 +15,12 @@ namespace Gts {
 	};
 
     TESContainer* GetChestRef(TESForm form, ChestType type);
-    
+
     void DistributeChestItems();
 
     void AddItemToChests(FormID Chest);
 
     std::vector<TESForm*> FindAllChests();
    
-	std::vector<TESObjectRefr*> FindAllChests();
+	std::vector<TESBoundObject*> CalculateItemProbability(ChestType type);
 }
