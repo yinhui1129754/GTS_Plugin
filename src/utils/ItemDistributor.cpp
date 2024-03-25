@@ -152,8 +152,8 @@ namespace Gts {
         std::vector<TESForm*> Forms = {}; 
         
         auto containers = DataHandler->GetFormArray(RE::FormType::Container);
-        
-        containers->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& container) {
+
+        (*containers)->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& container) {
             log::info("Pushing forms");
             container.push_back(Forms);
             return (RE::BSContainer::ForEachResult) true;
