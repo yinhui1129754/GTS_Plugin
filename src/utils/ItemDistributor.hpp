@@ -22,6 +22,6 @@ namespace Gts {
 
     std::vector<TESForm*> FindAllChests();
    
-	TESLevItem* CalculateItemProbability(ChestType type);
+	std::vector<TESLevItem*> CalculateItemProbability(ChestType type);
     std::vector<TESBoundObject*> SelectItemsFromPool(ChestType type, float Level);
 }

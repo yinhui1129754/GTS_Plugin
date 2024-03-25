@@ -102,24 +102,29 @@ namespace Gts {
         TESContainer* container_Misc = GetChestRef(Chest, ChestType::MiscChest); 
         if (container_Boss) {
             log::info("Boss container found!");
-            auto item = CalculateItemProbability(ChestType::BossChest);
-            if (item) {
-                log::info("Adding Boss items");
-                container_Boss->AddObjectToContainer(item, 1, nullptr);
+            for (auto item: CalculateItemProbability(ChestType::BossChest)) {
+                if (item) {
+                    log::info("Adding Boss items");
+                    container_Boss->AddObjectToContainer(item, 1, nullptr);
+                }
             }
-        } else if (container_Normal) {
+        }
+        else if (container_Normal) {
             log::info("Normal chest found!");
-            auto item = CalculateItemProbability(ChestType::NormalChest);
-            if (item) {
-                log::info("Adding Normal items");
-                container_Boss->AddObjectToContainer(item, 1, nullptr);
+            for (auto item: CalculateItemProbability(ChestType::NormalChest)) {
+                if (item) {
+                    log::info("Adding Normal items");
+                    container_Normal->AddObjectToContainer(item, 1, nullptr);
+                }
             }
-        } else if (container_Misc) {
+        }
+        else if (container_Misc) {
             log::info("Misc chest found!");
-            auto item = CalculateItemProbability(ChestType::MiscChest);
-            if (item) {
-                log::info("Adding Misc items");
-                container_Boss->AddObjectToContainer(item, 1, nullptr);
+            for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
+                if (item) {
+                    log::info("Adding items");
+                    container_Misc->AddObjectToContainer(item, 1, nullptr);
+                }
             }
         }
     }
@@ -141,7 +146,7 @@ namespace Gts {
         return Forms;
     }
 
-    TESLevItem* CalculateItemProbability(ChestType type) {
+    std::vector<TESBoundObject*> CalculateItemProbability(ChestType type) {
         float HighLootChance = Runtime::GetStage("MainQuest");
         float Level = 1.0 + GetGtsSkillLevel() * 0.01;
         float ChanceToAdd = 100;
@@ -165,76 +170,57 @@ namespace Gts {
 
         if (rng <= ChanceToAdd) { // Add only if RNG returns true
             log::info("RNG Rolled true, adding items");
-
-            auto factory = IFormFactory::GetConcreteFormFactoryByType<TESLevItem>();
-            if (factory) {
-                std::vector<LEVELED_OBJECT*> Item;
-                for (auto result: SelectItemsFromPool(type, Level * 100)) {
-                    Item.push_back(result);
-                }
-
-                if(!Item.empty()) {
-                    const size_t size = Item.size();
-                    RE::TESLevItem* Items = factory->Create();
-                    Items->chanceNone = 0;
-                    Items->llFlags = (RE::TESLeveledList::Flag)(RE::TESLeveledList::Flag::kCalculateFromAllLevelsLTOrEqPCLevel | RE::TESLeveledList::Flag::kCalculateForEachItemInCount);
-                    Items->entries.resize(size);
-                    Items->numEntries = size;
-                    log::info("List isn't empty");
-                    return Items;
-                } 
-                return nullptr;
-            }
-
-            return nullptr;
+            return SelectItemsFromPool(type, Level * 100.0);
         }
-        return nullptr;
+        return {};
     }
 
-    std::vector<TESBoundObject*> SelectItemsFromPool(ChestType type, float Level) {
-        TESBoundObject* ResistSize = Runtime::GetAlchemy("Potion_ResistSize");
-        TESBoundObject* Growth = Runtime::GetAlchemy("Potion_Growth");
+    std::vector<TESLevItem*> SelectItemsFromPool(ChestType type, float Level) {
+        TESLevItem* ResistSize_Weak = Runtime::GetLeveledItem("Potion_ResistSize_Weak");
+        TESLevItem* ResistSize = Runtime::GetLeveledItem("Potion_ResistSize");
+        TESLevItem* Growth = Runtime::GetLeveledItem("Potion_Growth");
 
-        TESBoundObject* SizeLimit_Weak = Runtime::GetAlchemy("Potion_SizeLimit_Weak");
-        TESBoundObject* SizeLimit_Normal = Runtime::GetAlchemy("Potion_SizeLimit_Normal");
-        TESBoundObject* SizeLimit_Strong = Runtime::GetAlchemy("Potion_SizeLimit_Strong");
-        TESBoundObject* SizeLimit_Extreme = Runtime::GetAlchemy("Potion_SizeLimit_Extreme");
+        TESLevItem* SizeLimit_Weak = Runtime::GetLeveledItem("Potion_SizeLimit_Weak");
+        TESLevItem* SizeLimit_Normal = Runtime::GetLeveledItem("Potion_SizeLimit_Normal");
+        TESLevItem* SizeLimit_Strong = Runtime::GetLeveledItem("Potion_SizeLimit_Strong");
+        TESLevItem* SizeLimit_Extreme = Runtime::GetLeveledItem("Potion_SizeLimit_Extreme");
 
-        TESBoundObject* SizeHunger_Weak = Runtime::GetAlchemy("Potion_SizeHunger_Weak");
-        TESBoundObject* SizeHunger_Normal = Runtime::GetAlchemy("Potion_SizeHunger_Normal");
-        TESBoundObject* SizeHunger_Strong = Runtime::GetAlchemy("Potion_SizeHunger_Strong");
-        TESBoundObject* SizeHunger_Extreme = Runtime::GetAlchemy("Potion_SizeHunger_Extreme");
+        TESLevItem* SizeHunger_Weak = Runtime::GetLeveledItem("Potion_SizeHunger_Weak");
+        TESLevItem* SizeHunger_Normal = Runtime::GetLeveledItem("Potion_SizeHunger_Normal");
+        TESLevItem* SizeHunger_Strong = Runtime::GetLeveledItem("Potion_SizeHunger_Strong");
+        TESLevItem* SizeHunger_Extreme = Runtime::GetLeveledItem("Potion_SizeHunger_Extreme");
 
-        TESBoundObject* Size_Amplify = Runtime::GetAlchemy("Potion_Size_Amplify");
-        TESBoundObject* Size_Drain = Runtime::GetAlchemy("Poison_Size_Drain");
-        TESBoundObject* Size_Shrink = Runtime::GetAlchemy("Poison_Size_Shrink");
+        TESLevItem* Size_Amplify = Runtime::GetLeveledItem("Potion_Size_Amplify");
+        TESLevItem* Size_Drain = Runtime::GetLeveledItem("Poison_Size_Drain");
+        TESLevItem* Size_Shrink = Runtime::GetLeveledItem("Poison_Size_Shrink");
 
-        TESBoundObject* Amulet = Runtime::GetArmor("AmuletOfGiants");
+        TESLevItem* Amulet = Runtime::GetArmor("AmuletOfGiants");
 
-        std::vector<TESBoundObject*> ChosenItems = {};
+        std::vector<TESLevItem*> ChosenItems = {};
 
-        const std::vector<TESBoundObject*> WeakPotions = {
+        const std::vector<TESLevItem*> WeakPotions = {
             SizeHunger_Weak,
             SizeLimit_Weak,
+            ResistSize_Weak,
             Growth,
         };
-        const std::vector<TESBoundObject*> NormalPotions = {
+        const std::vector<TESLevItem*> NormalPotions = {
             SizeHunger_Normal,
             SizeLimit_Normal,
-            ResistSize,
             Size_Drain,
             Amulet,
         };
-        const std::vector<TESBoundObject*> StrongPotions = {
+        const std::vector<TESLevItem*> StrongPotions = {
             SizeHunger_Strong,
             SizeLimit_Strong,
             Size_Amplify,
+            ResistSize,
         };
-        const std::vector<TESBoundObject*> ExtremePotions = {
+        const std::vector<TESLevItem*> ExtremePotions = {
             SizeHunger_Extreme,
             SizeLimit_Extreme,
             Size_Shrink,
-            Size_Drain
+            Size_Drain,
         };
         
         float weakBoundary = 100;
@@ -251,7 +237,7 @@ namespace Gts {
         int roll = rand() % 100; // Select item rarity
         int MaxItems = 1 + (rand() % 1 + 1); // Limit amount of items that can be spawned
         MaxItems *= (Level * 0.01);
-
+        
         int SelectItem; // Select random item from array
 
         if (type == ChestType::NormalChest) {

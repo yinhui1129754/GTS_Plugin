@@ -435,24 +435,25 @@ Dropbox_Mechanical = "GTS.esp|6C1ABE"
 Dropbox_Soul = "GTS.esp|6C1ABD"
 Dropbox_Bug = "GTS.esp|6C1ABF"
 
-[ingredients]
-Potion_ResistSize = "GTS.esp|3D457E"
-Potion_Growth = "GTS.esp|3D4580"
+[levelitems]
+Potion_ResistSize = "GTS.esp|7BECF1"
+Potion_ResistSize_Weak = "GTS.esp|7BECF4"
+Potion_Growth = "GTS.esp|7BECF0"
 
-Potion_SizeLimit_Weak = "GTS.esp|3E38B5"
-Potion_SizeLimit_Normal = "GTS.esp|3E38B7"
-Potion_SizeLimit_Strong = "GTS.esp|3E38B9"
-Potion_SizeLimit_Extreme = "GTS.esp|3E38BE"
+Potion_SizeLimit_Weak = "GTS.esp|7BECE8"
+Potion_SizeLimit_Normal = "GTS.esp|7BECE9"
+Potion_SizeLimit_Strong = "GTS.esp|7BECEA"
+Potion_SizeLimit_Extreme = "GTS.esp|7BECEB"
 
-Potion_SizeHunger_Weak = "GTS.esp|42F7D4"
-Potion_SizeHunger_Normal = "GTS.esp|4399DF"
-Potion_SizeHunger_Strong = "GTS.esp|4399DD"
-Potion_SizeHunger_Extreme = "GTS.esp|4399E1"
+Potion_SizeHunger_Weak = "GTS.esp|7BECEC"
+Potion_SizeHunger_Normal = "GTS.esp|7BECED"
+Potion_SizeHunger_Strong = "GTS.esp|7BECEE"
+Potion_SizeHunger_Extreme = "GTS.esp|7BECEF"
 
-Potion_Size_Amplify = "GTS.esp|452F1E"
-Poison_Size_Drain = "GTS.esp|5B5553"
-Poison_Size_Shrink = "GTS.esp|5B5555"
+Potion_Size_Amplify = "GTS.esp|7BECF3"
+Poison_Size_Drain = "GTS.esp|7BECF2"
+Poison_Size_Shrink = "GTS.esp|7BECF5"
 
-[armors]
-AmuletOfGiants = "GTS.esp|3EDAC7"
+AmuletOfGiants = "GTS.esp|7BECE7"
+
 

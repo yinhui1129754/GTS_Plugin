@@ -57,13 +57,10 @@ namespace Gts {
 		TESObjectCONT* data;
 	};
 
-	struct IngredientData {
-		AlchemyItem* data;
+	struct LeveledItemsData {
+		TESLevItem* data;
 	};
 
-	struct ArmorData {
-		TESObjectARMO* data;
-	};
 
 	class Runtime : public EventListener {
 		public:
@@ -133,9 +130,8 @@ namespace Gts {
 			static BGSKeyword* GetKeyword(const std::string_view& tag);
 			static bool HasKeyword(Actor* actor, const std::string_view& tag);
 
-			// Items
-			static AlchemyItem* GetAlchemy(const std::string_view& tag);
-			static TESObjectARMO* GetArmor(const std::string_view& tag);
+			// Leveled Items
+			static TESLevItem* GetLeveledItem(const std::string_view& tag);
 			// Containers
 			static TESObjectCONT* GetContainer(const std::string_view& tag);
 			static TESObjectREFR* PlaceContainer(Actor* actor, const std::string_view& tag);
@@ -166,8 +162,7 @@ namespace Gts {
 			std::unordered_map<std::string, RaceData> races;
 			std::unordered_map<std::string, KeywordData> keywords;
 			std::unordered_map<std::string, ContainerData> containers;
-			std::unordered_map<std::string, IngredientData> ingredients;
-			std::unordered_map<std::string, ArmorData> armors;
+			std::unordered_map<std::string, LeveledItemsData> levelitems;
 
 			std::unordered_set<std::string> logged;
 	};
