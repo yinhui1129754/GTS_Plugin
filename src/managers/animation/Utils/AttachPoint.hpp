@@ -20,6 +20,7 @@ namespace {
 	const std::string_view rightToeLookup = "AnimObjectB";
 	const std::string_view bodyLookup = "NPC Spine1 [Spn1]";
 
+
 	NiPoint3 CastRayDownwards(Actor* tiny) {
 		bool success = false;
 		NiPoint3 ray_start = tiny->GetPosition();
@@ -67,39 +68,9 @@ namespace Gts {
 			return false;
 		}
 
-		if (!IsRagdolled(tiny)) {
-			tiny->SetPosition(point, true);
-		}
+		tiny->SetPosition(point, true);
 
 		ForceRagdoll(tiny, false);
-
-		if (IsRagdolled(tiny)) {
-			log::info("Tiny is ragdolled");
-			for (auto bools: {true, false}) {
-				auto collision = tiny->Get3D(bools)->GetCollisionObject();
-				if (collision) {
-					NiPoint3 deltaLocation = point - tiny->GetPosition();
-					float deltaLength = deltaLocation.Length();
-					if (deltaLength >= 20.0) {
-						auto rigidbody = collision->GetRigidBody();
-						if (rigidbody) {
-							auto body = rigidbody->AsBhkRigidBody();
-							if (body) {
-								hkVector4 pos;
-								body->GetPosition(pos);
-								log::info("POS: {}", Vector2Str(pos));
-								hkVector4 delta = hkVector4(deltaLocation.x/70.0, deltaLocation.y/70.0, deltaLocation.z/70, 1.0);
-
-								hkVector4 newPos = pos + delta;
-								SetLinearVelocity(body, hkVector4(0.0, 0.0, 0.0, 0.0));
-								body->SetPosition(newPos);
-								log::info("Ragdoll found, Applying Pos");
-							}
-						}
-					}
-				}
-			}
-		}
 
 		auto charcont = tiny->GetCharController();
 		if (charcont) {

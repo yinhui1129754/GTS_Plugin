@@ -74,7 +74,7 @@ namespace Gts {
 		} else {
 			SoftPotential kick {
 			.k = 1.42,
-			.n = 0.72,
+			.n = 0.78,
 			.s = 0.6,
 			.a = 0.0,
 			};

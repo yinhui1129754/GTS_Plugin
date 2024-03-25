@@ -586,9 +586,9 @@ namespace Gts {
 		}
 
 		auto transient = Transient::GetSingleton().GetData(prey);
-		/*if (prey->IsDead()) {
+		if (prey->IsDead()) {
 			return false;
-		}*/
+		}
 
 		if (IsBeingHeld(pred, prey) || IsGtsBusy(pred)) {
 			return false;

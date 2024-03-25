@@ -1330,7 +1330,7 @@ namespace Gts {
 		if (!actor) {
 			return;
 		}
-		/*auto charCont = actor->GetCharController();
+		auto charCont = actor->GetCharController();
 		if (!charCont) {
 			return;
 		}
@@ -1349,7 +1349,7 @@ namespace Gts {
 					}
 				}
 			}
-		}*/
+		}
 	}
 
 
@@ -2982,13 +2982,6 @@ namespace Gts {
 		using func_t = decltype(&SetAngularImpulse);
 		REL::Relocation<func_t> func{ RELOCATION_ID(76262, 78092) };
 		return func(body, a_impulse);
-	}
-
-	void SetLinearVelocity(bhkRigidBody* body, const hkVector4& a_newVel)
-	{
-		using func_t = decltype(&SetLinearVelocity);
-		REL::Relocation<func_t> func{ RELOCATION_ID(76259, 78089) };
-		return func(body, a_newVel);
 	}
 
 	std::int16_t GetItemCount(InventoryChanges* changes, RE::TESBoundObject* a_obj)

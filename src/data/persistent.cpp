@@ -1,5 +1,6 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/GtsSizeManager.hpp"
+#include "utils/ItemDistributor.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
 #include "scale/modscale.hpp"
@@ -104,6 +105,8 @@ namespace Gts {
 
 		SizeManager::GetSingleton().Reset();
 		//CooldownManager::GetSingleton().Reset();
+
+		DistributeChestItems();
 
 		FixAnimationsAndCamera(); // Call it from ActorUtils, needed to fix Grab anim on save-reload
 
