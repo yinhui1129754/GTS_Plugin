@@ -141,7 +141,7 @@ namespace Gts {
                     });
                     log::info("Adding Boss items");
                     if (Allow) {
-                        container_Normal->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Normal->AsReference()->AddObjectToContainer(item, nullptr, 1, nullptr);
                     }
                 }
             }
@@ -160,7 +160,7 @@ namespace Gts {
                     });
                     log::info("Adding Boss items");
                     if (Allow) {
-                        container_Misc->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Misc->AsReference()->AddObjectToContainer(item, nullptr, 1, nullptr);
                     }
                 }
             }
