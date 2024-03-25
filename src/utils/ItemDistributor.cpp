@@ -233,26 +233,28 @@ namespace Gts {
         extremeBoundary = extremeBoundary / totalPercentage * 100;
 
         int roll = rand() % 100; // Select item rarity
-        int MaxItems = 1 + (rand() % (2*(Level))); // Limit amount of items that can be spawned
+        int MaxItems = 1 + (rand() % 1 + 1); // Limit amount of items that can be spawned
+        MaxItems *= Level;
+        
         int SelectItem; // Select random item from array
 
-        if (type == ChestType::NormalChests) {
+        if (type == ChestType::NormalChest) {
             roll *= 0.60;
-        } else if (type == ChestType::MiscChests) {
+        } else if (type == ChestType::MiscChest) {
             roll *= 0.10;
         }
         log::info("rolled max items: {}", MaxItems);
 
         for (int i = 0; i < MaxItems; ++i) { // Run the func multiple times 
-            if (roll > weak+normal+strong) {
+            if (roll > weakBoundary + normalBoundary + strongBoundary) {
                 SelectItem = rand() % (ExtremePotions.size() + 1);
                 ChosenItems.push_back(ExtremePotions[SelectItem]);
                 log::info("Extreme Random: {}", SelectItem);
-            } else if (roll > weak + normal) {
+            } else if (roll > weakBoundary + normalBoundary) {
                 SelectItem = rand() % (StrongPotions.size() + 1);
                 ChosenItems.push_back(StrongPotions[SelectItem]);
                 log::info("Strong Random: {}", SelectItem);
-            } else if (roll > weak) {
+            } else if (roll > weakBoundary) {
                 SelectItem = rand() % (NormalPotions.size() + 1);
                 ChosenItems.push_back(NormalPotions[SelectItem]);
                 log::info("Normal Random: {}", SelectItem);
