@@ -174,6 +174,13 @@ namespace Gts {
         float HighLootChance = Runtime::GetStage("MainQuest");
         float Level = GetGtsSkillLevel();
         log::info("Item could be added but there's no items yet");
+
+        std::vector<TESBoundObject*> Items = {};
+
+        TESBoundObject* potion = Runtime::GetPotion("Potion_ResistSize");
+        if (potion) {
+            Items.push_back(potion);
+        }
         return {};
     }
 }

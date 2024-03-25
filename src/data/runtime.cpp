@@ -37,6 +37,7 @@ namespace {
 		std::unordered_map<std::string, std::string> races;
 		std::unordered_map<std::string, std::string> keywords;
 		std::unordered_map<std::string, std::string> containers;
+		std::unirdered_map<std::string, std::string> items;
 
 		RuntimeConfig(const toml::value& data) {
 			this->sounds = toml::find_or(data, "sounds", std::unordered_map<std::string, std::string>());
@@ -51,6 +52,7 @@ namespace {
 			this->races = toml::find_or(data, "races", std::unordered_map<std::string, std::string>());
 			this->keywords = toml::find_or(data, "keywords", std::unordered_map<std::string, std::string>());
 			this->containers = toml::find_or(data, "containers", std::unordered_map<std::string, std::string>());
+			this->items = toml::find_or(data, "items", std::unordered_map<std::string, std::string>());
 		}
 	};
 }
@@ -578,7 +580,19 @@ namespace Gts {
 			return false;
 		}
 	}
-
+	// Items
+	TESBoundObject* Runtime::GetItem(const std::string_view& tag) {
+		TESObjectCONT* data = nullptr;
+		try {
+			data = Runtime::GetSingleton().items.at(std::string(tag)).data;
+		}  catch (const std::out_of_range& oor) {
+			data = nullptr;
+			if (!Runtime::Logged("cont", tag)) {
+				log::warn("Item: {} not found", tag);
+			}
+		}
+		return data;
+	}
 	// Containers
 	TESObjectCONT* Runtime::GetContainer(const std::string_view& tag) {
 		TESObjectCONT* data = nullptr;
@@ -811,6 +825,15 @@ namespace Gts {
 			auto form = find_form<TESObjectCONT>(value);
 			if (form) {
 				this->containers.try_emplace(key, form);
+			} else if (!Runtime::Logged("cont", key)) {
+				log::warn("Container form not found for {}", key);
+			}
+		}
+
+		for (auto &[key, value]: config.items) {
+			auto form = find_form<TESBoundObject>(value);
+			if (form) {
+				this->items.try_emplace(key, form);
 			} else if (!Runtime::Logged("cont", key)) {
 				log::warn("Container form not found for {}", key);
 			}

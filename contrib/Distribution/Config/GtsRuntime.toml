@@ -434,3 +434,7 @@ Dropbox_Undead = "GTS.esp|6BC9BC"
 Dropbox_Mechanical = "GTS.esp|6C1ABE"
 Dropbox_Soul = "GTS.esp|6C1ABD"
 Dropbox_Bug = "GTS.esp|6C1ABF"
+
+[items]
+Potion_ResistSize = "GTS.esp|3D457E"
+
