@@ -14,11 +14,11 @@ namespace Gts {
 		MiscChest,
 	};
 
-    TESContainer* GetChestRef(FormID form, ChestType type);
+    TESContainer* GetChestRef(TESForm* form, ChestType type);
 
     void DistributeChestItems();
 
-    void AddItemToChests(FormID Chest);
+    void AddItemToChests(TESForm* Chest);
 
     std::vector<TESForm*> FindAllChests();
    

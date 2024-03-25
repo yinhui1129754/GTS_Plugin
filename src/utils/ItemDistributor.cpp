@@ -74,11 +74,11 @@ namespace {
 }
 
 namespace Gts {
-    TESContainer* GetChestRef(FormID form, ChestType type) {
+    TESContainer* GetChestRef(TESForm* form, ChestType type) {
         switch (type) {
             case ChestType::BossChest: {
-                for (auto chests: BossChests) {
-                    if (chests == form) {
+                for (auto chest: BossChests) {
+                    if (chest == form->formID) {
                         return form->As<RE::TESContainer>();
                     }
                 }
@@ -86,7 +86,7 @@ namespace Gts {
             }
             case ChestType::MiniChest: {
                 for (auto chests: MiniChests) {
-                    if (chests == form) {
+                    if (chest == form->formID) {
                         return form->As<RE::TESContainer>();
                     }
                 }
@@ -94,7 +94,7 @@ namespace Gts {
             }
             case ChestType::MiscChest: {
                 for (auto chests: BossChests) {
-                    if (chests == form) {
+                    if (chest == form->formID) {
                         return form->As<RE::TESContainer>();
                     }
                 }
@@ -111,12 +111,12 @@ namespace Gts {
         }
         for (auto Chest: FindAllChests()) {
             if (Chest.size() > 0) {
-                AddItemToChests(Chest->formID);
+                AddItemToChests(Chest);
             }
         }
     }
 
-    void AddItemToChests(FormID Chest) {
+    void AddItemToChests(TESForm* Chest) {
         TESContainer* container_Boss = GetChestRef(Chest, ChestType::BossChest); 
         TESContainer* container_Mini = GetChestRef(Chest, ChestType::MiniChest); 
         TESContainer* container_Misc = GetChestRef(Chest, ChestType::MiscChest); 
