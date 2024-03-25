@@ -87,13 +87,6 @@ namespace {
 
 namespace Gts {
 
-    float GetDropMultiplier(TESForm* form) {
-        if (chest == BossChest_Draugr) {
-            return 2.0;
-        }
-        return 1.0;
-    }
-
     TESContainer* FilterChests(TESForm* form, ChestType type) {
         switch (type) {
             case ChestType::BossChest: {
