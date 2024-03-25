@@ -85,7 +85,7 @@ namespace Gts {
                 break;
             }
             case ChestType::MiniChest: {
-                for (auto chests: MiniChests) {
+                for (auto chest: MiniChests) {
                     if (chest == form->formID) {
                         return form->As<RE::TESContainer>();
                     }
@@ -93,7 +93,7 @@ namespace Gts {
                 break;
             }
             case ChestType::MiscChest: {
-                for (auto chests: BossChests) {
+                for (auto chest: BossChests) {
                     if (chest == form->formID) {
                         return form->As<RE::TESContainer>();
                     }
@@ -124,7 +124,7 @@ namespace Gts {
             log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
-                    container_Misc->AddObjectToContainer(item, nullptr, 1, nullptr);
+                    container_Boss->AddObjectToContainer(item, 1, nullptr);
                 }
             }
         }
@@ -132,7 +132,7 @@ namespace Gts {
             log::info("Mini chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiniChest)) {
                 if (item) {
-                    container_Misc->AddObjectToContainer(item, nullptr, 1, nullptr);
+                    container_Mini->AddObjectToContainer(item, 1, nullptr);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace Gts {
             log::info("Misc chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
                 if (item) {
-                    container_Misc->AddObjectToContainer(item, nullptr, 1, nullptr);
+                    container_Misc->AddObjectToContainer(item, 1, nullptr);
                 }
             }
         }
