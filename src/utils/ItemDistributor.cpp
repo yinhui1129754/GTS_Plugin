@@ -98,7 +98,7 @@ namespace Gts {
 
     void AddItemToChests(TESForm* Chest) {
         TESContainer* container_Boss = GetChestRef(Chest, ChestType::BossChest); 
-        TESContainer* container_Normal = GetChestRef(Chest, ChestType::Normal); 
+        TESContainer* container_Normal = GetChestRef(Chest, ChestType::NormalChest); 
         TESContainer* container_Misc = GetChestRef(Chest, ChestType::MiscChest); 
         if (container_Boss) {
             log::info("Boss container found!");
@@ -226,19 +226,19 @@ namespace Gts {
         float strongBoundary = 1 + Level * Level * 1;
         float extremeBoundary = 1 + Level * Level * Level * 0.1;
 
-        float totalPercentage = weakBoundary + normalBoundary + strongBoundary + extremeBoundary
+        float totalPercentage = weakBoundary + normalBoundary + strongBoundary + extremeBoundary;
         weakBoundary = weakBoundary / totalPercentage * 100;
         normalBoundary = normalBoundary / totalPercentage * 100;
         strongBoundary = strongBoundary / totalPercentage * 100;
         extremeBoundary = extremeBoundary / totalPercentage * 100;
 
         int roll = rand() % 100; // Select item rarity
-        int MaxItems = 1 + (rand() % (2*(level))); // Limit amount of items that can be spawned
+        int MaxItems = 1 + (rand() % (2*(Level))); // Limit amount of items that can be spawned
         int SelectItem; // Select random item from array
 
-        if (Type == ChestType::NormalChests) {
+        if (type == ChestType::NormalChests) {
             roll *= 0.60;
-        } else if (Type == ChestType::MiscChests) {
+        } else if (type == ChestType::MiscChests) {
             roll *= 0.10;
         }
         log::info("rolled max items: {}", MaxItems);
