@@ -54,13 +54,13 @@ namespace {
 }
 
 namespace Gts {
-    TESObjectREFR* GetChestRef(TESForm* form, ChestType type) {
+    TESContainer* GetChestRef(TESForm* form, ChestType type) {
         switch (type) {
             case ChestType::BossChest: {
                 for (auto chest: BossChests) {
                     if (chest == form->formID) {
                         log::info("BossChest Found");
-                        return form->As<RE::TESObjectREFR>();
+                        return form->As<RE::TESContainer>();
                     }
                 }
                 break;
@@ -69,7 +69,7 @@ namespace Gts {
                 for (auto chest: NormalChests) {
                     if (chest == form->formID) {
                         log::info("NormalChest Found");
-                        return form->As<RE::TESObjectREFR>();
+                        return form->As<RE::TESContainer>();
                     }
                 }
                 break;
@@ -78,7 +78,7 @@ namespace Gts {
                 for (auto chest: MiscChests) {
                     if (chest == form->formID) {
                         log::info("MiscChest Found");
-                        return form->As<RE::TESObjectREFR>();
+                        return form->As<RE::TESContainer>();
                     }
                 }
                 break;
@@ -90,6 +90,7 @@ namespace Gts {
     void DistributeChestItems() {
         float QuestStage = Runtime::GetStage("MainQuest");
         if (QuestStage < 20) {
+            log::info("Quest stage is <20, returning");
             return;
         }
         for (auto Chest: FindAllChests()) {
@@ -100,13 +101,25 @@ namespace Gts {
     }
 
     void AddItemToChests(TESForm* Chest) {
-        TESObjectREFR* container_Boss = GetChestRef(Chest, ChestType::BossChest); 
-        TESObjectREFR* container_Normal = GetChestRef(Chest, ChestType::NormalChest); 
-        TESObjectREFR* container_Misc = GetChestRef(Chest, ChestType::MiscChest); 
+        TESContainer* container_Boss_Find = GetChestRef(Chest, ChestType::BossChest); 
+        TESContainer* container_Normal_Find = GetChestRef(Chest, ChestType::NormalChest); 
+        TESContainer* container_Misc_Find = GetChestRef(Chest, ChestType::MiscChest);
+
+        if (container_Boss_Find) {
+            log::info("Found Boss Container");
+        } 
+        if (container_Normal_Find) {
+            log::info("Found Normal Container");
+        }
+        if (container_Misc_Find) {
+            log::info("Found Misc Container");
+        }
+        TESObjectREFR* container_Boss = skyrim_cast<TESObjectREFR*>(container_Boss_Find);
+        TESObjectREFR* container_Normal = skyrim_cast<TESObjectREFR*>(container_Normal_Find);
+        TESObjectREFR* container_Misc = skyrim_cast<TESObjectREFR*>(container_Misc_Find);
+        TESBoundObject* Token = Runtime::GetLeveledItem("GTSToken");
 
         bool Allow = true;
-
-        TESBoundObject* Token = Runtime::GetLeveledItem("GTSToken");
         
         if (container_Boss) {
             log::info("Boss container found!");
@@ -176,7 +189,7 @@ namespace Gts {
             Forms.push_back(container);
         }
 
-        if (Forms.size() < 1) {
+        if (Forms.empty()) {
             log::info("Forms are empty");
             return {};
         }
