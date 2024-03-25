@@ -608,7 +608,7 @@ namespace Gts {
 		}
 		return data;
 	}
-	
+
 	// Containers
 	TESObjectCONT* Runtime::GetContainer(const std::string_view& tag) {
 		TESObjectCONT* data = nullptr;
@@ -847,7 +847,7 @@ namespace Gts {
 		}
 
 		for (auto &[key, value]: config.ingredients) {
-			auto form = find_form<AlchemyItem*>(value);
+			auto form = find_form<AlchemyItem>(value);
 			if (form) {
 				this->ingredients.try_emplace(key, form);
 			} else if (!Runtime::Logged("cont", key)) {
@@ -856,7 +856,7 @@ namespace Gts {
 		}
 
 		for (auto &[key, value]: config.armors) {
-			auto form = find_form<TESObjectARMO*>(value);
+			auto form = find_form<TESObjectARMO>(value);
 			if (form) {
 				this->armors.try_emplace(key, form);
 			} else if (!Runtime::Logged("cont", key)) {
