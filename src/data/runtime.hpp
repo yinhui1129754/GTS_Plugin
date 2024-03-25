@@ -130,7 +130,7 @@ namespace Gts {
 			static bool HasKeyword(Actor* actor, const std::string_view& tag);
 
 			// Items
-			static Runtime::GetItem(const std::string_view& tag);
+			static TESBoundObject* GetItem(const std::string_view& tag);
 
 			// Containers
 			static TESObjectCONT* GetContainer(const std::string_view& tag);

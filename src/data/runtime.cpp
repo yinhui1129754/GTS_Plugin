@@ -37,7 +37,7 @@ namespace {
 		std::unordered_map<std::string, std::string> races;
 		std::unordered_map<std::string, std::string> keywords;
 		std::unordered_map<std::string, std::string> containers;
-		std::unirdered_map<std::string, std::string> items;
+		std::unordered_map<std::string, std::string> items;
 
 		RuntimeConfig(const toml::value& data) {
 			this->sounds = toml::find_or(data, "sounds", std::unordered_map<std::string, std::string>());
