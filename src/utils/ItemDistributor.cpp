@@ -123,7 +123,7 @@ namespace Gts {
             log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
-                    log::info("Items added: {}", item.size());
+                    log::info("Adding items");
                     container_Boss->AddObjectToContainer(item, 1, nullptr);
                 }
             }
@@ -132,7 +132,7 @@ namespace Gts {
             log::info("Mini chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiniChest)) {
                 if (item) {
-                    log::info("Items added: {}", item.size());
+                    log::info("Adding items");
                     container_Mini->AddObjectToContainer(item, 1, nullptr);
                 }
             }
@@ -141,7 +141,7 @@ namespace Gts {
             log::info("Misc chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
                 if (item) {
-                    log::info("Items added: {}", item.size());
+                    log::info("Adding items");
                     container_Misc->AddObjectToContainer(item, 1, nullptr);
                 }
             }
@@ -179,8 +179,8 @@ namespace Gts {
 
         std::vector<TESBoundObject*> Items = {};
 
-        TESBoundObject* potion = Runtime::GetAlchemy("Potion_ResistSize");
-        TESBoundObject* amulet = Runtime::GetArmor("Potion_ResistSize");
+        TESBoundObject* potion = static_cast<TESBoundObject*>(Runtime::GetAlchemy("Potion_ResistSize"));
+        TESBoundObject* amulet = static_cast<TESBoundObject*>(Runtime::GetArmor("AmuletOfGiants"));
         if (potion) {
             Items.push_back(potion);
             log::info("Potion pushed!");
