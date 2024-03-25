@@ -170,12 +170,12 @@ namespace Gts {
             if (factory) {
                 std::vector<const RE::LEVELED_OBJECT*> Item;
                 for (auto& result: SelectItemsFromPool(type, Level * 100)) {
-                    Item.push_back(&result);
+                    Item.push_back(result);
                 }
 
                 if(!Item.empty()) {
                     const size_t size = Item.size();
-                    RE::TESLevItem* Items = fac->Create();
+                    RE::TESLevItem* Items = factory->Create();
                     Items->chanceNone = 0;
                     Items->llFlags = (RE::TESLeveledList::Flag)(RE::TESLeveledList::Flag::kCalculateFromAllLevelsLTOrEqPCLevel | RE::TESLeveledList::Flag::kCalculateForEachItemInCount);
                     Items->entries.resize(size);
