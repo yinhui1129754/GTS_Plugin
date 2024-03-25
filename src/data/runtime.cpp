@@ -584,7 +584,7 @@ namespace Gts {
 	}
 	// Items
 	TESBoundObject* Runtime::GetAlchemy(const std::string_view& tag) {
-		AlchemyItem* data = nullptr;
+		TESBoundObject* data = nullptr;
 		try {
 			data = static_cast<TESBoundObject*>(Runtime::GetSingleton().ingredients.at(std::string(tag)).data);
 		}  catch (const std::out_of_range& oor) {
@@ -596,7 +596,7 @@ namespace Gts {
 		return data;
 	}
 	TESBoundObject* Runtime::GetArmor(const std::string_view& tag) {
-		TESObjectARMO* data = nullptr;
+		TESBoundObject* data = nullptr;
 		try {
 			data = static_cast<TESBoundObject*>(Runtime::GetSingleton().armors.at(std::string(tag)).data);
 		}  catch (const std::out_of_range& oor) {
@@ -847,7 +847,7 @@ namespace Gts {
 		for (auto &[key, value]: config.ingredients) {
 			auto form = find_form<AlchemyItem*>(value);
 			if (form) {
-				this->items.try_emplace(key, form);
+				this->ingredients.try_emplace(key, form);
 			} else if (!Runtime::Logged("cont", key)) {
 				log::warn("Item form not found for {}", key);
 			}
@@ -856,7 +856,7 @@ namespace Gts {
 		for (auto &[key, value]: config.armors) {
 			auto form = find_form<TESObjectARMO*>(value);
 			if (form) {
-				this->items.try_emplace(key, form);
+				this->armors.try_emplace(key, form);
 			} else if (!Runtime::Logged("cont", key)) {
 				log::warn("Item form not found for {}", key);
 			}

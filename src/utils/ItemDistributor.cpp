@@ -38,11 +38,20 @@ namespace {
     const FormID Poison_Size_Drain =         0x5B5553;
     const FormID Poison_Size_Shrink =        0x5B5555;
 
-
 	// Boss Chests
 	const FormID BossChest_Giant = 		0x774BF; // TreastGiantChestBoss
 	const FormID BossChest_Bandit = 	0x2064F; // TreasBanditChestBoss
 	const FormID BossChest_Draugr =     0x20671; // TreasDraugrChestBoss
+
+	// Mini Chests
+	const FormID MiniChest_Normal =     0x3AC21;	// TreasBanditChest
+	const FormID MiniChest_Giant =      0x774C6;    // TreastGiantChest
+
+	// Barrels and misc
+	const FormID Barrel_1 =     		0x845; 		// Barrel 1
+	const FormID Barrel_2 =             0xFE078806; // Barrel 2
+	const FormID Long_Crate_1 =         0xFE05D819; // Long Crate 1
+	const FormID Long_Crate_2 =         0xFE05D81A; // Long Crate 2
 
     const std::vector<FormID> BossChests = {
         BossChest_Giant,
@@ -50,20 +59,10 @@ namespace {
         BossChest_Draugr,
     };
 
-	// Mini Chests
-	const FormID MiniChest_Normal =     0x3AC21;	// TreasBanditChest
-	const FormID MiniChest_Giant =      0x774C6;    // TreastGiantChest
-
     const std::vector<FormID> MiniChests = {
         MiniChest_Normal,
         MiniChest_Giant,
     };
-
-	// Barrels and misc
-	const FormID Barrel_1 =     		0x845; 		// Barrel 1
-	const FormID Barrel_2 =             0xFE078806; // Barrel 2
-	const FormID Long_Crate_1 =         0xFE05D819; // Long Crate 1
-	const FormID Long_Crate_2 =         0xFE05D81A; // Long Crate 2
 
     const std::vector<FormID> MiscChests = {
         Barrel_1,
@@ -173,7 +172,7 @@ namespace Gts {
     std::vector<TESBoundObject*> CalculateItemProbability(ChestType type) {
         float HighLootChance = Runtime::GetStage("MainQuest");
         float Level = GetGtsSkillLevel();
-        log::info("Item could be added but there's no items yet");
+        log::info("Calculating item probability");
 
         std::vector<TESBoundObject*> Items = {};
 
