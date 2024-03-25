@@ -81,8 +81,8 @@ namespace Gts {
 						auto body = rigidbody->AsBhkRigidBody();
 						if (body) {
 							hkVector4 pos = hkVector4(point.x, point.y, point.z, 1.0);
-							body->SetPosition(pos);
-							SetLinearVelocity(body, hkVector4(0.0, 0.0, 0.0, 1.0));
+							//body->SetPosition(pos);
+							SetLinearVelocity(body, hkVector4(0.0, 0.0, 0.0, 0.0));
 							log::info("Ragdoll found, Applying Pos");
 						}
 					}
