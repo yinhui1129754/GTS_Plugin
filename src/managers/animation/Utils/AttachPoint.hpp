@@ -20,7 +20,6 @@ namespace {
 	const std::string_view rightToeLookup = "AnimObjectB";
 	const std::string_view bodyLookup = "NPC Spine1 [Spn1]";
 
-
 	NiPoint3 CastRayDownwards(Actor* tiny) {
 		bool success = false;
 		NiPoint3 ray_start = tiny->GetPosition();
