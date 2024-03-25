@@ -151,13 +151,13 @@ namespace Gts {
 
         std::vector<TESForm*> Forms = {}; 
         
-        auto containers = DataHandler->GetFormArray(RE::FormType::Container);
-
-        (*containers)->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& container) {
-            log::info("Pushing forms");
-            container.push_back(Forms);
-            return (RE::BSContainer::ForEachResult) true;
-        });
+        for(auto containers = DataHandler->GetFormArray(RE::FormType::Container).begin(); containers != DataHandler->GetFormArray(RE::FormType::Container).end(); ++containers) {
+            (*containers)->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& container) {
+                log::info("Pushing forms");
+                container.push_back(Forms);
+                return (RE::BSContainer::ForEachResult) true;
+            });
+        }
 
         if (Forms.size() < 1) {
             log::info("Forms are empty");
