@@ -37,7 +37,8 @@ namespace {
 		std::unordered_map<std::string, std::string> races;
 		std::unordered_map<std::string, std::string> keywords;
 		std::unordered_map<std::string, std::string> containers;
-		std::unordered_map<std::string, std::string> items;
+		std::unordered_map<std::string, std::string> ingredients;
+		std::unordered_map<std::string, std::string> armors;
 
 		RuntimeConfig(const toml::value& data) {
 			this->sounds = toml::find_or(data, "sounds", std::unordered_map<std::string, std::string>());
@@ -52,7 +53,8 @@ namespace {
 			this->races = toml::find_or(data, "races", std::unordered_map<std::string, std::string>());
 			this->keywords = toml::find_or(data, "keywords", std::unordered_map<std::string, std::string>());
 			this->containers = toml::find_or(data, "containers", std::unordered_map<std::string, std::string>());
-			this->items = toml::find_or(data, "items", std::unordered_map<std::string, std::string>());
+			this->ingredients = toml::find_or(data, "ingredients", std::unordered_map<std::string, std::string>());
+			this->armors = toml::find_or(data, "armors", std::unordered_map<std::string, std::string>());
 		}
 	};
 }
@@ -581,10 +583,22 @@ namespace Gts {
 		}
 	}
 	// Items
-	TESBoundObject* Runtime::GetItem(const std::string_view& tag) {
-		TESBoundObject* data = nullptr;
+	TESBoundObject* Runtime::GetAlchemy(const std::string_view& tag) {
+		AlchemyItem* data = nullptr;
 		try {
-			data = static_cast<TESBoundObject*>(Runtime::GetSingleton().items.at(std::string(tag)).data);
+			data = static_cast<TESBoundObject*>(Runtime::GetSingleton().ingredients.at(std::string(tag)).data);
+		}  catch (const std::out_of_range& oor) {
+			data = nullptr;
+			if (!Runtime::Logged("cont", tag)) {
+				log::warn("Item: {} not found", tag);
+			}
+		}
+		return data;
+	}
+	TESBoundObject* Runtime::GetArmor(const std::string_view& tag) {
+		TESObjectARMO* data = nullptr;
+		try {
+			data = static_cast<TESBoundObject*>(Runtime::GetSingleton().armors.at(std::string(tag)).data);
 		}  catch (const std::out_of_range& oor) {
 			data = nullptr;
 			if (!Runtime::Logged("cont", tag)) {
@@ -830,8 +844,17 @@ namespace Gts {
 			}
 		}
 
-		for (auto &[key, value]: config.items) {
-			auto form = find_form<TESBoundObject>(value);
+		for (auto &[key, value]: config.ingredients) {
+			auto form = find_form<AlchemyItem*>(value);
+			if (form) {
+				this->items.try_emplace(key, form);
+			} else if (!Runtime::Logged("cont", key)) {
+				log::warn("Item form not found for {}", key);
+			}
+		}
+
+		for (auto &[key, value]: config.armors) {
+			auto form = find_form<TESObjectARMO*>(value);
 			if (form) {
 				this->items.try_emplace(key, form);
 			} else if (!Runtime::Logged("cont", key)) {
@@ -840,3 +863,4 @@ namespace Gts {
 		}
 	}
 }
+TESObjectARMO*

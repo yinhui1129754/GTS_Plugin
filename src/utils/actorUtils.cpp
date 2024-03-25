@@ -916,7 +916,7 @@ namespace Gts {
 		float fallmod = 1.0;
 		if (transient) {
 			fallmod = transient->FallTimer;
-			log::info("Fall mult :{}", transient->FallTimer);
+			//log::info("Fall mult :{}", transient->FallTimer);
 		}
 		return fallmod;
 	}

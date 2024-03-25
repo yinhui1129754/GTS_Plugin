@@ -435,6 +435,9 @@ Dropbox_Mechanical = "GTS.esp|6C1ABE"
 Dropbox_Soul = "GTS.esp|6C1ABD"
 Dropbox_Bug = "GTS.esp|6C1ABF"
 
-[items]
+[ingredients]
 Potion_ResistSize = "GTS.esp|3D457E"
+
+[armors]
+AmuletOfGiants = "GTS.esp|3EDAC7"
 

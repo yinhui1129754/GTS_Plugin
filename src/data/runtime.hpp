@@ -57,8 +57,12 @@ namespace Gts {
 		TESObjectCONT* data;
 	};
 
-	struct ItemData {
-		TESBoundObject* data;
+	struct IngredientData {
+		AlchemyItem* data;
+	};
+
+	struct ArmorData {
+		TESObjectARMO* data;
 	};
 
 	class Runtime : public EventListener {
@@ -130,8 +134,8 @@ namespace Gts {
 			static bool HasKeyword(Actor* actor, const std::string_view& tag);
 
 			// Items
-			static TESBoundObject* GetItem(const std::string_view& tag);
-
+			static TESBoundObject* GetAlchemy(const std::string_view& tag);
+			static TESBoundObject* GetArmor(const std::string_view& tag);
 			// Containers
 			static TESObjectCONT* GetContainer(const std::string_view& tag);
 			static TESObjectREFR* PlaceContainer(Actor* actor, const std::string_view& tag);
@@ -162,7 +166,8 @@ namespace Gts {
 			std::unordered_map<std::string, RaceData> races;
 			std::unordered_map<std::string, KeywordData> keywords;
 			std::unordered_map<std::string, ContainerData> containers;
-			std::unordered_map<std::string, ItemData> items;
+			std::unordered_map<std::string, IngredientData> ingredients;
+			std::unordered_map<std::string, ArmorData> armors;
 
 			std::unordered_set<std::string> logged;
 	};
