@@ -54,13 +54,13 @@ namespace {
 }
 
 namespace Gts {
-    TESForm* GetChestRef(TESForm* form, ChestType type) {
+    TESContainer FilterChests(TESForm* form, ChestType type) {
         switch (type) {
             case ChestType::BossChest: {
                 for (auto chest: BossChests) {
                     if (chest == form->formID) {
                         log::info("BossChest Found");
-                        return form;
+                        return form->As<RE::TESContainer>();
                     }
                 }
                 break;
@@ -69,7 +69,7 @@ namespace Gts {
                 for (auto chest: NormalChests) {
                     if (chest == form->formID) {
                         log::info("NormalChest Found");
-                        return form;
+                        return form->As<RE::TESContainer>();
                     }
                 }
                 break;
@@ -78,7 +78,7 @@ namespace Gts {
                 for (auto chest: MiscChests) {
                     if (chest == form->formID) {
                         log::info("MiscChest Found");
-                        return form;
+                        return form->As<RE::TESContainer>();
                     }
                 }
                 break;
@@ -101,9 +101,9 @@ namespace Gts {
     }
 
     void AddItemToChests(TESForm* Chest) {
-        TESForm* container_Boss = GetChestRef(Chest, ChestType::BossChest); 
-        TESForm* container_Normal = GetChestRef(Chest, ChestType::NormalChest); 
-        TESForm* container_Misc = GetChestRef(Chest, ChestType::MiscChest);
+        TESContainer* container_Boss = FilterChests(Chest, ChestType::BossChest); 
+        TESContainer* container_Normal = FilterChests(Chest, ChestType::NormalChest); 
+        TESContainer* container_Misc = FilterChests(Chest, ChestType::MiscChest);
         TESBoundObject* Token = Runtime::GetLeveledItem("GTSToken");
 
         bool Allow = true;
@@ -112,7 +112,7 @@ namespace Gts {
             log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
-                    container_Boss->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& object) {
+                    container_Boss->ForEachContainerObject([&](RE::ContainerObject& object) {
                         if(object.obj == Token) {
                            // Allow = false;
                             log::info("Chest has a token");
@@ -122,7 +122,7 @@ namespace Gts {
                     });
                     log::info("Adding Boss items");
                     if (Allow) {
-                        container_Boss->AsReference()->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Boss->AddObjectToContainer(item, nullptr, 1, nullptr);
                     }
                 }
             }
@@ -131,7 +131,7 @@ namespace Gts {
             log::info("Normal chest found!");
             for (auto item: CalculateItemProbability(ChestType::NormalChest)) {
                 if (item) {
-                    container_Normal->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& object) {
+                    container_Normal->ForEachContainerObject([&](RE::ContainerObject& object) {
                         if(object.obj == Token) {
                             //Allow = false;
                             log::info("Chest has a token");
@@ -139,9 +139,9 @@ namespace Gts {
                         }
                         return (RE::BSContainer::ForEachResult)true;
                     });
-                    log::info("Adding Boss items");
+                    log::info("Adding Normal items");
                     if (Allow) {
-                        container_Normal->AsReference()->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Normal->AddObjectToContainer(item, nullptr, 1, nullptr);
                     }
                 }
             }
@@ -150,7 +150,7 @@ namespace Gts {
             log::info("Misc chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
                 if (item) {
-                    container_Misc->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& object) {
+                    container_Misc->ForEachContainerObject([&](RE::ContainerObject& object) {
                         if(object.obj == Token) {
                             //Allow = false;
                             log::info("Chest has a token");
@@ -158,9 +158,9 @@ namespace Gts {
                         }
                         return (RE::BSContainer::ForEachResult)true;
                     });
-                    log::info("Adding Boss items");
+                    log::info("Adding Chest items");
                     if (Allow) {
-                        container_Misc->AsReference()->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Misc->AddObjectToContainer(item, nullptr, 1, nullptr);
                     }
                 }
             }
@@ -171,9 +171,8 @@ namespace Gts {
         RE::TESDataHandler* const DataHandler = RE::TESDataHandler::GetSingleton();
 
         std::vector<TESForm*> Forms = {}; 
-        auto containers = DataHandler->GetFormArray(RE::FormType::Container);
-        for (auto container: containers) {
-            Forms.push_back(container);
+        for (auto cont = DataHandler->GetFormArray(RE::FormType::Container).begin(); cont != DataHandler->GetFormArray(RE::FormType::Container).end(); ++cont)
+            Forms.push_back(cont);
         }
 
         if (Forms.empty()) {
