@@ -102,29 +102,24 @@ namespace Gts {
         TESContainer* container_Misc = GetChestRef(Chest, ChestType::MiscChest); 
         if (container_Boss) {
             log::info("Boss container found!");
-            for (auto item: CalculateItemProbability(ChestType::BossChest)) {
-                if (item) {
-                    log::info("Adding items");
-                    container_Boss->AddObjectToContainer(item, 1, nullptr);
-                }
+            auto item = CalculateItemProbability(ChestType::BossChest);
+            if (item) {
+                log::info("Adding Boss items");
+                container_Boss->AddObjectToContainer(item, 1, nullptr);
             }
-        }
-        else if (container_Normal) {
+        } else if (container_Normal) {
             log::info("Normal chest found!");
-            for (auto item: CalculateItemProbability(ChestType::NormalChest)) {
-                if (item) {
-                    log::info("Adding items");
-                    container_Normal->AddObjectToContainer(item, 1, nullptr);
-                }
+            auto item = CalculateItemProbability(ChestType::NormalChest);
+            if (item) {
+                log::info("Adding Normal items");
+                container_Boss->AddObjectToContainer(item, 1, nullptr);
             }
-        }
-        else if (container_Misc) {
+        } else if (container_Misc) {
             log::info("Misc chest found!");
-            for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
-                if (item) {
-                    log::info("Adding items");
-                    container_Misc->AddObjectToContainer(item, 1, nullptr);
-                }
+            auto item = CalculateItemProbability(ChestType::MiscChest);
+            if (item) {
+                log::info("Adding Misc items");
+                container_Boss->AddObjectToContainer(item, 1, nullptr);
             }
         }
     }
@@ -146,7 +141,7 @@ namespace Gts {
         return Forms;
     }
 
-    std::vector<TESBoundObject*> CalculateItemProbability(ChestType type) {
+    TESLevItem* CalculateItemProbability(ChestType type) {
         float HighLootChance = Runtime::GetStage("MainQuest");
         float Level = 1.0 + GetGtsSkillLevel() * 0.01;
         float ChanceToAdd = 100;
@@ -170,9 +165,30 @@ namespace Gts {
 
         if (rng <= ChanceToAdd) { // Add only if RNG returns true
             log::info("RNG Rolled true, adding items");
-            return SelectItemsFromPool(type, Level);
+
+            auto factory = IFormFactory::GetConcreteFormFactoryByType<TESLevItem>();
+            if (factory) {
+                std::vector<const RE::LEVELED_OBJECT*> Item;
+                for (auto& result: SelectItemsFromPool(type, Level * 100)) {
+                    Item.push_back(&result);
+                }
+
+                if(!Item.empty()) {
+                    const size_t size = closetclothes.size();
+                    RE::TESLevItem* Items = fac->Create();
+                    Items->chanceNone = 0;
+                    Items->llFlags = (RE::TESLeveledList::Flag)(RE::TESLeveledList::Flag::kCalculateFromAllLevelsLTOrEqPCLevel | RE::TESLeveledList::Flag::kCalculateForEachItemInCount);
+                    Items->entries.resize(size);
+                    Items->numEntries = size;
+                    log::info("List isn't empty");
+                    return Items;
+                } 
+                return nullptr;
+            }
+
+            return nullptr;
         }
-        return {};
+        return nullptr;
     }
 
     std::vector<TESBoundObject*> SelectItemsFromPool(ChestType type, float Level) {
@@ -200,12 +216,12 @@ namespace Gts {
         const std::vector<TESBoundObject*> WeakPotions = {
             SizeHunger_Weak,
             SizeLimit_Weak,
-            ResistSize,
             Growth,
         };
         const std::vector<TESBoundObject*> NormalPotions = {
             SizeHunger_Normal,
             SizeLimit_Normal,
+            ResistSize,
             Size_Drain,
             Amulet,
         };
@@ -234,8 +250,8 @@ namespace Gts {
 
         int roll = rand() % 100; // Select item rarity
         int MaxItems = 1 + (rand() % 1 + 1); // Limit amount of items that can be spawned
-        MaxItems *= Level;
-        
+        MaxItems *= (Level * 0.01);
+
         int SelectItem; // Select random item from array
 
         if (type == ChestType::NormalChest) {
