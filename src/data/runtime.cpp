@@ -582,7 +582,7 @@ namespace Gts {
 	}
 	// Items
 	TESBoundObject* Runtime::GetItem(const std::string_view& tag) {
-		TESObjectCONT* data = nullptr;
+		TESBoundObject* data = nullptr;
 		try {
 			data = Runtime::GetSingleton().items.at(std::string(tag)).data;
 		}  catch (const std::out_of_range& oor) {
