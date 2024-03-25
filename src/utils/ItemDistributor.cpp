@@ -25,8 +25,8 @@ namespace {
 	const FormID BossChest_Draugr =     0x20671; // TreasDraugrChestBoss
 
 	// Mini Chests
-	const FormID MiniChest_Normal =     0x3AC21;	// TreasBanditChest
-	const FormID MiniChest_Giant =      0x774C6;    // TreasGiantChest
+	const FormID NormalChest_Normal =     0x3AC21;	// TreasBanditChest
+	const FormID NormalChest_Giant =      0x774C6;    // TreasGiantChest
 
 	// Barrels and misc
 	const FormID Barrel_1 =     		0x845; 		// Barrel 1
@@ -40,12 +40,12 @@ namespace {
         BossChest_Draugr,
     };
 
-    const std::vector<FormID> MiniChests = {
-        MiniChest_Normal,
-        MiniChest_Giant,
+    const std::vector<FormID> NormalChests = {
+        NormalChest_Normal,
+        NormalChest_Giant,
     };
 
-    const std::vector<FormID> MiscChests = {
+    const std::vector<FormID> MiniChests = {
         Barrel_1,
         Barrel_2,
         Long_Crate_1,
@@ -109,7 +109,7 @@ namespace Gts {
                 }
             }
         }
-        if (container_Mini) {
+        else if (container_Mini) {
             log::info("Mini chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiniChest)) {
                 if (item) {
@@ -118,7 +118,7 @@ namespace Gts {
                 }
             }
         }
-        if (container_Misc) {
+        else if (container_Misc) {
             log::info("Misc chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
                 if (item) {
@@ -169,12 +169,12 @@ namespace Gts {
         }
 
         if (rng <= ChanceToAdd) { // Add only if RNG returns true
-            return SelectItemsFromPool(type, level);
+            return SelectItemsFromPool(type, Level);
         }
         return {};
     }
 
-    std::vector<TESBoundObject*> SelectItemsFromPool(ChestType type, float level) {
+    std::vector<TESBoundObject*> SelectItemsFromPool(ChestType type, float Level) {
         TESBoundObject* ResistSize = Runtime::GetAlchemy("Potion_ResistSize");
         TESBoundObject* Growth = Runtime::GetAlchemy("Potion_Growth");
 
@@ -196,35 +196,68 @@ namespace Gts {
 
         std::vector<TESBoundObject*> ChosenItems = {};
 
-        const std::vector<TESBoundObject*> WeakPotions = { // 100% chance  / 0
+        const std::vector<TESBoundObject*> WeakPotions = {
             SizeHunger_Weak,
             SizeLimit_Weak,
             ResistSize,
             Growth,
         };
-        const std::vector<TESBoundObject*> NormalPotions = { // 50% chance  / 1
+        const std::vector<TESBoundObject*> NormalPotions = {
             SizeHunger_Normal,
             SizeLimit_Normal,
             Size_Drain,
             Amulet,
         };
-        const std::vector<TESBoundObject*> StrongPotions = { // 20% chance  / 2
+        const std::vector<TESBoundObject*> StrongPotions = {
             SizeHunger_Strong,
             SizeLimit_Strong,
             Size_Amplify,
         };
-        const std::vector<TESBoundObject*> ExtremePotions = { // 10% chance  / 3
+        const std::vector<TESBoundObject*> ExtremePotions = {
             SizeHunger_Extreme,
             SizeLimit_Extreme,
             Size_Shrink,
             Size_Drain
         };
         
-        int SelectRandom = rng() % 3;
-        int ExtraLootChance = rng() % 10;
-        ExtraLootChance /= Level;
+        float weakBoundary = 100;
+        float normalBoundary = 1 + Level * 10;
+        float strongBoundary = 1 + Level * Level * 1;
+        float extremeBoundary = 1 + Level * Level * Level * 0.1;
 
-        log::info("Selected Random: {}", SelectRandom);
+        float totalPercentage = weakBoundary + normalBoundary + strongBoundary + extremeBoundary
+        weakBoundary = weakBoundary / totalPercentage * 100;
+        normalBoundary = normalBoundary / totalPercentage * 100;
+        strongBoundary = strongBoundary / totalPercentage * 100;
+        extremeBoundary = extremeBoundary / totalPercentage * 100;
+
+        int roll = rand() % 100; // Select item rarity
+        int MaxItems = 1 + (rand() % (2*(level))); // Limit amount of items that can be spawned
+        int SelectItem; // Select random item from array
+
+        if (Type == ChestType::NormalChests) {
+            roll *= 0.60;
+        } else if (Type == ChestType::MiniChests) {
+            roll *= 0.10;
+        }
+        log::info("rolled max items: {}", MaxItems);
+        for (int i = 0; i < MaxItems; ++i) {
+            if (roll > weak+normal+strong) {
+                SelectItem = rand() % (ExtremePotions.size());
+                ChosenItems.push_back(ExtremePotions[SelectItem]);
+            } else if (roll > weak + normal) {
+                SelectItem = rand() % (StrongPotions.size());
+                ChosenItems.push_back(StrongPotions[SelectItem]);
+            } else if (roll > weak) {
+                SelectItem = rand() % (NormalPotions.size());
+                ChosenItems.push_back(NormalPotions[SelectItem]);
+            } else {
+                SelectItem = rand() % (WeakPotions.size());
+                ChosenItems.push_back(WeakPotions[SelectItem]);
+            }
+
+            log::info("Selected Random: {}", SelectItem);
+        }
 
         return ChosenItems;
     }
