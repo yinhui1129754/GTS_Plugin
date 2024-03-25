@@ -14,7 +14,7 @@ namespace Gts {
 		MiscChest,
 	};
 
-    TESContainer* GetChestRef(TESForm form, ChestType type);
+    TESContainer* GetChestRef(FormID form, ChestType type);
 
     void DistributeChestItems();
 
