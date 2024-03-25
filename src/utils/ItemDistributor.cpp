@@ -59,7 +59,8 @@ namespace Gts {
             case ChestType::BossChest: {
                 for (auto chest: BossChests) {
                     if (chest == form->formID) {
-                        return form->AsReference();
+                        log::info("BossChest Found");
+                        return form->As<RE::TESObjectREFR>();
                     }
                 }
                 break;
@@ -67,7 +68,8 @@ namespace Gts {
             case ChestType::NormalChest: {
                 for (auto chest: NormalChests) {
                     if (chest == form->formID) {
-                        return form->AsReference();
+                        log::info("NormalChest Found");
+                        return form->As<RE::TESObjectREFR>();
                     }
                 }
                 break;
@@ -75,7 +77,8 @@ namespace Gts {
             case ChestType::MiscChest: {
                 for (auto chest: MiscChests) {
                     if (chest == form->formID) {
-                        return form->AsReference();
+                        log::info("MiscChest Found");
+                        return form->As<RE::TESObjectREFR>();
                     }
                 }
                 break;
