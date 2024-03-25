@@ -20,13 +20,29 @@ using namespace Gts;
 
 namespace {
 	// Boss Chests
-	const FormID BossChest_Giant = 		0x774BF; // TreastGiantChestBoss
+	const FormID BossChest_Giant = 		0x774BF; // TreasGiantChestBoss
 	const FormID BossChest_Bandit = 	0x2064F; // TreasBanditChestBoss
 	const FormID BossChest_Draugr =     0x20671; // TreasDraugrChestBoss
-
-	// Mini Chests
+    const FormID BossChest_Vampire =    0x20664; // TreasVampireChestBoss
+    const FormID BossChest_Afflicted =  0x8EA5D; // TreasAfflictedChestBoss
+    const FormID BossChest_ImperialL =  0x8B1F0; // TreasCWImperialChestBossLarge
+    const FormID BossChest_SonsL =      0x8B1F1; // TreasCWSonsChestBossLarge
+    const FormID BossChest_Dwarwen =    0x20652; // TreasDwarvenChestBoss
+    const FormID BossChest_Falmer =     0x2065B; // TreasFalmerChestBoss
+    const FormID BossChest_DWFalmer =   0xB1176; // TreasFalmerChestBossDwarven
+    const FormID BossChest_Forsworn =   0x20658; // TreasForswornChestBoss
+    const FormID BossChest_Hagraven =   0x20667; // TreasHagravenChestBoss
+    const FormID BossChest_Orc      =   0x774C9; // TreasOrcChestBoss
+    const FormID BossChest_Warlock  =   0x2065D; // TreasWarlockChestBoss
+    const FormID BossChest_Werewolf =   0x20661; // TreasWerewolfChestBoss
+    const FormID BossChest_DLC01_Elf =  0x2019DD6; // DLC01TreasSnowElfChestBoss
+    const FormID BossChest_DLC01_SC =   0x20040A5; // DLC01SC_ChestBoss
+    
+	// Normal Chests
 	const FormID NormalChest_Normal =     0x3AC21;	// TreasBanditChest
-	const FormID NormalChest_Giant =      0x774C6;    // TreasGiantChest
+	const FormID NormalChest_Giant =      0x774C6;  // TreasGiantChest
+    const FormID NormalChest_SonsS =      0x8B1E9;  // TreasCWSonsChestBossSmall
+    const FormID NormalChest_ImperialS =  0x8B1E8; // TreasCWImperialChestBossSmall
 
 	// Barrels and misc
 	const FormID Barrel_1 =     		0x845; 		// Barrel 1
@@ -38,11 +54,27 @@ namespace {
         BossChest_Giant,
         BossChest_Bandit,
         BossChest_Draugr,
+        BossChest_Vampire,
+        BossChest_Afflicted,
+        BossChest_ImperialL,
+        BossChest_SonsL,
+        BossChest_Dwarwen,
+        BossChest_Falmer,
+        BossChest_DWFalmer,
+        BossChest_Forsworn,
+        BossChest_Hagraven,
+        BossChest_Orc,
+        BossChest_Warlock,
+        BossChest_Werewolf,
+        BossChest_DLC01_Elf,
+        BossChest_DLC01_SC,
     };
 
     const std::vector<FormID> NormalChests = {
         NormalChest_Normal,
         NormalChest_Giant,
+        NormalChest_SonsS,
+        NormalChest_ImperialS,
     };
 
     const std::vector<FormID> MiscChests = {
@@ -54,6 +86,14 @@ namespace {
 }
 
 namespace Gts {
+
+    float GetDropMultiplier(TESForm* form) {
+        if (chest == BossChest_Draugr) {
+            return 2.0;
+        }
+        return 1.0;
+    }
+
     TESContainer* FilterChests(TESForm* form, ChestType type) {
         switch (type) {
             case ChestType::BossChest: {
@@ -104,26 +144,12 @@ namespace Gts {
         TESContainer* container_Boss = FilterChests(Chest, ChestType::BossChest); 
         TESContainer* container_Normal = FilterChests(Chest, ChestType::NormalChest); 
         TESContainer* container_Misc = FilterChests(Chest, ChestType::MiscChest);
-        TESBoundObject* Token = Runtime::GetLeveledItem("GTSToken");
 
-        bool Allow = true;
-        
         if (container_Boss) {
             log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
-                    container_Boss->ForEachContainerObject([&](RE::ContainerObject& object) {
-                        if(object.obj == Token) {
-                           // Allow = false;
-                            log::info("Chest has a token");
-                            return (RE::BSContainer::ForEachResult)false;
-                        }
-                        return (RE::BSContainer::ForEachResult)true;
-                    });
-                    log::info("Adding Boss items");
-                    if (Allow) {
-                        container_Boss->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
-                    }
+                    container_Boss->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
                 }
             }
         }
@@ -131,18 +157,7 @@ namespace Gts {
             log::info("Normal chest found!");
             for (auto item: CalculateItemProbability(ChestType::NormalChest)) {
                 if (item) {
-                    container_Normal->ForEachContainerObject([&](RE::ContainerObject& object) {
-                        if(object.obj == Token) {
-                            //Allow = false;
-                            log::info("Chest has a token");
-                            return (RE::BSContainer::ForEachResult)false;
-                        }
-                        return (RE::BSContainer::ForEachResult)true;
-                    });
-                    log::info("Adding Normal items");
-                    if (Allow) {
-                        container_Normal->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
-                    }
+                    container_Normal->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
                 }
             }
         }
@@ -150,18 +165,7 @@ namespace Gts {
             log::info("Misc chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
                 if (item) {
-                    container_Misc->ForEachContainerObject([&](RE::ContainerObject& object) {
-                        if(object.obj == Token) {
-                            //Allow = false;
-                            log::info("Chest has a token");
-                            return (RE::BSContainer::ForEachResult)false;
-                        }
-                        return (RE::BSContainer::ForEachResult)true;
-                    });
-                    log::info("Adding Chest items");
-                    if (Allow) {
-                        container_Misc->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
-                    }
+                    container_Misc->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
                 }
             }
         }
@@ -183,7 +187,7 @@ namespace Gts {
         return Forms;
     }
 
-    std::vector<TESLevItem*> CalculateItemProbability(ChestType type) {
+    std::vector<TESLevItem*> CalculateItemProbability(ChestType type, float DropMult) {
         float HighLootChance = Runtime::GetStage("MainQuest");
         float Level = 1.0 + GetGtsSkillLevel() * 0.01;
         float ChanceToAdd = 100;
@@ -196,18 +200,18 @@ namespace Gts {
                 break;
             }
             case (ChestType::NormalChest): { // Occasionally add stuff
-                ChanceToAdd = 15 * Level;
+                ChanceToAdd = 8 * Level;
                 break;
             }
             case (ChestType::MiscChest): { // Very small chance to add stuff
-                ChanceToAdd = 0.15 * Level;
+                ChanceToAdd = 0.10 * Level;
                 break;
             }
         }
 
         if (rng <= ChanceToAdd) { // Add only if RNG returns true
             log::info("RNG Rolled true, adding items");
-            return SelectItemsFromPool(type, Level * 100.0);
+            return SelectItemsFromPool(type, Level * 100.0 * DropMult);
         }
         return {};
     }
@@ -232,7 +236,6 @@ namespace Gts {
         TESLevItem* Size_Shrink = Runtime::GetLeveledItem("Poison_Size_Shrink");
 
         TESLevItem* Amulet = Runtime::GetLeveledItem("AmuletOfGiants");
-        TESLevItem* EditedToken = Runtime::GetLeveledItem("GTSToken");
 
         std::vector<TESLevItem*> ChosenItems = {};
 
@@ -263,8 +266,8 @@ namespace Gts {
         
         float weakBoundary = 100;
         float normalBoundary = 1 + Level * 10;
-        float strongBoundary = 1 + Level * Level * 1;
-        float extremeBoundary = 1 + Level * Level * Level * 0.1;
+        float strongBoundary = 1 + Level * Level * 0.5;
+        float extremeBoundary = 1 + Level * Level * Level * 0.025;
 
         float totalPercentage = weakBoundary + normalBoundary + strongBoundary + extremeBoundary;
         weakBoundary = weakBoundary / totalPercentage * 100;
@@ -273,8 +276,8 @@ namespace Gts {
         extremeBoundary = extremeBoundary / totalPercentage * 100;
 
         int roll = rand() % 100; // Select item rarity
-        int MaxItems = 1 + (rand() % 1 + 1); // Limit amount of items that can be spawned
-        MaxItems *= (Level * 0.01);
+        int MaxItems = 1 + (rand() % 2); // Limit amount of items that can be spawned
+        MaxItems *= (1.0 + Level * 0.01);
         
         int SelectItem; // Select random item from array
 
@@ -284,8 +287,6 @@ namespace Gts {
             roll *= 0.10;
         }
         log::info("rolled max items: {}", MaxItems);
-
-        ChosenItems.push_back(EditedToken);
 
         for (int i = 0; i < MaxItems; ++i) { // Run the func multiple times 
             if (roll > weakBoundary + normalBoundary + strongBoundary) {
