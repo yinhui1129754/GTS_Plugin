@@ -54,13 +54,13 @@ namespace {
 }
 
 namespace Gts {
-    TESContainer* GetChestRef(TESForm* form, ChestType type) {
+    TESForm* GetChestRef(TESForm* form, ChestType type) {
         switch (type) {
             case ChestType::BossChest: {
                 for (auto chest: BossChests) {
                     if (chest == form->formID) {
                         log::info("BossChest Found");
-                        return form->As<RE::TESContainer>();
+                        return form;
                     }
                 }
                 break;
@@ -69,7 +69,7 @@ namespace Gts {
                 for (auto chest: NormalChests) {
                     if (chest == form->formID) {
                         log::info("NormalChest Found");
-                        return form->As<RE::TESContainer>();
+                        return form;
                     }
                 }
                 break;
@@ -78,7 +78,7 @@ namespace Gts {
                 for (auto chest: MiscChests) {
                     if (chest == form->formID) {
                         log::info("MiscChest Found");
-                        return form->As<RE::TESContainer>();
+                        return form;
                     }
                 }
                 break;
@@ -101,22 +101,9 @@ namespace Gts {
     }
 
     void AddItemToChests(TESForm* Chest) {
-        TESContainer* container_Boss_Find = GetChestRef(Chest, ChestType::BossChest); 
-        TESContainer* container_Normal_Find = GetChestRef(Chest, ChestType::NormalChest); 
-        TESContainer* container_Misc_Find = GetChestRef(Chest, ChestType::MiscChest);
-
-        if (container_Boss_Find) {
-            log::info("Found Boss Container");
-        } 
-        if (container_Normal_Find) {
-            log::info("Found Normal Container");
-        }
-        if (container_Misc_Find) {
-            log::info("Found Misc Container");
-        }
-        TESObjectREFR* container_Boss = skyrim_cast<TESObjectREFR*>(container_Boss_Find);
-        TESObjectREFR* container_Normal = skyrim_cast<TESObjectREFR*>(container_Normal_Find);
-        TESObjectREFR* container_Misc = skyrim_cast<TESObjectREFR*>(container_Misc_Find);
+        TESForm* container_Boss = GetChestRef(Chest, ChestType::BossChest); 
+        TESForm* container_Normal = GetChestRef(Chest, ChestType::NormalChest); 
+        TESForm* container_Misc = GetChestRef(Chest, ChestType::MiscChest);
         TESBoundObject* Token = Runtime::GetLeveledItem("GTSToken");
 
         bool Allow = true;
@@ -125,9 +112,9 @@ namespace Gts {
             log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
-                    container_Boss->GetContainer()->ForEachContainerObject([&](RE::ContainerObject& object) {
+                    container_Boss->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& object) {
                         if(object.obj == Token) {
-                            Allow = false;
+                           // Allow = false;
                             log::info("Chest has a token");
                             return (RE::BSContainer::ForEachResult)false;
                         }
@@ -135,7 +122,7 @@ namespace Gts {
                     });
                     log::info("Adding Boss items");
                     if (Allow) {
-                        container_Boss->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Boss->AsReference()->AddObjectToContainer(item, nullptr, 1, nullptr);
                     }
                 }
             }
@@ -144,9 +131,9 @@ namespace Gts {
             log::info("Normal chest found!");
             for (auto item: CalculateItemProbability(ChestType::NormalChest)) {
                 if (item) {
-                    container_Normal->GetContainer()->ForEachContainerObject([&](RE::ContainerObject& object) {
+                    container_Normal->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& object) {
                         if(object.obj == Token) {
-                            Allow = false;
+                            //Allow = false;
                             log::info("Chest has a token");
                             return (RE::BSContainer::ForEachResult)false;
                         }
@@ -163,9 +150,9 @@ namespace Gts {
             log::info("Misc chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
                 if (item) {
-                    container_Misc->GetContainer()->ForEachContainerObject([&](RE::ContainerObject& object) {
+                    container_Misc->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& object) {
                         if(object.obj == Token) {
-                            Allow = false;
+                            //Allow = false;
                             log::info("Chest has a token");
                             return (RE::BSContainer::ForEachResult)false;
                         }
