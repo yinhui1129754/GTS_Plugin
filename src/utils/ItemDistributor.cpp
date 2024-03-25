@@ -172,7 +172,7 @@ namespace Gts {
 
         std::vector<TESForm*> Forms = {}; 
         for (auto cont = DataHandler->GetFormArray(RE::FormType::Container).begin(); cont != DataHandler->GetFormArray(RE::FormType::Container).end(); ++cont) {
-            Forms.push_back(&cont);
+            Forms.push_back(*cont);
         }
 
         if (Forms.empty()) {
@@ -289,19 +289,19 @@ namespace Gts {
 
         for (int i = 0; i < MaxItems; ++i) { // Run the func multiple times 
             if (roll > weakBoundary + normalBoundary + strongBoundary) {
-                SelectItem = rand() % (ExtremePotions.size() + 1);
+                SelectItem = rand() % (ExtremePotions.size());
                 ChosenItems.push_back(ExtremePotions[SelectItem]);
                 log::info("Extreme Random: {}", SelectItem);
             } else if (roll > weakBoundary + normalBoundary) {
-                SelectItem = rand() % (StrongPotions.size() + 1);
+                SelectItem = rand() % (StrongPotions.size());
                 ChosenItems.push_back(StrongPotions[SelectItem]);
                 log::info("Strong Random: {}", SelectItem);
             } else if (roll > weakBoundary) {
-                SelectItem = rand() % (NormalPotions.size() + 1);
+                SelectItem = rand() % (NormalPotions.size());
                 ChosenItems.push_back(NormalPotions[SelectItem]);
                 log::info("Normal Random: {}", SelectItem);
             } else {
-                SelectItem = rand() % (WeakPotions.size() + 1);
+                SelectItem = rand() % (WeakPotions.size());
                 ChosenItems.push_back(WeakPotions[SelectItem]);
                 log::info("Weak Random: {}", SelectItem);
             }
