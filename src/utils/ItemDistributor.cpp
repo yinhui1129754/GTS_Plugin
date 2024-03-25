@@ -45,7 +45,7 @@ namespace {
         NormalChest_Giant,
     };
 
-    const std::vector<FormID> MiniChests = {
+    const std::vector<FormID> MiscChests = {
         Barrel_1,
         Barrel_2,
         Long_Crate_1,
@@ -64,8 +64,8 @@ namespace Gts {
                 }
                 break;
             }
-            case ChestType::MiniChest: {
-                for (auto chest: MiniChests) {
+            case ChestType::NormalChest: {
+                for (auto chest: NormalChests) {
                     if (chest == form->formID) {
                         return form->As<RE::TESContainer>();
                     }
@@ -98,7 +98,7 @@ namespace Gts {
 
     void AddItemToChests(TESForm* Chest) {
         TESContainer* container_Boss = GetChestRef(Chest, ChestType::BossChest); 
-        TESContainer* container_Mini = GetChestRef(Chest, ChestType::MiniChest); 
+        TESContainer* container_Normal = GetChestRef(Chest, ChestType::Normal); 
         TESContainer* container_Misc = GetChestRef(Chest, ChestType::MiscChest); 
         if (container_Boss) {
             log::info("Boss container found!");
@@ -109,12 +109,12 @@ namespace Gts {
                 }
             }
         }
-        else if (container_Mini) {
-            log::info("Mini chest found!");
-            for (auto item: CalculateItemProbability(ChestType::MiniChest)) {
+        else if (container_Normal) {
+            log::info("Normal chest found!");
+            for (auto item: CalculateItemProbability(ChestType::NormalChest)) {
                 if (item) {
                     log::info("Adding items");
-                    container_Mini->AddObjectToContainer(item, 1, nullptr);
+                    container_Normal->AddObjectToContainer(item, 1, nullptr);
                 }
             }
         }
@@ -158,17 +158,18 @@ namespace Gts {
                 ChanceToAdd = 100;
                 break;
             }
-            case (ChestType::MiniChest): { // Occasionally add stuff
-                ChanceToAdd = 10 * Level;
+            case (ChestType::NormalChest): { // Occasionally add stuff
+                ChanceToAdd = 15 * Level;
                 break;
             }
             case (ChestType::MiscChest): { // Very small chance to add stuff
-                ChanceToAdd = 0.1 * Level;
+                ChanceToAdd = 0.15 * Level;
                 break;
             }
         }
 
         if (rng <= ChanceToAdd) { // Add only if RNG returns true
+            log::info("RNG Rolled true, adding items");
             return SelectItemsFromPool(type, Level);
         }
         return {};
@@ -237,26 +238,29 @@ namespace Gts {
 
         if (Type == ChestType::NormalChests) {
             roll *= 0.60;
-        } else if (Type == ChestType::MiniChests) {
+        } else if (Type == ChestType::MiscChests) {
             roll *= 0.10;
         }
         log::info("rolled max items: {}", MaxItems);
-        for (int i = 0; i < MaxItems; ++i) {
-            if (roll > weak+normal+strong) {
-                SelectItem = rand() % (ExtremePotions.size());
-                ChosenItems.push_back(ExtremePotions[SelectItem]);
-            } else if (roll > weak + normal) {
-                SelectItem = rand() % (StrongPotions.size());
-                ChosenItems.push_back(StrongPotions[SelectItem]);
-            } else if (roll > weak) {
-                SelectItem = rand() % (NormalPotions.size());
-                ChosenItems.push_back(NormalPotions[SelectItem]);
-            } else {
-                SelectItem = rand() % (WeakPotions.size());
-                ChosenItems.push_back(WeakPotions[SelectItem]);
-            }
 
-            log::info("Selected Random: {}", SelectItem);
+        for (int i = 0; i < MaxItems; ++i) { // Run the func multiple times 
+            if (roll > weak+normal+strong) {
+                SelectItem = rand() % (ExtremePotions.size() + 1);
+                ChosenItems.push_back(ExtremePotions[SelectItem]);
+                log::info("Extreme Random: {}", SelectItem);
+            } else if (roll > weak + normal) {
+                SelectItem = rand() % (StrongPotions.size() + 1);
+                ChosenItems.push_back(StrongPotions[SelectItem]);
+                log::info("Strong Random: {}", SelectItem);
+            } else if (roll > weak) {
+                SelectItem = rand() % (NormalPotions.size() + 1);
+                ChosenItems.push_back(NormalPotions[SelectItem]);
+                log::info("Normal Random: {}", SelectItem);
+            } else {
+                SelectItem = rand() % (WeakPotions.size() + 1);
+                ChosenItems.push_back(WeakPotions[SelectItem]);
+                log::info("Weak Random: {}", SelectItem);
+            }
         }
 
         return ChosenItems;

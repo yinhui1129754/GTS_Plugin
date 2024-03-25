@@ -10,7 +10,7 @@ using namespace Gts;
 namespace Gts {
     enum class ChestType {
 		BossChest,
-		MiniChest,
+		NormalChest,
 		MiscChest,
 	};
 
