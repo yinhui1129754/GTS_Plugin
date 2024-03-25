@@ -177,7 +177,7 @@ namespace Gts {
 
         std::vector<TESBoundObject*> Items = {};
 
-        TESBoundObject* potion = Runtime::GetPotion("Potion_ResistSize");
+        TESBoundObject* potion = Runtime::GetItem("Potion_ResistSize");
         if (potion) {
             Items.push_back(potion);
         }
