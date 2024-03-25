@@ -584,7 +584,7 @@ namespace Gts {
 	TESBoundObject* Runtime::GetItem(const std::string_view& tag) {
 		TESBoundObject* data = nullptr;
 		try {
-			data = Runtime::GetSingleton().items.at(std::string(tag)).data;
+			data = static_cast<TESBoundObject*>(Runtime::GetSingleton().items.at(std::string(tag)).data);
 		}  catch (const std::out_of_range& oor) {
 			data = nullptr;
 			if (!Runtime::Logged("cont", tag)) {
@@ -831,11 +831,12 @@ namespace Gts {
 		}
 
 		for (auto &[key, value]: config.items) {
+			log::info("Found form for: {}", GetRawName(value));
 			auto form = find_form<TESBoundObject>(value);
 			if (form) {
 				this->items.try_emplace(key, form);
 			} else if (!Runtime::Logged("cont", key)) {
-				log::warn("Container form not found for {}", key);
+				log::warn("Item form not found for {}", key);
 			}
 		}
 	}
