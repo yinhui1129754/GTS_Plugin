@@ -1330,7 +1330,7 @@ namespace Gts {
 		if (!actor) {
 			return;
 		}
-		auto charCont = actor->GetCharController();
+		/*auto charCont = actor->GetCharController();
 		if (!charCont) {
 			return;
 		}
@@ -1349,7 +1349,7 @@ namespace Gts {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 

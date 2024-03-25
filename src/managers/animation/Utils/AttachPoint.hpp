@@ -72,6 +72,25 @@ namespace Gts {
 
 		ForceRagdoll(tiny, false);
 
+		if (IsRagdolled(tiny)) {
+			log::info("Tiny is ragdolled");
+			for (auto bools: {true, false}) {
+				auto collision = tiny->Get3D(bools)->GetCollisionObject();
+				if (collision) {
+					auto rigidbody = collision->GetRigidBody();
+					if (rigidbody) {
+						auto body = rigidbody->AsBhkRigidBody();
+						if (body) {
+							hkVector4 pos = hkVector4(point.x, point.y, point.z, 1.0);
+							body->SetPosition(pos);
+							body->SetLinearVelocity(hkVector4(0.0, 0.0, 0.0, 1.0));
+							log::info("Ragdoll found, Applying Pos");
+						}
+					}
+				}
+			}
+		}
+
 		auto charcont = tiny->GetCharController();
 		if (charcont) {
 			charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fall down.
