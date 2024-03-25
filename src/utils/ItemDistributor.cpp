@@ -189,6 +189,6 @@ namespace Gts {
             Items.push_back(amulet);
             log::info("Amulet pushed!");
         }
-        return {};
+        return Items;
     }
 }
