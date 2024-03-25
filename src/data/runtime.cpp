@@ -863,4 +863,3 @@ namespace Gts {
 		}
 	}
 }
-TESObjectARMO*
