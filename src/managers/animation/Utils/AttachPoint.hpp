@@ -82,7 +82,7 @@ namespace Gts {
 						if (body) {
 							hkVector4 pos = hkVector4(point.x, point.y, point.z, 1.0);
 							body->SetPosition(pos);
-							body->SetLinearVelocity(hkVector4(0.0, 0.0, 0.0, 1.0));
+							SetLinearVelocity(body, hkVector4(0.0, 0.0, 0.0, 1.0));
 							log::info("Ragdoll found, Applying Pos");
 						}
 					}
