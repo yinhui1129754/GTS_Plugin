@@ -194,7 +194,7 @@ namespace Gts {
         TESLevItem* Size_Drain = Runtime::GetLeveledItem("Poison_Size_Drain");
         TESLevItem* Size_Shrink = Runtime::GetLeveledItem("Poison_Size_Shrink");
 
-        TESLevItem* Amulet = Runtime::GetArmor("AmuletOfGiants");
+        TESLevItem* Amulet = Runtime::GetLeveledItem("AmuletOfGiants");
 
         std::vector<TESLevItem*> ChosenItems = {};
 
