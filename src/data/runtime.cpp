@@ -582,11 +582,12 @@ namespace Gts {
 			return false;
 		}
 	}
+
 	// Items
-	TESBoundObject* Runtime::GetAlchemy(const std::string_view& tag) {
-		TESBoundObject* data = nullptr;
+	AlchemyItem* Runtime::GetAlchemy(const std::string_view& tag) {
+		AlchemyItem* data = nullptr;
 		try {
-			data = static_cast<TESBoundObject*>(Runtime::GetSingleton().ingredients.at(std::string(tag)).data);
+			data = Runtime::GetSingleton().ingredients.at(std::string(tag)).data;
 		}  catch (const std::out_of_range& oor) {
 			data = nullptr;
 			if (!Runtime::Logged("cont", tag)) {
@@ -595,10 +596,10 @@ namespace Gts {
 		}
 		return data;
 	}
-	TESBoundObject* Runtime::GetArmor(const std::string_view& tag) {
-		TESBoundObject* data = nullptr;
+	TESObjectARMO* Runtime::GetArmor(const std::string_view& tag) {
+		TESObjectARMO* data = nullptr;
 		try {
-			data = static_cast<TESBoundObject*>(Runtime::GetSingleton().armors.at(std::string(tag)).data);
+			data = Runtime::GetSingleton().armors.at(std::string(tag)).data;
 		}  catch (const std::out_of_range& oor) {
 			data = nullptr;
 			if (!Runtime::Logged("cont", tag)) {
@@ -607,6 +608,7 @@ namespace Gts {
 		}
 		return data;
 	}
+	
 	// Containers
 	TESObjectCONT* Runtime::GetContainer(const std::string_view& tag) {
 		TESObjectCONT* data = nullptr;

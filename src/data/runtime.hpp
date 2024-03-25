@@ -134,8 +134,8 @@ namespace Gts {
 			static bool HasKeyword(Actor* actor, const std::string_view& tag);
 
 			// Items
-			static TESBoundObject* GetAlchemy(const std::string_view& tag);
-			static TESBoundObject* GetArmor(const std::string_view& tag);
+			static AlchemyItem* GetAlchemy(const std::string_view& tag);
+			static TESObjectARMO* GetArmor(const std::string_view& tag);
 			// Containers
 			static TESObjectCONT* GetContainer(const std::string_view& tag);
 			static TESObjectREFR* PlaceContainer(Actor* actor, const std::string_view& tag);
