@@ -139,7 +139,9 @@ namespace Gts {
 			balancemodebonus = 0.5;
 		}
 
-		
+		float HealthPercent = std::clamp(GetHealthPercentage(target), 0.25f, 1.0f);
+		shrink /= HealthPercent;
+
 		TransferSize(caster, target, IsDualCasting(), shrink * SizeDifference * bonus, gainpower * balancemodebonus, false, ShrinkSource::magic);
 
 		Attacked(target, caster); // make it work like a hostile spell
