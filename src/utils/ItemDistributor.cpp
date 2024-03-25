@@ -110,7 +110,7 @@ namespace Gts {
             return;
         }
         for (auto Chest: FindAllChests()) {
-            if (Chest.size() > 0) {
+            if (Chest) {
                 AddItemToChests(Chest);
             }
         }
@@ -149,9 +149,14 @@ namespace Gts {
     std::vector<TESForm*> FindAllChests() {
         RE::TESDataHandler* const DataHandler = RE::TESDataHandler::GetSingleton();
 
-        std::vector<TESForm*> Forms = DataHandler->GetFormArray(RE::FormType::Container);
+        std::vector<TESForm*> Forms = {}; 
         
+        auto containers = DataHandler->GetFormArray(RE::FormType::Container);
+        for (auto cont: containers) {
+            cont.push_back(Forms);
+        }
         if (Forms.size() < 1) {
+            log::info("Forms are empty");
             return {};
         }
 
