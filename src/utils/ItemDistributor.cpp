@@ -19,25 +19,6 @@ using namespace RE;
 using namespace Gts;
 
 namespace {
-    const FormID Potion_ResistSize =        0x3D457E;
-    const FormID Potion_Growth =            0x3D4580;
-
-    const FormID Potion_ResistSize_Weak =   0x3D9689;
-
-    const FormID Potion_SizeLimit_Weak =    0x3E38B5;
-    const FormID Potion_SizeLimit_Normal =  0x3E38B7;
-    const FormID Potion_SizeLimit_Strong =  0x3E38B9;
-    const FormID Potion_SizeLimit_Extreme = 0x3E38BE;
-
-    const FormID Potion_SizeHunger_Weak =    0x42F7D4;
-    const FormID Potion_SizeHunger_Normal =  0x4399DF;
-    const FormID Potion_SizeHunger_Strong =  0x4399DD;
-    const FormID Potion_SizeHunger_Extreme = 0x4399E1;
-
-    const FormID Potion_Size_Amplify =       0x452F1E;
-    const FormID Poison_Size_Drain =         0x5B5553;
-    const FormID Poison_Size_Shrink =        0x5B5555;
-
 	// Boss Chests
 	const FormID BossChest_Giant = 		0x774BF; // TreastGiantChestBoss
 	const FormID BossChest_Bandit = 	0x2064F; // TreasBanditChestBoss
@@ -45,7 +26,7 @@ namespace {
 
 	// Mini Chests
 	const FormID MiniChest_Normal =     0x3AC21;	// TreasBanditChest
-	const FormID MiniChest_Giant =      0x774C6;    // TreastGiantChest
+	const FormID MiniChest_Giant =      0x774C6;    // TreasGiantChest
 
 	// Barrels and misc
 	const FormID Barrel_1 =     		0x845; 		// Barrel 1
@@ -92,7 +73,7 @@ namespace Gts {
                 break;
             }
             case ChestType::MiscChest: {
-                for (auto chest: BossChests) {
+                for (auto chest: MiscChests) {
                     if (chest == form->formID) {
                         return form->As<RE::TESContainer>();
                     }
@@ -156,13 +137,6 @@ namespace Gts {
         for (auto container: containers) {
             Forms.push_back(container);
         }
-        /*for(auto containers = DataHandler->GetFormArray(RE::FormType::Container).begin(); containers != DataHandler->GetFormArray(RE::FormType::Container).end(); ++containers) {
-            (*containers)->As<RE::TESContainer>()->ForEachContainerObject([&](RE::ContainerObject& container) {
-                log::info("Pushing forms");
-                Forms.push_back(container);
-                return (RE::BSContainer::ForEachResult) true;
-            });
-        }*/
 
         if (Forms.size() < 1) {
             log::info("Forms are empty");
@@ -174,21 +148,84 @@ namespace Gts {
 
     std::vector<TESBoundObject*> CalculateItemProbability(ChestType type) {
         float HighLootChance = Runtime::GetStage("MainQuest");
-        float Level = GetGtsSkillLevel();
+        float Level = 1.0 + GetGtsSkillLevel() * 0.01;
+        float ChanceToAdd = 100;
+        int rng = rand() % 98;
         log::info("Calculating item probability");
 
-        std::vector<TESBoundObject*> Items = {};
+        switch (type) {
+            case (ChestType::BossChest): { // Always add stuff
+                ChanceToAdd = 100;
+                break;
+            }
+            case (ChestType::MiniChest): { // Occasionally add stuff
+                ChanceToAdd = 10 * Level;
+                break;
+            }
+            case (ChestType::MiscChest): { // Very small chance to add stuff
+                ChanceToAdd = 0.1 * Level;
+                break;
+            }
+        }
 
-        TESBoundObject* potion = Runtime::GetAlchemy("Potion_ResistSize");
-        TESBoundObject* amulet = Runtime::GetArmor("AmuletOfGiants");
-        if (potion) {
-            Items.push_back(potion);
-            log::info("Potion pushed!");
+        if (rng <= ChanceToAdd) { // Add only if RNG returns true
+            return SelectItemsFromPool(type, level);
         }
-        if (amulet) {
-            Items.push_back(amulet);
-            log::info("Amulet pushed!");
-        }
-        return Items;
+        return {};
+    }
+
+    std::vector<TESBoundObject*> SelectItemsFromPool(ChestType type, float level) {
+        TESBoundObject* ResistSize = Runtime::GetAlchemy("Potion_ResistSize");
+        TESBoundObject* Growth = Runtime::GetAlchemy("Potion_Growth");
+
+        TESBoundObject* SizeLimit_Weak = Runtime::GetAlchemy("Potion_SizeLimit_Weak");
+        TESBoundObject* SizeLimit_Normal = Runtime::GetAlchemy("Potion_SizeLimit_Normal");
+        TESBoundObject* SizeLimit_Strong = Runtime::GetAlchemy("Potion_SizeLimit_Strong");
+        TESBoundObject* SizeLimit_Extreme = Runtime::GetAlchemy("Potion_SizeLimit_Extreme");
+
+        TESBoundObject* SizeHunger_Weak = Runtime::GetAlchemy("Potion_SizeHunger_Weak");
+        TESBoundObject* SizeHunger_Normal = Runtime::GetAlchemy("Potion_SizeHunger_Normal");
+        TESBoundObject* SizeHunger_Strong = Runtime::GetAlchemy("Potion_SizeHunger_Strong");
+        TESBoundObject* SizeHunger_Extreme = Runtime::GetAlchemy("Potion_SizeHunger_Extreme");
+
+        TESBoundObject* Size_Amplify = Runtime::GetAlchemy("Potion_Size_Amplify");
+        TESBoundObject* Size_Drain = Runtime::GetAlchemy("Poison_Size_Drain");
+        TESBoundObject* Size_Shrink = Runtime::GetAlchemy("Poison_Size_Shrink");
+
+        TESBoundObject* Amulet = Runtime::GetArmor("AmuletOfGiants");
+
+        std::vector<TESBoundObject*> ChosenItems = {};
+
+        const std::vector<TESBoundObject*> WeakPotions = { // 100% chance  / 0
+            SizeHunger_Weak,
+            SizeLimit_Weak,
+            ResistSize,
+            Growth,
+        };
+        const std::vector<TESBoundObject*> NormalPotions = { // 50% chance  / 1
+            SizeHunger_Normal,
+            SizeLimit_Normal,
+            Size_Drain,
+            Amulet,
+        };
+        const std::vector<TESBoundObject*> StrongPotions = { // 20% chance  / 2
+            SizeHunger_Strong,
+            SizeLimit_Strong,
+            Size_Amplify,
+        };
+        const std::vector<TESBoundObject*> ExtremePotions = { // 10% chance  / 3
+            SizeHunger_Extreme,
+            SizeLimit_Extreme,
+            Size_Shrink,
+            Size_Drain
+        };
+        
+        int SelectRandom = rng() % 3;
+        int ExtraLootChance = rng() % 10;
+        ExtraLootChance /= Level;
+
+        log::info("Selected Random: {}", SelectRandom);
+
+        return ChosenItems;
     }
 }

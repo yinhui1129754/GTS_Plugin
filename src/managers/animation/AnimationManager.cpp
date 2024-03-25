@@ -215,7 +215,7 @@ namespace Gts {
 
 	void AnimationManager::RegisterEvent( std::string_view name,  std::string_view group, std::function<void(AnimationEventData&)> func) {
 		AnimationManager::GetSingleton().eventCallbacks.try_emplace(std::string(name), func, std::string(group));
-		log::info("Registering Event: Name {}, Group {}", name, group);
+		//log::info("Registering Event: Name {}, Group {}", name, group);
 	}
 
 	void AnimationManager::RegisterTrigger( std::string_view trigger,  std::string_view group,  std::string_view behavior) {
