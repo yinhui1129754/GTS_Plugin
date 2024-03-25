@@ -100,12 +100,27 @@ namespace Gts {
         TESContainer* container_Boss = GetChestRef(Chest, ChestType::BossChest); 
         TESContainer* container_Normal = GetChestRef(Chest, ChestType::NormalChest); 
         TESContainer* container_Misc = GetChestRef(Chest, ChestType::MiscChest); 
+
+        bool Allow = true;
+
+        TESBoundObject* Token = Runtime::GetLeveledItem("GTSToken");
+        
         if (container_Boss) {
             log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
+                    container_Boss->ForEachContainerObject([&](RE::ContainerObject& object) {
+                        if(object.obj == Token) {
+                            Allow = false;
+                            log::info("Chest has a token");
+                            return (RE::BSContainer::ForEachResult)false;
+                        }
+                        return (RE::BSContainer::ForEachResult)true;
+                    });
                     log::info("Adding Boss items");
-                    container_Boss->AddObjectToContainer(item, 1, nullptr);
+                    if (Allow) {
+                        container_Boss->AddObjectToContainer(item, 1, nullptr);
+                    }
                 }
             }
         }
@@ -113,8 +128,18 @@ namespace Gts {
             log::info("Normal chest found!");
             for (auto item: CalculateItemProbability(ChestType::NormalChest)) {
                 if (item) {
-                    log::info("Adding Normal items");
-                    container_Normal->AddObjectToContainer(item, 1, nullptr);
+                    container_Normal->ForEachContainerObject([&](RE::ContainerObject& object) {
+                        if(object.obj == Token) {
+                            Allow = false;
+                            log::info("Chest has a token");
+                            return (RE::BSContainer::ForEachResult)false;
+                        }
+                        return (RE::BSContainer::ForEachResult)true;
+                    });
+                    log::info("Adding Boss items");
+                    if (Allow) {
+                        container_Normal->AddObjectToContainer(item, 1, nullptr);
+                    }
                 }
             }
         }
@@ -122,8 +147,18 @@ namespace Gts {
             log::info("Misc chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
                 if (item) {
-                    log::info("Adding items");
-                    container_Misc->AddObjectToContainer(item, 1, nullptr);
+                    container_Misc->ForEachContainerObject([&](RE::ContainerObject& object) {
+                        if(object.obj == Token) {
+                            Allow = false;
+                            log::info("Chest has a token");
+                            return (RE::BSContainer::ForEachResult)false;
+                        }
+                        return (RE::BSContainer::ForEachResult)true;
+                    });
+                    log::info("Adding Boss items");
+                    if (Allow) {
+                        container_Misc->AddObjectToContainer(item, 1, nullptr);
+                    }
                 }
             }
         }
@@ -195,6 +230,7 @@ namespace Gts {
         TESLevItem* Size_Shrink = Runtime::GetLeveledItem("Poison_Size_Shrink");
 
         TESLevItem* Amulet = Runtime::GetLeveledItem("AmuletOfGiants");
+        TESLevItem* EditedToken = Runtime::GetLeveledItem("GTSToken");
 
         std::vector<TESLevItem*> ChosenItems = {};
 
@@ -246,6 +282,8 @@ namespace Gts {
             roll *= 0.10;
         }
         log::info("rolled max items: {}", MaxItems);
+
+        ChosenItems.push_back(EditedToken);
 
         for (int i = 0; i < MaxItems; ++i) { // Run the func multiple times 
             if (roll > weakBoundary + normalBoundary + strongBoundary) {
