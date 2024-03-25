@@ -84,7 +84,7 @@ namespace Gts {
 							auto body = rigidbody->AsBhkRigidBody();
 							if (body) {
 								hkVector4 pos;
-								body->GetPosition(pos)
+								body->GetPosition(pos);
 								log::info("POS: {}", Vector2Str(pos));
 								hkVector4 delta = hkVector4(deltaLocation.x/70.0, deltaLocation.y/70.0, deltaLocation.z/70, 1.0);
 
