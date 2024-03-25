@@ -174,7 +174,7 @@ namespace Gts {
                 }
 
                 if(!Item.empty()) {
-                    const size_t size = closetclothes.size();
+                    const size_t size = Item.size();
                     RE::TESLevItem* Items = fac->Create();
                     Items->chanceNone = 0;
                     Items->llFlags = (RE::TESLeveledList::Flag)(RE::TESLeveledList::Flag::kCalculateFromAllLevelsLTOrEqPCLevel | RE::TESLeveledList::Flag::kCalculateForEachItemInCount);
