@@ -123,6 +123,7 @@ namespace Gts {
             log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
+                    log::info("Items added: {}", item.size());
                     container_Boss->AddObjectToContainer(item, 1, nullptr);
                 }
             }
@@ -131,6 +132,7 @@ namespace Gts {
             log::info("Mini chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiniChest)) {
                 if (item) {
+                    log::info("Items added: {}", item.size());
                     container_Mini->AddObjectToContainer(item, 1, nullptr);
                 }
             }
@@ -139,6 +141,7 @@ namespace Gts {
             log::info("Misc chest found!");
             for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
                 if (item) {
+                    log::info("Items added: {}", item.size());
                     container_Misc->AddObjectToContainer(item, 1, nullptr);
                 }
             }
