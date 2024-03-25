@@ -76,14 +76,23 @@ namespace Gts {
 			for (auto bools: {true, false}) {
 				auto collision = tiny->Get3D(bools)->GetCollisionObject();
 				if (collision) {
-					auto rigidbody = collision->GetRigidBody();
-					if (rigidbody) {
-						auto body = rigidbody->AsBhkRigidBody();
-						if (body) {
-							hkVector4 pos = hkVector4(point.x, point.y, point.z, 1.0);
-							//body->SetPosition(pos);
-							SetLinearVelocity(body, hkVector4(0.0, 0.0, 0.0, 0.0));
-							log::info("Ragdoll found, Applying Pos");
+					NiPoint3 deltaLocation = point - tiny->GetPosition();
+					float deltaLength = deltaLocation.Length();
+					if (deltaLength >= 20.0) {
+						auto rigidbody = collision->GetRigidBody();
+						if (rigidbody) {
+							auto body = rigidbody->AsBhkRigidBody();
+							if (body) {
+								hkVector4 pos;
+								hkVector4 currentPos = body->GetPosition(pos);
+								log::info("POS: {}", Vector2Str(pos));
+								hkVector4 delta = hkVector4(deltaLocation.x/70.0, deltaLocation.y/70.0, deltaLocation.z/70, 1.0);
+
+								hkVector4 newPos = currentPos + delta;
+								SetLinearVelocity(body, hkVector4(0.0, 0.0, 0.0, 0.0));
+								body->SetPosition(newPos);
+								log::info("Ragdoll found, Applying Pos");
+							}
 						}
 					}
 				}
