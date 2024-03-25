@@ -67,7 +67,9 @@ namespace Gts {
 			return false;
 		}
 
-		tiny->SetPosition(point, true);
+		if (!IsRagdolled(tiny)) {
+			tiny->SetPosition(point, true);
+		}
 
 		ForceRagdoll(tiny, false);
 
