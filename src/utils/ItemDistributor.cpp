@@ -180,7 +180,7 @@ namespace Gts {
         return Forms;
     }
 
-    std::vector<TESLevItem*> CalculateItemProbability(ChestType type, float DropMult) {
+    std::vector<TESLevItem*> CalculateItemProbability(ChestType type) {
         float HighLootChance = Runtime::GetStage("MainQuest");
         float Level = 1.0 + GetGtsSkillLevel() * 0.01;
         float ChanceToAdd = 100;
