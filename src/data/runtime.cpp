@@ -831,7 +831,6 @@ namespace Gts {
 		}
 
 		for (auto &[key, value]: config.items) {
-			log::info("Found form for: {}", GetRawName(value));
 			auto form = find_form<TESBoundObject>(value);
 			if (form) {
 				this->items.try_emplace(key, form);
