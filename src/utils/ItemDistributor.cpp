@@ -268,20 +268,25 @@ namespace Gts {
         strongBoundary = strongBoundary / totalPercentage * 100;
         extremeBoundary = extremeBoundary / totalPercentage * 100;
 
-        int roll = rand() % 100; // Select item rarity
+        
         int MaxItems = 1 + (rand() % 2); // Limit amount of items that can be spawned
         MaxItems *= (1.0 + Level * 0.01);
         
         int SelectItem; // Select random item from array
 
-        if (type == ChestType::NormalChest) {
-            roll *= 0.60;
-        } else if (type == ChestType::MiscChest) {
-            roll *= 0.10;
-        }
+        
         log::info("rolled max items: {}", MaxItems);
 
         for (int i = 0; i < MaxItems; ++i) { // Run the func multiple times 
+
+            int roll = rand() % 100; // Select item rarity
+
+            if (type == ChestType::NormalChest) { // Worse rarity for normal chests
+                roll *= 0.60;
+            } else if (type == ChestType::MiscChest) { // Even worse rarity for trash-tier, barrels and such
+                roll *= 0.10;
+            }
+
             if (roll > weakBoundary + normalBoundary + strongBoundary) {
                 SelectItem = rand() % (ExtremePotions.size());
                 ChosenItems.push_back(ExtremePotions[SelectItem]);
