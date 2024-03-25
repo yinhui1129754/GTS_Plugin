@@ -14,7 +14,7 @@ namespace Gts {
 		MiscChest,
 	};
 
-    TESForm* FilterChests(TESForm* form, ChestType type);
+    TESContainer* FilterChests(TESForm* form, ChestType type);
 
     void DistributeChestItems();
 

@@ -54,7 +54,7 @@ namespace {
 }
 
 namespace Gts {
-    TESContainer FilterChests(TESForm* form, ChestType type) {
+    TESContainer* FilterChests(TESForm* form, ChestType type) {
         switch (type) {
             case ChestType::BossChest: {
                 for (auto chest: BossChests) {
@@ -122,7 +122,7 @@ namespace Gts {
                     });
                     log::info("Adding Boss items");
                     if (Allow) {
-                        container_Boss->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Boss->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
                     }
                 }
             }
@@ -141,7 +141,7 @@ namespace Gts {
                     });
                     log::info("Adding Normal items");
                     if (Allow) {
-                        container_Normal->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Normal->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
                     }
                 }
             }
@@ -160,7 +160,7 @@ namespace Gts {
                     });
                     log::info("Adding Chest items");
                     if (Allow) {
-                        container_Misc->AddObjectToContainer(item, nullptr, 1, nullptr);
+                        container_Misc->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
                     }
                 }
             }
