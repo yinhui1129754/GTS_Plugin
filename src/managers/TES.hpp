@@ -13,7 +13,7 @@ namespace SKSE {
 	constexpr REL::Version RUNTIME_SSE_1_6_1130(1, 6, 1130, 0);
 }
 
-namespace RE
+namespace Gts
 {
 	namespace BSResource
 	{

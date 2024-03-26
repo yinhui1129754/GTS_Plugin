@@ -10,7 +10,7 @@
 /// Copy-pasted from alandtse/CommonLibNG
 /// since with default CommonLib it crashes on AE...
 
-namespace RE
+namespace Gts
 {
 	TES* TES::GetSingleton()
 	{

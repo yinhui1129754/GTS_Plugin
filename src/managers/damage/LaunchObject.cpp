@@ -221,7 +221,7 @@ namespace Gts {
 		std::vector<TESObjectREFR*> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
-        const auto TES = RE::TES_Fix::GetSingleton();
+        const auto TES = Gts::TES::GetSingleton();
 		if (TES) {
 			TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
 			if (GiantRef) {
