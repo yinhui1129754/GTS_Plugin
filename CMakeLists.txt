@@ -44,7 +44,7 @@ source_group(
 ########################################################################################################################
 ## Configure target DLL
 ########################################################################################################################
-find_package(CommonLibSSE CONFIG REQUIRED)
+find_package(CommonLibSSE REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(toml11 CONFIG REQUIRED)
 find_package(nlohmann_json 3.2.0 REQUIRED)
@@ -75,6 +75,8 @@ target_include_directories(${PROJECT_NAME}
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
 target_link_libraries(${PROJECT_NAME}
+        PUBLIC 
+        CommonLibSSE::CommonLibSSE
         PRIVATE
         toml11::toml11
         nlohmann_json::nlohmann_json
