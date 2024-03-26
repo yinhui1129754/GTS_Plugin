@@ -14,7 +14,7 @@ namespace RE
 {
 	TES_Fix* TES_Fix::GetSingleton()
 	{
-		REL::Relocation<TES_Fix**> singleton{ Offset::TES_Fix::Singleton };
+		REL::Relocation<TES_Fix**> singleton{ RELOCATION_ID(516923, 403450); };
 		return *singleton;
 	}
 

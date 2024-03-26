@@ -239,10 +239,6 @@ namespace RE
 		RUNTIME_DATA_CONTENT;
 #endif
 		RUNTIME_DATA2_CONTENT;
-
-	private:
-		KEEP_FOR_RE();
-	};
 #if defined(ENABLE_SKYRIM_AE) && !(defined(ENABLE_SKYRIM_SE) || defined(ENABLE_SKYRIM_VR))
 	static_assert(sizeof(TES_Fix) == 0x2C0);
 #else
