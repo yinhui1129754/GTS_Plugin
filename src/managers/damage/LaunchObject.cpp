@@ -169,7 +169,7 @@ namespace Gts {
 		int nodeCollisions = 0;
 		float force = 0.25;
 
-		float distance = (point - object->world.translate).Length();
+		float distance = (point - object->GetPosition()).Length();
 		if (distance < maxDistance) {
 		
 			float Start = Time::WorldTimeElapsed();
