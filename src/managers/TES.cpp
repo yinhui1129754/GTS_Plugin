@@ -12,13 +12,13 @@
 
 namespace RE
 {
-	TES_Fix* TES_Fix::GetSingleton()
+	TES* TES::GetSingleton()
 	{
-		REL::Relocation<TES_Fix**> singleton{ Offset::TES::Singleton }; // Address is the same at least
+		REL::Relocation<TES**> singleton{ Offset::TES::Singleton }; // Address is the same at least
 		return *singleton;
 	}
 
-	void TES_Fix::ForEachReference(std::function<BSContainer::ForEachResult(TESObjectREFR* a_ref)> a_callback)
+	void TES::ForEachReference(std::function<BSContainer::ForEachResult(TESObjectREFR* a_ref)> a_callback)
 	{
 		if (interiorCell) {
 			interiorCell->ForEachReference([&](TESObjectREFR* a_ref) {
@@ -48,7 +48,7 @@ namespace RE
 		}
 	}
 
-	void TES_Fix::ForEachReferenceInRange(TESObjectREFR* a_origin, float a_radius, std::function<BSContainer::ForEachResult(TESObjectREFR* a_ref)> a_callback)
+	void TES::ForEachReferenceInRange(TESObjectREFR* a_origin, float a_radius, std::function<BSContainer::ForEachResult(TESObjectREFR* a_ref)> a_callback)
 	{
 		if (a_origin && a_radius > 0.0f) {
 			const auto originPos = a_origin->GetPosition();
@@ -97,51 +97,51 @@ namespace RE
 		}
 	}
 
-	TESObjectCELL* TES_Fix::GetCell(const NiPoint3& a_position) const
+	TESObjectCELL* TES::GetCell(const NiPoint3& a_position) const
 	{
-		using func_t = decltype(&TES_Fix::GetCell);
+		using func_t = decltype(&TES::GetCell);
 		REL::Relocation<func_t> func{ RELOCATION_ID(13177, 13322) };
 		return func(this, a_position);
 	}
 
-	MATERIAL_ID TES_Fix::GetLandMaterialType(const NiPoint3& a_position) const
+	MATERIAL_ID TES::GetLandMaterialType(const NiPoint3& a_position) const
 	{
-		using func_t = decltype(&TES_Fix::GetLandMaterialType);
+		using func_t = decltype(&TES::GetLandMaterialType);
 		REL::Relocation<func_t> func{ RELOCATION_ID(13203, 13349) };
 		return func(this, a_position);
 	}
 
-	bool TES_Fix::GetLandHeight(const NiPoint3& a_positionIn, float& a_heightOut)
+	bool TES::GetLandHeight(const NiPoint3& a_positionIn, float& a_heightOut)
 	{
-		using func_t = decltype(&TES_Fix::GetLandHeight);
+		using func_t = decltype(&TES::GetLandHeight);
 		REL::Relocation<func_t> func{ RELOCATION_ID(13198, 13344) };
 		return func(this, a_positionIn, a_heightOut);
 	}
 
-	TESLandTexture* TES_Fix::GetLandTexture(const NiPoint3& a_position) const
+	TESLandTexture* TES::GetLandTexture(const NiPoint3& a_position) const
 	{
-		using func_t = decltype(&TES_Fix::GetLandTexture);
+		using func_t = decltype(&TES::GetLandTexture);
 		REL::Relocation<func_t> func{ RELOCATION_ID(13202, 13348) };
 		return func(this, a_position);
 	}
 
-	float TES_Fix::GetWaterHeight(const NiPoint3& a_pos, TESObjectCELL* a_cell) const
+	float TES::GetWaterHeight(const NiPoint3& a_pos, TESObjectCELL* a_cell) const
 	{
-		using func_t = decltype(&TES_Fix::GetWaterHeight);
+		using func_t = decltype(&TES::GetWaterHeight);
 		REL::Relocation<func_t> func{ RELOCATION_ID(13212, 13358) };
 		return func(this, a_pos, a_cell);
 	}
 
-	NiAVObject* TES_Fix::Pick(bhkPickData& a_pickData)
+	NiAVObject* TES::Pick(bhkPickData& a_pickData)
 	{
-		using func_t = decltype(&TES_Fix::Pick);
+		using func_t = decltype(&TES::Pick);
 		REL::Relocation<func_t> func{ RELOCATION_ID(13221, 13371) };
 		return func(this, a_pickData);
 	}
 
-	void TES_Fix::PurgeBufferedCells()
+	void TES::PurgeBufferedCells()
 	{
-		using func_t = decltype(&TES_Fix::PurgeBufferedCells);
+		using func_t = decltype(&TES::PurgeBufferedCells);
 		REL::Relocation<func_t> func{ RELOCATION_ID(13159, 13299) };
 		return func(this);
 	}

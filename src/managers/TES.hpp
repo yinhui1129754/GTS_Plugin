@@ -37,7 +37,7 @@ namespace RE
 	struct bhkPickData;
 	struct PositionPlayerEvent;
 
-	class TES_Fix :
+	class TES :
 		public ICellAttachDetachEventSource,                        // 000
 		public BSTEventSink<BSResource::ArchiveStreamOpenedEvent>,  // 060
 		public BSTEventSink<PositionPlayerEvent>                    // 068
@@ -60,7 +60,7 @@ namespace RE
 		};
 		static_assert(sizeof(SystemEventAdapter) == 0x10);
 
-		~TES_Fix() override;  // 00
+		~TES() override;  // 00
 
 		// override (BSTEventSink<BSResource::ArchiveStreamOpenedEvent>)
 		BSEventNotifyControl ProcessEvent(const BSResource::ArchiveStreamOpenedEvent* a_event, BSTEventSource<BSResource::ArchiveStreamOpenedEvent>* a_eventSource) override;  // 01 - { return BSEventNotifyControl::kContinue; }
@@ -68,7 +68,7 @@ namespace RE
 		// override (BSTEventSink<PositionPlayerEvent>)
 		BSEventNotifyControl ProcessEvent(const PositionPlayerEvent* a_event, BSTEventSource<PositionPlayerEvent>* a_eventSource) override;  // 01
 
-		static TES_Fix* GetSingleton();
+		static TES* GetSingleton();
 
 		void ForEachReference(std::function<BSContainer::ForEachResult(TESObjectREFR*)> a_callback);
 		void ForEachReferenceInRange(TESObjectREFR* a_origin, float a_radius, std::function<BSContainer::ForEachResult(TESObjectREFR*)> a_callback);
@@ -241,9 +241,9 @@ namespace RE
 		RUNTIME_DATA2_CONTENT;
 	};
 #if defined(ENABLE_SKYRIM_AE) && !(defined(ENABLE_SKYRIM_SE) || defined(ENABLE_SKYRIM_VR))
-	static_assert(sizeof(TES_Fix) == 0x2C0);
+	static_assert(sizeof(TES) == 0x2C0);
 #else
-	static_assert(sizeof(TES_Fix) == 0x2B8);
+	static_assert(sizeof(TES) == 0x2B8);
 #endif
 }
 #undef RUNTIME_DATA_CONTENT
