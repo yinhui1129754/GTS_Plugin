@@ -9,6 +9,10 @@
 
 /// Copy-pasted from alandtse/CommonLibNG
 
+namespace SKSE {
+	constexpr REL::Version RUNTIME_SSE_1_6_1130(1, 6, 1130, 0);
+}
+
 namespace RE
 {
 	namespace BSResource
@@ -237,7 +241,7 @@ namespace RE
 		RUNTIME_DATA2_CONTENT;
 
 	private:
-		KEEP_FOR_RE()
+		KEEP_FOR_RE();
 	};
 #if defined(ENABLE_SKYRIM_AE) && !(defined(ENABLE_SKYRIM_SE) || defined(ENABLE_SKYRIM_VR))
 	static_assert(sizeof(TES_Fix) == 0x2C0);
