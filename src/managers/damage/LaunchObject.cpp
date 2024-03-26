@@ -101,35 +101,30 @@ namespace Gts {
         for (auto objectref: Refs) {
             if (objectref) {
                 if (objectref && objectref->Is3DLoaded()) {
-                    if (objectref->GetCurrent3D()) {
-                        bool IsActor = objectref->Is(FormType::ActorCharacter);
-                        if (!IsActor) { // we don't want to apply it to actors
-                            NiPoint3 objectlocation = objectref->GetPosition();
-                            for (auto point: footPoints) {
-                                float distance = (point - objectlocation).Length();
-                                if (distance <= maxFootDistance) {
-                                    float force = 1.0 - distance / maxFootDistance;
-                                    float push = start_power * GetLaunchPower_Object(giantScale, false) * force * power;
-                                    auto Object1 = objectref->Get3D1(false);
-                                    if (Object1) {
-                                        auto collision = Object1->GetCollisionObject();
-                                        if (collision) {
-                                            auto rigidbody = collision->GetRigidBody();
-                                            if (rigidbody) {
-                                                auto body = rigidbody->AsBhkRigidBody();
-                                                if (body) {
-                                                    SetLinearImpulse(body, hkVector4(0, 0, push, push));
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+					NiPoint3 objectlocation = objectref->GetPosition();
+					for (auto point: footPoints) {
+						float distance = (point - objectlocation).Length();
+						if (distance <= maxFootDistance) {
+							float force = 1.0 - distance / maxFootDistance;
+							float push = start_power * GetLaunchPower_Object(giantScale, false) * force * power;
+							auto Object1 = objectref->Get3D1(false);
+							if (Object1) {
+								auto collision = Object1->GetCollisionObject();
+								if (collision) {
+									auto rigidbody = collision->GetRigidBody();
+									if (rigidbody) {
+										auto body = rigidbody->AsBhkRigidBody();
+										if (body) {
+											SetLinearImpulse(body, hkVector4(0, 0, push, push));
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
     }
             
     void PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power, float radius, bool Kick) {
@@ -218,7 +213,26 @@ namespace Gts {
 		std::vector<TESObjectREFR*> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
-        const auto TES = TES::GetSingleton();
+		TESObjectCELL* cell = giant->GetParentCell();
+
+		if (cell) {
+			auto data = cell->GetRuntimeData();
+			for (auto object: data.references) {
+				auto objectref = object.get();
+				if (objectref) {
+					bool IsActor = objectref.Is(FormType::ActorCharacter);
+					if (!IsActor) { // we don't want to apply it to actors
+						NiPoint3 objectlocation = objectref.GetPosition();
+						float distance = (point - objectlocation).Length();
+						if (distance <= maxDistance) {
+							Objects.push_back(objectref);
+						}
+					}
+				}
+			}
+		}
+
+       	/*const auto TES = TES::GetSingleton(); // Crashes on AE, ty Todd (Also seems to be FPS expensive)
 		if (TES) {
 			TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
 			if (GiantRef) {
@@ -234,7 +248,7 @@ namespace Gts {
 					return RE::BSContainer::ForEachResult::kContinue;    
 				});
 			}
-		}
+		}*/
 
 		return Objects;
 	}
