@@ -1068,7 +1068,7 @@ namespace Gts {
 		if (Cause == DamageSource::KickedLeft || Cause == DamageSource::KickedRight) {
 			// Apply Down offset in that case
 			float HH = HighHeelManager::GetHHOffset(giant).Length();
-			NodePosition.z -= HH * 0.7;
+			NodePosition.z -= HH * 0.75;
 		}
 
 		float maxDistance = radius * giantScale;

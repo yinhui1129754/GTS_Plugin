@@ -121,11 +121,6 @@ namespace Gts {
     }
 
     void DistributeChestItems() {
-        float QuestStage = Runtime::GetStage("MainQuest");
-        if (QuestStage < 20) {
-            log::info("Quest stage is <20, returning");
-            return;
-        }
         for (auto Chest: FindAllChests()) {
             if (Chest) {
                 AddItemToChests(Chest);
@@ -135,30 +130,14 @@ namespace Gts {
 
     void AddItemToChests(TESForm* Chest) {
         TESContainer* container_Boss = FilterChests(Chest, ChestType::BossChest); 
-        TESContainer* container_Normal = FilterChests(Chest, ChestType::NormalChest); 
-        TESContainer* container_Misc = FilterChests(Chest, ChestType::MiscChest);
+        //ESContainer* container_Normal = FilterChests(Chest, ChestType::NormalChest); 
+        //TESContainer* container_Misc = FilterChests(Chest, ChestType::MiscChest);
 
         if (container_Boss) {
             log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
                     container_Boss->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
-                }
-            }
-        }
-        else if (container_Normal) {
-            log::info("Normal chest found!");
-            for (auto item: CalculateItemProbability(ChestType::NormalChest)) {
-                if (item) {
-                    container_Normal->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
-                }
-            }
-        }
-        else if (container_Misc) {
-            log::info("Misc chest found!");
-            for (auto item: CalculateItemProbability(ChestType::MiscChest)) {
-                if (item) {
-                    container_Misc->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
                 }
             }
         }
@@ -181,130 +160,26 @@ namespace Gts {
     }
 
     std::vector<TESLevItem*> CalculateItemProbability(ChestType type) {
-        float HighLootChance = Runtime::GetStage("MainQuest");
-        float Level = 1.0 + GetGtsSkillLevel() * 0.01;
-        float ChanceToAdd = 100;
-        int rng = rand() % 98;
-        log::info("Calculating item probability");
-
-        switch (type) {
-            case (ChestType::BossChest): { // Always add stuff
-                ChanceToAdd = 100;
-                break;
-            }
-            case (ChestType::NormalChest): { // Occasionally add stuff
-                ChanceToAdd = 8 * Level;
-                break;
-            }
-            case (ChestType::MiscChest): { // Very small chance to add stuff
-                ChanceToAdd = 0.10 * Level;
-                break;
-            }
-        }
-
-        if (rng <= ChanceToAdd) { // Add only if RNG returns true
-            log::info("RNG Rolled true, adding items");
-            return SelectItemsFromPool(type, Level * 100.0);
-        }
-        return {};
+        return SelectItemsFromPool(type);
     }
 
-    std::vector<TESLevItem*> SelectItemsFromPool(ChestType type, float Level) {
-        TESLevItem* ResistSize_Weak = Runtime::GetLeveledItem("Potion_ResistSize_Weak");
-        TESLevItem* ResistSize = Runtime::GetLeveledItem("Potion_ResistSize");
-        TESLevItem* Growth = Runtime::GetLeveledItem("Potion_Growth");
-
-        TESLevItem* SizeLimit_Weak = Runtime::GetLeveledItem("Potion_SizeLimit_Weak");
-        TESLevItem* SizeLimit_Normal = Runtime::GetLeveledItem("Potion_SizeLimit_Normal");
-        TESLevItem* SizeLimit_Strong = Runtime::GetLeveledItem("Potion_SizeLimit_Strong");
-        TESLevItem* SizeLimit_Extreme = Runtime::GetLeveledItem("Potion_SizeLimit_Extreme");
-
-        TESLevItem* SizeHunger_Weak = Runtime::GetLeveledItem("Potion_SizeHunger_Weak");
-        TESLevItem* SizeHunger_Normal = Runtime::GetLeveledItem("Potion_SizeHunger_Normal");
-        TESLevItem* SizeHunger_Strong = Runtime::GetLeveledItem("Potion_SizeHunger_Strong");
-        TESLevItem* SizeHunger_Extreme = Runtime::GetLeveledItem("Potion_SizeHunger_Extreme");
-
-        TESLevItem* Size_Amplify = Runtime::GetLeveledItem("Potion_Size_Amplify");
-        TESLevItem* Size_Drain = Runtime::GetLeveledItem("Poison_Size_Drain");
-        TESLevItem* Size_Shrink = Runtime::GetLeveledItem("Poison_Size_Shrink");
-
-        TESLevItem* Amulet = Runtime::GetLeveledItem("AmuletOfGiants");
-
-        std::vector<TESLevItem*> ChosenItems = {};
-
-        const std::vector<TESLevItem*> WeakPotions = {
-            SizeHunger_Weak,
-            SizeLimit_Weak,
-            ResistSize_Weak,
-            Growth,
-        };
-        const std::vector<TESLevItem*> NormalPotions = {
-            SizeHunger_Normal,
-            SizeLimit_Normal,
-            Size_Drain,
-            Amulet,
-        };
-        const std::vector<TESLevItem*> StrongPotions = {
-            SizeHunger_Strong,
-            SizeLimit_Strong,
-            Size_Amplify,
-            ResistSize,
-        };
-        const std::vector<TESLevItem*> ExtremePotions = {
-            SizeHunger_Extreme,
-            SizeLimit_Extreme,
-            Size_Shrink,
-            Size_Drain,
-        };
-        
-        float weakBoundary = 100;
-        float normalBoundary = 1 + Level * 10;
-        float strongBoundary = 1 + Level * Level * 0.5;
-        float extremeBoundary = 1 + Level * Level * Level * 0.025;
-
-        float totalPercentage = weakBoundary + normalBoundary + strongBoundary + extremeBoundary;
-        weakBoundary = weakBoundary / totalPercentage * 100;
-        normalBoundary = normalBoundary / totalPercentage * 100;
-        strongBoundary = strongBoundary / totalPercentage * 100;
-        extremeBoundary = extremeBoundary / totalPercentage * 100;
+    std::vector<TESLevItem*> SelectItemsFromPool(ChestType type) {
+        TESLevItem* LootList_Master = Runtime::GetLeveledItem("LootList_Misc");
+        //TESLevItem* LootList_Misc = Runtime::GetLeveledItem("LootList_Misc");
+        //TESLevItem* LootList_SizeHunger = Runtime::GetLeveledItem("LootList_SizeHunger");
+        //TESLevItem* LootList_SizeLimit = Runtime::GetLeveledItem("LootList_SizeLimit");
+        // Loot probability is configured inside LootList in the esp
 
         
-        int MaxItems = 1 + (rand() % 2); // Limit amount of items that can be spawned
-        MaxItems *= (1.0 + Level * 0.01);
-        
-        int SelectItem; // Select random item from array
-
-        
-        log::info("rolled max items: {}", MaxItems);
-
-        for (int i = 0; i < MaxItems; ++i) { // Run the func multiple times 
-
-            int roll = rand() % 100; // Select item rarity
-
-            if (type == ChestType::NormalChest) { // Worse rarity for normal chests
-                roll *= 0.60;
-            } else if (type == ChestType::MiscChest) { // Even worse rarity for trash-tier, barrels and such
-                roll *= 0.10;
-            }
-
-            if (roll > weakBoundary + normalBoundary + strongBoundary) {
-                SelectItem = rand() % (ExtremePotions.size());
-                ChosenItems.push_back(ExtremePotions[SelectItem]);
-                log::info("Extreme Random: {}", SelectItem);
-            } else if (roll > weakBoundary + normalBoundary) {
-                SelectItem = rand() % (StrongPotions.size());
-                ChosenItems.push_back(StrongPotions[SelectItem]);
-                log::info("Strong Random: {}", SelectItem);
-            } else if (roll > weakBoundary) {
-                SelectItem = rand() % (NormalPotions.size());
-                ChosenItems.push_back(NormalPotions[SelectItem]);
-                log::info("Normal Random: {}", SelectItem);
-            } else {
-                SelectItem = rand() % (WeakPotions.size());
-                ChosenItems.push_back(WeakPotions[SelectItem]);
-                log::info("Weak Random: {}", SelectItem);
-            }
+        std::vector<TESLevItem*> ChosenItems = {
+           // LootList_Misc,          // Content: 6: ResistSize_Weak; 12: Amulet; 18: ResistSize; 20: SizeDrain; 32: SizeAmplify, Shrink, Grow 
+           // LootList_SizeHunger,    // Content: 6: SizeHunger_Weak, 12: SizeHunger_Normal, 24: SizeHunger_Strong, 32: SizeHunger_Extreme
+           // LootList_SizeLimit,     // Content: 6: SizeLimit_Weak,  12: SizeLimit_Normal, 24: SizeLimit_Strong, 32: SizeLimit_Extreme
+           // LootList_AllInOne,      // All of these above, combined into single loot pool
+           LootList_Master, // All in one x4 , up to 5 loot pools based on Player Level, at lvl: {6, 12, 26, 36, 60}
+           // Spawns inside Boss Chests only
         }
+    
 
         return ChosenItems;
     }

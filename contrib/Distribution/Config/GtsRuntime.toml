@@ -456,5 +456,12 @@ Poison_Size_Shrink = "GTS.esp|7BECF5"
 
 AmuletOfGiants = "GTS.esp|7BECE7"
 
+LootList_Misc =  "GTS.esp|7C3DFA"
+LootList_SizeHunger = "GTS.esp|7C3DF9"
+LootList_SizeLimit = "GTS.esp|7C3DF8"
+
+LootList_AllInOne = "GTS.esp|7BECF6"
+LootList_Master = "GTS.esp|7C3DFB"
+
 
 

@@ -18,6 +18,6 @@ namespace Gts {
         
         void PushObjectsUpwards(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power);
         void PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power, float radius, bool Kick);
-        void PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick);
-        std::vector<ObjectRefHandle> GetNearbyObjects(Actor* giant);
+        void PushObjects(std::vector<TESObjectREFR*> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick)
+        std::vector<TESObjectREFR*> GetNearbyObjects(Actor* giant);
 }

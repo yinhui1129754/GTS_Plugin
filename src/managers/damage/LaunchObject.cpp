@@ -96,11 +96,10 @@ namespace Gts {
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			power *= 1.5;
 		}
-		std::vector<ObjectRefHandle> Refs = GetNearbyObjects(giant);
+		std::vector<TESObjectREFR*> Refs = GetNearbyObjects(giant);
 
-        for (auto object: Refs) {
-            if (object) {
-                TESObjectREFR* objectref = object.get().get();
+        for (auto objectref: Refs) {
+            if (objectref) {
                 if (objectref && objectref->Is3DLoaded()) {
                     if (objectref->GetCurrent3D()) {
                         bool IsActor = objectref->Is(FormType::ActorCharacter);
@@ -143,6 +142,9 @@ namespace Gts {
 		if (!Bone) {
 			return;
 		} 
+		if (!object) {
+			return;
+		}
         if (!object->Is3DLoaded()) {
 			return;
         }
@@ -157,7 +159,7 @@ namespace Gts {
 
         if (Kick) { // Offset pos down
             float HH = HighHeelManager::GetHHOffset(giant).Length();
-			point.z -= HH * 0.7;
+			point.z -= HH * 0.75;
 		}
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
@@ -167,16 +169,9 @@ namespace Gts {
 		int nodeCollisions = 0;
 		float force = 0.25;
 
-		VisitNodes(object->Get3D1(false), [&nodeCollisions, &force, point, maxDistance](NiAVObject& a_obj) {
-			float distance = (point - a_obj.world.translate).Length();
-			if (distance < maxDistance) {
-				nodeCollisions += 1;
-				return false;
-			}
-			return true;
-		});
-
-		if (nodeCollisions > 0) {
+		float distance = (point - a_obj.world.translate).Length();
+		if (distance < maxDistance) {
+		
 			float Start = Time::WorldTimeElapsed();
 			ActorHandle gianthandle = giant->CreateRefHandle();
 			std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
@@ -201,18 +196,17 @@ namespace Gts {
 		}
 	}
 
-	void PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick) {
-		if (refs.size() > 0) {
+	void PushObjects(std::vector<TESObjectREFR*> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick) {
+		if (!refs.empty()) {
 			for (auto object: refs) {
 				if (object) {
-					auto objectRef = object.get().get();
-					PushObjectsTowards(giant, objectRef, bone, power, radius, Kick);
+					PushObjectsTowards(giant, object, bone, power, radius, Kick);
 				}
 			}
 		}
 	}
 
-	std::vector<ObjectRefHandle> GetNearbyObjects(Actor* giant) {
+	std::vector<TESObjectREFR*> GetNearbyObjects(Actor* giant) {
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
 		if (!AllowLaunch) {
 			return {};
@@ -221,26 +215,28 @@ namespace Gts {
 
 		float maxDistance = 220 * giantScale;
 
-		std::vector<ObjectRefHandle> Objects = {};
+		std::vector<TESObjectREFR*> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
         const auto TES = RE::TES::GetSingleton();
-        TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
-        
-		TES->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
-            bool IsActor = a_ref.Is(FormType::ActorCharacter);
-            if (!IsActor) { // we don't want to apply it to actors
-                NiPoint3 objectlocation = a_ref.GetPosition();
-                float distance = (point - objectlocation).Length();
-                if (distance <= maxDistance) {
-                    ObjectRefHandle handle = a_ref.CreateRefHandle();
-                    if (handle) {
-                        Objects.push_back(handle);
-                    }
-                }
-            }
-            return RE::BSContainer::ForEachResult::kContinue;    
-        });
+		if (TES) {
+			TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
+			if (GiantRef) {
+				TES->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
+					bool IsActor = a_ref.Is(FormType::ActorCharacter);
+					if (!IsActor) { // we don't want to apply it to actors
+						NiPoint3 objectlocation = a_ref.GetPosition();
+						float distance = (point - objectlocation).Length();
+						if (distance <= maxDistance) {
+							if (handle) {
+								Objects.push_back(&a_ref);
+							}
+						}
+					}
+					return RE::BSContainer::ForEachResult::kContinue;    
+				});
+			}
+		}
 
 		return Objects;
 	}
