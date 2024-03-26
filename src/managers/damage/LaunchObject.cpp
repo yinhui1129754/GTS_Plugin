@@ -15,9 +15,6 @@
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
-
-#include "managers/TES.hpp"
-
 #include "data/transient.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
@@ -221,7 +218,7 @@ namespace Gts {
 		std::vector<TESObjectREFR*> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
-        const auto TES = Gts::TES::GetSingleton();
+        const auto TES = TES::GetSingleton();
 		if (TES) {
 			TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
 			if (GiantRef) {
