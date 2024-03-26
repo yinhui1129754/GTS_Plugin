@@ -164,7 +164,7 @@ namespace Gts {
     }
 
     std::vector<TESLevItem*> SelectItemsFromPool(ChestType type) {
-        TESLevItem* LootList_Master = Runtime::GetLeveledItem("LootList_Misc");
+        TESLevItem* LootList_Master = Runtime::GetLeveledItem("LootList_Master");
         //TESLevItem* LootList_Misc = Runtime::GetLeveledItem("LootList_Misc");
         //TESLevItem* LootList_SizeHunger = Runtime::GetLeveledItem("LootList_SizeHunger");
         //TESLevItem* LootList_SizeLimit = Runtime::GetLeveledItem("LootList_SizeLimit");
