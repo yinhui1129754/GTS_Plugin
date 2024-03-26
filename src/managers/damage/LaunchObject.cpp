@@ -228,9 +228,7 @@ namespace Gts {
 						NiPoint3 objectlocation = a_ref.GetPosition();
 						float distance = (point - objectlocation).Length();
 						if (distance <= maxDistance) {
-							if (handle) {
-								Objects.push_back(&a_ref);
-							}
+							Objects.push_back(&a_ref);
 						}
 					}
 					return RE::BSContainer::ForEachResult::kContinue;    

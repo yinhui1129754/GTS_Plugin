@@ -176,7 +176,7 @@ namespace Gts {
            // LootList_SizeHunger,    // Content: 6: SizeHunger_Weak, 12: SizeHunger_Normal, 24: SizeHunger_Strong, 32: SizeHunger_Extreme
            // LootList_SizeLimit,     // Content: 6: SizeLimit_Weak,  12: SizeLimit_Normal, 24: SizeLimit_Strong, 32: SizeLimit_Extreme
            // LootList_AllInOne,      // All of these above, combined into single loot pool
-           LootList_Master, // All in one x4 , up to 5 loot pools based on Player Level, at lvl: {6, 12, 26, 36, 60}
+           LootList_Master, // All in one, up to 5 loot pools based on Player Level, at lvl: {6, 12, 26, 36, 60}
            // Spawns inside Boss Chests only
         }
     
