@@ -220,9 +220,9 @@ namespace Gts {
 			for (auto object: data.references) {
 				auto objectref = object.get();
 				if (objectref) {
-					bool IsActor = objectref.Is(FormType::ActorCharacter);
+					bool IsActor = objectref->Is(FormType::ActorCharacter);
 					if (!IsActor) { // we don't want to apply it to actors
-						NiPoint3 objectlocation = objectref.GetPosition();
+						NiPoint3 objectlocation = objectref->GetPosition();
 						float distance = (point - objectlocation).Length();
 						if (distance <= maxDistance) {
 							Objects.push_back(objectref);
