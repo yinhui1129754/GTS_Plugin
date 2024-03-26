@@ -1,4 +1,4 @@
-#include "managers/TES.h"
+#include "managers/TES.hpp"
 
 #include "RE/B/bhkPickData.h"
 #include "RE/G/GridCellArray.h"
