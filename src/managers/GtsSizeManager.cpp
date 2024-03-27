@@ -225,16 +225,16 @@ namespace Gts {
 			float Fall = clamp (1.0, 999999.0, Persistent->FallDamage);
 			float HH = clamp (1.0, 999999.0, Persistent->HHDamage);
 			switch (attribute) {
-				case AttributeType::Normal: 
+				case SizeAttribute::Normal: 
 					return Normal;
 				break;
-				case AttributeType::Sprint:
+				case SizeAttribute::Sprint:
 					return Sprint;
 				break;
-				case AttributeType::Fall:
+				case SizeAttribute::Fall:
 					return Fall;
 				break;
-				case AttributeType::HighHeel:
+				case SizeAttribute::HighHeel:
 					return GetHighHeelsBonusDamage(actor);
 				break;
 				}

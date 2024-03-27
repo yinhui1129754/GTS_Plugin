@@ -37,6 +37,13 @@ namespace Gts {
 		kGift,
 		kNeutral,
 	};
+
+	enum class SizeAttribute {
+		Normal,
+		Sprint,
+		Jump,
+		HighHeel,
+	};
 	
 	enum class CameraTracking_MCM {
 		None,

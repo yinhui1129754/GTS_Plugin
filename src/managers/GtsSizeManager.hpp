@@ -7,14 +7,6 @@ using namespace SKSE;
 using namespace RE;
 
 namespace Gts {
-	
-	enum class SizeAttribute {
-		Normal,
-		Sprint,
-		Jump,
-		HighHeel,
-	};
-
 	struct SizeManagerData {
 		float enchantmentBonus = 0.0;
 		float SizeHungerBonus = 0.0;
