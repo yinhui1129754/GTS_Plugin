@@ -77,8 +77,8 @@ namespace Gts {
 	bool IsHuman(Actor* actor);
 	bool IsBlacklisted(Actor* actor);
 
-	void SetUnderGrowthPotion(Actor* actor, bool set);
-	bool IsUnderGrowthPotion(Actor* actor);
+	void Potion_SetUnderGrowth(Actor* actor, bool set);
+	bool Potion_IsUnderGrowthPotion(Actor* actor);
 	
 	bool IsInsect(Actor* actor, bool performcheck);
 	bool IsFemale(Actor* actor);

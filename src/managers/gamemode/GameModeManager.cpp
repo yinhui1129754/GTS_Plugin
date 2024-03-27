@@ -234,9 +234,9 @@ namespace Gts {
 
 				shrinkRate *= Potion_GetShrinkResistance(actor);
 
-				if (IsUnderGrowthPotion(actor)) {
+				if (Potion_IsUnderGrowthPotion(actor)) {
 					shrinkRate *= 0.0;
-					log::info("IsUnderGrowthPotion");
+					log::info("Potion_IsUnderGrowthPotion");
 				} 
 				if (HasGrowthSpurt(actor)) {
 					shrinkRate *= 0.15;

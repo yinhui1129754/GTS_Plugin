@@ -40,7 +40,7 @@ namespace Gts {
 	void ShrinkResistPotion::OnStart() {
 		auto caster = GetCaster();
 		if (caster) {
-			Potion_SetShrinkResistance(this->Resistance);
+			Potion_SetShrinkResistance(caster, this->Resistance);
             log::info("Setting shrink resistance to {}", this->Resistance);
 		}
 	}
@@ -48,7 +48,7 @@ namespace Gts {
 	void ShrinkResistPotion::OnFinish() {
 		auto caster = GetCaster();
 		if (caster) {
-			Potion_SetShrinkResistance(0.0);
+			Potion_SetShrinkResistance(caster, 0.0);
 		}
 	}
 }

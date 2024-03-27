@@ -673,14 +673,14 @@ namespace Gts {
 		return blacklist;
 	}
 
-	void SetUnderGrowthPotion(Actor* actor, bool set) {
+	void Potion_SetUnderGrowth(Actor* actor, bool set) {
 		auto transient = Transient::GetSingleton().GetData(actor);
 		if (transient) {
 			transient->GrowthPotion = set;
 		}
 	}
 
-	bool IsUnderGrowthPotion(Actor* actor) {
+	bool Potion_IsUnderGrowthPotion(Actor* actor) {
 		bool UnderGrowth = false;
 		auto transient = Transient::GetSingleton().GetData(actor);
 		if (transient) {
