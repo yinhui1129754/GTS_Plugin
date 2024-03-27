@@ -213,7 +213,7 @@ namespace Gts {
 		std::vector<TESObjectREFR*> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
-		TESObjectCELL* cell = giant->GetParentCell();
+		/*TESObjectCELL* cell = giant->GetParentCell();
 
 		if (cell) {
 			auto data = cell->GetRuntimeData();
@@ -230,9 +230,9 @@ namespace Gts {
 					}
 				}
 			}
-		}
+		}*/
 
-       	/*const auto TES = TES::GetSingleton(); // Crashes on AE, ty Todd (Also seems to be FPS expensive)
+       	const auto TES = TES::GetSingleton(); // Crashes on AE, ty Todd (Also seems to be FPS expensive)
 		if (TES) {
 			TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
 			if (GiantRef) {
@@ -248,7 +248,7 @@ namespace Gts {
 					return RE::BSContainer::ForEachResult::kContinue;    
 				});
 			}
-		}*/
+		}
 
 		return Objects;
 	}
