@@ -67,7 +67,7 @@ namespace Gts {
 		
 		PlayGrowthAudio(caster, this->timer.ShouldRun());
 
-		float HP = GetMaxAV(caster, ActorValue::kHealth) * 0.00035;
+		float HP = GetMaxAV(caster, ActorValue::kHealth) * 0.00020 * this->power;
 		caster->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HP * TimeScale());
 
 		float Power = BASE_POWER * AlchemyLevel;

@@ -1,4 +1,4 @@
-#include "magic/effects/Potions/SizeStealPotion.hpp"
+#include "magic/effects/Potions/SizeHunger.hpp"
 #include "magic/effects/common.hpp"
 #include "magic/magic.hpp"
 #include "scale/scale.hpp"

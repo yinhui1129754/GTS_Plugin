@@ -8,7 +8,7 @@ using namespace SKSE;
 using namespace RE;
 
 namespace Gts {
-	class SizePotion : public Magic {
+	class MaxSizePotion : public Magic {
 		public:
 			using Magic::Magic;
 
@@ -20,7 +20,7 @@ namespace Gts {
 
 			virtual std::string GetName() override;
 
-			SizePotion(ActiveEffect* effect);
+			MaxSizePotion(ActiveEffect* effect);
 		private:
 			float Strenght = 0.0;
 	};

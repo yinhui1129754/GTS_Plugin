@@ -1,4 +1,4 @@
-#include "magic/effects/Potions/SizePotion.hpp"
+#include "magic/effects/Potions/MaxSizePotion.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "magic/effects/common.hpp"
 #include "managers/GtsManager.hpp"
@@ -12,12 +12,12 @@
 
 
 namespace Gts {
-	std::string SizePotion::GetName() {
-		return "SizePotion";
+	std::string MaxSizePotion::GetName() {
+		return "MaxSizePotion";
 	}
 
 
-	SizePotion::SizePotion(ActiveEffect* effect) : Magic(effect) {
+	MaxSizePotion::MaxSizePotion(ActiveEffect* effect) : Magic(effect) {
 
 		auto base_spell = GetBaseEffect();
 
@@ -34,7 +34,7 @@ namespace Gts {
 	}
 
 
-	void SizePotion::OnStart() {
+	void MaxSizePotion::OnStart() {
 		auto caster = GetCaster();
 		if (!caster) {
 			return;
@@ -48,7 +48,7 @@ namespace Gts {
 		}
 	}
 
-	void SizePotion::OnUpdate() {
+	void MaxSizePotion::OnUpdate() {
 		auto caster = GetCaster();
 		if (!caster) {
 			return;
@@ -65,7 +65,7 @@ namespace Gts {
 		}
 	}
 
-	void SizePotion::OnFinish() {
+	void MaxSizePotion::OnFinish() {
 		auto caster = GetCaster();
 		if (!caster) {
 			return;

@@ -15,8 +15,8 @@
 #include "magic/effects/sword_of_size.hpp"
 #include "magic/effects/SmallMassiveThreat.hpp"
 #include "magic/effects/Potions/GrowthPotion.hpp"
-#include "magic/effects/Potions/SizePotion.hpp"
-#include "magic/effects/Potions/SizeStealPotion.hpp"
+#include "magic/effects/Potions/MaxSizePotion.hpp"
+#include "magic/effects/Potions/SizeHunger.hpp"
 #include "magic/effects/Potions/ExperiencePotion.hpp"
 #include "magic/effects/Poisons/Poison_Of_Shrinking.hpp"
 #include "magic/effects/Potions/ShrinkResistPotion.hpp"
@@ -215,10 +215,10 @@ namespace Gts {
 		
 		RegisterMagic<SizeHunger>("EffectSizeHungerPotion");
 
-		RegisterMagic<SizePotion>("EffectSizePotionWeak");
-		RegisterMagic<SizePotion>("EffectSizePotionNormal");
-		RegisterMagic<SizePotion>("EffectSizePotionStrong");
-		RegisterMagic<SizePotion>("EffectSizePotionExtreme");
+		RegisterMagic<MaxSizePotion>("EffectSizePotionWeak");
+		RegisterMagic<MaxSizePotion>("EffectSizePotionNormal");
+		RegisterMagic<MaxSizePotion>("EffectSizePotionStrong");
+		RegisterMagic<MaxSizePotion>("EffectSizePotionExtreme");
 
 		RegisterMagic<ExperiencePotion>("SizeMasteryPotionBasic");
 
