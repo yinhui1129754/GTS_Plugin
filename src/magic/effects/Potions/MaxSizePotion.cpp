@@ -8,7 +8,25 @@
 #include "magic/magic.hpp"
 #include "scale/scale.hpp"
 
-
+namespace {
+	float BonusMaxSize_Get(Actor* giant) {
+		auto saved_data = Persistent::GetSingleton().GetData(giant);
+		if (saved_data) {
+			return saved_data->bonus_max_size;
+		}
+		return 1.0;
+	}
+	void BonusMaxSize_Modify(Actor* giant, float value, bool add) {
+		auto saved_data = Persistent::GetSingleton().GetData(giant);
+		if (saved_data) {
+			if (!add) {
+				saved_data->bonus_max_size = value;
+			} else {
+				saved_data->bonus_max_size += value;
+			}
+		}
+	}
+}
 
 
 namespace Gts {
@@ -40,12 +58,9 @@ namespace Gts {
 			return;
 		}
 		float Gigantism = 1.0 + Ench_Aspect_GetPower(caster);
-		auto saved_data = Persistent::GetSingleton().GetData(caster);
-		if (saved_data) {
-			float PotionPower = this->Strenght;
-			float BonusSize = Runtime::GetFloat("sizeLimit") * PotionPower * Gigantism; // add % of scale, that's why we read sizeLimit value
-			saved_data->bonus_max_size = BonusSize;
-		}
+		float PotionPower = this->Strenght;
+		float BonusSize = Runtime::GetFloat("sizeLimit") * PotionPower * Gigantism; // add % of scale, that's why we read sizeLimit value
+		BonusMaxSize_Modify(caster, BonusSize, false);
 	}
 
 	void MaxSizePotion::OnUpdate() {
@@ -56,7 +71,6 @@ namespace Gts {
 		float PotionPower = this->Strenght;
 		float Gigantism = 1.0 + Ench_Aspect_GetPower(caster);
 		float expected = Runtime::GetFloat("sizeLimit") * PotionPower * Gigantism;
-		auto saved_data = Persistent::GetSingleton().GetData(caster);
 		if (saved_data) {
 			if (saved_data->bonus_max_size < expected) {
 				saved_data->bonus_max_size += expected; // Just to be sure

@@ -191,67 +191,57 @@ namespace Gts {
 	}
 
 	//================Size-Related Damage
-	void SizeManager::SetSizeAttribute(Actor* actor, float amt, float attribute) {
+	void SizeManager::SetSizeAttribute(Actor* actor, float amt, SizeAttribute attribute) {
 		if (!actor) {
 			return;
 		}
 		auto Persistent = Persistent::GetSingleton().GetData(actor);
-		if (!Persistent) {
-			return;
-		}
-		if (attribute == 0) {
-			Persistent->NormalDamage = amt;
-		} else if (attribute == 1) {
-			Persistent->SprintDamage = amt;
-		} else if (attribute == 2) {
-			Persistent->FallDamage = amt;
-		} else if (attribute == 3) {
-			Persistent->HHDamage = amt;
+		if (Persistent) {
+			switch (attribute) {
+				case SizeAttribute::Normal:
+					Persistent->NormalDamage = amt;
+				break;
+				case SizeAttribute::Sprint:
+					Persistent->SprintDamage = amt;
+				break;
+				case SizeAttribute::Fall: 
+					Persistent->FallDamage = amt;
+				break;
+				case SizeAttribute::HighHeel:
+					Persistent->HHDamage = amt;
+				break;
+			}
 		}
 	}
 
-	float SizeManager::GetSizeAttribute(Actor* actor, float attribute) {
+	float SizeManager::GetSizeAttribute(Actor* actor, SizeAttribute attribute) {
 		if (!actor) {
 			return 1.0;
 		}
 		auto Persistent = Persistent::GetSingleton().GetData(actor);
-		if (!Persistent) {
-			return 1.0;
-		}
-		float Normal = clamp (1.0, 999999.0, Persistent->NormalDamage);
-		float Sprint = clamp (1.0, 999999.0, Persistent->SprintDamage);
-		float Fall = clamp (1.0, 999999.0, Persistent->FallDamage);
-		float HH = clamp (1.0, 999999.0, Persistent->HHDamage);
-		if (attribute == 0) {
-			return Normal;
-		} else if (attribute == 1) {
-			return Sprint;
-		} else if (attribute == 2) {
-			return Fall;
-		} else if (attribute == 3) {
-			return GetHighHeelsBonusDamage(actor);
-		}
+		if (Persistent) {
+			float Normal = clamp (1.0, 999999.0, Persistent->NormalDamage);
+			float Sprint = clamp (1.0, 999999.0, Persistent->SprintDamage);
+			float Fall = clamp (1.0, 999999.0, Persistent->FallDamage);
+			float HH = clamp (1.0, 999999.0, Persistent->HHDamage);
+			switch (attribute) {
+				case AttributeType::Normal: 
+					return Normal;
+				break;
+				case AttributeType::Sprint:
+					return Sprint;
+				break;
+				case AttributeType::Fall:
+					return Fall;
+				break;
+				case AttributeType::HighHeel:
+					return GetHighHeelsBonusDamage(actor);
+				break;
+				}
+			}
 		return 1.0;
 	}
 
-	void SizeManager::ModSizeAttribute(Actor* actor, float amt, float attribute) {
-		if (!actor) {
-			return;
-		}
-		auto Persistent = Persistent::GetSingleton().GetData(actor);
-		if (!Persistent) {
-			return;
-		}
-		if (attribute == 0) {
-			Persistent->NormalDamage += amt;
-		} else if (attribute == 1) {
-			Persistent->SprintDamage += amt;
-		} else if (attribute == 2) {
-			Persistent->FallDamage += amt;
-		} else if (attribute == 3) {
-			Persistent->HHDamage += amt;
-		}
-	}
 	//===============Size-Related Attribute End
 
 

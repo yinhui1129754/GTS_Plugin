@@ -44,9 +44,9 @@ namespace {
 		float BalancedMode = SizeManager::GetSingleton().BalancedMode();
 		float gigantism = 1.0 + (Ench_Aspect_GetPower(actor) * 0.30);
 
-		float BaseGlobalDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, 0);
-		float BaseSprintDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, 1);
-		float BaseFallDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, 2);
+		float BaseGlobalDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Normal);
+		float BaseSprintDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Sprint);
+		float BaseFallDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Fall);
 
 		float ExpectedGlobalDamage = 1.0;
 		float ExpectedSprintDamage = 1.0;
@@ -80,19 +80,14 @@ namespace {
 		ExpectedFallDamage *= gigantism;
 
 		if (BaseGlobalDamage != ExpectedGlobalDamage) {
-			SizeManager.SetSizeAttribute(actor, ExpectedGlobalDamage, 0);
+			SizeManager.SetSizeAttribute(actor, ExpectedGlobalDamage, SizeAttribute::Normal);
 		}
 		if (BaseSprintDamage != ExpectedSprintDamage) {
-			SizeManager.SetSizeAttribute(actor, ExpectedSprintDamage, 1);
+			SizeManager.SetSizeAttribute(actor, ExpectedSprintDamage, SizeAttribute::Sprint);
 		}
 		if (BaseFallDamage != ExpectedFallDamage) {
-			SizeManager.SetSizeAttribute(actor, ExpectedFallDamage, 2);
+			SizeManager.SetSizeAttribute(actor, ExpectedFallDamage, SizeAttribute::Jump);
 		}
-	}
-
-	float JumpHeight(Actor* actor) {
-		float bonus = std::max(get_giantess_scale(actor), 1.0f);
-		return 76.0 * bonus;
 	}
 
 	// Todo unify the functions
@@ -100,11 +95,9 @@ namespace {
 		if (!actor) {
 			return;
 		}
-		static Timer timer = Timer(0.05);
-		static Timer jumptimer = Timer(0.50);
-		float size = get_giantess_scale(actor);
+		static Timer timer = Timer(0.10);
 
-		if (timer.ShouldRunFrame()) { // Run once per 0.05 sec
+		if (timer.ShouldRunFrame()) { // Run once per 0.10 sec
 			ManagePerkBonuses(actor);
 
 			if (actor->formID == 0x14) {
@@ -251,7 +244,7 @@ namespace Gts {
 		float finalValue = originalValue;
 
 		switch (av) {
-			case ActorValue::kHealth: {
+			case ActorValue::kHealth: { // 27.03.2024: Health boost is still applied, but for Player only and only if having matching perks
 				float bonus = 1.0;
 				auto& attributes = AttributeManager::GetSingleton();
 				float scale = get_giantess_scale(actor);
@@ -267,17 +260,7 @@ namespace Gts {
 					bonus = scale;
 				}
 				float perkbonus = GetStolenAttributes_Values(actor, ActorValue::kHealth); // calc health from the perk bonuses
-				//float tempav = actor->GetActorValueModifier(ACTOR_VALUE_MODIFIER::kTemporary, av); // Do temp boosts here too
-				//float permav = actor->GetActorValueModifier(ACTOR_VALUE_MODIFIER::kPermanent, av);  //Do perm boosts here too
 				finalValue = originalValue + perkbonus; // add flat health on top
-				//finalValue += perkbonus; // add health boost from perks on top. It is limited to boost = 2 * playerlevel.
-
-				//if (actor->formID == 0x14) {
-				//log::info("Health originalValue: {}", originalValue);
-				//log::info("Health tempav: {}", tempav);
-				//log::info("Health permav: {}", permav);
-				//log::info("Health bonus: {}", bonus);
-				//log::info("Health finalValue: {}", finalValue);
 				auto transient = Transient::GetSingleton().GetData(actor);
 				if (transient) {
 					transient->health_boost = finalValue - originalValue;
@@ -322,10 +305,6 @@ namespace Gts {
 
 	float AttributeManager::AlterGetAvMod(float originalValue, Actor* actor, ACTOR_VALUE_MODIFIER a_modifier, ActorValue a_value) {
 		return originalValue;
-	}
-
-	float AttributeManager::GetJumpHeight(Actor* actor) {
-		return JumpHeight(actor);
 	}
 
 	float AttributeManager::AlterMovementSpeed(Actor* actor, const NiPoint3& direction) {

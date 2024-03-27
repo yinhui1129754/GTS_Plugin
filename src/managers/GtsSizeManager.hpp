@@ -7,6 +7,13 @@ using namespace SKSE;
 using namespace RE;
 
 namespace Gts {
+	
+	enum class SizeAttribute {
+		Normal,
+		Sprint,
+		Jump,
+		HighHeel,
+	};
 
 	struct SizeManagerData {
 		float enchantmentBonus = 0.0;
@@ -48,9 +55,8 @@ namespace Gts {
 			float GetGrowthSpurt(Actor* actor);
 			void ModGrowthSpurt(Actor* actor, float amt);
 
-			void SetSizeAttribute(Actor* actor, float amt, float attribute);
-			float GetSizeAttribute(Actor* actor, float attribute);
-			void ModSizeAttribute(Actor* actor, float amt, float attribute);
+			void SetSizeAttribute(Actor* actor, float amt, SizeAttribute attribute);
+			float GetSizeAttribute(Actor* actor, SizeAttribute attribute);
 
 			void SetSizeVulnerability(Actor* actor, float amt);
 			float GetSizeVulnerability(Actor* actor);

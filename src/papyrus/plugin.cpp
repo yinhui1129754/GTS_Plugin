@@ -34,7 +34,8 @@ namespace {
 	}
 
 	float GetSizeRelatedDamage(StaticFunctionTag*, Actor* actor, float attribute) {
-		return SizeManager::GetSingleton().GetSizeAttribute(actor, attribute);
+		SizeAttribute Attribute = static_cast<SizeAttribute>(attribute);
+		return SizeManager::GetSingleton().GetSizeAttribute(actor, Attribute);
 	}
 	float GetSizeVulnerability(StaticFunctionTag*, Actor* actor) {
 		return SizeManager::GetSingleton().GetSizeVulnerability(actor);
