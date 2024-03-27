@@ -26,13 +26,13 @@ namespace Gts {
 
 		auto base_spell = GetBaseEffect();
 
-		if (base_spell == Runtime::GetMagicEffect("EffectSizePotionWeak")) {
+		if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionWeak")) {
 			this->power = 0.5;
-		} else if (base_spell == Runtime::GetMagicEffect("EffectSizePotionNormal")) {
+		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionNormal")) {
 			this->power = 1.0;
-		} else if (base_spell == Runtime::GetMagicEffect("EffectSizePotionStrong")) {
+		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionStrong")) {
 			this->power = 1.5;
-		} else if (base_spell == Runtime::GetMagicEffect("EffectSizePotionExtreme")) {
+		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionExtreme")) {
 			this->power = 2.0;
 		} 
 	}
