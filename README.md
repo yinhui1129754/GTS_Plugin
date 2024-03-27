@@ -30,13 +30,13 @@ WIP
 - [ ] [16] Quest progression ui/current size ui
 - [X] [17] Vore anim and other animations
 - [ ] [18] Vore belly
-- [ ] [19] Integrate new Potions into the world
+- [X] [19] Integrate new Potions into the world
 - [X] [20] .dll optimization so it will eat less CPU and have better performance (Partially done)
 - [X] [21] Affect stealth by size (Partially done)
 - [ ] [22] Make feet deal damage and effects based on it's speed instead of being able to kill everyone while standing still
 
 ## Easier Things
-- [ ] Scale
+- [X] Scale
   - [x] Change scale in papyrus
   - [X] Get height in meters of any actor
   - [X] Get volume of any actor

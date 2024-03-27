@@ -9,8 +9,7 @@ namespace Gts {
 		AllRayCollectorOutput output;
 
 		const hkpCdBody* body = &a_body;
-		while( body->parent )
-		{
+		if (body->parent) {
 			body = body->parent;
 		}
 		auto root = reinterpret_cast<const hkpCollidable*>(body);
