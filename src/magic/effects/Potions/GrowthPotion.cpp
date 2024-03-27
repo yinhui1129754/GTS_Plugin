@@ -55,7 +55,7 @@ namespace Gts {
 	}
 
 	void GrowthPotion::OnUpdate() {
-		const float BASE_POWER = 0.000128 * this->power;
+		float BASE_POWER = 0.000128 * this->power;
 
 		auto caster = GetCaster();
 		if (!caster) {
@@ -74,6 +74,7 @@ namespace Gts {
 
 		Grow(caster, Power, 0.0);
 		GRumble::Once("GrowButton", caster, 0.6, 0.05);
+		log::info("This Power: {}", this->power);
 		log::info("Enlarging {} with the power of {}", caster->GetDisplayFullName(), Power);
 	}
 
