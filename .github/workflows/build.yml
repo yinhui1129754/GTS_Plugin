@@ -44,7 +44,7 @@ jobs:
               REPO alandtse/CommonLibVR
               REF 2b983f5281bfadd26ee20787390d2513e8ffe38a
               SHA512  ad8a935b38be29390036caff1ceffb9c774f0ba358f6806df5d99ae8f563897bbca0f7e2ecaf951f8047d29c060fbbd7d5458eaa2a924839d7b05ea42af16d34
-              HEAD_REF main
+              HEAD_REF ng
             )
             
             vcpkg_configure_cmake(
