@@ -5,7 +5,7 @@
 #include "data/persistent.hpp"
 #include "data/runtime.hpp"
 
-// A potion that amplifies size gain
+// A potion that gives size experience
 
 namespace Gts {
 	std::string ExperiencePotion::GetName() {
@@ -15,11 +15,10 @@ namespace Gts {
 	void ExperiencePotion::OnStart() {
 		auto caster = GetCaster();
 
-		if (!caster) {
-			return;
-		}
-        int RNG = rand() % 30;
-		ModSizeExperience(caster, 145 * (1.0 + (RNG * 0.01)));
+		if (caster) {
+            int RNG = rand() % 30;
+            ModSizeExperience(caster, 145 * (1.0 + (RNG * 0.01)));
+        }
 	}
 }
 

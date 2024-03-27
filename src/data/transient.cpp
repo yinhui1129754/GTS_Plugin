@@ -83,7 +83,7 @@ namespace Gts {
 			bool FPProning = false;
 			bool Overkilled = false;
 			bool Protection = false;
-			bool UnderGrowthPotion = false;
+			bool GrowthPotion = false;
 
 			bool disable_collision = false;
 
