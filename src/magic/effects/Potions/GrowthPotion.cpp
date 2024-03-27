@@ -22,7 +22,7 @@ namespace Gts {
 		return "GrowthPotion";
 	}
 
-	GrowPotion::GrowPotion(ActiveEffect* effect) : Magic(effect) {
+	GrowthPotion::GrowthPotion(ActiveEffect* effect) : Magic(effect) {
 
 		auto base_spell = GetBaseEffect();
 

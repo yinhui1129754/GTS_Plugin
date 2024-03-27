@@ -21,7 +21,7 @@ namespace Gts {
 
 			virtual std::string GetName() override;
 
-			GrowPotion(ActiveEffect* effect);
+			GrowthPotion(ActiveEffect* effect);
 
 		private:
 			Timer MoanTimer = Timer(6.0);

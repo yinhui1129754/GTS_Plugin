@@ -22,7 +22,7 @@ namespace Gts {
 		return "ShrinkResistPotion";
 	}
 
-	ResistancePotion::ResistancePotion(ActiveEffect* effect) : Magic(effect) {
+	ShrinkResistPotion::ShrinkResistPotion(ActiveEffect* effect) : Magic(effect) {
 
 		auto base_spell = GetBaseEffect();
 

@@ -19,7 +19,7 @@ namespace Gts {
 
 			virtual std::string GetName() override;
 
-			ResistancePotion(ActiveEffect* effect);
+			ShrinkResistPotion(ActiveEffect* effect);
 
 		private:
 			float Resistance = 0.0;
