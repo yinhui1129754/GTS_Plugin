@@ -43,14 +43,14 @@ namespace Gts {
 	void MaxSizePotion::OnStart() {
 		auto caster = GetCaster();
 		if (caster) {
-			BonusMaxSize_Modify(caster, this->Power, true);
+			BonusMaxSize_Modify(caster, this->Power);
 		}
 	}
 
 	void MaxSizePotion::OnFinish() {
 		auto caster = GetCaster();
 		if (caster) {
-			BonusMaxSize_Modify(caster, -this->Power, true);
+			BonusMaxSize_Modify(caster, -this->Power);
 		}
 	}
 }
