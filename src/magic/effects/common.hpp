@@ -182,9 +182,7 @@ namespace Gts {
 
 		float Scale_Resistance = std::clamp(get_visual_scale(target), 1.0f, 9999.0f); // Calf_power makes shrink effects stronger based on scale, this fixes that.
 
-		if (Runtime::HasMagicEffect(target, "ResistShrinkPotion")) {
-			efficiency *= 0.25;
-		}
+		efficiency *= Potion_GetShrinkResistance(target);
 
 		efficiency *= Gigantism_Caster * SizeHunger; // amplity it by Aspect Of Giantess (on gts) and size hunger potion bonus
 		efficiency /= Gigantism_Target; // resistance from Aspect Of Giantess (on Tiny)

@@ -17,7 +17,9 @@
 #include "magic/effects/Potions/GrowthPotion.hpp"
 #include "magic/effects/Potions/SizePotion.hpp"
 #include "magic/effects/Potions/SizeStealPotion.hpp"
+#include "magic/effects/Potions/ExperiencePotion.hpp"
 #include "magic/effects/Poisons/Poison_Of_Shrinking.hpp"
+#include "magic/effects/Potions/ShrinkResistPotion.hpp"
 #include "magic/effects/Potions/ShrinkPotion.hpp"
 #include "managers/Attributes.hpp"
 #include "data/runtime.hpp"
@@ -210,12 +212,26 @@ namespace Gts {
 	void MagicManager::DataReady() {
 
 		// Potions
-		RegisterMagic<SizePotion>("EffectSizePotionExtreme");
+		
 		RegisterMagic<SizeHunger>("EffectSizeHungerPotion");
-		RegisterMagic<SizePotion>("EffectSizePotionStrong");
-		RegisterMagic<SizePotion>("EffectSizePotionNormal");
+
 		RegisterMagic<SizePotion>("EffectSizePotionWeak");
-		RegisterMagic<GrowthPotion>("EffectGrowthPotion");
+		RegisterMagic<SizePotion>("EffectSizePotionNormal");
+		RegisterMagic<SizePotion>("EffectSizePotionStrong");
+		RegisterMagic<SizePotion>("EffectSizePotionExtreme");
+
+		RegisterMagic<ExperiencePotion>("SizeMasteryPotionBasic");
+
+		RegisterMagic<ShrinkResistPotion>("ResistShrinkPotionWeak");
+		RegisterMagic<ShrinkResistPotion>("ResistShrinkPotionNormal");
+		RegisterMagic<ShrinkResistPotion>("ResistShrinkPotionStrong");
+		RegisterMagic<ShrinkResistPotion>("ResistShrinkPotionExtreme");
+
+		RegisterMagic<GrowthPotion>("EffectGrowthPotionWeak");
+		RegisterMagic<GrowthPotion>("EffectGrowthPotionNormal");
+		RegisterMagic<GrowthPotion>("EffectGrowthPotionStrong");
+		RegisterMagic<GrowthPotion>("EffectGrowthPotionExtreme");
+
 		RegisterMagic<ShrinkPotion>("SizeDrainPotion");
 		RegisterMagic<Shrink_Poison>("ShrinkPoison");
 		//

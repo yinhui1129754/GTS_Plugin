@@ -165,18 +165,11 @@ namespace Gts {
 
     std::vector<TESLevItem*> SelectItemsFromPool(ChestType type) {
         TESLevItem* LootList_Master = Runtime::GetLeveledItem("LootList_Master");
-        //TESLevItem* LootList_Misc = Runtime::GetLeveledItem("LootList_Misc");
-        //TESLevItem* LootList_SizeHunger = Runtime::GetLeveledItem("LootList_SizeHunger");
-        //TESLevItem* LootList_SizeLimit = Runtime::GetLeveledItem("LootList_SizeLimit");
         // Loot probability is configured inside LootList in the esp
 
         
         std::vector<TESLevItem*> ChosenItems = {
-           // LootList_Misc,          // Content: 6: ResistSize_Weak; 12: Amulet; 18: ResistSize; 20: SizeDrain; 32: SizeAmplify, Shrink, Grow 
-           // LootList_SizeHunger,    // Content: 6: SizeHunger_Weak, 12: SizeHunger_Normal, 24: SizeHunger_Strong, 32: SizeHunger_Extreme
-           // LootList_SizeLimit,     // Content: 6: SizeLimit_Weak,  12: SizeLimit_Normal, 24: SizeLimit_Strong, 32: SizeLimit_Extreme
-           // LootList_AllInOne,      // All of these above, combined into single loot pool
-           LootList_Master, // All in one, up to 5 loot pools based on Player Level, at lvl: {6, 12, 26, 36, 60}
+           LootList_Master, 
            // Spawns inside Boss Chests only
         };
     

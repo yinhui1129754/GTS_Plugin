@@ -673,6 +673,22 @@ namespace Gts {
 		return blacklist;
 	}
 
+	void SetUnderGrowthPotion(Actor* actor, bool set) {
+		auto transient = Transient::GetSingleton().GetData(actor);
+		if (transient) {
+			transient->GrowthPotion = set;
+		}
+	}
+
+	bool IsUnderGrowthPotion(Actor* actor) {
+		bool UnderGrowth = false;
+		auto transient = Transient::GetSingleton().GetData(actor);
+		if (transient) {
+			UnderGrowth = transient->GrowthPotion;
+		}
+		return UnderGrowth;
+	}
+
 	bool IsInsect(Actor* actor, bool performcheck) {
 		bool Check = Persistent::GetSingleton().AllowInsectVore;
 		if (performcheck && Check) {
@@ -921,6 +937,26 @@ namespace Gts {
 		return fallmod;
 	}
 	
+	void Potion_SetShrinkResistance(Actor* giant, float value) {
+		auto transient = Transient::GetSingleton().GetData(giant);
+		if (transient) {
+			transient->ShrinkResistance = value;
+		}
+	}
+
+	float Potion_GetShrinkResistance(Actor* giant) {
+		auto transient = Transient::GetSingleton().GetData(giant);
+		float Resistance = 1.0;
+		if (transient) {
+			Resistance -= transient->ShrinkResistance;
+			//log::info("Fall mult :{}", transient->FallTimer);
+		}
+		if (Resistance <= 0.25) {
+			Resistance = 0.25; // cap it just in case
+		}
+		return Resistance;
+	}
+
 	float GetHPThreshold(Actor* actor) {
 		float hp = 0.20;
 		if (Runtime::HasPerkTeam(actor, "HugCrush_MightyCuddles")) {

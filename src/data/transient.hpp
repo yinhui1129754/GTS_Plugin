@@ -28,7 +28,7 @@ namespace Gts {
 		float FpFov_Default;
 		float ButtCrushGrowthAmount;
 		float MovementSlowdown;
-		float Rotation_X;
+		float ShrinkResistance;
 		
 
 		bool Throw_WasThrown;
@@ -48,6 +48,7 @@ namespace Gts {
 		bool FPProning;
 		bool Overkilled;
 		bool Protection;
+		bool GrowthPotion;
 		
 
 		bool disable_collision;

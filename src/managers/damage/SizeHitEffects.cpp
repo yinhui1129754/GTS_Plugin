@@ -176,12 +176,8 @@ namespace {
 		float SizeDifference = get_visual_scale(receiver)/get_visual_scale(attacker);
 		float DamageReduction = std::clamp(GetDamageResistance(receiver), 0.25f, 1.0f); // disallow going > than 1
 
-		float resistance = 1.0;
-		
-		if (Runtime::HasMagicEffect(receiver, "ResistShrinkPotion")) {
-			resistance = 0.25;
-		}
-
+		float resistance = Potion_GetShrinkResistance(receiver);
+	
 		damage *= DamageReduction;
 
 		if (receiver->formID == 0x14 && Runtime::HasPerk(receiver, "GrowthOnHitPerk") && sizemanager.GetHitGrowth(receiver) >= 1.0) { // if has perk

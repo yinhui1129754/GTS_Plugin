@@ -232,11 +232,12 @@ namespace Gts {
 					shrinkRate = 0.00086 * BonusShrink * 1.40;
 				}
 
-				if (Runtime::HasMagicEffect(actor, "EffectGrowthPotion")) {
+				shrinkRate *= Potion_GetShrinkResistance(actor);
+
+				if (IsUnderGrowthPotion(actor)) {
 					shrinkRate *= 0.0;
-				} else if (Runtime::HasMagicEffect(actor, "ResistShrinkPotion")) {
-					shrinkRate *= 0.25;
-				}
+					log::info("IsUnderGrowthPotion");
+				} 
 				if (HasGrowthSpurt(actor)) {
 					shrinkRate *= 0.15;
 				}

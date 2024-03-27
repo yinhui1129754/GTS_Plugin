@@ -83,6 +83,7 @@ namespace Gts {
 			bool FPProning = false;
 			bool Overkilled = false;
 			bool Protection = false;
+			bool UnderGrowthPotion = false;
 
 			bool disable_collision = false;
 
@@ -97,7 +98,7 @@ namespace Gts {
 			float FpFov_Default = 0;
 			float ButtCrushGrowthAmount = 0;
 			float MovementSlowdown = 1.0;
-			float Rotation_X = 0.0;
+			float ShrinkResistance = 0.0;
 
 			// Volume scales cubically
 			float base_volume = bound->extents[0] * bound->extents[1] * bound->extents[2] * scale * scale * scale;
@@ -140,13 +141,14 @@ namespace Gts {
 			result.FpFov_Default = FpFov_Default;
 			result.ButtCrushGrowthAmount = ButtCrushGrowthAmount;
 			result.MovementSlowdown = MovementSlowdown;
-			result.Rotation_X = Rotation_X;
+			result.ShrinkResistance = ShrinkResistance;
 			result.OverrideCamera = OverrideCamera;
 			result.WasReanimated = WasReanimated;
 			result.FPCrawling = FPCrawling;
 			result.FPProning = FPProning;
 			result.Overkilled = Overkilled;
 			result.Protection = Protection;
+			result.GrowthPotion = GrowthPotion;
 			
 
 			result.disable_collision = disable_collision;

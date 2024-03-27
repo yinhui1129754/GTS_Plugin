@@ -76,6 +76,10 @@ namespace Gts {
 	bool IsMechanical(Actor* actor);
 	bool IsHuman(Actor* actor);
 	bool IsBlacklisted(Actor* actor);
+
+	void SetUnderGrowthPotion(Actor* actor, bool set);
+	bool IsUnderGrowthPotion(Actor* actor);
+	
 	bool IsInsect(Actor* actor, bool performcheck);
 	bool IsFemale(Actor* actor);
 	bool IsDragon(Actor* actor);
@@ -105,6 +109,10 @@ namespace Gts {
 	// GTS Actor Functions
 	float GetDamageSetting();
 	float GetFallModifier(Actor* giant);
+
+	void Potion_SetShrinkResistance(Actor* giant, float value);
+	float Potion_GetShrinkResistance(Actor* giant);
+
 	float GetHPThreshold(Actor* actor);
 
 	float Ench_Aspect_GetPower(Actor* giant);
