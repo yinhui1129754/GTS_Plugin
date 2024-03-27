@@ -77,7 +77,7 @@ namespace Gts {
 	void SizeManager::Update() {
 		auto profiler = Profilers::Profile("SizeManager: Update");
 		for (auto actor: find_actors()) {
-			// 2023: TODO: move away from polling
+			// 2023 + 2024: TODO: move away from polling
 			float Endless = 0.0;
 			if (actor->formID == 0x14) {
 				Endless = get_endless_height(actor);
@@ -90,14 +90,14 @@ namespace Gts {
 			
 			float GetLimit = clamp(NaturalScale, 99999999.0, NaturalScale + ((Runtime::GetFloat("sizeLimit") - 1.0) * NaturalScale)); // Default size limit
 			
-			float Persistent_Size = 0.0;
+			float Persistent_Size = 1.0;
 			float SelectedFormula = Runtime::GetInt("SelectedSizeFormula");
 
 			float FollowerLimit = Runtime::GetFloat("FollowersSizeLimit"); // 0 by default
 			float NPCLimit = Runtime::GetFloat("NPCSizeLimit"); // 0 by default
 
 			if (Persistent) {
-				Persistent_Size = Persistent->bonus_max_size;
+				Persistent_Size = (1.0 + Persistent->bonus_max_size);
 			}
 
 			if (SelectedFormula >= 1.0 && actor->formID == 0x14) { // Apply Player Mass-Based max size
@@ -112,7 +112,7 @@ namespace Gts {
 				GetLimit = clamp(NaturalScale * NPCLimit, 99999999.0, NaturalScale + ((Runtime::GetFloat("NPCSizeLimit") - 1.0) * NaturalScale));       // Apply only if Quest is done.
 			}
 
-			float TotalLimit = ((GetLimit + Persistent_Size) * (1.0 + Gigantism));
+			float TotalLimit = ((GetLimit * Persistent_Size) * (1.0 + Gigantism));
 
 			if (get_max_scale(actor) < TotalLimit + Endless || get_max_scale(actor) > TotalLimit + Endless) {
 				set_max_scale(actor, TotalLimit);

@@ -14,14 +14,12 @@ namespace Gts {
 
 			virtual void OnStart() override;
 
-			virtual void OnUpdate() override;
-
 			virtual void OnFinish() override;
 
 			virtual std::string GetName() override;
 
 			MaxSizePotion(ActiveEffect* effect);
 		private:
-			float Strenght = 0.0;
+			float Power = 0.0;
 	};
 }
