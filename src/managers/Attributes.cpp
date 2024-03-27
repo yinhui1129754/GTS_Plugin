@@ -46,7 +46,7 @@ namespace {
 
 		float BaseGlobalDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Normal);
 		float BaseSprintDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Sprint);
-		float BaseFallDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Jump);
+		float BaseFallDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::JumpFall);
 
 		float ExpectedGlobalDamage = 1.0;
 		float ExpectedSprintDamage = 1.0;
@@ -86,7 +86,7 @@ namespace {
 			SizeManager.SetSizeAttribute(actor, ExpectedSprintDamage, SizeAttribute::Sprint);
 		}
 		if (BaseFallDamage != ExpectedFallDamage) {
-			SizeManager.SetSizeAttribute(actor, ExpectedFallDamage, SizeAttribute::Jump);
+			SizeManager.SetSizeAttribute(actor, ExpectedFallDamage, SizeAttribute::JumpFall);
 		}
 	}
 

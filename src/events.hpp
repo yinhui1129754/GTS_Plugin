@@ -41,7 +41,7 @@ namespace Gts {
 	enum class SizeAttribute {
 		Normal,
 		Sprint,
-		Jump,
+		JumpFall,
 		HighHeel,
 	};
 	

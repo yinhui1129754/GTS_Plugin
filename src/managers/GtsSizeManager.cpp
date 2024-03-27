@@ -204,7 +204,7 @@ namespace Gts {
 				case SizeAttribute::Sprint:
 					Persistent->SprintDamage = amt;
 				break;
-				case SizeAttribute::Jump: 
+				case SizeAttribute::JumpFall: 
 					Persistent->FallDamage = amt;
 				break;
 				case SizeAttribute::HighHeel:
@@ -231,7 +231,7 @@ namespace Gts {
 				case SizeAttribute::Sprint:
 					return Sprint;
 				break;
-				case SizeAttribute::Fall:
+				case SizeAttribute::JumpFall:
 					return Fall;
 				break;
 				case SizeAttribute::HighHeel:
