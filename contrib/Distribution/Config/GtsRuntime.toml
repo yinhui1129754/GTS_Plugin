@@ -129,11 +129,13 @@ SizeRelatedDamage2 = "GTS.esp|00B474"
 # Absorb
 AbsorbMGEF = "GTS.esp|00B470"
 TrueAbsorb = "GTS.esp|22B0D5"
+
 # Potions
+
 EffectGrowthPotionWeak = "GTS.esp|3D4582"
-EffectGrowthPotionNormal = "GTS.esp|7C8EFC"
-EffectGrowthPotionStrong = "GTS.esp|7C8EFE"
-EffectGrowthPotionExtreme = "GTS.esp|7C8F00"
+EffectGrowthPotionNormal = "GTS.esp|7C8F02"
+EffectGrowthPotionStrong = "GTS.esp|7C8F03"
+EffectGrowthPotionExtreme = "GTS.esp|7C8F04"
 
 SizeMasteryPotionBasic = "GTS.esp|7CE013"
 
@@ -146,8 +148,11 @@ EffectSizePotionWeak = "GTS.esp|3E38BB"
 EffectSizePotionNormal = "GTS.esp|3E38BC"
 EffectSizePotionStrong = "GTS.esp|3E38BD"
 EffectSizePotionExtreme = "GTS.esp|3E38C0"
+
 EffectSizeHungerPotion = "GTS.esp|42F7D6"
+
 EffectSizeAmplifyPotion = "GTS.esp|452F1D"
+
 SizeDrainPotion = "GTS.esp|5B5557"
 ShrinkPoison = "GTS.esp|5B5552"
 
