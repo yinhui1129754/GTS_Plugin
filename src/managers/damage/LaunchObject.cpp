@@ -213,40 +213,43 @@ namespace Gts {
 		std::vector<TESObjectREFR*> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
-		/*TESObjectCELL* cell = giant->GetParentCell();
+		bool PreciseScan = Runtime::GetBoolOr("AccurateCellScan", false);
 
-		if (cell) {
-			auto data = cell->GetRuntimeData();
-			for (auto object: data.references) {
-				auto objectref = object.get();
-				if (objectref) {
-					bool IsActor = objectref->Is(FormType::ActorCharacter);
-					if (!IsActor) { // we don't want to apply it to actors
-						NiPoint3 objectlocation = objectref->GetPosition();
-						float distance = (point - objectlocation).Length();
-						if (distance <= maxDistance) {
-							Objects.push_back(objectref);
+		if (!PreciseScan) { // Scan single cell only
+			TESObjectCELL* cell = giant->GetParentCell();
+			if (cell) {
+				auto data = cell->GetRuntimeData();
+				for (auto object: data.references) {
+					auto objectref = object.get();
+					if (objectref) {
+						bool IsActor = objectref->Is(FormType::ActorCharacter);
+						if (!IsActor) { // we don't want to apply it to actors
+							NiPoint3 objectlocation = objectref->GetPosition();
+							float distance = (point - objectlocation).Length();
+							if (distance <= maxDistance) {
+								Objects.push_back(objectref);
+							}
 						}
 					}
 				}
 			}
-		}*/
-
-       	const auto TES = TES::GetSingleton(); // Crashes on AE, ty Todd (Also seems to be FPS expensive)
-		if (TES) {
-			TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
-			if (GiantRef) {
-				TES->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
-					bool IsActor = a_ref.Is(FormType::ActorCharacter);
-					if (!IsActor) { // we don't want to apply it to actors
-						NiPoint3 objectlocation = a_ref.GetPosition();
-						float distance = (point - objectlocation).Length();
-						if (distance <= maxDistance) {
-							Objects.push_back(&a_ref);
+		} else { // Else scan Entire world
+			const auto TES = TES::GetSingleton(); // Crashes on AE, ty Todd (Also seems to be FPS expensive)
+			if (TES) {
+				TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
+				if (GiantRef) {
+					TES->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
+						bool IsActor = a_ref.Is(FormType::ActorCharacter);
+						if (!IsActor) { // we don't want to apply it to actors
+							NiPoint3 objectlocation = a_ref.GetPosition();
+							float distance = (point - objectlocation).Length();
+							if (distance <= maxDistance) {
+								Objects.push_back(&a_ref);
+							}
 						}
-					}
-					return RE::BSContainer::ForEachResult::kContinue;    
-				});
+						return RE::BSContainer::ForEachResult::kContinue;    
+					});
+				}
 			}
 		}
 
