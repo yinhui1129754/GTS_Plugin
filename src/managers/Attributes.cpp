@@ -46,7 +46,7 @@ namespace {
 
 		float BaseGlobalDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Normal);
 		float BaseSprintDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Sprint);
-		float BaseFallDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Fall);
+		float BaseFallDamage = SizeManager::GetSingleton().GetSizeAttribute(actor, SizeAttribute::Jump);
 
 		float ExpectedGlobalDamage = 1.0;
 		float ExpectedSprintDamage = 1.0;

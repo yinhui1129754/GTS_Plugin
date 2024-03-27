@@ -160,7 +160,7 @@ namespace Gts {
 				float fallmod = GetFallModifier(actor);
 				auto& sizemanager = SizeManager::GetSingleton();
 				
-				float damage = sizemanager.GetSizeAttribute(actor, SizeAttribute::Fall) * fallmod; // get jump damage boost
+				float damage = sizemanager.GetSizeAttribute(actor, SizeAttribute::Jump) * fallmod; // get jump damage boost
 
 				float Start = Time::WorldTimeElapsed();
 				ActorHandle gianthandle = actor->CreateRefHandle();
