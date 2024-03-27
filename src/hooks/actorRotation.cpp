@@ -10,22 +10,6 @@ using namespace RE;
 using namespace SKSE;
 
 namespace {
-    float GetTinyRotation_X(Actor* actor) {
-        float rotation_x = 0.0;
-        auto transient = Transient::GetSingleton().GetData(actor);
-        if (transient) {
-            rotation_x = transient->Rotation_X;
-        }
-        return rotation_x;
-    }
-
-    float GetTinyRotation_X(TESObjectREFR* ref) {
-        Actor* actor = skyrim_cast<Actor*>(ref);
-        if (actor) {
-            return GetTinyRotation_X(actor);
-        }
-        return 0.0;
-    }
 }
 
 namespace Hooks { // This hook is commented out inside hooks.cpp

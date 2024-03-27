@@ -84,7 +84,7 @@ namespace {
 		return (tiny_chance > giant_chance);
 	}
 
-	void Task_RotateActorToBreastX(Actor* giant, Actor* tiny) {
+	/*void Task_RotateActorToBreastX(Actor* giant, Actor* tiny) {
 		std::string name = std::format("RotateActor_{}", giant->formID);
 		ActorHandle gianthandle = giant->CreateRefHandle();
 		ActorHandle tinyhandle = tiny->CreateRefHandle();
@@ -145,7 +145,7 @@ namespace {
 			return true;
 		});
 		TaskManager::ChangeUpdate(name, UpdateKind::Camera);
-	}
+	}*/   // Transient value no longer exists, unused
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////G R A B
