@@ -11,6 +11,8 @@ namespace Gts {
 	class ExperiencePotion : public Magic {
 		public:
 			using Magic::Magic;
+			
+			virtual std::string GetName() override;
 
 			virtual void OnStart() override;
 	};
