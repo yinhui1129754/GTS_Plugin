@@ -38,6 +38,10 @@ namespace Gts {
 		}
 	}
 
+	inline void Potion_Penalty(Actor* giant, float damage) { // Normal people just die if they drink them, duh
+		return;
+	}
+
 	inline void AdjustSizeReserve(Actor* giant, float value) {
 		if (!Runtime::HasPerk(giant, "SizeReserve")) {
 			return;
