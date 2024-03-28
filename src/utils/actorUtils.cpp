@@ -1912,9 +1912,6 @@ namespace Gts {
 			.a = 0.0,  //Default is 0
 		};
 		float speedmultcalc = soft_core(scale, getspeed);
-		if (giant->formID == 0x14) {
-			log::info("Visual Scale of Player is: {}, speedmult: {}", scale, speedmultcalc);
-		}
 		return speedmultcalc;
 	}
 
