@@ -14,7 +14,7 @@ namespace {
 			if (IsRagdolled(giant)) { // For some reason breaks tiny ragdoll when they're small, so they fly into the sky.
 				return original;      // So this check is a must because of that bug.
 			}
-			return original * (get_giantess_scale(giant) / game_getactorscale(giant)); // Compensate it, since SetScale() already affects HT by default
+			return original * (get_giantess_scale(giant));// / game_getactorscale(giant)); // Compensate it, since SetScale() already affects HT by default
 		}
 		return original;
 	}

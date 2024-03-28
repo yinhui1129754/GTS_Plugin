@@ -71,7 +71,7 @@ namespace Hooks {
 				//log::info("Original jump height: {}", result);
 				if (actor) {
 					if (actor->formID == 0x14) {
-						float modifier = get_giantess_scale(actor) / game_getactorscale(actor); // Compensate it, since SetScale() already boosts jump height by default
+						float modifier = get_giantess_scale(actor);// / game_getactorscale(actor); // Compensate it, since SetScale() already boosts jump height by default
 						float scale = std::clamp(modifier, 0.8f, 99999.0f);
 						result *= scale;
 					}
