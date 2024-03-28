@@ -38,5 +38,5 @@ namespace Gts {
 	float game_getactorscale(Actor* actor);
 	float game_getactorscale(Actor& actor);
 	
-	bool set_scale(Actor* actor, float scale);
+	bool update_model_visuals(Actor* actor, float scale);
 }

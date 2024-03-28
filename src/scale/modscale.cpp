@@ -271,7 +271,7 @@ namespace Gts {
 		return game_getactorscale(&actor);
 	}
 
-	bool set_scale(Actor* actor, float scale) {
+	bool update_model_visuals(Actor* actor, float scale) {
 		auto& size_method = Persistent::GetSingleton().size_method;
 		switch (size_method) {
 			case SizeMethod::ModelScale:

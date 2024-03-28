@@ -177,7 +177,7 @@ namespace {
 		bool result = false;
 		auto actor_data = Persistent::GetSingleton().GetData(actor);
 		if (actor_data) {
-			result = set_scale(actor, scale);
+			result = update_model_visuals(actor, scale);
 			actor_data->visual_scale = scale;
 			actor_data->visual_scale_v = 0.0;
 			actor_data->target_scale = scale;
@@ -196,7 +196,7 @@ namespace {
 		auto actor_data = Persistent::GetSingleton().GetData(actor);
 		if (actor_data) {
 			auto scale = get_scale(actor) + amt;
-			result = set_scale(actor, scale);
+			result = update_model_visuals(actor, scale);
 			actor_data->visual_scale = scale;
 			actor_data->visual_scale_v = 0.0;
 			actor_data->target_scale = scale;
