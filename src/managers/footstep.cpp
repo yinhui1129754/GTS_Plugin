@@ -321,6 +321,7 @@ namespace Gts {
 				}
 				if (Runtime::GetBool("EnableGiantSounds")) {
 					for (NiAVObject* foot: impact.nodes) {
+						scale *= 1.0 + (Potion_GetMightBonus(actor) * 0.33);
 						FootStepManager::PlayLegacySounds(foot, foot_kind, scale, start_l, start_xl, start_xxl);
 						return; // New soundsa re disabled for now
 						if (!LegacySounds && WearingHighHeels) { // Play high heel sounds that will be done someday
@@ -342,6 +343,7 @@ namespace Gts {
 	void FootStepManager::PlayLegacySounds(NiAVObject* foot, FootEvent foot_kind, float scale, float start_l, float start_xl, float start_xxl) {
 		//https://www.desmos.com/calculator/wh0vwgljfl
 		auto profiler = Profilers::Profile("Impact: PlayLegacySounds");
+
 		BSSoundHandle lFootstep    = get_sound(foot, scale, get_lFootstep_sounddesc(foot_kind),   VolumeParams { .a = start_l,             .k = 0.45,  .n = 0.7, .s = 1.0}, "L Footstep", 1.0);
 		BSSoundHandle lJumpLand    = get_sound(foot, scale, get_lJumpLand_sounddesc(foot_kind),   VolumeParams { .a = start_l,             .k = 0.65,  .n = 0.7, .s = 1.0}, "L Jump", 1.0);
 

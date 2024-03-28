@@ -36,8 +36,6 @@ namespace {
 		}
 	}
 
-	
-
 	void TinyAsShield(Actor* receiver, float a_damage) {
 
 		auto grabbedActor = Grab::GetHeldActor(receiver);

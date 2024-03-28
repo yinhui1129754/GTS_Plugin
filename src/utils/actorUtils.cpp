@@ -1895,6 +1895,7 @@ namespace Gts {
 		}
 		cost -= reduction_1;
 		cost *= reduction_2;
+		cost *= (1.0 - Potion_GetMightBonus(giant));
 		return cost;
 	}
 

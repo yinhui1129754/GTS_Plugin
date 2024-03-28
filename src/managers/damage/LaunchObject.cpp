@@ -91,7 +91,7 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
-		float start_power = 0.5;
+		float start_power = 0.5 * (1.0 + Potion_GetMightBonus(giant));
 
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			power *= 1.5;
@@ -162,7 +162,7 @@ namespace Gts {
 		}
 
 		int nodeCollisions = 0;
-		float force = 0.25;
+		float force = 0.25 * (1.0 + Potion_GetMightBonus(giant));
 
 		float distance = (point - object->GetPosition()).Length();
 		if (distance < maxDistance) {
