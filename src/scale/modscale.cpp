@@ -103,7 +103,7 @@ namespace Gts {
       // Only initial scales for these two methods since the racemenu
       // and refscale one can edit on the character edit menu and setscale
 			case SizeMethod::ModelScale:
-				log::info("InitScale of {} is {}", actor->GetDisplayFullName(), initScale.model);
+				//log::info("InitScale of {} is {}", actor->GetDisplayFullName(), initScale.model);
 				return initScale.model;
 			case SizeMethod::RootScale:
         return initScale.npc;
