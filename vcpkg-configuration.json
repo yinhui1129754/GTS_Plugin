@@ -7,8 +7,8 @@
     "registries": [
         {
             "kind": "git",
-            "repository": "https://gitlab.com/colorglass/vcpkg-colorglass",
-            "baseline": "ef8d43afe4d26e842de3d034bff1081cb7990f07",
+            "repository": "https://github.com/alandtse/CommonLibVR",
+            "baseline": "711d8739158b3ed0cd5c7ef8a652ceafe1564eab",
             "packages": [
                 "bethesda-skyrim-scripts",
                 "commonlibsse-ng",
