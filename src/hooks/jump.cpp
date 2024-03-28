@@ -4,6 +4,7 @@
 #include "data/plugin.hpp"
 #include "managers/Attributes.hpp"
 #include "utils/actorUtils.hpp"
+#include "scale/modscale.hpp"
 
 using namespace RE;
 using namespace SKSE;
