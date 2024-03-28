@@ -190,8 +190,14 @@ namespace Gts {
 
 				float power = 1.0 * Slowdown * (Bonus/2.2 + 1.0)/MS_mult/MS_mult_limit/Multy/bonusspeed/PerkSpeed;
 				if (scale > 1.0) {
+					if (actor->formID == 0x14) {
+						log::info("SpeedMult of player is {}", power);
+					}
 					return power;
 				} else {
+					if (actor->formID == 0x14) {
+						log::info("< 1.0 SpeedMult of player is {}", scale * Slowdown * (Bonus/2.2 + 1.0));
+					}
 					return scale * Slowdown * (Bonus/2.2 + 1.0);
 				}
 			}
