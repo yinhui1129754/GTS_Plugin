@@ -17,7 +17,7 @@ namespace Gts {
 		queue.push_back(model);
 
 
-		while (!queue.empty()) {
+		if (!queue.empty()) {
 			auto currentnode = queue.front();
 			queue.pop_front();
 			try {
@@ -68,7 +68,7 @@ namespace Gts {
 		queue.push_back(model);
 
 
-		while (!queue.empty()) {
+		if (!queue.empty()) {
 			auto currentnode = queue.front();
 			queue.pop_front();
 			try {
