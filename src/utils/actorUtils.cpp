@@ -674,10 +674,14 @@ namespace Gts {
 	}
 
 
-	void Potion_SetMightBonus(Actor* giant, float value) {
+	void Potion_SetMightBonus(Actor* giant, float value, bool add) {
 		auto transient = Transient::GetSingleton().GetData(giant);
 		if (transient) {
-			transient->MightValue = value;
+			if (add) {
+				transient->MightValue += value;
+			} else {
+				transient->MightValue = value;
+			}
 		}
 	}
 

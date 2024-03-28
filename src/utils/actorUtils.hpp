@@ -77,7 +77,7 @@ namespace Gts {
 	bool IsHuman(Actor* actor);
 	bool IsBlacklisted(Actor* actor);
 
-	void Potion_SetMightBonus(Actor* giant, float value);
+	void Potion_SetMightBonus(Actor* giant, float value, bool add);
 	float Potion_GetMightBonus(Actor* giant);
 
 	void Potion_SetShrinkResistance(Actor* giant, float value);

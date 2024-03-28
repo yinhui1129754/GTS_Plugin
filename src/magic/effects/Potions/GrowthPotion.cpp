@@ -43,8 +43,7 @@ namespace Gts {
 			return;
 		}
 
-		if (this->power >= 2.0 && this->MoanTimer.ShouldRun()) {
-			PlayMoanSound(caster, 0.44);
+		if (this->power >= 2.0) {
 			if (caster->formID == 0x14) {
 				shake_camera(caster, 0.50, 0.33);
 			}
