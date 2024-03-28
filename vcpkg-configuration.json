@@ -7,7 +7,7 @@
     "registries": [
         {
             "kind": "git",
-            "repository": "https://github.com/alandtse/CommonLibVR",
+            "repository": "https://github.com/alandtse/CommonLibVR/tree/ng",
             "baseline": "711d8739158b3ed0cd5c7ef8a652ceafe1564eab",
             "packages": [
                 "bethesda-skyrim-scripts",
