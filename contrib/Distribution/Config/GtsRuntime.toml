@@ -286,6 +286,7 @@ draugrexplosion = "GTS.esp|035C80"
 ShrinkOutburstExplosion = "GTS.esp|638F99"
 
 [globals]
+PlayerSizeOverride = "GTS.esp|2028B5"
 FreeLookOnVore = "GTS.esp|281206"
 MultiplyGameModePC = "GTS.esp|47B72B"
 MultiplyGameModeNPC = "GTS.esp|47B72C"

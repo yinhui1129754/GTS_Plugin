@@ -17,7 +17,7 @@ namespace Gts {
 		queue.push_back(model);
 
 
-		if (!queue.empty()) {
+		if (!queue.empty()) { // Used to be while (!queue.empty())
 			auto currentnode = queue.front();
 			queue.pop_front();
 			try {
@@ -68,7 +68,7 @@ namespace Gts {
 		queue.push_back(model);
 
 
-		if (!queue.empty()) {
+		if (!queue.empty()) { // Used to be while (!queue.empty())
 			auto currentnode = queue.front();
 			queue.pop_front();
 			try {
@@ -121,7 +121,7 @@ namespace Gts {
 		queue.push_back(model);
 
 
-		while (!queue.empty()) {
+		if (!queue.empty()) { // Used to be while (!queue.empty())
 			auto currentnode = queue.front();
 			queue.pop_front();
 			try {
@@ -174,7 +174,7 @@ namespace Gts {
 		queue.push_back(model);
 
 
-		while (!queue.empty()) {
+		if (!queue.empty()) { // Used to be while (!queue.empty())
 			auto currentnode = queue.front();
 			queue.pop_front();
 			try {
@@ -246,7 +246,7 @@ namespace Gts {
 		queue.push_back(model);
 
 
-		while (!queue.empty()) {
+		if (!queue.empty()) { // Used to be while (!queue.empty())
 			auto currentnode = queue.front();
 			queue.pop_front();
 			try {
@@ -426,7 +426,7 @@ namespace Gts {
 		std::deque<NiAVObject*> queue;
 		queue.push_back(root);
 
-		while (!queue.empty()) {
+		if (!queue.empty()) { // Used to be while (!queue.empty())
 			auto currentnode = queue.front();
 			queue.pop_front();
 			if (currentnode) {

@@ -33,7 +33,9 @@ namespace Gts {
 	float get_npcnode_scale(Actor* actor);
 	float get_npcparentnode_scale(Actor* actor);
 	float get_model_scale(Actor* actor);
-	float get_ref_scale(Actor* actor);
 	float get_scale(Actor* actor);
+
+	float game_getactorscale(Actor* actor);
+	
 	bool set_scale(Actor* actor, float scale);
 }

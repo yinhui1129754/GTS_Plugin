@@ -100,7 +100,7 @@ namespace Gts {
 				Persistent_Size = (1.0 + Persistent->bonus_max_size);
 			}
 
-			if (SelectedFormula >= 1.0 && actor->formID == 0x14) { // Apply Player Mass-Based max size
+			if (actor->formID == 0x14 && SelectedFormula >= 1.0) { // Apply Player Mass-Based max size
 				float low_limit = get_endless_height(actor);
 				if (low_limit < 2) {
 					low_limit = Runtime::GetFloat("sizeLimit");

@@ -211,7 +211,8 @@ namespace {
 		if (visual_scale <= 1e-5) {
 			return;
 		}
-		//float ref_scale = get_ref_scale(actor); // GetScale() similar to SetScale()
+		
+		float ref_scale = game_getactorscale(actor); // GetScale() similar to SetScale()
 		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
 		set_scale(actor, visual_scale * initialScale);
 	}

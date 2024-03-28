@@ -233,7 +233,7 @@ namespace Gts {
 					}
 				}
 			}
-		} else { // Else scan Entire world
+		} else if (PreciseScan && REL::Module::IsSE()) { // Else scan Entire world, SE only for now: TES->ForEachReferenceInRange crashes on AE!
 			const auto TES = TES::GetSingleton(); // Crashes on AE, ty Todd (Also seems to be FPS expensive)
 			if (TES) {
 				TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
