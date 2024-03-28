@@ -33,14 +33,14 @@ namespace Gts {
 	void MightPotion::OnStart() {
 		auto caster = GetCaster();
 		if (caster) {
-			Potion_SetMightBonus(caster, 1.0 + this->Power); // Disallow potions to stack
+			Potion_SetMightBonus(caster, this->Power); // Disallow potions to stack
 		}
 	}
 
 	void MightPotion::OnFinish() {
 		auto caster = GetCaster();
 		if (caster) {
-			Potion_SetMightBonus(caster, 1.0);
+			Potion_SetMightBonus(caster, 0.0);
 		}
 	}
 }

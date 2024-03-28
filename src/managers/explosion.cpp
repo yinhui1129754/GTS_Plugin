@@ -99,6 +99,8 @@ namespace Gts {
 				float ray_length = meter_to_unit(std::max(1.50*scale, 1.50));
 				NiPoint3 explosion_pos = CastRay(actor, ray_start, ray_direction, ray_length, success);
 
+				float might = 1.0 + (Potion_GetMightBonus(actor) * 0.5);
+
 				if (!success) {
 					explosion_pos = foot_location;
 					explosion_pos.z = actor->GetPosition().z;

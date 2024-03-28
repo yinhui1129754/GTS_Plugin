@@ -302,7 +302,7 @@ namespace Gts {
 			damage *= 1.5;
 		}
 
-		float Might = Potion_GetMightBonus(giant);
+		float Might = 1.0 * Potion_GetMightBonus(giant);
 		float damage_result = (damage * size_difference * damagebonus) * (normaldamage * sprintdamage) * (highheelsdamage * weightdamage) * vulnerability;
 
 		damage_result *= Might;

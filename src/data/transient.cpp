@@ -99,7 +99,7 @@ namespace Gts {
 			float ButtCrushGrowthAmount = 0;
 			float MovementSlowdown = 1.0;
 			float ShrinkResistance = 0.0;
-			float MightValue = 1.0;
+			float MightValue = 0.0;
 
 			// Volume scales cubically
 			float base_volume = bound->extents[0] * bound->extents[1] * bound->extents[2] * scale * scale * scale;

@@ -684,9 +684,9 @@ namespace Gts {
 	float Potion_GetMightBonus(Actor* giant) {
 		auto transient = Transient::GetSingleton().GetData(giant);
 		if (transient) {
-			return transient->MightValue;
+			return transient->MightValue; // return raw bonus
 		}
-		return 1.0;
+		return 0.0;
 	}
 
 
