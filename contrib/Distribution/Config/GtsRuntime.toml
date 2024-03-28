@@ -137,6 +137,11 @@ EffectGrowthPotionNormal = "GTS.esp|7C8F02"
 EffectGrowthPotionStrong = "GTS.esp|7C8F03"
 EffectGrowthPotionExtreme = "GTS.esp|7C8F04"
 
+EffectMightPotionWeak = "GTS.esp|7D8215"
+EffectMightPotionNormal = "GTS.esp|7D8216"
+EffectMightPotionStrong = "GTS.esp|7D8217"
+EffectMightPotionExtreme = "GTS.esp|7D8218"
+
 SizeMasteryPotionBasic = "GTS.esp|7CE013"
 
 ResistShrinkPotionWeak = "GTS.esp|3D4583"

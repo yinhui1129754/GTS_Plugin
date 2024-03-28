@@ -302,7 +302,10 @@ namespace Gts {
 			damage *= 1.5;
 		}
 
+		float Might = Potion_GetMightBonus(giant);
 		float damage_result = (damage * size_difference * damagebonus) * (normaldamage * sprintdamage) * (highheelsdamage * weightdamage) * vulnerability;
+
+		damage_result *= Might;
 
 		TinyCalamity_ShrinkActor(giant, tiny, damage_result * GetDamageSetting());
 

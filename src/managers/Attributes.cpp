@@ -145,9 +145,13 @@ namespace Gts {
 		}
 		switch (av) {
 			case ActorValue::kHealth: {
+				float might = Potion_GetMightBonus(actor);
+				
 				if (actor->formID == 0x14 && HasSMT(actor)) {
 					scale += 1.0;
 				}
+
+				scale *= might;
 
 				float resistance = std::clamp(1.0f / scale, 0.001f, 3.0f); // 0.001% as max resistance, -300% is a max vulnerability.
 
@@ -157,13 +161,16 @@ namespace Gts {
 			case ActorValue::kCarryWeight: {
 				float bonusCarryWeightMultiplier = Runtime::GetFloatOr("bonusCarryWeightMultiplier", 1.0);
 				float power = (bonusCarryWeightMultiplier/BalancedMode);
+
+				float might = Potion_GetMightBonus(actor);
+
 				if (actor->formID == 0x14 && HasSMT(actor)) {
 					scale += 3.0;
 				}
 				if (scale > 1.0) {
-					return power*scale + 1.0 - power;
+					return (power*scale*might) + 1.0 - power;
 				} else {
-					return 1.0; // Don't reduce it if scale is < 1.0
+					return 1.0 * might; // Don't reduce it if scale is < 1.0
 				}
 			}
 			case ActorValue::kSpeedMult: {
@@ -201,19 +208,23 @@ namespace Gts {
 				}
 				float bonusDamageMultiplier = Runtime::GetFloatOr("bonusDamageMultiplier", 1.0);
 				float damage_storage = 1.0 + ((bonusDamageMultiplier) * scale - 1.0);
+
+				float might = Potion_GetMightBonus(actor);
+
 				if (scale > 1.0) {
-					return damage_storage;
+					return damage_storage * might;
 				} else {
-					return scale;
+					return scale * might;
 				}
 			}
 			case ActorValue::kJumpingBonus: { // Used through MCM only (display bonus jump height)
 				float power = 1.0;
 				float defaultjump = 1.0 + (1.0 * (scale - 1) * power);
+				float might = Potion_GetMightBonus(actor);
 				if (scale > 1.0) {
-					return defaultjump;
+					return defaultjump * might;
 				} else {
-					return scale;
+					return scale * might;
 				}
 			}
 			default: {
