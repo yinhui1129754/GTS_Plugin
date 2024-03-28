@@ -122,7 +122,7 @@ namespace Gts {
 			return;
 		}
 
-		float giantScale = get_visual_scale(actor);
+		float giantScale = get_visual_scale(actor) * GetSizeFromBoundingBox(actor);
 		const float BASE_CHECK_DISTANCE = 120.0;
 		float SCALE_RATIO = 1.15;
 		bool SMT = HasSMT(actor);
