@@ -212,9 +212,9 @@ namespace {
 			return;
 		}
 
-		float ref_scale = game_getactorscale(actor); // GetScale() similar to SetScale()
+		//float ref_scale = game_getactorscale(actor); // GetScale() similar to SetScale()
 		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
-		set_scale(actor, visual_scale * initialScale * ref_scale);
+		set_scale(actor, visual_scale * initialScale);
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {

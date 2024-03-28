@@ -213,7 +213,7 @@ namespace Gts {
 					return scale;
 				}
 			}
-			case ActorValue::kJumpingBonus: {
+			case ActorValue::kJumpingBonus: { // Used through MCM only (display bonus jump height)
 				float power = 1.0;
 				float defaultjump = 1.0 + (1.0 * (scale - 1) * power);
 				if (scale > 1.0) {
