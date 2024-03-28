@@ -133,9 +133,9 @@ namespace Gts {
 		auto actor_data = Transient::GetSingleton().GetData(&actor);
 		
 		if (actor_data) {
-			float GetScale = game_getactorscale(&actor); // GetScale() value from console, similar to SetScale() from Papyrus
+			//float GetScale = game_getactorscale(&actor); // GetScale() value from console, similar to SetScale() from Papyrus
 		    float initialScale = GetInitialScale(&actor);
-			return actor_data->otherScales * initialScale * GetScale;
+			return actor_data->otherScales * initialScale;
 		}
 		return 1.0;
 	}
