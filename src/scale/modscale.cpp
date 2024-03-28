@@ -265,7 +265,10 @@ namespace Gts {
 			log::info("Ref scale of {} is {}", actor->GetDisplayFullName(), static_cast<float>(actor->GetReferenceRuntimeData().refScale) / 100.0F);
 		}*/
 		return static_cast<float>(actor->GetReferenceRuntimeData().refScale) / 100.0F;
-		
+	}
+
+	float game_getactorscale(Actor& actor) {
+		return game_getactorscale(&actor);
 	}
 
 	bool set_scale(Actor* actor, float scale) {

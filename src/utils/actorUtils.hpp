@@ -77,6 +77,12 @@ namespace Gts {
 	bool IsHuman(Actor* actor);
 	bool IsBlacklisted(Actor* actor);
 
+	void Potion_SetMightBonus(Actor* giant, float value);
+	float Potion_GetMightBonus(Actor* giant);
+
+	void Potion_SetShrinkResistance(Actor* giant, float value);
+	float Potion_GetShrinkResistance(Actor* giant);
+
 	void Potion_SetUnderGrowth(Actor* actor, bool set);
 	bool Potion_IsUnderGrowthPotion(Actor* actor);
 	
@@ -110,8 +116,7 @@ namespace Gts {
 	float GetDamageSetting();
 	float GetFallModifier(Actor* giant);
 
-	void Potion_SetShrinkResistance(Actor* giant, float value);
-	float Potion_GetShrinkResistance(Actor* giant);
+	
 
 	float GetHPThreshold(Actor* actor);
 

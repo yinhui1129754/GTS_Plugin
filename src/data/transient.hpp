@@ -29,6 +29,7 @@ namespace Gts {
 		float ButtCrushGrowthAmount;
 		float MovementSlowdown;
 		float ShrinkResistance;
+		float MightValue;
 		
 
 		bool Throw_WasThrown;
