@@ -101,7 +101,8 @@ namespace Hooks {
 				if (param_1->formID == 0x14) {
 					log::info("(13) FUN_14071b230 Hooked, value: {}", result);
 					float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
-					log::info("(13) Overriding value to {}", global);
+					log::info("(13) Overriding value to {}", Global);
+					result = Global;
 				}
 				return result;
             }
