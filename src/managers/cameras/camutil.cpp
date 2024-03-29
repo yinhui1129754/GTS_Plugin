@@ -1,4 +1,6 @@
 #include "managers/cameras/camutil.hpp"
+#include "scale/modscale.hpp"
+#include "scale/scale.hpp"
 #include "data/runtime.hpp"
 #include "node.hpp"
 
