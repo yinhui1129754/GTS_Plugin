@@ -134,13 +134,9 @@ namespace Gts {
 
 	float get_natural_scale(Actor& actor) {
 		auto actor_data = Transient::GetSingleton().GetData(&actor);
-		
 		if (actor_data) {
-			float gamescale = game_get_scale_overrides(&actor);
-			// We've divided natural size by GetScale before (inside struct InitialScales) to respect original scale 
-			// Now we * it again, so other functions will read it correctly
 		    float initialScale = GetInitialScale(&actor);
-			return actor_data->otherScales * initialScale * gamescale;
+			return actor_data->otherScales * initialScale;
 		}
 		return 1.0;
 	}
