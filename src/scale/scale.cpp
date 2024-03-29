@@ -18,8 +18,8 @@ namespace Gts {
 	void set_target_scale(Actor& actor, float scale) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			
-			scale /= game_get_scale_overrides(&actor);
+
+			scale *= game_get_scale_overrides(&actor);
 
 			if (scale < (actor_data->max_scale + EPS)) {
 				// If new value is below max: allow it
@@ -159,7 +159,7 @@ namespace Gts {
 	float get_giantess_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			float result = actor_data->visual_scale * game_get_scale_overrides(&actor);
+			float result = actor_data->visual_scale;
 			return result;
 		}
 		return 1.0;

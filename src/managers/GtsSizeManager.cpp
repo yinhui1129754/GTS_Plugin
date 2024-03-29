@@ -82,7 +82,7 @@ namespace Gts {
 			if (actor->formID == 0x14) {
 				Endless = get_endless_height(actor);
 			}
-			float NaturalScale = get_neutral_scale(actor);
+			float NaturalScale = get_neutral_scale(actor) * game_getactorscale(actor);
 			float Gigantism = Ench_Aspect_GetPower(actor);
 
 			float QuestStage = Runtime::GetStage("MainQuest");
