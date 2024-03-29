@@ -153,9 +153,11 @@ namespace Gts {
 	NiTransform GetCameraWorldTransform() {
 		auto camera = PlayerCamera::GetSingleton();
 		if (camera) {
+			Actor* player = PlayerCharacter::GetSingleton();
+			float fixes = get_natural_scale(player) / game_getactorscale(player);
 			auto cameraRoot = camera->cameraRoot;
 			if (cameraRoot) {
-				return cameraRoot->world;
+				return cameraRoot->world * fixes;
 			}
 		}
 		return NiTransform();
