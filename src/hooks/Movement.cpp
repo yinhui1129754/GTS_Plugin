@@ -52,13 +52,9 @@ namespace Hooks
 				// ---------------AE:
 				// FUN_140746b40 : 42768
 				// 0x140746b71 - 0x140746b40 = 0x31   // wow it's the same
-				float result = Scale_AlterAnimSpeed(param_1);
-				if (param_1->formID == 0x14) {
-					log::info("(13) Scale_AlterAnimSpeed Hooked, value: {}", result);
-					float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
-					log::info("(13) Overriding value to {}", Global);
-					result = Global;
-				}
+
+				float result = 1.0; // Override it
+				
 				return result;
             }
         );

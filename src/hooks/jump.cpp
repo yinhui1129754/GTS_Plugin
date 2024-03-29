@@ -72,7 +72,7 @@ namespace Hooks {
 				if (actor) {
 					if (actor->formID == 0x14) {
 						float Might = 1.0 + Potion_GetMightBonus(actor);
-						float modifier = get_giantess_scale(actor) * Might;// / game_getactorscale(actor); // Compensate it, since SetScale() already boosts jump height by default
+						float modifier = (get_giantess_scale(actor) / game_getactorscale(actor)) * Might; // Compensate it, since SetScale() already boosts jump height by default
 						float scale = std::clamp(modifier, 0.8f, 99999.0f);
 						result *= scale;
 					}

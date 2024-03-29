@@ -14,7 +14,7 @@ namespace {
 			if (IsRagdolled(giant)) { // For some reason breaks tiny ragdoll when they're small, so they fly into the sky.
 				return original;      // So this check is a must because of that bug.
 			}
-			return original * (get_giantess_scale(giant));// / game_getactorscale(giant)); // Compensate it, since SetScale() already affects HT by default
+			return original * (get_giantess_scale(giant) / game_getactorscale(giant)); // Compensate it, since SetScale() already affects HT by default
 		}
 		return original;
 	}
@@ -36,9 +36,9 @@ namespace Hooks
 				// 0x1405ffcae - 0x1405ffc50 = 0x5E
   
 				float result = Alter_Headtracking(param_1);
-				float Alter = affect_by_scale(param_1, result);
-				//log::info("(20) Alter_Headtracking Hooked");
-				return Alter;
+				float alter = affect_by_scale(param_1, result);
+
+				return alter;
             }
         );
 

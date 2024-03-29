@@ -133,9 +133,9 @@ namespace Gts {
 		auto actor_data = Transient::GetSingleton().GetData(&actor);
 		
 		if (actor_data) {
-			//float GetScale = game_getactorscale(&actor); // GetScale() value from console, similar to SetScale() from Papyrus
+			float gamescale = game_getactorscale(&actor); // GetScale() value from console, similar to SetScale() from Papyrus
 		    float initialScale = GetInitialScale(&actor);
-			return actor_data->otherScales * initialScale;
+			return actor_data->otherScales * initialScale * gamescale;
 		}
 		return 1.0;
 	}
@@ -154,8 +154,8 @@ namespace Gts {
 	float get_giantess_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			//float gamescale = game_getactorscale(&actor);
-			return actor_data->visual_scale;
+			float gamescale = game_getactorscale(&actor);
+			return actor_data->visual_scale * gamescale;
 		}
 		return 1.0;
 	}

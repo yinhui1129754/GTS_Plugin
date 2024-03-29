@@ -207,7 +207,7 @@ namespace {
 
 	float GetTotalDamageResistance(Actor* receiver, Actor* aggressor) {
 		float resistance = GetDamageResistance(receiver) * HugDamageResistance(receiver);
-		float multiplier = GetDamageMultiplier(aggressor);
+		float multiplier = GetDamageMultiplier(aggressor) / game_getactorscale(aggressor); // take GetScale into account since it boosts damage as well
 		float tiny = 1.0;
 		float IsNotImmune = 1.0;
 
