@@ -96,7 +96,7 @@ namespace Gts {
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			power *= 1.5;
 		}
-		std::vector<ObjectRefandle> Refs = GetNearbyObjects(giant);
+		std::vector<ObjectRefHandle> Refs = GetNearbyObjects(giant);
 
         for (auto object: Refs) {
 			if (object) {
@@ -172,7 +172,7 @@ namespace Gts {
 		
 			float Start = Time::WorldTimeElapsed();
 			ActorHandle gianthandle = giant->CreateRefHandle();
-			ObjectRefandle objectref = object->CreateRefHandle();
+			ObjectRefHandle objectref = object->CreateRefHandle();
 			std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
 
 			NiPoint3 StartPos = Bone->world.translate;
@@ -254,7 +254,7 @@ namespace Gts {
 							NiPoint3 objectlocation = a_ref.GetPosition();
 							float distance = (point - objectlocation).Length();
 							if (distance <= maxDistance) {
-								ObjectRefandle handle = a_ref.CreateRefHandle();
+								ObjectRefHandle handle = a_ref.CreateRefHandle();
 								Objects.push_back(handle);
 							}
 						}
