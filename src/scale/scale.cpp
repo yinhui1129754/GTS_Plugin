@@ -134,6 +134,8 @@ namespace Gts {
 		
 		if (actor_data) {
 			float gamescale = game_getactorscale(&actor); // GetScale() value from console, similar to SetScale() from Papyrus
+			// We've divided natural size by GetScale before (inside struct InitialScales) to respect original scale 
+			// Now we * it again, so other functions will read it correctly
 		    float initialScale = GetInitialScale(&actor);
 			return actor_data->otherScales * initialScale * gamescale;
 		}

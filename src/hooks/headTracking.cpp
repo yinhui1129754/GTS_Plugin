@@ -11,10 +11,11 @@ namespace {
 	float affect_by_scale(TESObjectREFR* ref, float original) {
 		Actor* giant = skyrim_cast<Actor*>(ref);
 		if (giant) {
-			if (IsRagdolled(giant)) { // For some reason breaks tiny ragdoll when they're small, so they fly into the sky.
-				return original;      // So this check is a must because of that bug.
+			if (IsRagdolled(giant)) { // For some Bethesda™ reason - it breaks tiny ragdoll (their skeleton stretches :/) when they're small, so they fly into the sky.
+				return original;      // We really want to prevent that, so we return original value.
 			}
-			return original * (get_giantess_scale(giant) / game_getactorscale(giant)); // Compensate it, since SetScale() already affects HT by default
+			return original * (get_giantess_scale(giant) * get_natural_scale(giant)); // game_getscale() is used here
+			// ^ Compensate it, since SetScale() already affects HT by default
 		}
 		return original;
 	}
