@@ -370,7 +370,7 @@ namespace Gts {
 							NiTransform adjustments = NiTransform();
 							adjustments.scale = scale * adjust_by_scale();
 
-							log::info("Adjust by scale: {}", adjust_by_scale);
+							log::info("Adjust by scale: {}", adjust_by_scale());
 
 							adjustments.translate = playerLocalOffset;
 
