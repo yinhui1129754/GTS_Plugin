@@ -12,6 +12,14 @@ namespace {
 
 	const CameraDataMode currentMode = CameraDataMode::State;
 
+	float adjust_by_scale() {
+		Actor* player = PlayerCharacter::GetSingleton();
+		if (player) {
+			float fixes = get_natural_scale(player) / game_getactorscale(player);
+			return fixes;
+		}
+		return 1.0;
+	}
 }
 
 namespace Gts {
@@ -153,11 +161,9 @@ namespace Gts {
 	NiTransform GetCameraWorldTransform() {
 		auto camera = PlayerCamera::GetSingleton();
 		if (camera) {
-			Actor* player = PlayerCharacter::GetSingleton();
-			float fixes = get_natural_scale(player) / game_getactorscale(player);
 			auto cameraRoot = camera->cameraRoot;
 			if (cameraRoot) {
-				return cameraRoot->world * fixes;
+				return cameraRoot->world;
 			}
 		}
 		return NiTransform();
@@ -257,7 +263,7 @@ namespace Gts {
 						playerTrans.scale = model->parent ? model->parent->world.scale : 1.0; // Only do translation/rotation
 						auto playerTransInve = playerTrans.Invert();
 						// Get Scaled Camera Location
-						return playerTransInve*cameraLocation;
+						return (playerTransInve*cameraLocation) * adjust_by_scale();
 					}
 				}
 			}
@@ -354,7 +360,7 @@ namespace Gts {
 						auto model = player->Get3D(false);
 						if (model) {
 							auto playerTrans = model->world;
-							playerTrans.scale = model->parent ? model->parent->world.scale : 1.0;  // Only do translation/rotation
+							playerTrans.scale = model->parent ? model->parent->world.scale * adjust_by_scale() : 1.0;  // Only do translation/rotation
 							auto playerTransInve = playerTrans.Invert();
 
 							// Make the transform matrix for our changes
