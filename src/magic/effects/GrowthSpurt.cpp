@@ -31,7 +31,7 @@ namespace {
 		}
 	}
 
-	float Get_Perk_Bonus(Actor* giant) {
+	float Get_Perk_Bo nus(Actor* giant) {
 		float bonus = 1.0;
 		float basic = 0.0;
 		
@@ -58,6 +58,7 @@ namespace {
 		}
 
 		bonus *= Get_Perk_Bonus(giant);
+		bonus *= game_get_scale_overrides(giant);
 		return basic + bonus;
 	}
 
@@ -158,8 +159,9 @@ namespace Gts {
 
 	void GrowthSpurt::DoShrink(Actor* actor) {
 		float value = SizeManager::GetSingleton().GetGrowthSpurt(actor);
+		float naturalscale = get_natural_scale(actor) * game_get_scale_overrides(actor);
 		update_target_scale(actor, -value, SizeEffectType::kNeutral); // Do Shrink
-		if (get_target_scale(actor) <= get_natural_scale(actor)) {
+		if (get_target_scale(actor) <= naturalscale) {
 			set_target_scale(actor, get_natural_scale(actor));
 		}
 		SizeManager::GetSingleton().SetGrowthSpurt(actor, 0.0);

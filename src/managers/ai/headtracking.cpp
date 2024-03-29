@@ -249,10 +249,10 @@ namespace Gts {
 	}
 
 	void Headtracking::SpineUpdate(Actor* me) {
+		auto profiler = Profilers::Profile("Headtracking: SpineUpdate");
 		if (me->formID == 0x14) {
 			return;
 		}
-		auto profiler = Profilers::Profile("Headtracking: SpineUpdate");
 		auto ai = me->GetActorRuntimeData().currentProcess;
 		Actor* tiny = nullptr;
 		if (ai) {

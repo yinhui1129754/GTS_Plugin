@@ -253,7 +253,7 @@ namespace Hooks {
         );*/
 		
 
-		/*static CallHook<float(TESObjectREFR* param_1)>FUN_14080d560(        // rarely called             
+		static CallHook<float(TESObjectREFR* param_1)>FUN_14080d560(        // rarely called             
 			REL::RelocationID(48146, 48146), REL::Relocate(0x10D, 0x10D),
 			// 48146
 			// 0x14080d66d - 0x14080d560 = 0x10D
@@ -262,8 +262,15 @@ namespace Hooks {
 			// FUN_140838890 ???
 			[](auto* param_1) {
 				float result = FUN_14080d560(param_1);
+
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 0.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 0");
+				}
+
 				log::info("(0) FUN_14080d560 Hooked");
-				return result * 10;
+				return result;
             }
         );
 		//^ Hook 0 (Not taking [jmp] and [jbo32] hooks into account at the beginning)
@@ -274,8 +281,13 @@ namespace Hooks {
 			// 0x1407bf2de - 0x1407BF260 = 0x7E
 			[](auto* param_1) {
 				float result = sub_1407BF260(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 1.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 1");
+				}
 				log::info("(1) sub_1407BF260 Hooked");
-				return result * 10;
+				return result;
             }
         );
 		//^ Hook 1
@@ -285,8 +297,13 @@ namespace Hooks {
 			// 0x1407bf13d - 0x1407BF0C0 = 0x7D
 			[](auto* param_1) {
 				float result = sub_1407BF0C0(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 2.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 2");
+				}
 				log::info("(2) sub_1407BF0C0 Hooked");
-				return result * 10;
+				return result;
             }
         );
 		//^ Hook 2
@@ -298,6 +315,11 @@ namespace Hooks {
 			// 0x1407becb7 - 0x1407BEB90 = 0x127
 			[](auto* param_1) {
 				float result = sub_1407BEB90(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 3.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 3");
+				}
 				log::info("(3 - 1) sub_1407BEB90_1 Hooked"); // not sure what they do, seem to be called rarely
 				return result;
             }
@@ -310,6 +332,11 @@ namespace Hooks {
 			REL::RelocationID(46068, 46068), REL::Relocate(0x3E, 0x3E),
 			[](auto* param_1) {
 				float result = sub_1407BEB90_2(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 4.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 4");
+				}
 				log::info("(3 - 2) sub_1407BEB90_2 Hooked");
 				return result;
             }
@@ -320,14 +347,19 @@ namespace Hooks {
 
 
 
-		/*static CallHook<float(TESObjectREFR* param_1)>sub_1407BAB40(     // Seems to work after hitting someone/when we're detected. Disabling hostile actor stops prints.
+		static CallHook<float(TESObjectREFR* param_1)>sub_1407BAB40(     // Seems to work after hitting someone/when we're detected. Disabling hostile actor stops prints.
 			REL::RelocationID(46018, 46018), REL::Relocate(0x15, 0x15),   // USED INSIDE MOVEMENT.CPP
 			// 46018
 			// 0x1407bab55 - 0x1407BAB40 = 0x15
 			[](auto* param_1) {
 				float result = sub_1407BAB40(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 5.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 5");
+				}
 				//log::info("(5) sub_1407BAB40 Hooked");	
-				return result * 10;
+				return result;
             }
         ); 
 
@@ -347,6 +379,11 @@ namespace Hooks {
 			// 0x1407baa5c - 0x1407BA9C0 = 0x9C
 			[](auto* param_1) {
 				float result = sub_1407BA9C0(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 6.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 6");
+				}
 				log::info("(6 - 1) sub_1407BA9C0_1 Hooked");
 				return result;
             }
@@ -357,7 +394,13 @@ namespace Hooks {
 			[](auto* param_1) {
 				// 46015
 				// 0x1407baa17 - 0x1407BA9C0 = 0x57
+				
 				float result = sub_1407BA9C0_2(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 7.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 7");
+				}
 				log::info("(6 - 2) sub_1407BA9C0 Hooked");
 				return result;
             }
@@ -374,6 +417,11 @@ namespace Hooks {
 				// 46014
 				// 0x1407ba9a4 - 0x1407BA910 = 0x94
 				float result = sub_1407BA910(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 8.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 8");
+				}
 				log::info("(8) sub_1407BA910 Hooked");
 				return result;
             }
@@ -385,6 +433,11 @@ namespace Hooks {
 				// 46013
 				// 0x1407ba8f4 - 0x1407BA8B0 = 0x44
 				float result = sub_1407BA8B0(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 9.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 9");
+				}
 				log::info("(9) sub_1407BA8B0 Hooked");
 				return result;
             }
@@ -397,6 +450,11 @@ namespace Hooks {
 				// 43242
 				// 0x1407600c4 - 0x140760070 = 0x54
 				float result = FUN_140760070(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 10.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 10");
+				}
 				log::info("(10) FUN_140760070 Hooked");
 				return result;
             }
@@ -417,6 +475,11 @@ namespace Hooks {
 				// 0x14076001e - 0x14075ffa0 = 0x7E
 				log::info("(11) FUN_14075ffa0 Hooked");
 				float result = FUN_14075ffa0(param_1);
+				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+				if (Global == 11.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 11");
+				}
 				return result;
             }
         );
@@ -429,6 +492,10 @@ namespace Hooks {
 				// 41811 V
 				// 0x14072336d - 0x140723320 = 0x4D
 				float result = Handle_140723320(param_1);
+				if (Global == 12.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 12");
+				}
 				log::info("(12) Handle_140723320 Hooked");
 				return result;
             }
@@ -456,7 +523,7 @@ namespace Hooks {
 				}
 				return result;
             }
-        );
+        );*/
 		//^ Hook 13
 
 		static CallHook<float(TESObjectREFR* param_1)>FUN_1406b0a00(  // bone stuff again?
@@ -466,6 +533,10 @@ namespace Hooks {
 				// 0x1406b0aab - 0x1406b0a00 = 0xAB
 				log::info("(14) FUN_1406b0a00 Hooked");
 				float result = FUN_1406b0a00(param_1);
+				if (Global == 14.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 14");
+				}
 				return result;
             }
         );
@@ -478,6 +549,10 @@ namespace Hooks {
 				// 0x1406aa4d1 - 0x1406AA410 = 0xC1
 				log::info("(15) sub_1406AA410 Hooked");
 				float result = sub_1406AA410(param_1);
+				if (Global == 15.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 15");
+				}
 				return result;
             }
         );
@@ -496,6 +571,10 @@ namespace Hooks {
 				// 38564
 				// 0x14065c552 - 0x14065c4a0 = 0xB2
 				float result = FUN_14065c4a0(param_1);
+				if (Global == 16.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 16");
+				}
 				log::info("(16) FUN_14065c4a0 Hooked");
 				return result;
             }
@@ -508,6 +587,10 @@ namespace Hooks {
 				// 37752
 				// 0x14062e4d3 - 0x14062E390 = 0x143
 				float result = sub_14062E390(param_1);
+				if (Global == 17.0) {
+					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+					log::info("Altering hook 17");
+				}
 				log::info("(17) sub_14062E390 Hooked");
 				return result;
             }

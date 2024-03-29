@@ -2398,7 +2398,7 @@ namespace Gts {
 
 
 	bool HasSMT(Actor* giant) {
-		if (Runtime::HasMagicEffect(giant, "SmallMassiveThreat")) {
+		if (Runtime::HasMagicEffect(giant, "TinyCalamity")) {
 			return true;
 		}
 		return false;
