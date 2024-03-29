@@ -180,7 +180,7 @@ namespace Gts {
 		float damage_zones_applied = 0.0;
 
 		float maxFootDistance = radius * giantScale;
-		float hh = hhOffsetbase[2];
+		float hh = hhOffsetbase[2] / get_npcparentnode_scale(actor);
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
 			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
@@ -207,9 +207,6 @@ namespace Gts {
 					if (giantScale / tinyScale > SCALE_RATIO) {
 						NiPoint3 actorLocation = otherActor->GetPosition();
 
-						if (SMT) {
-							TinyCalamity_SeekActorForShrink_Foot(actor, otherActor, damage, radius, -1, 0.0, crush_threshold, Cause, Right, ApplyCooldown);
-						}
 						// This function is needed to Shrinking actors around foot. Mostly a duplicate of this function but without the damage
 						// Can't do size damage debuff
 

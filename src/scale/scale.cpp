@@ -57,6 +57,7 @@ namespace Gts {
 		auto profiler = Profilers::Profile("Scale: ModTargetScale");
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
+			amt /= game_get_scale_overrides(&actor);
 			if (amt - EPS < 0.0) {
 				// If neative change always: allow
 				actor_data->target_scale += amt;

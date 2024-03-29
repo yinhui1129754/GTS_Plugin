@@ -43,6 +43,7 @@ using namespace std;
 
 namespace {
 	void ManageActorControl() { // Rough control other fix
+		auto profiler = Profilers::Profile("Manager: Actor Control");
 		Actor* target = GetPlayerOrControlled();
 		if (target->formID != 0x14) {
 			auto grabbed = Grab::GetHeldActor(target);
@@ -58,14 +59,16 @@ namespace {
 	void UpdateFalling() {
 		Actor* player = PlayerCharacter::GetSingleton();
 		if (player && player->IsInMidair()) {
-			auto charCont = player->GetCharController();
-			if (charCont && Runtime::HasPerkTeam(player, "MightyLegs")) {
-				auto transient = Transient::GetSingleton().GetData(player);
-				if (transient) {
-					float scale = std::clamp(get_visual_scale(player), 0.06f, 2.0f);
-					float CalcFall = 1.0 + (charCont->fallTime * (4.0 / scale) - 4.0);
-					float FallTime = std::clamp(CalcFall, 1.0f, 3.0f);
-					transient->FallTimer = FallTime;
+			if (Runtime::HasPerkTeam(player, "MightyLegs")) {
+				auto charCont = player->GetCharController();
+				if (charCont) {
+					auto transient = Transient::GetSingleton().GetData(player);
+					if (transient) {
+						float scale = std::clamp(get_visual_scale(player), 0.06f, 2.0f);
+						float CalcFall = 1.0 + (charCont->fallTime * (4.0 / scale) - 4.0);
+						float FallTime = std::clamp(CalcFall, 1.0f, 3.0f);
+						transient->FallTimer = FallTime;
+					}
 				}
 			}
 		}

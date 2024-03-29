@@ -101,12 +101,10 @@ namespace Gts {
 			return;
 		}
 		this->UpdateHHOffset(actor);
-		if (Persistent::GetSingleton().size_method != SizeMethod::ModelScale) {
-			new_hh = this->GetHHOffset(actor) * hhData.multiplier.value;
-		} else {
-			// With model scale do it in unscaled coords
-			new_hh = this->GetBaseHHOffset(actor) * hhData.multiplier.value;
-		}
+
+		// With model scale do it in unscaled coords
+		new_hh = this->GetBaseHHOffset(actor) * hhData.multiplier.value;
+		
 		float hh_length = new_hh.Length();
 
 		for (bool person: {false, true}) {
@@ -203,12 +201,12 @@ namespace Gts {
 			}
 		}
 		//log::info("Base HHOffset: {}", Vector2Str(result));
-		//auto npcNodeScale = get_npcparentnode_scale(actor);
+		auto npcNodeScale = get_npcparentnode_scale(actor);
 
 		auto& me = HighHeelManager::GetSingleton();
 		me.data.try_emplace(actor);
 		auto& hhData = me.data[actor];
-		hhData.lastBaseHHOffset = result;
+		hhData.lastBaseHHOffset = result * npcNodeScale;
 	}
 
 	NiPoint3 HighHeelManager::GetBaseHHOffset(Actor* actor) {
