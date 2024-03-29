@@ -1,7 +1,5 @@
 #include "managers/cameras/camutil.hpp"
-#include "scale/modscale.hpp"
 #include "data/runtime.hpp"
-#include "scale/scale.hpp"
 #include "node.hpp"
 
 using namespace RE;
@@ -22,6 +20,7 @@ namespace {
 		}
 		return 1.0;
 	}
+
 }
 
 namespace Gts {
@@ -265,7 +264,7 @@ namespace Gts {
 						playerTrans.scale = model->parent ? model->parent->world.scale : 1.0; // Only do translation/rotation
 						auto playerTransInve = playerTrans.Invert();
 						// Get Scaled Camera Location
-						return (playerTransInve*cameraLocation);
+						return playerTransInve*cameraLocation;
 					}
 				}
 			}
@@ -367,7 +366,10 @@ namespace Gts {
 
 							// Make the transform matrix for our changes
 							NiTransform adjustments = NiTransform();
-							adjustments.scale = scale;
+							adjustments.scale = scale * adjust_by_scale();
+
+							log::info("Adjust by scale: {}", adjust_by_scale);
+
 							adjustments.translate = playerLocalOffset;
 
 							// Get Scaled Camera Location
@@ -382,9 +384,6 @@ namespace Gts {
 							// Convert to local space
 							auto parent = cameraRoot->parent;
 							NiTransform transform = parent->world.Invert();
-
-							transform.scale *= adjust_by_scale();
-
 							auto localShifted = transform * worldShifted;
 							auto targetLocationLocalShifted = localShifted;
 
