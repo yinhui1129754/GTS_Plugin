@@ -31,7 +31,7 @@ namespace {
 		}
 	}
 
-	float Get_Perk_Bo nus(Actor* giant) {
+	float Get_Perk_Bonus(Actor* giant) {
 		float bonus = 1.0;
 		float basic = 0.0;
 		
