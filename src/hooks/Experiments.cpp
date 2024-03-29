@@ -2,6 +2,7 @@
 #include "hooks/callhook.hpp"
 #include "data/transient.hpp"
 #include "hooks/Experiments.hpp"
+#include "data/runtime.hpp"
 #include "scale/scale.hpp"
 #include "data/runtime.hpp"
 
@@ -90,6 +91,21 @@ namespace {
 namespace Hooks {
 
 	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is commented out inside hooks.cpp
+
+		static CallHook<float(TESObjectREFR* param_1)>FUN_14071b230(  // something bone related
+			REL::RelocationID(41683, 41683), REL::Relocate(0x31, 0x31), // Affects Animation speed of: Walk Speed, Sneak Speed
+			[](auto* param_1) {
+				// 41683 V
+				// 0x14071b261 - 0x14071b230 = 0x31
+				float result = FUN_14071b230(param_1);
+				if (param_1->formID == 0x14) {
+					log::info("(13) FUN_14071b230 Hooked, value: {}", result);
+					float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+					log::info("(13) Overriding value to {}", global);
+				}
+				return result;
+            }
+        );
 
 		// return func(actor, a_caster, a_hasTargetAnim, a_target, a_leftHand);
 
