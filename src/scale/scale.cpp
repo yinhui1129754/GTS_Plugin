@@ -159,7 +159,8 @@ namespace Gts {
 			float gamescale = game_getactorscale(&actor);
 			float racemenu = get_npcparentnode_scale(&actor);
 			float result = (actor_data->visual_scale * gamescale) / racemenu;
-			log::info("Giantess Scale of {} is {}", &actor.GetDisplayFullName(), result);
+			Actor* gts = &actor;
+			log::info("Giantess Scale of {} is {}", gts->GetDisplayFullName(), result);
 			log::info("----------gamescale: {}", gamescale);
 			log::info("----------racescale: {}", racemenu);
 			log::info("----------visual_sc: {}", actor_data->visual_scale);
