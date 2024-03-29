@@ -17,7 +17,7 @@ namespace {
 	double adjust_by_scale() {
 		Actor* player = PlayerCharacter::GetSingleton();
 		if (player) {
-			float natural_scale = game_get_scale_overrides(player) * get_npcnode_scale(player);
+			float natural_scale = game_get_scale_overrides(player);
 			if (natural_scale > 1.0) {
 				double fixes = 1.0 / natural_scale;
 				log::info("Fixes Value: {}", fixes);

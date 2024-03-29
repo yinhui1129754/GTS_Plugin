@@ -121,6 +121,7 @@ namespace Gts {
 	float get_visual_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
+			log::info("Visual Scale of is {}", actor_data->visual_scale);
 			return actor_data->visual_scale * get_natural_scale(actor);
 		}
 		return -1.0;
@@ -156,6 +157,7 @@ namespace Gts {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
 			float result = actor_data->visual_scale;
+			log::info("Giantess Scale of is {}", result);
 			return result;
 		}
 		return 1.0;
