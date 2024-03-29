@@ -236,7 +236,8 @@ namespace Gts {
 								NiPoint3 objectlocation = objectref->GetPosition();
 								float distance = (point - objectlocation).Length();
 								if (distance <= maxDistance) {
-									Objects.push_back(object);
+									ObjectRefHandle refhandle = objectref->CreateRefHandle(); 
+									Objects.push_back(refhandle);
 								}
 							}
 						}
