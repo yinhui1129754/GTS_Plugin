@@ -221,7 +221,7 @@ namespace {
 				tiny = TinyShield(receiver);
 			}
 		}
-		log::info("    - Damage Mult: {}, resistance: {}, shield: {}", multiplier, resistance, tiny);
+		//log::info("    - Damage Mult: {}, resistance: {}, shield: {}", multiplier, resistance, tiny);
 		mult *= (multiplier * resistance * tiny * IsNotImmune);
 		return mult;
 	}
