@@ -120,9 +120,9 @@ namespace Gts {
 		if (actor_data) {
 			Actor* ref = &actor;
 			if (ref->formID == 0x14) {
-				log::info("Visual Scale of Player is {}", actor_data->visual_scale * game_get_scale_overrides(&actor) * get_natural_scale(actor));
+				log::info("Visual Scale of Player is {}", actor_data->visual_scale * get_natural_scale(actor) * game_get_scale_overrides(&actor));
 			}
-			return actor_data->visual_scale * game_get_scale_overrides(&actor) * get_natural_scale(actor);
+			return actor_data->visual_scale * get_natural_scale(actor) * game_get_scale_overrides(&actor);
 		}
 		return -1.0;
 	}
@@ -139,9 +139,10 @@ namespace Gts {
 		    float initialScale = GetInitialScale(&actor);
 			Actor* ref = &actor;
 			if (ref->formID == 0x14) {
-				log::info("Initial scale of player: {}", initialScale);
+				log::info("(   Initial scale of player: {}", initialScale);
+				log::info("(   Other Scales of Player: {}", actor_data->otherScales);
+				log::info("(   Result of scales:", actor_data->otherScales * initialScale);
 			}
-			
 			return actor_data->otherScales * initialScale;
 		}
 		return 1.0;
