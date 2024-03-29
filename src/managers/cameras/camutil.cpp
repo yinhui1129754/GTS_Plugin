@@ -20,6 +20,7 @@ namespace {
 			float natural_scale = game_get_scale_overrides(player) * get_npcnode_scale(player);
 			if (natural_scale > 1.0) {
 				double fixes = 1.0 / natural_scale;
+				log::info("Fixes Value: {}", fixes);
 				return fixes;
 			}
 			return 1.0;

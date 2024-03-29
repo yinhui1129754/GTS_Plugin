@@ -1045,6 +1045,8 @@ namespace Gts {
 
 		float Difference = GiantScale/TinyScale;
 
+		log::info("Size Difference between {} and {} is {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName(), Difference);
+
 		return Difference;
 	}
 
@@ -2140,7 +2142,7 @@ namespace Gts {
 
 				NiPoint3 endCoords = bone->world.translate;
 
-				log::info("Passing coords: Start: {}, End: {}", Vector2Str(startCoords), Vector2Str(endCoords));
+				//log::info("Passing coords: Start: {}, End: {}", Vector2Str(startCoords), Vector2Str(endCoords));
 				// Because of delayed nature (and because coordinates become constant once we pass them to TaskManager)
 				// i don't have any better idea than to do it through task + task, don't kill me
 				PushTowards_Task(giantHandle, tinyHandle, startCoords, endCoords, TaskName, power, sizecheck);
