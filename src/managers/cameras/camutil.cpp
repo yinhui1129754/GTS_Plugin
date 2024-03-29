@@ -1,5 +1,7 @@
 #include "managers/cameras/camutil.hpp"
+#include "scale/modscale.hpp"
 #include "data/runtime.hpp"
+#include "scale/scale.hpp"
 #include "node.hpp"
 
 using namespace RE;
