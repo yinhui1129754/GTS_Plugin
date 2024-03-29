@@ -87,7 +87,7 @@ NormalLand_Mega = "GTS.esp|61588D"
 
 
 [spellEffects]
-SmallMassiveThreat = "GTS.esp|1A2568"
+TinyCalamity = "GTS.esp|1A2568"
 # Explosive
 GrowthSpurt1 = "GTS.esp|007928"
 GrowthSpurt2 = "GTS.esp|1E42A5"

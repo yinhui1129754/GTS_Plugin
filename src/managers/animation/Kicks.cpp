@@ -35,7 +35,7 @@ namespace {
 		std::string name = std::format("LegKick_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
 
-		std::vector<TESObjectREFR*> Objects = GetNearbyObjects(actor);
+		std::vector<ObjectRefHandle> Objects = GetNearbyObjects(actor);
 
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
@@ -55,7 +55,7 @@ namespace {
 		std::string name = std::format("LegKick_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
 
-		std::vector<TESObjectREFR*> Objects = GetNearbyObjects(actor);
+		std::vector<ObjectRefHandle> Objects = GetNearbyObjects(actor);
 
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {

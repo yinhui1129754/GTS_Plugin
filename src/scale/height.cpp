@@ -93,11 +93,11 @@ namespace Gts {
 			float x = nif_dim.x;
 			float y = nif_dim.y;
 			float z = nif_dim.z;
-			float natural_scale = std::clamp(get_natural_scale(actor), 0.1f, 1.0f);
+			float natural_scale = std::clamp(get_natural_scale(actor), 0.1f, 100.0f);
 
 			float box = pow(x*y*z/(22.0f*14.0f*64.0f), 1.0f/3.0f) * natural_scale;
-			//log::info("Found bounds for {}, bounds :{}", actor->GetDisplayFullName(), Vector2Str(nif_dim));
-			//log::info("Value: {}, NS: {}", box, natural_scale);
+			log::info("Found bounds for {}, bounds :{}", actor->GetDisplayFullName(), Vector2Str(nif_dim));
+			log::info("Value: {}, NS: {}", box, natural_scale);
 			return box;
 		}
 		return 1.0;

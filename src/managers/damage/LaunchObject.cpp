@@ -96,26 +96,29 @@ namespace Gts {
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			power *= 1.5;
 		}
-		std::vector<TESObjectREFR*> Refs = GetNearbyObjects(giant);
+		std::vector<ObjectRefandle> Refs = GetNearbyObjects(giant);
 
-        for (auto objectref: Refs) {
-            if (objectref) {
-                if (objectref && objectref->Is3DLoaded()) {
-					NiPoint3 objectlocation = objectref->GetPosition();
-					for (auto point: footPoints) {
-						float distance = (point - objectlocation).Length();
-						if (distance <= maxFootDistance) {
-							float force = 1.0 - distance / maxFootDistance;
-							float push = start_power * GetLaunchPower_Object(giantScale, false) * force * power;
-							auto Object1 = objectref->Get3D1(false);
-							if (Object1) {
-								auto collision = Object1->GetCollisionObject();
-								if (collision) {
-									auto rigidbody = collision->GetRigidBody();
-									if (rigidbody) {
-										auto body = rigidbody->AsBhkRigidBody();
-										if (body) {
-											SetLinearImpulse(body, hkVector4(0, 0, push, push));
+        for (auto object: Refs) {
+			if (object) {
+				auto objectref = object.get().get();
+				if (objectref) {
+					if (objectref && objectref->Is3DLoaded()) {
+						NiPoint3 objectlocation = objectref->GetPosition();
+						for (auto point: footPoints) {
+							float distance = (point - objectlocation).Length();
+							if (distance <= maxFootDistance) {
+								float force = 1.0 - distance / maxFootDistance;
+								float push = start_power * GetLaunchPower_Object(giantScale, false) * force * power;
+								auto Object1 = objectref->Get3D1(false);
+								if (Object1) {
+									auto collision = Object1->GetCollisionObject();
+									if (collision) {
+										auto rigidbody = collision->GetRigidBody();
+										if (rigidbody) {
+											auto body = rigidbody->AsBhkRigidBody();
+											if (body) {
+												SetLinearImpulse(body, hkVector4(0, 0, push, push));
+											}
 										}
 									}
 								}
@@ -169,6 +172,7 @@ namespace Gts {
 		
 			float Start = Time::WorldTimeElapsed();
 			ActorHandle gianthandle = giant->CreateRefHandle();
+			ObjectRefandle objectref = object->CreateRefHandle();
 			std::string name = std::format("PushObject_{}_{}", giant->formID, object->formID);
 
 			NiPoint3 StartPos = Bone->world.translate;
@@ -176,14 +180,17 @@ namespace Gts {
 			TaskManager::Run(name, [=](auto& progressData) {
 				if (!gianthandle) {
 					return false;
+				} if (!objectref) {
+					return false;
 				}
 				auto giantref = gianthandle.get().get();
+				auto ref = objectref.get().get();
 				float Finish = Time::WorldTimeElapsed();
 				float timepassed = Finish - Start;
 
 				if (timepassed > 1e-4) {
 					NiPoint3 EndPos = Bone->world.translate;
-					ApplyPhysicsToObject(giantref, object, EndPos - StartPos, force, giantScale);
+					ApplyPhysicsToObject(giantref, ref, EndPos - StartPos, force, giantScale);
 					return false; // end it
 				}
 				return true;
@@ -191,17 +198,18 @@ namespace Gts {
 		}
 	}
 
-	void PushObjects(std::vector<TESObjectREFR*> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick) {
+	void PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick) {
 		if (!refs.empty()) {
 			for (auto object: refs) {
 				if (object) {
-					PushObjectsTowards(giant, object, bone, power, radius, Kick);
+					TESObjectREFR* objectref = object.get().get();
+					PushObjectsTowards(giant, objectref, bone, power, radius, Kick);
 				}
 			}
 		}
 	}
 
-	std::vector<TESObjectREFR*> GetNearbyObjects(Actor* giant) {
+	std::vector<ObjectRefHandle> GetNearbyObjects(Actor* giant) {
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
 		if (!AllowLaunch) {
 			return {};
@@ -210,7 +218,7 @@ namespace Gts {
 
 		float maxDistance = 220 * giantScale;
 
-		std::vector<TESObjectREFR*> Objects = {};
+		std::vector<ObjectRefHandle> Objects = {};
 		NiPoint3 point = giant->GetPosition();
 
 		bool PreciseScan = Runtime::GetBoolOr("AccurateCellScan", false);
@@ -220,14 +228,16 @@ namespace Gts {
 			if (cell) {
 				auto data = cell->GetRuntimeData();
 				for (auto object: data.references) {
-					auto objectref = object.get();
-					if (objectref) {
-						bool IsActor = objectref->Is(FormType::ActorCharacter);
-						if (!IsActor) { // we don't want to apply it to actors
-							NiPoint3 objectlocation = objectref->GetPosition();
-							float distance = (point - objectlocation).Length();
-							if (distance <= maxDistance) {
-								Objects.push_back(objectref);
+					if (object) {
+						auto objectref = object.get();
+						if (objectref) {
+							bool IsActor = objectref->Is(FormType::ActorCharacter);
+							if (!IsActor) { // we don't want to apply it to actors
+								NiPoint3 objectlocation = objectref->GetPosition();
+								float distance = (point - objectlocation).Length();
+								if (distance <= maxDistance) {
+									Objects.push_back(object);
+								}
 							}
 						}
 					}
@@ -244,7 +254,8 @@ namespace Gts {
 							NiPoint3 objectlocation = a_ref.GetPosition();
 							float distance = (point - objectlocation).Length();
 							if (distance <= maxDistance) {
-								Objects.push_back(&a_ref);
+								ObjectRefandle handle = a_ref.CreateRefHandle();
+								Objects.push_back(handle);
 							}
 						}
 						return RE::BSContainer::ForEachResult::kContinue;    
