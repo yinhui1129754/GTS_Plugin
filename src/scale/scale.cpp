@@ -122,7 +122,7 @@ namespace Gts {
 			if (ref->formID == 0x14) {
 				log::info("Visual Scale of Player is {}", actor_data->visual_scale);
 			}
-			return actor_data->visual_scale * get_natural_scale(actor);
+			return actor_data->visual_scale * game_get_scale_overrides(&actor) * get_natural_scale(actor);
 		}
 		return -1.0;
 	}
@@ -156,7 +156,7 @@ namespace Gts {
 	float get_giantess_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			float result = actor_data->visual_scale;
+			float result = actor_data->visual_scale * game_get_scale_overrides(&actor);
 			Actor* ref = &actor;
 			if (ref->formID == 0x14) {
 				log::info("Giantess Scale of Player is {}", result);

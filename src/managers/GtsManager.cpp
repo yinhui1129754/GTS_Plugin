@@ -160,7 +160,7 @@ namespace {
 		if (fabs(target_scale - persi_actor_data->visual_scale) > 1e-5) {
 			float minimum_scale_delta = 0.000005; // 0.00005%
 			if (fabs(target_scale - persi_actor_data->visual_scale) < minimum_scale_delta) {
-				persi_actor_data->visual_scale = target_scale * game_get_scale_overrides(actor);
+				persi_actor_data->visual_scale = target_scale;
 				persi_actor_data->visual_scale_v = 0.0;
 			} else {
 				critically_damped(
@@ -212,10 +212,10 @@ namespace {
 			return;
 		}
 
-		float getscale = game_getactorscale(actor);
+		//float getscale = game_getactorscale(actor);
 		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
 
-		update_model_visuals(actor, visual_scale * initialScale * getscale); // We've set values, now update model size based on them
+		update_model_visuals(actor, visual_scale * initialScale); // We've set values, now update model size based on them
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {
