@@ -38,6 +38,30 @@ namespace Hooks
             }
         );
 
+        static CallHook<float(TESObjectREFR* param_1)>Scale_AlterAnimSpeed(  // something bone related
+			REL::RelocationID(41683, 42768), REL::Relocate(0x31, 0x31), // Affects Animation speed of: Walk Speed, Sneak Speed
+			// There's vanilla bug: If you save the game at SetScale of 2.0 (for example)
+            // Then load a save and perform SetScale of 1.0 = your animations will look slower. Bethesda.
+			// Anyway, we want to always force it to 1.0 since we manage animation speed anyway.
+			// This hook seems to be called only once, on save file load
+			[](auto* param_1) {
+                // ---------------SE:
+				// 0x14071b230 : 41683
+				// 0x14071b261 - 0x14071b230 = 0x31
+				// ---------------AE:
+				// FUN_140746b40 : 42768
+				// 0x140746b71 - 0x140746b40 = 0x31   // wow it's the same
+				float result = Scale_AlterAnimSpeed(param_1);
+				if (param_1->formID == 0x14) {
+					log::info("(13) Scale_AlterAnimSpeed Hooked, value: {}", result);
+					float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+					log::info("(13) Overriding value to {}", Global);
+					result = Global;
+				}
+				return result;
+            }
+        );
+
 
         /*static CallHook<float(TESObjectREFR* param_1)>sub_140623F10( // Seems to be called on attacks. 
             REL::RelocationID(37588, 37588), REL::Relocate(0x6B, 0x6B), // Supposedly moves invisible "Hitbox" zone for weapons more forward or something

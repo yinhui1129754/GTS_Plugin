@@ -91,23 +91,6 @@ namespace {
 namespace Hooks {
 
 	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is commented out inside hooks.cpp
-
-		static CallHook<float(TESObjectREFR* param_1)>FUN_14071b230(  // something bone related
-			REL::RelocationID(41683, 41683), REL::Relocate(0x31, 0x31), // Affects Animation speed of: Walk Speed, Sneak Speed
-			[](auto* param_1) {
-				// 41683 V
-				// 0x14071b261 - 0x14071b230 = 0x31
-				float result = FUN_14071b230(param_1);
-				if (param_1->formID == 0x14) {
-					log::info("(13) FUN_14071b230 Hooked, value: {}", result);
-					float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
-					log::info("(13) Overriding value to {}", Global);
-					result = Global;
-				}
-				return result;
-            }
-        );
-
 		// return func(actor, a_caster, a_hasTargetAnim, a_target, a_leftHand);
 
 		//							  																
@@ -453,13 +436,24 @@ namespace Hooks {
 		//^ Hook 12*/
 
 
-		/*static CallHook<float(TESObjectREFR* param_1)>FUN_14071b230(  // something bone related
-			REL::RelocationID(41683, 41683), REL::Relocate(0x31, 0x31), // Affects Animation speed of: Walk Speed, Sneak Speed
+		/*static CallHook<float(TESObjectREFR* param_1)>FUN_14071b230(  // something bone related // ALREADY HOOKED INSIDE MOVEMENT.cpp!!!!!!!
+			REL::RelocationID(41683, 42768), REL::Relocate(0x31, 0x31), // Affects Animation speed of: Walk Speed, Sneak Speed
+			// There's vanilla bug: If you save at SetScale of 2.0, load a save and perform SetScale of 1.0 = your animations will look slower
+			// Anyway, we want to always force it to 1.0 since we manage animation speed anyway.
+			// This hook seems to be called only once, on save file load
 			[](auto* param_1) {
-				// 41683 V
-				// 0x14071b261 - 0x14071b230 = 0x31
-				log::info("(13) FUN_14071b230 Hooked");
+				// SE: 0x14071b230 : 41683
+				// SE: 0x14071b261 - 0x14071b230 = 0x31
+				// ---------------------------------------------------
+				// AE: FUN_140746b40 : 42768
+				// AE: 0x140746b71 - 0x140746b40 = 0x31   // wow it's the same
 				float result = FUN_14071b230(param_1);
+				if (param_1->formID == 0x14) {
+					log::info("(13) FUN_14071b230 Hooked, value: {}", result);
+					float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+					log::info("(13) Overriding value to {}", Global);
+					result = Global;
+				}
 				return result;
             }
         );
