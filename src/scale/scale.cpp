@@ -137,6 +137,11 @@ namespace Gts {
 		auto actor_data = Transient::GetSingleton().GetData(&actor);
 		if (actor_data) {
 		    float initialScale = GetInitialScale(&actor);
+			Actor* ref = &actor;
+			if (ref->formID == 0x14) {
+				log::info("Initial scale of player: {}", initialScale);
+			}
+			
 			return actor_data->otherScales * initialScale;
 		}
 		return 1.0;
