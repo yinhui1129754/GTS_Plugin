@@ -13,7 +13,7 @@
 #include "magic/effects/shrink_other.hpp"
 #include "magic/effects/slow_grow.hpp"
 #include "magic/effects/sword_of_size.hpp"
-#include "magic/effects/SmallMassiveThreat.hpp"
+#include "magic/effects/TinyCalamity.hpp"
 #include "magic/effects/Potions/MightPotion.hpp"
 #include "magic/effects/Potions/GrowthPotion.hpp"
 #include "magic/effects/Potions/MaxSizePotion.hpp"
@@ -253,7 +253,7 @@ namespace Gts {
 
 		RegisterMagic<SwordOfSize>("SwordEnchant");
 		RegisterMagic<SlowGrow>("SlowGrowth");
-		RegisterMagic<SmallMassiveThreat>("SmallMassiveThreat");
+		RegisterMagic<TinyCalamity>("TinyCalamity");
 		RegisterMagic<Growth>("GrowthSpell");
 		RegisterMagic<Growth>("GrowthSpellAdept");
 		RegisterMagic<Growth>("GrowthSpellExpert");

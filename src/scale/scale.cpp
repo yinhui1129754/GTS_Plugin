@@ -39,7 +39,7 @@ namespace Gts {
 	float get_target_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			return actor_data->target_scale;
+			return actor_data->target_scale * game_get_scale_overrides(&actor);
 		} else {
 			return -1.0;
 		}
@@ -133,12 +133,11 @@ namespace Gts {
 		auto actor_data = Transient::GetSingleton().GetData(&actor);
 		
 		if (actor_data) {
-			float gamescale = game_getactorscale(&actor); // GetScale() value from console, similar to SetScale() from Papyrus
-			float racemenu = get_npcparentnode_scale(&actor); // apply RaceMenu scale as well
+			float gamescale = game_get_scale_overrides(&actor);
 			// We've divided natural size by GetScale before (inside struct InitialScales) to respect original scale 
 			// Now we * it again, so other functions will read it correctly
 		    float initialScale = GetInitialScale(&actor);
-			return actor_data->otherScales * initialScale * gamescale * racemenu;
+			return actor_data->otherScales * initialScale * gamescale;
 		}
 		return 1.0;
 	}
@@ -157,9 +156,7 @@ namespace Gts {
 	float get_giantess_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			float gamescale = game_getactorscale(&actor);
-			float racescale = get_npcparentnode_scale(&actor);
-			float result = racescale * gamescale * actor_data->visual_scale;
+			float result = actor_data->visual_scale * game_get_scale_overrides(&actor);
 			return result;
 		}
 		return 1.0;

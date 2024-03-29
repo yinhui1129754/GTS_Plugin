@@ -1,5 +1,5 @@
 #include "managers/animation/Utils/AnimationUtils.hpp"
-#include "magic/effects/smallmassivethreat.hpp"
+#include "magic/effects/TinyCalamity.hpp"
 #include "managers/ai/aifunctions.hpp"
 #include "managers/CrushManager.hpp"
 #include "magic/effects/common.hpp"

@@ -1,5 +1,5 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
-#include "magic/effects/smallmassivethreat.hpp"
+#include "magic/effects/TinyCalamity.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/SizeHitEffects.hpp"
 #include "managers/damage/TinyCalamity.hpp"

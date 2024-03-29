@@ -270,6 +270,14 @@ namespace Gts {
 		return game_getactorscale(&actor);
 	}
 
+	float game_get_scale_overrides(Actor* actor) { // Obtain RaceMenu * GetScale values of actor
+		return game_getactorscale(actor) * get_npcparentnode_scale(actor);
+	}
+
+	float game_get_scale_overrides(Actor& actor) {
+		return game_get_scale_overrides(&actor);
+	}
+
 	bool update_model_visuals(Actor* actor, float scale) {
 		auto& size_method = Persistent::GetSingleton().size_method;
 		switch (size_method) {

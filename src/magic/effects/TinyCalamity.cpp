@@ -1,4 +1,4 @@
-#include "magic/effects/smallmassivethreat.hpp"
+#include "magic/effects/TinyCalamity.hpp"
 #include "magic/effects/common.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
@@ -36,11 +36,11 @@ namespace {
 
 namespace Gts {
 
-	std::string SmallMassiveThreat::GetName() {
-		return "SmallMassiveThreat";
+	std::string TinyCalamity::GetName() {
+		return "TinyCalamity";
 	}
 
-	void SmallMassiveThreat::OnStart() {
+	void TinyCalamity::OnStart() {
 		//std::string message = std::format("While Tiny Calamity is active, your size-related actions are massively empowered, but your max scale is limited. You can perform all size-related actions (Vore, Grab, Hug Crush, etc) while being same size, but performing them wastes some of Tiny Calamity's duration.");
 		//TutorialMessage(message, "Calamity");
 		auto caster = GetCaster();
@@ -58,7 +58,7 @@ namespace Gts {
 		}
 	}
 
-	void SmallMassiveThreat::OnUpdate() {
+	void TinyCalamity::OnUpdate() {
 		const float BASE_POWER = 0.00035;
 		const float DUAL_CAST_BONUS = 2.0;
 		auto caster = GetCaster();
@@ -80,7 +80,7 @@ namespace Gts {
 		}
 		if (CasterScale < get_natural_scale(caster)) {// Disallow to be smaller than natural scale to avoid weird interactions with others
 			set_target_scale(caster, get_natural_scale(caster));
-		} else if (CasterScale >= 1.50) {
+		} else if (CasterScale >= get_natural_scale * 1.50) {
 			update_target_scale(caster, -0.0300, SizeEffectType::kNeutral);
 			if (warningtimer.ShouldRun() && caster->formID == 0x14) {
 				Notify("Im getting too big, it becomes hard to handle such power.");

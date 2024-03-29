@@ -1,7 +1,7 @@
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/animation/Utils/CrawlUtils.hpp"
 #include "managers/gamemode/GameModeManager.hpp"
-#include "magic/effects/smallmassivethreat.hpp"
+#include "magic/effects/TinyCalamity.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/TinyCalamity.hpp"
 #include "managers/cameras/camutil.hpp"
