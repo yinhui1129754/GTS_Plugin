@@ -265,7 +265,7 @@ namespace Gts {
 						playerTrans.scale = model->parent ? model->parent->world.scale : 1.0; // Only do translation/rotation
 						auto playerTransInve = playerTrans.Invert();
 						// Get Scaled Camera Location
-						return (playerTransInve*cameraLocation) * adjust_by_scale();
+						return (playerTransInve*cameraLocation);
 					}
 				}
 			}
@@ -362,7 +362,7 @@ namespace Gts {
 						auto model = player->Get3D(false);
 						if (model) {
 							auto playerTrans = model->world;
-							playerTrans.scale = model->parent ? model->parent->world.scale * adjust_by_scale() : 1.0;  // Only do translation/rotation
+							playerTrans.scale = model->parent ? model->parent->world.scale : 1.0;  // Only do translation/rotation
 							auto playerTransInve = playerTrans.Invert();
 
 							// Make the transform matrix for our changes
@@ -382,6 +382,9 @@ namespace Gts {
 							// Convert to local space
 							auto parent = cameraRoot->parent;
 							NiTransform transform = parent->world.Invert();
+
+							transform.scale *= adjust_by_scale();
+
 							auto localShifted = transform * worldShifted;
 							auto targetLocationLocalShifted = localShifted;
 
