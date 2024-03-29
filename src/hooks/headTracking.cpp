@@ -14,7 +14,11 @@ namespace {
 			if (IsRagdolled(giant)) { // For some Bethesda™ reason - it breaks tiny ragdoll (their skeleton stretches :/) when they're small, so they fly into the sky.
 				return original;      // We really want to prevent that, so we return original value.
 			}
-			return original * (get_giantess_scale(giant) / get_natural_scale(giant)); // game_getscale() is used here
+			float fix = (original * get_visual_scale(giant)); // game_getscale() is used here
+			if (giant->formID == 0x14) {
+				log::info("headtracking value: {}", fix);
+			}
+			return fix 
 			// ^ Compensate it, since SetScale() already affects HT by default
 		}
 		return original;
