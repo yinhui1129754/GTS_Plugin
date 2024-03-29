@@ -116,7 +116,7 @@ namespace Hooks {
 				return result;
             }
         );*/
-
+		/*
 		/*static FunctionHook<float(bhkCharacterController* param_1, uintptr_t param_2)>CheckLayerPenetration (        
 			REL::RelocationID(76469, 76469), 
 			// 140dc35c0
@@ -250,7 +250,7 @@ namespace Hooks {
 				log::info("CalculateCurrentHitTargetForWeaponSwing_140629090 Hooked, result: {}", result);
 				return result;
             }
-        );*/
+        );
 		
 
 		static CallHook<float(TESObjectREFR* param_1)>FUN_14080d560(        // rarely called             
@@ -524,7 +524,7 @@ namespace Hooks {
 				}
 				return result;
             }
-        );*/
+        );
 		//^ Hook 13
 
 		static CallHook<float(TESObjectREFR* param_1)>FUN_1406b0a00(  // bone stuff again?
@@ -664,7 +664,7 @@ namespace Hooks {
 				//log::info("(21) Scale_AlterMovementSpeed Hooked");
 				return result;
             }
-        );*/
+        );
 		//^ Hook 21
 
 		static CallHook<float(TESObjectREFR* param_1)>Func7_140609D50( // Something AnimationGraphManager related
@@ -693,7 +693,7 @@ namespace Hooks {
 				log::info("(23) GetEyeHeight_140601E40 Hooked");
 				return result;
             }
-        );*/
+        );
 		//^ Hook 23
 
 		static CallHook<float(TESObjectREFR* param_1)>sub_140601D80(
@@ -928,7 +928,7 @@ namespace Hooks {
 				log::info("(35 - 2) GetScaledBoundSize_1405E1300 Hooked");
 				return Alter;
             }
-        );*/
+        );
 		//^ Hook 36
 //-----------------------------------------------------------------------------------------------------------
 
@@ -977,7 +977,7 @@ namespace Hooks {
 				log::info("(39) Jump_1405D1F80 Hooked");
 				return result;
             }
-        );*/
+        );
 		//^ Hook 39
 		
 		static CallHook<float(TESObjectREFR* param_1)>FUN_1405513a0(   // Possible headtracking? angle stuff or something
@@ -1093,7 +1093,7 @@ namespace Hooks {
 				// CHECK WHAT 42-1-3 DO
 				return result;
             }
-        );*/
+        );
 		//^ Hook 45
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1227,7 +1227,7 @@ namespace Hooks {
 				log::info("(53) InitializeAfterAllFormsAreReadFromFile_1402850E0 Hooked");
 				return result;
             }
-        );*/
+        );
 		//^ Hook 53
 
 		static CallHook<float(TESObjectREFR* param_1)>FUN_140278070(          // seems to be applied on save load
@@ -1326,7 +1326,7 @@ namespace Hooks {
 //-----------------------------------------------------------------------------------------------------------		
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////// 
-		*/
+
 		static CallHook<float(TESObjectREFR* param_1)>sub_140220CA0(        // seems to be called during save load only
 			REL::RelocationID(17259, 17259), REL::Relocate(0x60, 0x60),
 			// 17259
