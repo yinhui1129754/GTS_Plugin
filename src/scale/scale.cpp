@@ -157,13 +157,8 @@ namespace Gts {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
 			float gamescale = game_getactorscale(&actor);
-			float racemenu = get_npcparentnode_scale(&actor);
-			float result = (actor_data->visual_scale * gamescale) / racemenu;
-			Actor* gts = &actor;
-			log::info("Giantess Scale of {} is {}", gts->GetDisplayFullName(), result);
-			log::info("----------gamescale: {}", gamescale);
-			log::info("----------racescale: {}", racemenu);
-			log::info("----------visual_sc: {}", actor_data->visual_scale);
+			float racescale = get_npcparentnode_scale(&actor);
+			float result = racescale * gamescale * actor_data->visual_scale;
 			return result;
 		}
 		return 1.0;
