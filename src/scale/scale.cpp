@@ -120,7 +120,7 @@ namespace Gts {
 		if (actor_data) {
 			Actor* ref = &actor;
 			if (ref->formID == 0x14) {
-				log::info("Visual Scale of Player is {}", actor_data->visual_scale);
+				log::info("Visual Scale of Player is {}", actor_data->visual_scale * game_get_scale_overrides(&actor) * get_natural_scale(actor));
 			}
 			return actor_data->visual_scale * game_get_scale_overrides(&actor) * get_natural_scale(actor);
 		}

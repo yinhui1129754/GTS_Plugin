@@ -185,8 +185,8 @@ namespace Gts {
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
 			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
-			NiPoint3(offset_side, 7.7 / get_npcparentnode_scale(actor) + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward and to the side
-			NiPoint3(0.0, (hh/50), -0.25 / get_npcparentnode_scale(actor) + (-hh * 1.15)), // Offset for HH
+			NiPoint3(offset_side, 7.7 + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward and to the side
+			NiPoint3(0.0, (hh/50), -0.25 + (-hh * 1.15)), // Offset for HH
 		};
 		std::tuple<NiAVObject*, NiMatrix3> adjust(Foot, RotMat);
 
