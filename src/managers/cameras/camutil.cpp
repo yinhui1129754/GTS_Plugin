@@ -17,7 +17,7 @@ namespace {
 	float adjust_by_scale() {
 		Actor* player = PlayerCharacter::GetSingleton();
 		if (player) {
-			float fixes = get_natural_scale(player) / game_getactorscale(player);
+			float fixes = 1.0 / get_natural_scale(player);
 			return fixes;
 		}
 		return 1.0;
