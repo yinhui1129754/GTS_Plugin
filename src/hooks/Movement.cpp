@@ -29,8 +29,8 @@ namespace Hooks
 			// 31949
 			// 0x1404e68ba - 0x1404E6360 = 0x55A
 			[](auto* param_1) {
-				float result = sub_1404E6360(param_1);
-				return 1.0; // Always return 1.0, We don't want to scale that: breaks dodge mods
+				float result = 1.0;
+				return result; // Always return 1.0, We don't want to scale that: breaks dodge mods
             }
         );
 
