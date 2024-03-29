@@ -203,12 +203,12 @@ namespace Gts {
 			}
 		}
 		//log::info("Base HHOffset: {}", Vector2Str(result));
-		auto npcNodeScale = get_npcparentnode_scale(actor);
+		//auto npcNodeScale = get_npcparentnode_scale(actor);
 
 		auto& me = HighHeelManager::GetSingleton();
 		me.data.try_emplace(actor);
 		auto& hhData = me.data[actor];
-		hhData.lastBaseHHOffset = result * npcNodeScale;
+		hhData.lastBaseHHOffset = result;
 	}
 
 	NiPoint3 HighHeelManager::GetBaseHHOffset(Actor* actor) {

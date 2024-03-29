@@ -134,7 +134,6 @@ namespace Gts {
 		// Get world HH offset
 		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(actor);
 
-
 		float offset_side = -1.6;
 
 		std::string_view FootLookup = leftFootLookup;
@@ -181,7 +180,7 @@ namespace Gts {
 		float damage_zones_applied = 0.0;
 
 		float maxFootDistance = radius * giantScale;
-		float hh = hhOffsetbase[2] / get_npcparentnode_scale(actor);
+		float hh = hhOffsetbase[2];
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
 			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
@@ -270,7 +269,6 @@ namespace Gts {
 		if (giant == tiny) {
 			return;
 		}
-		log::info("Trying to do size damage");
 		if (!CanDoDamage(giant, tiny, true) || IsBetweenBreasts(giant)) { // disallow if 
 			return;
 		}
@@ -280,7 +278,6 @@ namespace Gts {
 		float size_difference = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
 
 		if (!Allow_Damage(giant, tiny, Cause, size_difference)) {
-			log::info("Cannot deal damage, returning. Difference: {}", size_difference);
 			return; 
 		}
 
@@ -304,7 +301,7 @@ namespace Gts {
 			damage *= 1.5;
 		}
 
-		float Might = 1.0 * Potion_GetMightBonus(giant);
+		float Might = 1.0 + Potion_GetMightBonus(giant);
 		float damage_result = (damage * size_difference * damagebonus) * (normaldamage * sprintdamage) * (highheelsdamage * weightdamage) * vulnerability;
 
 		damage_result *= Might;
