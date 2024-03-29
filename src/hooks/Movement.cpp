@@ -23,6 +23,16 @@ namespace {
 namespace Hooks
 {
     void Hook_Movement::Hook(Trampoline& trampoline) {
+        
+        static CallHook<float(TESObjectREFR* param_1)>Scale_AlterDashDistance(     // This hook affects Dodge distance/Movement with weapons anims          
+			REL::RelocationID(31949, 31949), REL::Relocate(0x55A, 0x55A),          // (when you perform forward power attach for example)
+			// 31949
+			// 0x1404e68ba - 0x1404E6360 = 0x55A
+			[](auto* param_1) {
+				float result = sub_1404E6360(param_1);
+				return 1.0; // Always return 1.0, We don't want to scale that: breaks dodge mods
+            }
+        );
 
         static CallHook<float(TESObjectREFR* param_1)>Scale_AlterMovementSpeed(  // Movement speed alteration
             REL::RelocationID(37013, 37943), REL::Relocate(0x1A, 0x51),          

@@ -1029,7 +1029,7 @@ namespace Hooks {
 				// 0x1404e6d29 - 0x1404E6B30 = 0x1F9
 				float result = sub_1404E6B30_1(param_1);
 				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
-				if (Global == 42.0) {
+				if (Global >= 42.0 && Global <= 45.0) {
 					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
 					log::info("Altering hook 42");
 				}
@@ -1046,7 +1046,7 @@ namespace Hooks {
 				// 0x1404e6c0d - 0x1404E6B30 = 0xDD
 				float result = sub_1404E6B30_2(param_1);
 				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
-				if (Global == 43.0) {
+				if (Global >= 42.0 && Global <= 45.0) {
 					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
 					log::info("Altering hook 43");
 				}
@@ -1064,7 +1064,7 @@ namespace Hooks {
 				// 0x1404e6b8b - 0x1404E6B30 = 0x5B
 				float result = sub_1404E6B30_3(param_1);
 				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
-				if (Global == 44.0) {
+				if (Global >= 42.0 && Global <= 45.0) {
 					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
 					log::info("Altering hook 44");
 				}
@@ -1076,21 +1076,24 @@ namespace Hooks {
 //-----------------------------------------------------------------------------------------------------------		
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		static CallHook<float(TESObjectREFR* param_1)>sub_1404E6360(     // Called very often, not sure what it does. 
+		/*static CallHook<float(TESObjectREFR* param_1)>sub_1404E6360(     // Called very often, not sure what it does. 
 			REL::RelocationID(31949, 31949), REL::Relocate(0x55A, 0x55A), // Maybe attack distance of NPC's?
 			// 31949
 			// 0x1404e68ba - 0x1404E6360 = 0x55A
+			// AFFECTS DASH DISTANCE OF DODGE MODS/WEAPON ATTACKS THAT MOVE THE ACTOR SOMEWHERE
+			// HOOKED INSIDE Movement.cpp!
 			[](auto* param_1) {
 				float result = sub_1404E6360(param_1);
 				float Global = Runtime::GetFloatOr("cameraAlternateX", 1.0);
-				if (Global == 45.0) {
+				if (Global == 46.0) {
 					result = Runtime::GetFloatOr("cameraAlternateY", 1.0);
 					log::info("Altering hook 45");
 				}
 				//log::info("(45) Hooked");
+				// CHECK WHAT 42-1-3 DO
 				return result;
             }
-        );
+        );*/
 		//^ Hook 45
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
