@@ -110,7 +110,7 @@ namespace {
 			return;
 		}
 		float currentOtherScale = Get_Other_Scale(actor);
-		trans_actor_data->otherScales = currentOtherScale / get_npcparentnode_scale(actor); // get_npc is needes since RaceMenu Height actually messes that up
+		trans_actor_data->otherScales = currentOtherScale / get_npcparentnode_scale(actor); // get_npc is needed since RaceMenu Height actually messes that up
 		//log::info("Other Scale of {} is {}", actor->GetDisplayFullName(), currentOtherScale);
 
 		float target_scale = persi_actor_data->target_scale;

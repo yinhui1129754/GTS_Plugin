@@ -1045,7 +1045,7 @@ namespace Gts {
 
 		float Difference = GiantScale/TinyScale;
 
-		log::info("Size Difference between {} and {} is {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName(), Difference);
+		//log::info("Size Difference between {} and {} is {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName(), Difference);
 
 		return Difference;
 	}
@@ -2968,7 +2968,7 @@ namespace Gts {
 					StartCombat(receiver, attacker); // Make actor hostile and add bounty of 40 (can't be configured, needs different hook probably). 
 				}
 			}
-			 
+			log::info("Dealing {} damage to {}", value * difficulty * GetDamageSetting(), receiver->GetDisplayFullName());
 			ApplyDamage(attacker, receiver, value * difficulty * GetDamageSetting());
 		} else if (receiver->IsDead() || GetAV(receiver, ActorValue::kHealth) < 0.0) {
 			receiver->InitHavok();

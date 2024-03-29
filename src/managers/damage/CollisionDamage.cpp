@@ -181,7 +181,7 @@ namespace Gts {
 		float damage_zones_applied = 0.0;
 
 		float maxFootDistance = radius * giantScale;
-		float hh = hhOffsetbase[2];
+		float hh = hhOffsetbase[2] / get_npcparentnode_scale(actor);
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
 			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
@@ -270,6 +270,7 @@ namespace Gts {
 		if (giant == tiny) {
 			return;
 		}
+		log::info("Trying to do size damage");
 		if (!CanDoDamage(giant, tiny, true) || IsBetweenBreasts(giant)) { // disallow if 
 			return;
 		}
@@ -279,6 +280,7 @@ namespace Gts {
 		float size_difference = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
 
 		if (!Allow_Damage(giant, tiny, Cause, size_difference)) {
+			log::info("Cannot deal damage, returning. Difference: {}", size_difference);
 			return; 
 		}
 
