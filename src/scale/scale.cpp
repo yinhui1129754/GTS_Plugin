@@ -134,10 +134,11 @@ namespace Gts {
 		
 		if (actor_data) {
 			float gamescale = game_getactorscale(&actor); // GetScale() value from console, similar to SetScale() from Papyrus
+			float racemenu = get_npcparentnode_scale(&actor); // apply RaceMenu scale as well
 			// We've divided natural size by GetScale before (inside struct InitialScales) to respect original scale 
 			// Now we * it again, so other functions will read it correctly
 		    float initialScale = GetInitialScale(&actor);
-			return actor_data->otherScales * initialScale * gamescale;
+			return actor_data->otherScales * initialScale * gamescale * racemenu;
 		}
 		return 1.0;
 	}
