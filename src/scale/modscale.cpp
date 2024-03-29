@@ -271,12 +271,6 @@ namespace Gts {
 	}
 
 	float game_get_scale_overrides(Actor* actor) { // Obtain RaceMenu * GetScale values of actor
-		if (actor->formID == 0x14) {
-			log::info("Scale override of Player");
-			log::info("-----game_getactor: {}", game_getactorscale(actor));
-			log::info("-----parent node: {}", get_npcparentnode_scale(actor));
-			log::info("-----result: {}", game_getactorscale(actor) * get_npcparentnode_scale(actor));
-		}
 		return game_getactorscale(actor) * get_npcparentnode_scale(actor);
 	}
 

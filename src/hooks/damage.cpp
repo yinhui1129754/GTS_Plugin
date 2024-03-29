@@ -149,7 +149,7 @@ namespace {
 						ApplyActionCooldown(receiver, CooldownSource::Action_HealthGate);
 						float maxhp = GetMaxAV(receiver, ActorValue::kHealth);
 						float target = get_target_scale(receiver);
-						float natural = get_natural_scale(receiver);
+						float natural = get_natural_scale(receiver) * game_get_scale_overrides(receiver);
 
 						float scale = get_visual_scale(receiver);
 

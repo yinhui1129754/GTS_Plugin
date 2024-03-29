@@ -14,20 +14,6 @@ namespace {
 
 	const CameraDataMode currentMode = CameraDataMode::State;
 
-	double adjust_by_scale() {
-		Actor* player = PlayerCharacter::GetSingleton();
-		if (player) {
-			float natural_scale = get_natural_scale(player) * get_npcparentnode_scale(player);
-			if (natural_scale > 1.0) {
-				double fixes = 1.0 / natural_scale;
-				log::info("Fixes Value: {}", fixes);
-				return fixes;
-			}
-			return 1.0;
-		}
-		return 1.0;
-	}
-
 }
 
 namespace Gts {
@@ -373,7 +359,7 @@ namespace Gts {
 
 							// Make the transform matrix for our changes
 							NiTransform adjustments = NiTransform();
-							adjustments.scale = scale * adjust_by_scale();
+							adjustments.scale = scale;
 							// Adjust by scale reports 1.0 / naturalscale (Which includes RaceMenu and GetScale)
 
 

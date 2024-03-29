@@ -119,9 +119,6 @@ namespace Gts {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
 			Actor* ref = &actor;
-			if (ref->formID == 0x14) {
-				log::info("Visual Scale of Player is {}", actor_data->visual_scale * get_natural_scale(actor) * game_get_scale_overrides(&actor));
-			}
 			return actor_data->visual_scale * get_natural_scale(actor) * game_get_scale_overrides(&actor);
 		}
 		return -1.0;
@@ -138,12 +135,9 @@ namespace Gts {
 		if (actor_data) {
 		    float initialScale = GetInitialScale(&actor);
 			Actor* ref = &actor;
-			if (ref->formID == 0x14) {
-				log::info("(   Initial scale of player: {}", initialScale);
-				log::info("(   Other Scales of Player: {}", actor_data->otherScales);
-				log::info("(   Result of scales:", actor_data->otherScales * initialScale);
-			}
 			return actor_data->otherScales * initialScale;
+			// P.s: otherScales reads RaceMenu scale, so to fix it double-applying
+			// so we divide it by RaceMenu scale again inside GtsManager.cpp, update_height function through get_npcparentnode_scale() func
 		}
 		return 1.0;
 	}
@@ -164,9 +158,6 @@ namespace Gts {
 		if (actor_data) {
 			float result = actor_data->visual_scale * game_get_scale_overrides(&actor);
 			Actor* ref = &actor;
-			if (ref->formID == 0x14) {
-				log::info("Giantess Scale of Player is {}", result);
-			}
 			return result;
 		}
 		return 1.0;

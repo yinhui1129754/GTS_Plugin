@@ -67,7 +67,7 @@ namespace Gts {
 		}
 		static Timer warningtimer = Timer(3.0);
 		float CasterScale = get_target_scale(caster);
-		float naturalscale = get_natural_scale(caster);
+		float naturalscale = get_natural_scale(caster) * game_get_scale_overrides(caster);
 		float bonus = GetSMTBonus(caster);
 		float penalty = GetSMTPenalty(caster);
 		if (bonus > 0.5) {
