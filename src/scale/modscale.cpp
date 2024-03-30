@@ -20,7 +20,7 @@ namespace {
     }
 
     InitialScales(Actor* actor) {
-      model = get_model_scale(actor);
+      model = get_model_scale(actor) / game_getactorscale(actor);
       npc = get_npcnode_scale(actor);
     }
   };
