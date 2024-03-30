@@ -49,7 +49,7 @@ namespace {
 				if (rigidbody) {
 					auto body = rigidbody->AsBhkRigidBody();
 					if (body) {
-						HkVector4 mass;
+						hkVector4 mass = hkVector4();
 						body->GetCenterOfMassWorld(mass);
 						log::info("Mass Of {} is {}", object->GetDisplayFullName(), Vector2Str(mass));
 						//log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
