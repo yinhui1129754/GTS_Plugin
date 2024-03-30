@@ -14,8 +14,8 @@ namespace Gts {
 			using Magic::Magic;
 
 			virtual void OnStart() override;
-
 			virtual void OnUpdate() override;
+			virtual void OnFinish() override;
 
 			virtual std::string GetName() override;
 
