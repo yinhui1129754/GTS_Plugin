@@ -130,10 +130,6 @@ namespace {
 			float minimum_scale_delta = 0.000005; // 0.00005%
 			if (fabs(target_scale - max_scale) < minimum_scale_delta) {
 				float target = max_scale;
-				if (target < max_scale*adjustment) { // Rough RaceMenu * GetScale fix
-					target = currentOtherScale * adjustment;
-					log::info("Targeting max scale / adjustment");
-				}
 				persi_actor_data->target_scale = target;
 				persi_actor_data->target_scale_v = 0.0;
 			} else {
