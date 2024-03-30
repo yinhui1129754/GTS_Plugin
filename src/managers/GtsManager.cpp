@@ -116,7 +116,7 @@ namespace {
 		trans_actor_data->otherScales = currentOtherScale;
 		
 
-		float target_scale = persi_actor_data->target_scale * game_get_scale_overrides(actor) / get_npcparentnode_scale(actor);
+		float target_scale = persi_actor_data->target_scale * game_getactorscale(actor) * currentOtherScale;
 		if (actor->formID == 0x14) {
 			log::info("Other Scale of Player is {}", currentOtherScale);
 			log::info("Target Scale of Player is {}", target_scale);
@@ -223,10 +223,10 @@ namespace {
 			log::info("Visual Scale Of Player: {}", visual_scale);
 			log::info("Visual Scale Of Player After: {}, node scale: {}", visual_scale / get_npcparentnode_scale(actor), get_npcparentnode_scale(actor));
 		}
-		visual_scale /= get_npcparentnode_scale(actor); // FIx it being double-applied
-		//float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
+		//visual_scale /= get_npcparentnode_scale(actor); // FIx it being double-applied
+		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
 
-		update_model_visuals(actor, visual_scale); //* initialScale); // We've set values, now update model size based on them
+		update_model_visuals(actor, visual_scale / initialScale); //* initialScale); // We've set values, now update model size based on them
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {
