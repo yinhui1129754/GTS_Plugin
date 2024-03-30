@@ -147,21 +147,15 @@ namespace Gts {
 	}
 
 	float get_natural_scale(Actor* actor, bool game_scale) {
-		return get_natural_scale(*actor, game_scale);
-	}
-
-	float get_natural_scale(Actor& actor) {
 		if (actor) {
-			return get_natural_scale(actor, false);
+			return get_natural_scale(*actor, game_scale);
 		}
-		return 1.0;
 	}
 
 	float get_natural_scale(Actor* actor) {
 		if (actor) {
 			return get_natural_scale(*actor, false);
 		}
-		return 1.0;
 	}
 
 	float get_neutral_scale(Actor* actor) {

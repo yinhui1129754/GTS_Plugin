@@ -62,7 +62,7 @@ namespace {
 		}
 
 		bonus *= Get_Perk_Bonus(giant);
-		bonus *= game_get_scale_overrides(giant);
+		bonus *= get_natural_scale(giant, true);
 		return basic + bonus;
 	}
 
@@ -74,6 +74,27 @@ namespace {
 		}
 
 		caster->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HpRegen * TimeScale());
+	}
+
+	float update_target_scale(Actor* giant, float amt, SizeEffectType type) {
+		bool perk = Runtime::HasPerkTeam(giant, "OnTheEdge");
+		float scale = get_visual_scale(giant);
+		float Edge = 1.0;
+		
+		if (amt > 0 && (giant->formID == 0x14 || IsTeammate(giant))) {
+			if (scale >= 1.0) {
+				amt /= GetGrowthReduction(scale); // Enabled if BalanceMode is True. Decreases Grow Efficiency.
+			}
+		} else if (amt - EPS < 0.0) {
+			// If neative change: add stolen attributes
+			DistributeStolenAttributes(giant, -amt * GetGrowthReduction(scale)); // Adjust max attributes
+		}
+		if (type == SizeEffectType::kShrink) {
+			Edge = GetPerkBonus_OnTheEdge(giant, amt);
+		}
+
+		mod_target_scale(giant, amt * Edge); // set target scale value
+		return amt * Edge;
 	}
 }
 
@@ -143,14 +164,8 @@ namespace Gts {
 	}
 
 	void GrowthSpurt::DoGrowth(Actor* actor, float value) {
-		update_target_scale(actor, value, SizeEffectType::kGrow); // Grow
-		if (SizeManager::GetSingleton().BalancedMode() >= 2.0) {
-			float scale = get_visual_scale(actor);
-			if (scale >= 1.0) {
-				value /= (1.5 + (scale/1.5));
-			}
-		}
-		if (SizeManager::GetSingleton().GetGrowthSpurt(actor) < (this->grow_limit - get_natural_scale(actor))) {
+		float value = update_target_scale(actor, value, SizeEffectType::kGrow); // Grow
+		if (SizeManager::GetSingleton().GetGrowthSpurt(actor) < (this->grow_limit - get_natural_scale(actor, true))) {
 			if (this->AllowStacking) {
 				SizeManager::GetSingleton().ModGrowthSpurt(actor, value);
 			}
@@ -158,7 +173,6 @@ namespace Gts {
 			this->AllowStacking = false;
 		}
 		PlayGrowthAudio(actor, this->timer.ShouldRun(), this->timerSound.ShouldRunFrame(), this->power);
-		
 	}
 
 	void GrowthSpurt::DoShrink(Actor* actor) {
@@ -166,8 +180,9 @@ namespace Gts {
 		float naturalscale = get_natural_scale(actor, true);
 		update_target_scale(actor, -value, SizeEffectType::kNeutral); // Do Shrink
 		if (get_target_scale(actor) <= naturalscale) {
-			set_target_scale(actor, get_natural_scale(actor, true));
+			set_target_scale(actor, naturalscale);
 		}
+
 		SizeManager::GetSingleton().SetGrowthSpurt(actor, 0.0);
 
 		this->AllowStacking = true;
