@@ -1,8 +1,11 @@
-#include "managers/cameras/state.hpp"
-#include "managers/GtsSizeManager.hpp"
-#include "scale/scale.hpp"
-#include "data/runtime.hpp"
 #include "managers/cameras/camutil.hpp"
+#include "managers/GtsSizeManager.hpp"
+#include "managers/cameras/state.hpp"
+#include "scale/modscale.hpp"
+#include "data/runtime.hpp"
+#include "scale/scale.hpp"
+
+
 
 using namespace RE;
 using namespace Gts;

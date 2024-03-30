@@ -1,9 +1,12 @@
-#include "scale/modscale.hpp"
-#include "node.hpp"
 #include "managers/GtsManager.hpp"
 #include "data/persistent.hpp"
+#include "scale/modscale.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
+
+#include "node.hpp"
+
+
 
 using namespace Gts;
 
