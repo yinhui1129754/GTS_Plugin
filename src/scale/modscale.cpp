@@ -130,7 +130,7 @@ namespace Gts {
 		}
 		bool result = false;
 
-		target_scale *= game_get_scale_overrides(actor);
+		//target_scale *= game_get_scale_overrides(actor);
 
     	UpdateInitScale(actor); // This will update the inital scales BEFORE we alter them
 
