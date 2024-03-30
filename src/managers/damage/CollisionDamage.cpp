@@ -179,7 +179,7 @@ namespace Gts {
 
 		float damage_zones_applied = 0.0;
 
-		float maxFootDistance = radius * giantScale * Calamity;
+		float maxFootDistance = radius * giantScale;
 		float hh = hhOffsetbase[2] / get_npcparentnode_scale(actor);
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
