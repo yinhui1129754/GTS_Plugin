@@ -116,7 +116,7 @@ namespace {
 		trans_actor_data->otherScales = currentOtherScale;
 		
 
-		float target_scale = persi_actor_data->target_scale / game_get_scale_overrides(actor) / get_npcparentnode_scale(actor);
+		float target_scale = persi_actor_data->target_scale * game_get_scale_overrides(actor) / get_npcparentnode_scale(actor);
 		if (actor->formID == 0x14) {
 			log::info("Other Scale of Player is {}", currentOtherScale);
 			log::info("Target Scale of Player is {}", target_scale);
