@@ -222,7 +222,7 @@ namespace {
 	}
 
 	float GetMaxScale(StaticFunctionTag*, Actor* actor) {
-		return get_max_scale(actor);
+		return get_max_scale(actor) * game_get_scale_overrides(actor);
 	}
 
 	void ModMaxScale(StaticFunctionTag*, Actor* actor, float amt) {
