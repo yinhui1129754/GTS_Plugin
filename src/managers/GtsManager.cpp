@@ -113,7 +113,7 @@ namespace {
 			return;
 		}
 		float currentOtherScale = Get_Other_Scale(actor);
-		trans_actor_data->otherScales = currentOtherScale; // get_npc is needed since RaceMenu Height actually messes that up
+		trans_actor_data->otherScales = currentOtherScale;
 		//log::info("Other Scale of {} is {}", actor->GetDisplayFullName(), currentOtherScale);
 
 		float target_scale = persi_actor_data->target_scale * currentOtherScale * game_get_scale_overrides(actor);
@@ -216,9 +216,9 @@ namespace {
 		}
 
 		visual_scale /= get_npcnode_scale(actor); // FIx it being double-applied
-		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
+		//float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
 
-		update_model_visuals(actor, visual_scale * initialScale); // We've set values, now update model size based on them
+		update_model_visuals(actor, visual_scale); //* initialScale); // We've set values, now update model size based on them
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {

@@ -154,7 +154,7 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
-		float start_power = Push_Object_Forward * (1.0 + Potion_GetMightBonus(giant));
+		float start_power = 0.05 * Push_Object_Forward * (1.0 + Potion_GetMightBonus(giant));
 
 		NiPoint3 point = Bone->world.translate;
 		float maxDistance = radius * giantScale;
