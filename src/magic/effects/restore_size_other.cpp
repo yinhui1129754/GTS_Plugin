@@ -1,6 +1,6 @@
 
 #include "managers/GtsManager.hpp"
-#include "magic/effects/shrink_back_other.hpp"
+#include "magic/effects/restore_size_other.hpp"
 #include "magic/effects/common.hpp"
 #include "magic/magic.hpp"
 #include "scale/scale.hpp"
