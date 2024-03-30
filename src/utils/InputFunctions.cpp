@@ -184,7 +184,7 @@ namespace {
 			if (actor->formID != 0x14 && Runtime::InFaction(actor, "FollowerFaction") || actor->IsPlayerTeammate()) {
 				float hh = HighHeelManager::GetBaseHHOffset(actor)[2]/100;
 				float gigantism = Ench_Aspect_GetPower(actor) * 100;
-				float naturalscale = get_natural_scale(actor) * game_get_scale_overrides(actor);
+				float naturalscale = get_natural_scale(actor, true);
 				float scale = get_visual_scale(actor);
 				float maxscale = get_max_scale(actor) * naturalscale;
 				

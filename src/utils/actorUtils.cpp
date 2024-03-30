@@ -1244,23 +1244,27 @@ namespace Gts {
 	
 
 	void update_target_scale(Actor* giant, float amt, SizeEffectType type) { // used to mod scale with perk bonuses taken into account
-		float OTE = 1.0;
-		float scale = get_visual_scale(giant);
 		bool perk = Runtime::HasPerkTeam(giant, "OnTheEdge");
+		float scale = get_visual_scale(giant);
+		float Edge = 1.0;
+		
 		if (amt > 0 && (giant->formID == 0x14 || IsTeammate(giant))) {
 			if (scale >= 1.0) {
-				amt /= GetGrowthReduction(scale);
-				// Enabled if BalanceMode is True. Decreases Grow Efficiency.
+				amt /= GetGrowthReduction(scale); // Enabled if BalanceMode is True. Decreases Grow Efficiency.
 			}
 		} else if (amt - EPS < 0.0) {
 			// If neative change: add stolen attributes
 			DistributeStolenAttributes(giant, -amt * GetGrowthReduction(scale)); // Adjust max attributes
 		}
 		if (type == SizeEffectType::kShrink) {
-			OTE = GetPerkBonus_OnTheEdge(giant, amt);
+			Edge = GetPerkBonus_OnTheEdge(giant, amt);
 		}
 
-		mod_target_scale(giant, amt * OTE); // set target scale value
+		mod_target_scale(giant, amt * Edge); // set target scale value
+	}
+
+	float update_target_scale(Actor* giant, float amt, SizeEffectType type) {
+
 	}
 
 

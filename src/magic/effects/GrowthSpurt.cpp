@@ -10,24 +10,28 @@
 
 namespace {
 	void PlayShrinkAudio(Actor* actor, bool timer_1, bool timer_2, float power) {
+		float scale = get_visual_scale(actor);
+		float falloff = 0.10 * scale;
 		GRumble::Once("GrowthSpurt", actor, 7.0, 0.05);
 		if (timer_1) {
-			Runtime::PlaySound("xlRumbleL", actor, power/20, 1.0);
+			Runtime::PlaySoundAtNode_FallOff("xlRumbleL", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 		if (timer_2) {
 			float Volume = clamp(0.10, 1.0, get_visual_scale(actor) * 0.10);
-			Runtime::PlaySound("shrinkSound", actor, Volume, 1.0);
+			Runtime::PlaySoundAtNode_FallOff("shrinkSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 	}
 
 	void PlayGrowthAudio(Actor* actor, bool timer_1, bool timer_2, float power) {
-		GRumble::Once("GrowthSpurt", actor, get_visual_scale(actor) * 2, 0.05);
+		float scale = get_visual_scale(actor);
+		float falloff = 0.10 * scale;
+		GRumble::Once("GrowthSpurt", actor, scale * 2, 0.05);
 		if (timer_1) {
-			Runtime::PlaySound("xlRumbleL", actor, power/20, 1.0);
+			Runtime::PlaySoundAtNode_FallOff("xlRumbleL", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 		if (timer_2) {
-			float Volume = clamp(0.20, 1.0, get_visual_scale(actor) * 0.15);
-			Runtime::PlaySoundAtNode("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
+			float Volume = clamp(0.20, 1.0, scale * 0.10);
+			Runtime::PlaySoundAtNode_FallOff("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 	}
 
@@ -159,10 +163,10 @@ namespace Gts {
 
 	void GrowthSpurt::DoShrink(Actor* actor) {
 		float value = SizeManager::GetSingleton().GetGrowthSpurt(actor);
-		float naturalscale = get_natural_scale(actor) * game_get_scale_overrides(actor);
+		float naturalscale = get_natural_scale(actor, true);
 		update_target_scale(actor, -value, SizeEffectType::kNeutral); // Do Shrink
 		if (get_target_scale(actor) <= naturalscale) {
-			set_target_scale(actor, get_natural_scale(actor));
+			set_target_scale(actor, get_natural_scale(actor, true));
 		}
 		SizeManager::GetSingleton().SetGrowthSpurt(actor, 0.0);
 

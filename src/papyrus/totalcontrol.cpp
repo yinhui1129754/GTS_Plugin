@@ -110,7 +110,7 @@ namespace {
 					bonus = target_scale * 0.25 + 0.75;
 				}
 
-				if (target_scale > get_natural_scale(target) * game_get_scale_overrides(target)) {
+				if (target_scale > get_natural_scale(target, true)) {
 					DamageAV(caster, ActorValue::kMagicka, 0.25 * (target_scale * 0.25 + 0.75) * magicka * bonus * TimeScale() * power);
 					ShrinkActor(target, 0.0030 * magicka * bonus, 0.0);
 					GRumble::Once("ShrinkOtherButton", target, 1.0, 0.05);

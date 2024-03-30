@@ -15,6 +15,7 @@
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
+#include "ActionSettings.hpp"
 #include "data/transient.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
@@ -34,9 +35,7 @@ using namespace std;
 
 namespace {
     void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force, float scale) {
-		const float start_power = 0.4;
-
-		force *= start_power * GetLaunchPower_Object(scale, true);
+		force *= GetLaunchPower_Object(scale, true); // Should be * 0.40
 
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			force *= 1.5;
@@ -50,6 +49,9 @@ namespace {
 				if (rigidbody) {
 					auto body = rigidbody->AsBhkRigidBody();
 					if (body) {
+						HkVector4 mass;
+						body->GetCenterOfMassWorld(mass);
+						log::info("Mass Of {} is {}", object->GetDisplayFullName(), Vector2Str(mass));
 						//log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
 						SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
 					}
@@ -91,7 +93,7 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
-		float start_power = 0.5 * (1.0 + Potion_GetMightBonus(giant));
+		float start_power = Push_Object_Upwards * (1.0 + Potion_GetMightBonus(giant));
 
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			power *= 1.5;
@@ -152,6 +154,8 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
+		float start_power = Push_Object_Forward * (1.0 + Potion_GetMightBonus(giant));
+
 		NiPoint3 point = Bone->world.translate;
 		float maxDistance = radius * giantScale;
 
@@ -165,7 +169,6 @@ namespace Gts {
 		}
 
 		int nodeCollisions = 0;
-		float force = 0.25 * (1.0 + Potion_GetMightBonus(giant));
 
 		float distance = (point - object->GetPosition()).Length();
 		if (distance < maxDistance) {

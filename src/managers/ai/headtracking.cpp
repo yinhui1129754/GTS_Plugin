@@ -39,7 +39,7 @@ namespace {
 		if (asActor) {
 			auto charCont = asActor->GetCharController();
 			if (charCont) {
-				headOffset.z = charCont->actorHeight * 70.0 * scale * get_natural_scale(asActor) * game_get_scale_overrides(asActor);
+				headOffset.z = charCont->actorHeight * 70.0 * scale * get_natural_scale(asActor, true);
 			}
 		}
 		return location + headOffset;

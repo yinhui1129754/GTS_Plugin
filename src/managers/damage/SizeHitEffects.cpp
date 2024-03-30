@@ -139,7 +139,7 @@ namespace {
 
 	void HitShrink(Actor* receiver, float ShrinkValue) {
 		float scale = get_target_scale(receiver);
-		float naturalscale = get_natural_scale(receiver) * game_get_scale_overrides(receiver);
+		float naturalscale = get_natural_scale(receiver, true);
 
 		float lossmod = Runtime::GetFloatOr("SizeLossModifier", 1.0);
 		float modifier = std::clamp(lossmod, 0.10f, 25.0f); // * size loss value
@@ -165,7 +165,7 @@ namespace {
 		}
 		
 		float scale = get_visual_scale(receiver);
-		float naturalscale = get_natural_scale(receiver) * game_get_scale_overrides(receiver);
+		float naturalscale = get_natural_scale(receiver, true);
 		
 		auto& sizemanager = SizeManager::GetSingleton();
 		float BalanceMode = sizemanager.BalancedMode();

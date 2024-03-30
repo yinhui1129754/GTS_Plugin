@@ -131,21 +131,35 @@ namespace Gts {
 		return -1.0;
 	}
 
-	float get_natural_scale(Actor& actor) {
+	float get_natural_scale(Actor& actor, bool game_scale) {
 		auto actor_data = Transient::GetSingleton().GetData(&actor);
 		if (actor_data) {
 		    float initialScale = GetInitialScale(&actor);
-			Actor* ref = &actor;
-			return actor_data->otherScales * initialScale;
-			// P.s: otherScales reads RaceMenu scale, so to fix it double-applying
-			// so we divide it by RaceMenu scale again inside GtsManager.cpp, update_height function through get_npcparentnode_scale() func
+			float result = actor_data->otherScales * initialScale;
+			if (game_scale) {
+				result *= game_get_scale_overrides(&actor);
+			}
+			return result;
+			// P.s: otherScales reads RaceMenu scale, so to fix it double-applying -
+			// - we divide it by RaceMenu scale again inside GtsManager.cpp, update_height function through get_npcparentnode_scale() func
+		}
+		return 1.0;
+	}
+
+	float get_natural_scale(Actor* actor, bool game_scale) {
+		return get_natural_scale(*actor, game_scale);
+	}
+
+	float get_natural_scale(Actor& actor) {
+		if (actor) {
+			return get_natural_scale(actor, false);
 		}
 		return 1.0;
 	}
 
 	float get_natural_scale(Actor* actor) {
 		if (actor) {
-			return get_natural_scale(*actor);
+			return get_natural_scale(*actor, false);
 		}
 		return 1.0;
 	}

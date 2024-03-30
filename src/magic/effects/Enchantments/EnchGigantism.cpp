@@ -1,4 +1,4 @@
-#include "magic/effects/EnchGigantism.hpp"
+#include "magic/effects/Enchantments/EnchGigantism.hpp"
 #include "magic/effects/common.hpp"
 #include "magic/magic.hpp"
 #include "scale/scale.hpp"
@@ -21,10 +21,6 @@ namespace Gts {
 		float GigantismPower = this->magnitude;
 		SizeManager::GetSingleton().ModEnchantmentBonus(caster, GigantismPower);
 	}
-
-	void Gigantism::OnUpdate() {
-	}
-
 
 	void Gigantism::OnFinish() {
 		auto caster = GetCaster();

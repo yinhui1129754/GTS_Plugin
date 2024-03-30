@@ -3,12 +3,12 @@
 #include "magic/effects/common.hpp"
 #include "magic/effects/absorb_effect.hpp"
 #include "magic/effects/GrowthSpurt.hpp"
-#include "magic/effects/EnchGigantism.hpp"
+#include "magic/effects/Enchantments/EnchGigantism.hpp"
 #include "magic/effects/grow_other.hpp"
 #include "magic/effects/growth.hpp"
 #include "magic/effects/shrink.hpp"
-#include "magic/effects/shrink_back.hpp"
-#include "magic/effects/shrink_back_other.hpp"
+#include "magic/effects/restore_size.hpp"
+#include "magic/effects/restore_size_other.hpp"
 #include "magic/effects/shrink_foe.hpp"
 #include "magic/effects/shrink_other.hpp"
 #include "magic/effects/slow_grow.hpp"
@@ -265,8 +265,8 @@ namespace Gts {
 		RegisterMagic<ShrinkOther>("ShrinkAlly");
 		RegisterMagic<ShrinkOther>("ShrinkAllyAdept");
 		RegisterMagic<ShrinkOther>("ShrinkAllyExpert");
-		RegisterMagic<ShrinkBack>("ShrinkBack");
-		RegisterMagic<ShrinkBackOther>("ShrinkBackNPC");
+		RegisterMagic<RestoreSize>("ShrinkBack");
+		RegisterMagic<RestoreSizeOther>("ShrinkBackNPC");
 		RegisterMagic<Absorb>("AbsorbMGEF");
 		RegisterMagic<Absorb>("TrueAbsorb");
 		RegisterMagic<GrowthSpurt>("GrowthSpurt1");

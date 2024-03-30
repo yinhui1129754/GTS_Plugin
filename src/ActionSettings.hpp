@@ -113,7 +113,20 @@ namespace Gts {
 
     const float Damage_Throw_Collision = 10.0f; // unused for now, buggy
 
-    
+//-----------------------------------------Default Push Power variables
+    // For crawling
+    const float Push_Crawl_HandSwipe = 0.75f;    
+    const float Push_Crawl_HandSwipe_Strong = 1.40f;   
+    // For Sneaking
+    const float Push_Sneak_HandSwipe = 1.0f;    
+    const float Push_Sneak_HandSwipe_Strong = 2.35f;   
+
+    const float Push_Kick_Normal = 0.60f;
+    const float Push_Kick_Strong = 2.40f;
+
+    // For launching objects
+    const float Push_Object_Upwards = 0.2f;
+    const float Push_Object_Forward = 0.6f;
 
 //-----------------------------------------Default effect radius variables
 

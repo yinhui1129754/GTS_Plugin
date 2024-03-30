@@ -9,11 +9,11 @@
 #include "managers/Rumble.hpp"
 
 namespace Gts {
-	std::string ShrinkBackOther::GetName() {
-		return "ShrinkBackOther";
+	std::string RestoreSizeOther::GetName() {
+		return "RestoreSizeOther";
 	}
 
-	void ShrinkBackOther::OnStart() {
+	void RestoreSizeOther::OnStart() {
 		Actor* target = GetTarget();
 		if (!target) {
 			return;
@@ -22,7 +22,7 @@ namespace Gts {
 		Runtime::PlaySound("shrinkSound", target, Volume, 1.0);
 	}
 
-	void ShrinkBackOther::OnUpdate() {
+	void RestoreSizeOther::OnUpdate() {
 		auto target = GetTarget();
 		auto caster = GetCaster();
 		if (!target || !caster) {
@@ -37,10 +37,10 @@ namespace Gts {
 		if (this->timer.ShouldRun()) {
 			float Volume = clamp(0.15, 1.0, get_visual_scale(target) * 0.1);
 			Runtime::PlaySound("shrinkSound", target, Volume, 1.0);
-			GRumble::Once("ShrinkBackOther", target, 0.6, 0.05);
+			GRumble::Once("RestoreSizeOther", target, 0.6, 0.05);
 		}
 
-		if (!Revert(target, Power, Power/2.5)) { // Returns false when shrink back is complete
+		if (!Revert(target, Power, Power/2.5)) { // Returns false when restore size is complete
 			std::string taskname = std::format("DispelShrink_{}", target->formID);
 			TaskManager::RunOnce(taskname, [=](auto& update) {
 				Dispel();

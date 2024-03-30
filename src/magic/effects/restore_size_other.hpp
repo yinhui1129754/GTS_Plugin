@@ -9,7 +9,7 @@ using namespace SKSE;
 using namespace RE;
 
 namespace Gts {
-	class ShrinkBack : public Magic {
+	class RestoreSizeOther : public Magic {
 		public:
 			using Magic::Magic;
 
@@ -18,7 +18,6 @@ namespace Gts {
 
 			virtual std::string GetName() override;
 
-		private:
 			Timer timer = Timer(2.33); // Run every 2.33s or as soon as we can
 	};
 }
