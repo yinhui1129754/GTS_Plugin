@@ -241,7 +241,7 @@ namespace Gts {
 		auto& size_method = Persistent::GetSingleton().size_method;
 		switch (size_method) {
 			case SizeMethod::ModelScale:
-				return get_model_scale(actor);
+				return get_model_scale(actor) * GetInitialScale(actor);
 				break;
 			case SizeMethod::RootScale:
 				return get_npcnode_scale(actor);

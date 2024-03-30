@@ -135,6 +135,9 @@ namespace Gts {
 		if (actor_data) {
 		    float initialScale = GetInitialScale(&actor);
 			float result = actor_data->otherScales * initialScale;
+			if (game_scale) {
+				result *= game_getactorscale(&actor);
+			}
 			return result;
 			// P.s: otherScales reads RaceMenu scale, so to fix it double-applying -
 			// - we divide it by RaceMenu scale again inside GtsManager.cpp, update_height function through get_npcparentnode_scale() func
