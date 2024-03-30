@@ -114,9 +114,14 @@ namespace {
 		}
 		float currentOtherScale = Get_Other_Scale(actor);
 		trans_actor_data->otherScales = currentOtherScale;
-		//log::info("Other Scale of {} is {}", actor->GetDisplayFullName(), currentOtherScale);
+		
 
-		float target_scale = persi_actor_data->target_scale * currentOtherScale * game_get_scale_overrides(actor);
+		float target_scale = persi_actor_data->target_scale * game_get_scale_overrides(actor);
+		if (actor->formID == 0x14) {
+			log::info("Other Scale of Player is {}", actor->GetDisplayFullName(), currentOtherScale);
+			log::info("Target Scale of Player is {}", target_scale);
+			log::info("Scale overrides: {}", game_get_scale_overrides(actor));
+		}
 
 		// Smooth target_scale towards max_scale if target_scale > max_scale
 		float max_scale = persi_actor_data->max_scale;
