@@ -39,7 +39,7 @@ namespace Gts {
 	float get_target_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			return actor_data->target_scale;// * game_get_scale_overrides(&actor);
+			return actor_data->target_scale;
 		} else {
 			return -1.0;
 		}
@@ -57,7 +57,6 @@ namespace Gts {
 		auto profiler = Profilers::Profile("Scale: ModTargetScale");
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			//amt /= game_get_scale_overrides(&actor);
 			if (amt - EPS < 0.0) {
 				// If neative change always: allow
 				actor_data->target_scale += amt;
@@ -120,7 +119,7 @@ namespace Gts {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
 			Actor* ref = &actor;
-			return actor_data->visual_scale * get_natural_scale(&actor) * game_get_scale_overrides(&actor);
+			return actor_data->visual_scale * get_natural_scale(&actor);
 		}
 		return -1.0;
 	}
@@ -136,9 +135,6 @@ namespace Gts {
 		if (actor_data) {
 		    float initialScale = GetInitialScale(&actor);
 			float result = actor_data->otherScales * initialScale;
-			//if (game_scale) {
-				//result *= game_get_scale_overrides(&actor);
-			//}
 			return result;
 			// P.s: otherScales reads RaceMenu scale, so to fix it double-applying -
 			// - we divide it by RaceMenu scale again inside GtsManager.cpp, update_height function through get_npcparentnode_scale() func
@@ -167,7 +163,7 @@ namespace Gts {
 	float get_giantess_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			float result = actor_data->visual_scale;// * game_get_scale_overrides(&actor);
+			float result = actor_data->visual_scale;
 			return result;
 		}
 		return 1.0;

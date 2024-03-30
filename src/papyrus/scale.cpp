@@ -29,9 +29,9 @@ namespace {
 		auto actor_data = Persistent::GetSingleton().GetData(actor);
 		if (actor_data) {
 			result = set_model_scale(actor, scale);
-			actor_data->visual_scale = scale * game_get_scale_overrides(actor);
+			actor_data->visual_scale = scale;
 			actor_data->visual_scale_v = 0.0;
-			actor_data->target_scale = scale * game_get_scale_overrides(actor);
+			actor_data->target_scale = scale;
 		}
 		return result;
 	}
@@ -48,9 +48,9 @@ namespace {
 		if (actor_data) {
 			auto scale = get_model_scale(actor) + amt;
 			result = set_model_scale(actor, scale);
-			actor_data->visual_scale = scale * game_get_scale_overrides(actor);
+			actor_data->visual_scale = scale;
 			actor_data->visual_scale_v = 0.0;
-			actor_data->target_scale = scale * game_get_scale_overrides(actor);
+			actor_data->target_scale = scale;
 		}
 		return result;
 	}
