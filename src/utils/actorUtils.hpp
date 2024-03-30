@@ -135,6 +135,7 @@ namespace Gts {
 	float GetProneAdjustment();
 
 	void update_target_scale(Actor* giant, float amt, SizeEffectType type);
+	float update_target_scale(Actor* giant, float amt, SizeEffectType type);
 
 
 	void SpawnActionIcon(Actor* giant);

@@ -75,27 +75,6 @@ namespace {
 
 		caster->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HpRegen * TimeScale());
 	}
-
-	float update_target_scale(Actor* giant, float amt, SizeEffectType type) {
-		bool perk = Runtime::HasPerkTeam(giant, "OnTheEdge");
-		float scale = get_visual_scale(giant);
-		float Edge = 1.0;
-		
-		if (amt > 0 && (giant->formID == 0x14 || IsTeammate(giant))) {
-			if (scale >= 1.0) {
-				amt /= GetGrowthReduction(scale); // Enabled if BalanceMode is True. Decreases Grow Efficiency.
-			}
-		} else if (amt - EPS < 0.0) {
-			// If neative change: add stolen attributes
-			DistributeStolenAttributes(giant, -amt * GetGrowthReduction(scale)); // Adjust max attributes
-		}
-		if (type == SizeEffectType::kShrink) {
-			Edge = GetPerkBonus_OnTheEdge(giant, amt);
-		}
-
-		mod_target_scale(giant, amt * Edge); // set target scale value
-		return amt * Edge;
-	}
 }
 
 namespace Gts {
