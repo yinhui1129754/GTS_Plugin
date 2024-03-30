@@ -327,9 +327,9 @@ namespace Gts {
 		if (IsBeingHeld(pred, prey)) {
 			return;
 		}
-		ShrinkUntil(pred, prey, 6.0, 0.20, true);
-
+		
 		if (GetSizeDifference(pred, prey, SizeType::VisualScale, false, false) < Action_Sandwich) {
+			ShrinkUntil(pred, prey, 6.0, 0.20, true);
 			return;
 		}
 		

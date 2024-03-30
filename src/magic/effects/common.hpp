@@ -225,10 +225,10 @@ namespace Gts {
 		// amount = scale * a + b
 		float amount = CalcPower(actor, scale_factor, bonus, false);
 		float target_scale = get_target_scale(actor);
-		float natural_scale = get_neutral_scale(actor) * game_get_scale_overrides(actor);
+		float natural_scale = game_get_scale_overrides(actor); // get_neutral_scale(actor) 
 
 		if (target_scale < natural_scale) { // NOLINT
-			set_target_scale(actor, natural_scale);
+			set_target_scale(actor, natural_scale); // Without GetScale multiplier
 			return false;
 		} else {
 			update_target_scale(actor, -amount, SizeEffectType::kNeutral);

@@ -2652,6 +2652,14 @@ namespace Gts {
 			float preyscale = get_target_scale(tiny) * Adjustment_Tiny;
 			float targetScale = predscale/(expected * Adjustment_Tiny);
 
+			log::info("Trying to Shrink {}", tiny->GetDisplayFullName());
+			log::info("----Adjustment: GTS: {}", Adjustment_Gts);
+			log::info("----Adjustment: Tiny: {}", Adjustment_Tiny);
+			log::info("----Pred scale: {}", predscale);
+			log::info("----Prey scale: {}", preyscale);
+			log::info("----Targeted Scale: {}", targetScale);
+			log::info("----Get Target Scale: {}", get_target_scale(tiny));
+
 			if (preyscale > targetScale) { // Apply ONLY if target is bigger than requirement
 
 				if (animation) {
