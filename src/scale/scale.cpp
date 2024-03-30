@@ -57,7 +57,7 @@ namespace Gts {
 		auto profiler = Profilers::Profile("Scale: ModTargetScale");
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			amt /= game_get_scale_overrides(amt);
+			amt /= game_get_scale_overrides(&actor);
 			if (amt - EPS < 0.0) {
 				// If neative change always: allow
 				actor_data->target_scale += amt;
@@ -139,8 +139,7 @@ namespace Gts {
 				result *= game_getactorscale(&actor);
 			}
 			return result;
-			// P.s: otherScales reads RaceMenu scale, so to fix it double-applying -
-			// - we divide it by RaceMenu scale again inside GtsManager.cpp, update_height function through get_npcparentnode_scale() func
+			// otherScales reads RaceMenu scale
 		}
 		return 1.0;
 	}
