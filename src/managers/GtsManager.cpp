@@ -114,16 +114,9 @@ namespace {
 		}
 		float currentOtherScale = Get_Other_Scale(actor);
 		trans_actor_data->otherScales = currentOtherScale;
+
+		float target_scale = persi_actor_data->target_scale;
 		
-		float adjustment = game_get_scale_overrides(actor);
-
-		float target_scale = persi_actor_data->target_scale * adjustment;
-		if (actor->formID == 0x14) {
-			log::info("Other Scale of Player is {}", currentOtherScale);
-			log::info("Target Scale of Player is {}", target_scale);
-			log::info("Scale overrides: {}", game_get_scale_overrides(actor));
-		}
-
 		// Smooth target_scale towards max_scale if target_scale > max_scale
 		float max_scale = persi_actor_data->max_scale;
 		if (target_scale > max_scale) {
@@ -224,14 +217,7 @@ namespace {
 
 		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
 		
-
-		if (actor->formID == 0x14) {
-			log::info("Visual Scale Of Player: {}", visual_scale);
-			log::info("Visual Scale Of Player After: {}, node scale: {}", visual_scale / get_npcparentnode_scale(actor), get_npcparentnode_scale(actor));
-			log::info("Initial Scale: {}", initialScale);
-		}
-		
-		update_model_visuals(actor, visual_scale / initialScale); // We've set the values, now update model size based on them
+		update_model_visuals(actor, visual_scale * initialScale); // We've set the values, now update model size based on them
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {
