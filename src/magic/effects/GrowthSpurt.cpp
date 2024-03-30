@@ -143,7 +143,7 @@ namespace Gts {
 	}
 
 	void GrowthSpurt::DoGrowth(Actor* actor, float value) {
-		float value = update_target_scale(actor, value, SizeEffectType::kGrow); // Grow
+		float value = get_update_target_scale(actor, value, SizeEffectType::kGrow); // Grow
 		if (SizeManager::GetSingleton().GetGrowthSpurt(actor) < (this->grow_limit - get_natural_scale(actor, true))) {
 			if (this->AllowStacking) {
 				SizeManager::GetSingleton().ModGrowthSpurt(actor, value);

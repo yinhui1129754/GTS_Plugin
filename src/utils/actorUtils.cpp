@@ -1263,7 +1263,7 @@ namespace Gts {
 		mod_target_scale(giant, amt * Edge); // set target scale value
 	}
 
-	float update_target_scale(Actor* giant, float amt, SizeEffectType type) {
+	float get_update_target_scale(Actor* giant, float amt, SizeEffectType type) {
 		bool perk = Runtime::HasPerkTeam(giant, "OnTheEdge");
 		float scale = get_visual_scale(giant);
 		float Edge = 1.0;
