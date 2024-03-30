@@ -15,9 +15,9 @@ namespace {
 				return original;      // We really want to prevent that, so we return original value.
 			}
 			float fix = original * ((get_giantess_scale(giant)) / game_getactorscale(giant)); // game_getscale() is used here, so we want to / it again
-			if (giant->formID == 0x14) {
-				log::info("headtracking value: {}", fix);
-			}
+			//if (giant->formID == 0x14) {
+				//log::info("headtracking value: {}", fix);
+			//}
 			return fix;
 			// ^ Compensate it, since SetScale() already affects HT by default
 		}
