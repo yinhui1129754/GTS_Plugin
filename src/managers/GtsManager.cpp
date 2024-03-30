@@ -115,9 +115,9 @@ namespace {
 		float currentOtherScale = Get_Other_Scale(actor);
 		trans_actor_data->otherScales = currentOtherScale;
 		
-		float adjustment = game_get_scale_overrides(actor) / get_npcparentnode_scale(actor);
+		float adjustment = game_getactorscale(actor);
 
-		float target_scale = persi_actor_data->target_scale;
+		float target_scale = persi_actor_data->target_scale * adjustment;
 		if (actor->formID == 0x14) {
 			log::info("Other Scale of Player is {}", currentOtherScale);
 			log::info("Target Scale of Player is {}", target_scale);
@@ -169,7 +169,7 @@ namespace {
 		if (fabs(target_scale - persi_actor_data->visual_scale) > 1e-5) {
 			float minimum_scale_delta = 0.000005; // 0.00005%
 			if (fabs(target_scale - persi_actor_data->visual_scale) < minimum_scale_delta) {
-				persi_actor_data->visual_scale = target_scale * adjustment;
+				persi_actor_data->visual_scale = target_scale;
 				persi_actor_data->visual_scale_v = 0.0;
 			} else {
 				critically_damped(
