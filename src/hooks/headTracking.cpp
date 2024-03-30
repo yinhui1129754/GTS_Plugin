@@ -14,7 +14,7 @@ namespace {
 			if (IsRagdolled(giant)) { // For some Bethesda™ reason - it breaks tiny ragdoll (their skeleton stretches :/) when they're small, so they fly into the sky.
 				return original;      // We really want to prevent that, so we return original value.
 			}
-			float fix = original * ((get_giantess_scale(giant) * GetInitialScale(giant)) / game_getactorscale(giant)); // game_getscale() is used here, so we want to / it again
+			float fix = original * ((get_giantess_scale(giant) * get_npcparentnode_scale(giant)) / game_getactorscale(giant)); // game_getscale() is used here, so we want to / it again
 			if (giant->formID == 0x14) {
 				log::info("headtracking value: {}", fix);
 			}

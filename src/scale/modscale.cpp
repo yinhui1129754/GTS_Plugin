@@ -1,6 +1,6 @@
 #include "managers/GtsManager.hpp"
-#include "data/persistent.hpp"
 #include "scale/modscale.hpp"
+#include "data/persistent.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
 
@@ -205,7 +205,7 @@ namespace Gts {
 		//
 		// The name of it is variable. For actors it is NPC
 		// but for others it is the creature name
-		/*string node_name = "NPC Root [Root]";
+		string node_name = "NPC Root [Root]";
 		auto childNode = find_node(actor, node_name, false);
 		if (!childNode) {
 			childNode = find_node(actor, node_name, true);
@@ -217,8 +217,7 @@ namespace Gts {
 		if (parent) {
 			return parent->local.scale;
 		}
-		return -1.0;*/ //
-		return GetInitialScale(actor);
+		return -1.0; //
 	}
 
 	float get_model_scale(Actor* actor) {
@@ -274,7 +273,7 @@ namespace Gts {
 
 	float game_get_scale_overrides(Actor* actor) { // Obtain RaceMenu * GetScale values of actor
 		auto profiler = Profilers::Profile("Game: Override");
-		return game_getactorscale(actor) * GetInitialScale(actor);
+		return game_getactorscale(actor) * get_npcparentnode_scale(actor);
 	}
 
 	float game_get_scale_overrides(Actor& actor) {
