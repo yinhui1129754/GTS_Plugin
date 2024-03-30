@@ -115,8 +115,9 @@ namespace {
 		float currentOtherScale = Get_Other_Scale(actor);
 		trans_actor_data->otherScales = currentOtherScale;
 		
+		float adjustment = game_get_scale_overrides(actor) / get_npcparentnode_scale(actor);
 
-		float target_scale = persi_actor_data->target_scale * game_getactorscale(actor) * currentOtherScale;
+		float target_scale = persi_actor_data->target_scale;
 		if (actor->formID == 0x14) {
 			log::info("Other Scale of Player is {}", currentOtherScale);
 			log::info("Target Scale of Player is {}", target_scale);
@@ -151,14 +152,14 @@ namespace {
 			if (room_scale > (currentOtherScale - 0.05)) {
 				// Only apply room scale if room_scale > natural_scale
 				//   This stops it from working when room_scale < 1.0
-				if (actor->formID == 0x14) {
+				//if (actor->formID == 0x14) {
 					//log::info("old target_scale: {}", target_scale);
 					//log::info("room_scale: {}", room_scale);
-				}
+				//}
 				target_scale = min(target_scale, room_scale);
-				if (actor->formID == 0x14) {
+				//if (actor->formID == 0x14) {
 					//log::info("new target_scale: {}", target_scale);
-				}
+				//}
 			} else {
 				// Else we just scale to natural
 				target_scale = 1.0;
@@ -168,7 +169,7 @@ namespace {
 		if (fabs(target_scale - persi_actor_data->visual_scale) > 1e-5) {
 			float minimum_scale_delta = 0.000005; // 0.00005%
 			if (fabs(target_scale - persi_actor_data->visual_scale) < minimum_scale_delta) {
-				persi_actor_data->visual_scale = target_scale;
+				persi_actor_data->visual_scale = target_scale * adjustment;
 				persi_actor_data->visual_scale_v = 0.0;
 			} else {
 				critically_damped(
@@ -224,9 +225,9 @@ namespace {
 			log::info("Visual Scale Of Player After: {}, node scale: {}", visual_scale / get_npcparentnode_scale(actor), get_npcparentnode_scale(actor));
 		}
 		//visual_scale /= get_npcparentnode_scale(actor); // FIx it being double-applied
-		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
+		//float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
 
-		update_model_visuals(actor, visual_scale / initialScale); //* initialScale); // We've set values, now update model size based on them
+		update_model_visuals(actor, visual_scale); //* initialScale); // We've set the values, now update model size based on them
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {

@@ -230,7 +230,7 @@ namespace {
 	}
 
 	float GetVisualScale(StaticFunctionTag*, Actor* actor) {
-		return get_visual_scale(actor) * game_get_scale_overrides(actor);
+		return get_visual_scale(actor);
 	}
 
 	void ModTeammateScale(StaticFunctionTag*, float amt) {
@@ -252,7 +252,7 @@ namespace {
 	}
 
 	float GetGiantessScale(StaticFunctionTag*, Actor* actor) {
-		return get_giantess_scale(actor) * game_get_scale_overrides(actor);
+		return get_giantess_scale(actor);
 	}
 }
 

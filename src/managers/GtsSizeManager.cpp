@@ -115,7 +115,7 @@ namespace Gts {
 				GetLimit = clamp(NaturalScale * NPCLimit, 99999999.0, NaturalScale + ((Runtime::GetFloat("NPCSizeLimit") - 1.0) * NaturalScale));       // Apply only if Quest is done.
 			}
 
-			float TotalLimit = (((GetLimit * Persistent_Size) * (1.0 + Gigantism))) / GameScale;
+			float TotalLimit = (((GetLimit * Persistent_Size) * (1.0 + Gigantism)));
 
 			if (get_max_scale(actor) < TotalLimit + Endless || get_max_scale(actor) > TotalLimit + Endless) {
 				set_max_scale(actor, TotalLimit);
