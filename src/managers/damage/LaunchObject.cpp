@@ -193,7 +193,7 @@ namespace Gts {
 
 				if (timepassed > 1e-4) {
 					NiPoint3 EndPos = Bone->world.translate;
-					ApplyPhysicsToObject(giantref, ref, EndPos - StartPos, force, giantScale);
+					ApplyPhysicsToObject(giantref, ref, EndPos - StartPos, start_power, giantScale);
 					return false; // end it
 				}
 				return true;
