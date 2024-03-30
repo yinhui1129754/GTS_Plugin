@@ -115,13 +115,14 @@ namespace {
 		float currentOtherScale = Get_Other_Scale(actor);
 		trans_actor_data->otherScales = currentOtherScale;
 		
-		float adjustment = game_getactorscale(actor);
+		float adjustment = game_getactorscale(actor) * currentOtherScale;
 
 		float target_scale = persi_actor_data->target_scale * adjustment;
 		if (actor->formID == 0x14) {
 			log::info("Other Scale of Player is {}", currentOtherScale);
 			log::info("Target Scale of Player is {}", target_scale);
-			log::info("Scale overrides: {}", game_get_scale_overrides(actor));
+			log::info("Scale overrides: {}", adjustment);
+			log::info("Model Scale: {}", get_model_scale(actor));
 		}
 
 		// Smooth target_scale towards max_scale if target_scale > max_scale
@@ -224,10 +225,9 @@ namespace {
 			log::info("Visual Scale Of Player: {}", visual_scale);
 			log::info("Visual Scale Of Player After: {}, node scale: {}", visual_scale / get_npcparentnode_scale(actor), get_npcparentnode_scale(actor));
 		}
-		//visual_scale /= get_npcparentnode_scale(actor); // FIx it being double-applied
-		//float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits, fix double scaling from RaceMenu
+		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits, fix double scaling from RaceMenu
 
-		update_model_visuals(actor, visual_scale); 
+		update_model_visuals(actor, visual_scale/initialScale); 
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {

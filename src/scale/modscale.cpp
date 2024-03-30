@@ -205,7 +205,7 @@ namespace Gts {
 		//
 		// The name of it is variable. For actors it is NPC
 		// but for others it is the creature name
-		string node_name = "NPC Root [Root]";
+		/*string node_name = "NPC Root [Root]";
 		auto childNode = find_node(actor, node_name, false);
 		if (!childNode) {
 			childNode = find_node(actor, node_name, true);
@@ -217,7 +217,8 @@ namespace Gts {
 		if (parent) {
 			return parent->local.scale;
 		}
-		return -1.0; //
+		return -1.0;*/ //
+		return GetInitialScale(actor);
 	}
 
 	float get_model_scale(Actor* actor) {
@@ -241,7 +242,7 @@ namespace Gts {
 		auto& size_method = Persistent::GetSingleton().size_method;
 		switch (size_method) {
 			case SizeMethod::ModelScale:
-				return get_model_scale(actor) * GetInitialScale(actor);
+				return get_model_scale(actor);
 				break;
 			case SizeMethod::RootScale:
 				return get_npcnode_scale(actor);
@@ -273,7 +274,7 @@ namespace Gts {
 
 	float game_get_scale_overrides(Actor* actor) { // Obtain RaceMenu * GetScale values of actor
 		auto profiler = Profilers::Profile("Game: Override");
-		return game_getactorscale(actor) * get_npcparentnode_scale(actor);
+		return game_getactorscale(actor) * GetInitialScale(actor);
 	}
 
 	float game_get_scale_overrides(Actor& actor) {

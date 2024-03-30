@@ -201,7 +201,7 @@ namespace Gts {
 			}
 		}
 		//log::info("Base HHOffset: {}", Vector2Str(result));
-		auto npcNodeScale = get_npcparentnode_scale(actor);
+		auto npcNodeScale = GetInitialScale(actor);
 
 		auto& me = HighHeelManager::GetSingleton();
 		me.data.try_emplace(actor);
