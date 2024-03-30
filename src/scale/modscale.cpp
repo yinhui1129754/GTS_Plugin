@@ -130,8 +130,6 @@ namespace Gts {
 		}
 		bool result = false;
 
-		//target_scale *= game_get_scale_overrides(actor);
-
     	UpdateInitScale(actor); // This will update the inital scales BEFORE we alter them
 
 		auto model = actor->Get3D(false);
