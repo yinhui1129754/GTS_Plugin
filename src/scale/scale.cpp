@@ -39,7 +39,7 @@ namespace Gts {
 	float get_target_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			return actor_data->target_scale;
+			return actor_data->target_scale * game_get_scale_overrides(&actor);
 		} else {
 			return -1.0;
 		}

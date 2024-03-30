@@ -66,8 +66,7 @@ namespace Gts {
 			return;
 		}
 		static Timer warningtimer = Timer(3.0);
-		float CasterScale = get_target_scale(caster);
-		float naturalscale = get_natural_scale(caster, true);
+		float CasterScale = get_giantess_scale(caster);
 		float bonus = GetSMTBonus(caster);
 		float penalty = GetSMTPenalty(caster);
 		if (bonus > 0.5) {
@@ -79,9 +78,9 @@ namespace Gts {
 			GetActiveEffect()->duration -= penalty;
 			NullifySMTDuration(caster);
 		}
-		if (CasterScale < naturalscale) {// Disallow to be smaller than natural scale to avoid weird interactions with others
-			set_target_scale(caster, get_natural_scale(caster));
-		} else if (CasterScale >= naturalscale * 1.50) {
+		if (CasterScale < 1.5) {// Disallow to be smaller than 1.5 to avoid weird interactions with others
+			set_target_scale(caster, 1.5/game_get_scale_overrides(caster));
+		} else if (CasterScale > 1.50) {
 			update_target_scale(caster, -0.0300, SizeEffectType::kNeutral);
 			if (warningtimer.ShouldRun() && caster->formID == 0x14) {
 				Notify("Im getting too big, it becomes hard to handle such power.");

@@ -125,12 +125,10 @@ namespace Gts {
 		float giantScale = get_visual_scale(actor) * GetSizeFromBoundingBox(actor);
 		float BASE_CHECK_DISTANCE = 120.0;
 		float SCALE_RATIO = 1.15;
-		float Calamity = 1.0;
 		bool SMT = HasSMT(actor);
 		if (SMT) {
 			giantScale += 0.20;
 			SCALE_RATIO = 0.7;
-			Calamity = 3.0;
 		}
 
 		// Get world HH offset
@@ -211,7 +209,6 @@ namespace Gts {
 
 						if ((actorLocation-giantLocation).Length() < BASE_CHECK_DISTANCE*giantScale) {
 							// Check the tiny's nodes against the giant's foot points
-							bool DoDamage = true;
 							int nodeCollisions = 0;
 							float force = 0.0;
 
@@ -219,15 +216,9 @@ namespace Gts {
 
 							if (model) {
 								for (auto point: footPoints) {
-									VisitNodes(model, [&nodeCollisions, &force, &Calamity, &DoDamage, point, maxFootDistance](NiAVObject& a_obj) {
+									VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
 										if (distance < maxFootDistance) {
-											log::info("Distance: {} ; MaxFootDistance: {}", distance, maxFootDistance);
-											if (distance > maxFootDistance/Calamity) {
-												log::info("Calamity Distance: {} ; MaxFootDistance: {}", distance, maxFootDistance/Calamity);
-												log::info("Damage is false");
-												DoDamage = false; // Make Tiny Calamity do no damage outside of damage zone
-											}
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;
 										}
@@ -246,12 +237,12 @@ namespace Gts {
 									bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
 									if (!OnCooldown) {
 										Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
-										CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, DoDamage);
+										CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, true);
 										ApplyActionCooldown(otherActor, CooldownSource::Damage_Thigh);
 									}
 								} else {
 									Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
-									CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, DoDamage);
+									CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, true);
 								}
 							}
 						}
@@ -309,7 +300,7 @@ namespace Gts {
 
 		damage_result *= Might;
 
-		TinyCalamity_ShrinkActor(giant, tiny, damage_result * GetDamageSetting());
+		TinyCalamity_ShrinkActor(giant, tiny, damage_result * 0.10 * GetDamageSetting());
 
 		if (giant->IsSneaking()) {
 			damage_result *= 0.70;

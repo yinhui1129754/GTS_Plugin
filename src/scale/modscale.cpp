@@ -273,8 +273,8 @@ namespace Gts {
 
 	float game_get_scale_overrides(Actor* actor) { // Obtain RaceMenu * GetScale values of actor
 		auto profiler = Profilers::Profile("Game: Override");
-		log::info("Getting Natural Scale of {}: {}", actor->GetDisplayFullName(), get_natural_scale(actor));
-		log::info("Game Override Result for {}: {}", actor->GetDisplayFullName(), game_getactorscale(actor) * get_natural_scale(actor));
+		//log::info("Getting Natural Scale of {}: {}", actor->GetDisplayFullName(), get_natural_scale(actor));
+		//log::info("Game Override Result for {}: {}", actor->GetDisplayFullName(), game_getactorscale(actor) * get_natural_scale(actor));
 		return game_getactorscale(actor) * get_natural_scale(actor);
 	}
 
