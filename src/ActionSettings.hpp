@@ -115,14 +115,14 @@ namespace Gts {
 
 //-----------------------------------------Default Push Power variables
     // For crawling
-    const float Push_Crawl_HandSwipe = 0.75f;    
-    const float Push_Crawl_HandSwipe_Strong = 1.40f;   
+    const float Push_Crawl_HandSwipe = 1.25f;    
+    const float Push_Crawl_HandSwipe_Strong = 2.80f;   
     // For Sneaking
-    const float Push_Sneak_HandSwipe = 1.0f;    
-    const float Push_Sneak_HandSwipe_Strong = 2.35f;   
+    const float Push_Sneak_HandSwipe = 1.6f;    
+    const float Push_Sneak_HandSwipe_Strong = 340f;   
 
-    const float Push_Kick_Normal = 0.60f;
-    const float Push_Kick_Strong = 2.40f;
+    const float Push_Kick_Normal = 1.80f;
+    const float Push_Kick_Strong = 3.80f;
 
     // For launching objects
     const float Push_Object_Upwards = 0.2f;

@@ -85,7 +85,7 @@ namespace Gts {
 
 			float GameScale = game_get_scale_overrides(actor);
 
-			float NaturalScale = get_neutral_scale(actor) * GameScale;
+			float NaturalScale = get_neutral_scale(actor);
 			float Gigantism = Ench_Aspect_GetPower(actor);
 
 			float QuestStage = Runtime::GetStage("MainQuest");

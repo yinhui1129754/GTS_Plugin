@@ -209,9 +209,6 @@ namespace Gts {
 					if (giantScale / tinyScale > SCALE_RATIO) {
 						NiPoint3 actorLocation = otherActor->GetPosition();
 
-						// This function is needed to Shrinking actors around foot. Mostly a duplicate of this function but without the damage
-						// Can't do size damage debuff
-
 						if ((actorLocation-giantLocation).Length() < BASE_CHECK_DISTANCE*giantScale) {
 							// Check the tiny's nodes against the giant's foot points
 							bool DoDamage = true;
@@ -224,10 +221,12 @@ namespace Gts {
 								for (auto point: footPoints) {
 									VisitNodes(model, [&nodeCollisions, &force, &Calamity, &DoDamage, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
-										if (distance < maxFootDistance * Calamity) {
+										if (distance < maxFootDistance) {
+											log::info("Distance: {} ; MaxFootDistance: {}", distance, maxFootDistance);
 											if (distance > maxFootDistance/Calamity) {
+												log::info("Calamity Distance: {} ; MaxFootDistance: {}", distance, maxFootDistance/Calamity);
 												log::info("Damage is false");
-												DoDamage = false;
+												DoDamage = false; // Make Tiny Calamity do no damage outside of damage zone
 											}
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;

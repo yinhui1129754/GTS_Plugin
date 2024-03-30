@@ -50,7 +50,7 @@ namespace {
 	}
 
 	float Get_Growth_Limit(Actor* giant, int rank) {
-		float basic = 1.0;
+		float basic = 1.0 * get_natural_scale(giant, true);
 		float bonus = 0.0;
 
 		if (rank == 1) {

@@ -265,8 +265,8 @@ namespace Gts {
 		RegisterMagic<ShrinkOther>("ShrinkAlly");
 		RegisterMagic<ShrinkOther>("ShrinkAllyAdept");
 		RegisterMagic<ShrinkOther>("ShrinkAllyExpert");
-		RegisterMagic<RestoreSize>("ShrinkBack");
-		RegisterMagic<RestoreSizeOther>("ShrinkBackNPC");
+		RegisterMagic<RestoreSize>("RestoreSize");
+		RegisterMagic<RestoreSizeOther>("RestoreSizeNPC");
 		RegisterMagic<Absorb>("AbsorbMGEF");
 		RegisterMagic<Absorb>("TrueAbsorb");
 		RegisterMagic<GrowthSpurt>("GrowthSpurt1");
