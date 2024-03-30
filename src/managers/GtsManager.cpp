@@ -115,7 +115,7 @@ namespace {
 		float currentOtherScale = Get_Other_Scale(actor);
 		trans_actor_data->otherScales = currentOtherScale;
 		
-		float adjustment = game_getactorscale(actor);
+		float adjustment = game_get_scale_overrides(actor);
 
 		float target_scale = persi_actor_data->target_scale * adjustment;
 		if (actor->formID == 0x14) {
@@ -129,7 +129,12 @@ namespace {
 		if (target_scale > max_scale) {
 			float minimum_scale_delta = 0.000005; // 0.00005%
 			if (fabs(target_scale - max_scale) < minimum_scale_delta) {
-				persi_actor_data->target_scale = max_scale;
+				float target = max_scale;
+				if (target < max_scale*adjustment) { // Rough RaceMenu * GetScale fix
+					target = currentOtherScale * adjustment;
+					log::info("Targeting max scale / adjustment");
+				}
+				persi_actor_data->target_scale = target;
 				persi_actor_data->target_scale_v = 0.0;
 			} else {
 				critically_damped(
@@ -229,9 +234,8 @@ namespace {
 			log::info("Visual Scale Of Player After: {}, node scale: {}", visual_scale / get_npcparentnode_scale(actor), get_npcparentnode_scale(actor));
 			log::info("Initial Scale: {}", initialScale);
 		}
-		//visual_scale /= get_npcparentnode_scale(actor); // FIx it being double-applied
 		
-		update_model_visuals(actor, visual_scale); //* initialScale); // We've set the values, now update model size based on them
+		update_model_visuals(actor, visual_scale / initialScale); // We've set the values, now update model size based on them
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {
