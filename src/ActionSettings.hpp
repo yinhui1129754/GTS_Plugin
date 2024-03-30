@@ -119,7 +119,7 @@ namespace Gts {
     const float Push_Crawl_HandSwipe_Strong = 2.80f;   
     // For Sneaking
     const float Push_Sneak_HandSwipe = 1.6f;    
-    const float Push_Sneak_HandSwipe_Strong = 340f;   
+    const float Push_Sneak_HandSwipe_Strong = 3.40f;   
 
     const float Push_Kick_Normal = 1.80f;
     const float Push_Kick_Strong = 3.80f;
