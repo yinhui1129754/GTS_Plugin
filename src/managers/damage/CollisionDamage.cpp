@@ -222,7 +222,7 @@ namespace Gts {
 
 							if (model) {
 								for (auto point: footPoints) {
-									VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
+									VisitNodes(model, [&nodeCollisions, &force, &Calamity, &DoDamage, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
 										if (distance < maxFootDistance * Calamity) {
 											if (distance > maxFootDistance/Calamity) {
