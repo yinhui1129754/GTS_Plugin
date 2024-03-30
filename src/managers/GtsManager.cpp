@@ -115,7 +115,7 @@ namespace {
 		float currentOtherScale = Get_Other_Scale(actor);
 		trans_actor_data->otherScales = currentOtherScale;
 		
-		float adjustment = game_getactorscale(actor);
+		float adjustment = game_getactorscale(actor) * currentOtherScale;
 
 		float target_scale = persi_actor_data->target_scale * adjustment;
 		if (actor->formID == 0x14) {
@@ -225,9 +225,9 @@ namespace {
 			log::info("Visual Scale Of Player After: {}, node scale: {}", visual_scale / get_npcparentnode_scale(actor), get_npcparentnode_scale(actor));
 		}
 		//visual_scale /= get_npcparentnode_scale(actor); // FIx it being double-applied
-		//float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
+		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits, fix double scaling from RaceMenu
 
-		update_model_visuals(actor, visual_scale); //* initialScale); // We've set the values, now update model size based on them
+		update_model_visuals(actor, visual_scale / initialScale); 
 	}
 
 	void apply_speed(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data, bool force = false) {
