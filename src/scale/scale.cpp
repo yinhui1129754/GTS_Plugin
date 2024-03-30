@@ -120,7 +120,7 @@ namespace Gts {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
 			Actor* ref = &actor;
-			return actor_data->visual_scale * get_natural_scale(actor) * game_get_scale_overrides(&actor);
+			return actor_data->visual_scale * get_natural_scale(&actor) * game_get_scale_overrides(&actor);
 		}
 		return -1.0;
 	}
@@ -150,12 +150,14 @@ namespace Gts {
 		if (actor) {
 			return get_natural_scale(*actor, game_scale);
 		}
+		return 1.0;
 	}
 
 	float get_natural_scale(Actor* actor) {
 		if (actor) {
 			return get_natural_scale(*actor, false);
 		}
+		return 1.0;
 	}
 
 	float get_neutral_scale(Actor* actor) {
