@@ -168,13 +168,13 @@ namespace Gts {
 			float result = actor_data->visual_scale * game_get_scale_overrides(&actor);
 			return result;
 		}
-		return 1.0;
+		return -1.0;
 	}
 	float get_giantess_scale(Actor* actor) {
 		if (actor) {
 			return get_giantess_scale(*actor);
 		}
-		return 1.0;
+		return -1.0;
 	}
 
 }
