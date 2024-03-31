@@ -29,6 +29,24 @@ using namespace SKSE;
 using namespace RE;
 using namespace Gts;
 
+/*
+
+GTS_CustomDamage_Butt_ON
+GTS_CustomDamage_Butt_OFF
+
+GTS_CustomDamage_Legs_ON
+GTS_CustomDamage_Legs_OFF
+
+GTS_CustomDamage_FullBody_ON
+GTS_CustomDamage_FullBody_OFF
+
+GTS_CustomDamage_Cleavage_ON
+GTS_CustomDamage_Cleavage_OFF
+
+ ^ List of custom anims for modders to utilize
+
+*/
+
 namespace {
 	const std::string_view RNode = "NPC R Foot [Rft ]";
 	const std::string_view LNode = "NPC L Foot [Lft ]";

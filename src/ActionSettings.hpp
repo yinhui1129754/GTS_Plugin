@@ -121,8 +121,8 @@ namespace Gts {
     const float Push_Sneak_HandSwipe = 1.6f;    
     const float Push_Sneak_HandSwipe_Strong = 3.40f;   
 
-    const float Push_Kick_Normal = 1.80f;
-    const float Push_Kick_Strong = 3.80f;
+    const float Push_Kick_Normal = 2.20f;
+    const float Push_Kick_Strong = 4.40f;
 
     // For launching objects
     const float Push_Object_Upwards = 0.2f;

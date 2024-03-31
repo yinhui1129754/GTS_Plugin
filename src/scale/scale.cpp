@@ -40,7 +40,7 @@ namespace Gts {
 	float get_target_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			return actor_data->target_scale * game_get_scale_overrides(&actor);
+			return actor_data->target_scale * get_natural_scale(&actor, true);
 		} else {
 			return -1.0;
 		}
@@ -58,7 +58,7 @@ namespace Gts {
 		auto profiler = Profilers::Profile("Scale: ModTargetScale");
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			amt /= game_get_scale_overrides(&actor);
+			amt /= get_natural_scale(&actor, true);
 			if (amt - EPS < 0.0) {
 				// If neative change always: allow
 				actor_data->target_scale += amt;
@@ -166,7 +166,8 @@ namespace Gts {
 	float get_giantess_scale(Actor& actor) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			float result = actor_data->visual_scale * game_get_scale_overrides(&actor);
+			float result = actor_data->visual_scale * get_natural_scale(&actor, true);
+			// Sadly had to add natural scale to it so it will respect GetScale * RaceMenu alterations
 			return result;
 		}
 		return -1.0;

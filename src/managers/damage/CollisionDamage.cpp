@@ -125,10 +125,13 @@ namespace Gts {
 		float giantScale = get_visual_scale(actor) * GetSizeFromBoundingBox(actor);
 		float BASE_CHECK_DISTANCE = 120.0;
 		float SCALE_RATIO = 1.15;
+		float Calamity = 1.0;
+
 		bool SMT = HasSMT(actor);
 		if (SMT) {
 			giantScale += 0.20;
 			SCALE_RATIO = 0.7;
+			Calamity = 3.0; // larger range for shrinking radius with Tiny Calamity
 		}
 
 		// Get world HH offset
@@ -210,17 +213,21 @@ namespace Gts {
 						if ((actorLocation-giantLocation).Length() < BASE_CHECK_DISTANCE*giantScale) {
 							// Check the tiny's nodes against the giant's foot points
 							int nodeCollisions = 0;
+							bool DoDamage = true;
 							float force = 0.0;
 
 							auto model = otherActor->GetCurrent3D();
 
 							if (model) {
 								for (auto point: footPoints) {
-									VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
+									VisitNodes(model, [&nodeCollisions, &Calamity, &DoDamage, &force, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
 										if (distance < maxFootDistance) {
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;
+										} else if (distance < maxFootDistance*Calamity) {
+											DoDamage = false;
+											log::info("Damage False");
 										}
 										return true;
 									});
@@ -237,12 +244,12 @@ namespace Gts {
 									bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
 									if (!OnCooldown) {
 										Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
-										CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, true);
+										CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, DoDamage);
 										ApplyActionCooldown(otherActor, CooldownSource::Damage_Thigh);
 									}
 								} else {
 									Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
-									CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, true);
+									CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, DoDamage);
 								}
 							}
 						}
