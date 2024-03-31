@@ -119,7 +119,7 @@ namespace Gts {
     const float Push_Crawl_HandSwipe_Strong = 2.80f;   
     // For Sneaking
     const float Push_Sneak_HandSwipe = 1.6f;    
-    const float Push_Sneak_HandSwipe_Strong = 4.20f;   
+    const float Push_Sneak_HandSwipe_Strong = 6.0f;   // Larger value because of anim speed by default
 
     const float Push_Kick_Normal = 2.20f;
     const float Push_Kick_Strong = 4.40f;
@@ -136,7 +136,7 @@ namespace Gts {
     const float Radius_Default_Idle = 6.2f;
 
     const float Radius_Walk_Default = 6.6f;
-    const float Radius_Jump_Default = 18.0f; 
+    const float Radius_Jump_Default = 20.0f; 
 
     const float Radius_Stomp = 6.6f;
     const float Radius_Stomp_Strong = 7.0f;
