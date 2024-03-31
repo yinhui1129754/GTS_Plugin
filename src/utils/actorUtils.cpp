@@ -1044,8 +1044,9 @@ namespace Gts {
 		}
 
 		float Difference = GiantScale/TinyScale;
-
-		//log::info("Size Difference between {} and {} is {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName(), Difference);
+		if (giant->formID == 0x14) {
+			log::info("Size Difference between {} and {} is {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName(), Difference);
+		}
 
 		return Difference;
 	}
