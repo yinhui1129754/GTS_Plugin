@@ -216,7 +216,7 @@ namespace {
 		}
 
 		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
-		float GameScale = game_getactorscale(actor); // * by GetScale
+		float GameScale = 1.0; //game_getactorscale(actor); // * by GetScale
 		
 		update_model_visuals(actor, visual_scale * initialScale * GameScale); // We've set the values, now update model size based on them
 	}
