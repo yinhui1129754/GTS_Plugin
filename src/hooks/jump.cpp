@@ -31,7 +31,7 @@ namespace {
 				};
 
 				SpawnParticle(actor, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), pos, size * power * 2.0, 7, nullptr);
-				PushObjectsUpwards(actor, position, stagger_radius * size * Might * power, 0.90 * power); // Launch cabbages and stuff up
+				PushObjectsUpwards(actor, position, stagger_radius * size * Might * power, 1.25 * power); // Launch cabbages and stuff up
 				StaggerActor_Around(actor, stagger_radius * Might, true); // Launch actors up, Radius is scaled inside the function
 
 				log::info("Jump Power: {}", power);

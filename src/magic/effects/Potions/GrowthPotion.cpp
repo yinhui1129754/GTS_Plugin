@@ -1,5 +1,6 @@
 #include "managers/GtsManager.hpp"
 #include "magic/effects/Potions/GrowthPotion.hpp"
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "magic/effects/common.hpp"
 #include "magic/magic.hpp"
 #include "scale/scale.hpp"
@@ -44,6 +45,11 @@ namespace Gts {
 		}
 
 		if (this->power >= 2.0) {
+			bool Blocked = IsActionOnCooldown(caster, CooldownSource::Emotion_Moan);
+			if (!Blocked) {
+				PlayMoanSound(caster, 1.0, 1);
+				ApplyActionCooldown(caster, CooldownSource::Emotion_Moan);
+			}
 			if (caster->formID == 0x14) {
 				shake_camera(caster, 0.50, 0.33);
 			}

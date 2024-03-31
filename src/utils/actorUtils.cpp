@@ -323,7 +323,7 @@ namespace Gts {
 
 	void PlayMoanSound(Actor* actor, float volume) {
 		if (IsFemale(actor) && IsHuman(actor)) {
-			float falloff = 0.9 * get_visual_scale(actor);
+			float falloff = 0.11 * get_visual_scale(actor);
 			Runtime::PlaySoundAtNode_FallOff("MoanSound", actor, volume, 1.0, "NPC Head [Head]", falloff);
 		}
 	}
