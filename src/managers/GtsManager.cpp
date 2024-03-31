@@ -306,7 +306,7 @@ void GtsManager::Update() {
 	UpdateFalling();
 	ManageActorControl();
 
-	for (auto actor: find_actors()) {
+	for (auto actor: FindSomeActors("ManagerActors", 2)) {// find_actors()) {
 		if (!actor) {
 			return; 
 		}

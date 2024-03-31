@@ -134,21 +134,21 @@ namespace Gts {
 
 //-----------------------------------------Default effect radius variables
 
-    const float Radius_Default_Idle = 6.2f;
+    const float Radius_Default_Idle = 6.4f;
 
-    const float Radius_Walk_Default = 6.6f;
+    const float Radius_Walk_Default = 7.0f;
     const float Radius_Jump_Default = 20.0f; 
 
-    const float Radius_Stomp = 6.6f;
-    const float Radius_Stomp_Strong = 7.0f;
+    const float Radius_Stomp = 6.8f;
+    const float Radius_Stomp_Strong = 7.4f;
 
     /////////Foot Grind
-    const float Radius_Foot_Grind_Impact = 7.2f;
+    const float Radius_Foot_Grind_Impact = 7.4f;
     const float Radius_Foot_Grind_DOT = 9.0f;
 
     /////////Foot Trample
-    const float Radius_Trample = 6.6f;
-    const float Radius_Trample_Repeat = 6.8f;
+    const float Radius_Trample = 7.0f;
+    const float Radius_Trample_Repeat = 7.2f;
     const float Radius_Trample_Finisher = 7.6f;
 
     /////////Butt Crush
