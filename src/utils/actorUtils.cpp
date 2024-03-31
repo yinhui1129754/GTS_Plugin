@@ -1497,8 +1497,8 @@ namespace Gts {
 			if (ai) {
 				if (receiver->Is3DLoaded()) {
 					if (source->Is3DLoaded()) {
-						NiPoint3 direction = NiPoint3();//receiver->GetPosition() - source->GetPosition();
-						//direction = direction / direction.Length();
+						NiPoint3 direction = receiver->GetPosition() - source->GetPosition();
+						direction = direction / direction.Length();
 						typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
 						REL::Relocation<DefPushActorAway> RealPushActorAway{ RELOCATION_ID(38858, 39895) };
 						RealPushActorAway(ai, receiver, direction, afKnockBackForce);
@@ -2260,7 +2260,7 @@ namespace Gts {
 			shrinkpower *= 1.40;
 		}
 
-		update_target_scale(tiny, -(shrinkpower * gigantism), SizeEffectType::kShrink);
+		//update_target_scale(tiny, -(shrinkpower * gigantism), SizeEffectType::kShrink);
 		Attacked(tiny, giant);
 
 		ModSizeExperience(giant, (shrinkpower * gigantism) * 0.80);

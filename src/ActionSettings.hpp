@@ -9,6 +9,7 @@ using namespace SKSE;
 namespace Gts {
 //-----------------------------------------Size Limits
     const float Minimum_Actor_Scale = 0.04f;
+    const float Minimum_Actor_Crush_Scale_Idle = 16.0f; // x16.0 crush threshold for just standing still
 //-----------------------------------------Default Trigger Threshold Values
     const float Action_Sandwich = 6.0f; // used for sandwich only
 	const float Action_Crush = 10.0f;

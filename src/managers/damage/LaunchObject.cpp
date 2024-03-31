@@ -100,6 +100,10 @@ namespace Gts {
 		}
 		std::vector<ObjectRefHandle> Refs = GetNearbyObjects(giant);
 
+		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
+			DebugAPI::DrawSphere(glm::vec3(footPoints[0].x, footPoints[0].y, footPoints[0].z), maxFootDistance, 600, {0.0, 1.0, 0.0, 1.0});
+		}
+
         for (auto object: Refs) {
 			if (object) {
 				auto objectref = object.get().get();
