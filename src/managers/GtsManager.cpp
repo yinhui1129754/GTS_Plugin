@@ -300,8 +300,14 @@ void GtsManager::Start() {
 }
 
 // Poll for updates
-void GtsManager::HavokUpdate() {
+void GtsManager::Update() {
 	auto profiler = Profilers::Profile("Manager: Update()");
+
+	static Timer UpdateTimer = Timer(0.0167);
+
+	if (!UpdateTimer.ShouldRunFrame()) {
+		return;
+	}
 
 	UpdateFalling();
 	ManageActorControl();
