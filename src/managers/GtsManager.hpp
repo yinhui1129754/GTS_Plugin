@@ -30,7 +30,7 @@ namespace Gts {
 
 			virtual std::string DebugName() override;
 			virtual void Start() override;
-			virtual void Update() override;
+			virtual void CameraUpdate() override;
 
 			// Reapply changes (used after reload events)
 			void reapply(bool force = true);

@@ -300,7 +300,7 @@ void GtsManager::Start() {
 }
 
 // Poll for updates
-void GtsManager::Update() {
+void GtsManager::CameraUpdate() {
 	auto profiler = Profilers::Profile("Manager: Update()");
 
 	UpdateFalling();
