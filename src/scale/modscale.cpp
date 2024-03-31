@@ -132,10 +132,6 @@ namespace Gts {
 			return false;
 		}
 
-		if (Runtime::GetFloatOr("cameraAlternateX", 1.0) != 2.0) {
-			return false;
-		}
-
 		bool result = false;
 
     	UpdateInitScale(actor); // This will update the inital scales BEFORE we alter them
@@ -147,11 +143,13 @@ namespace Gts {
 			update_node(model);
 		}
 
-		auto first_model = actor->Get3D(true);
-		if (first_model) {
-			result = true;
-			first_model->local.scale = target_scale;
-			update_node(first_model);
+		if (actor->formID == 0x14) { // Player Exclusive
+			auto first_model = actor->Get3D(true);
+			if (first_model) {
+				result = true;
+				first_model->local.scale = target_scale;
+				update_node(first_model);
+			}
 		}
 		return result;
 	}
