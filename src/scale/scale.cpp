@@ -137,7 +137,7 @@ namespace Gts {
 		    float initialScale = GetInitialScale(&actor);
 			float result = actor_data->otherScales * initialScale;
 			if (game_scale) {
-				result *= game_getactorscale(&actor);
+				//result *= game_getactorscale(&actor);
 			}
 			return result;
 			// otherScales reads RaceMenu scale

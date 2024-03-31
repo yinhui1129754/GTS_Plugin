@@ -117,7 +117,7 @@ namespace Gts {
 				float damage = LAUNCH_DAMAGE * sizeRatio * force * DamageMult;
 				InflictSizeDamage(giant, tiny, damage);
 				if (OwnsPerk) { // Apply only when we have DisastrousTremor perk
-					update_target_scale(tiny, -(damage / 500) * GetDamageSetting(), SizeEffectType::kShrink);
+					update_target_scale(tiny, -(damage / 1500) * GetDamageSetting(), SizeEffectType::kShrink);
 
 					if (get_target_scale(tiny) < 0.12/Adjustment) {
 						set_target_scale(tiny, 0.12/Adjustment);
