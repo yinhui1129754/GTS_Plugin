@@ -143,14 +143,13 @@ namespace Gts {
 			update_node(model);
 		}
 
-		if (actor->formID == 0x14) { // Player Exclusive
-			auto first_model = actor->Get3D(true);
-			if (first_model) {
-				result = true;
-				first_model->local.scale = target_scale;
-				update_node(first_model);
-			}
+		auto first_model = actor->Get3D(true);
+		if (first_model) {
+			result = true;
+			first_model->local.scale = target_scale;
+			update_node(first_model);
 		}
+		
 		return result;
 	}
 
