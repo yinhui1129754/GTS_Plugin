@@ -27,13 +27,10 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
-	void StaggerImmunity(Actor* attacker, Actor* receiver) {
+	void Prevent_Stagger(Actor* attacker, Actor* receiver) {
 		float sizedifference = GetSizeDifference(receiver, attacker, SizeType::GiantessScale, true, true);
-		auto charCont = receiver->GetCharController();
-		if (charCont) {
-			receiver->SetGraphVariableFloat("GiantessScale", sizedifference); // Manages Stagger Resistance inside Behaviors.
-			// Prevent stagger anims from playing on GTS, Behaviors read GiantessScale value and disallow stagger is value is > 1.5
-		}
+		receiver->SetGraphVariableFloat("GiantessScale", sizedifference); // Manages Stagger Resistance inside Behaviors.
+		// Prevent stagger anims from playing on GTS, Behaviors read GiantessScale value and disallow stagger if value is > 1.5
 	}
 
 	void TinyAsShield(Actor* receiver, float a_damage) {
@@ -213,7 +210,7 @@ namespace Gts {
 	void SizeHitEffects::ApplyEverything(Actor* attacker, Actor* receiver, float damage) {
 		ApplyHitGrowth(attacker, receiver, damage);
 		ApplyToTinies(attacker, receiver, damage);
-		StaggerImmunity(attacker, receiver);
+		Prevent_Stagger(attacker, receiver);
 	}
 
 	void SizeHitEffects::BreakBones(Actor* giant, Actor* tiny, float damage, int random) { // Used as a debuff

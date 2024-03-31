@@ -131,7 +131,7 @@ namespace Gts {
 		if (SMT) {
 			giantScale += 0.20;
 			SCALE_RATIO = 0.7;
-			Calamity = 3.0; // larger range for shrinking radius with Tiny Calamity
+			Calamity = 4.0; // larger range for shrinking radius with Tiny Calamity
 		}
 
 		// Get world HH offset
@@ -206,7 +206,7 @@ namespace Gts {
 			NiPoint3 giantLocation = actor->GetPosition();
 			for (auto otherActor: find_actors()) {
 				if (otherActor != actor) {
-					float tinyScale = get_visual_scale(otherActor);
+					float tinyScale = get_visual_scale(otherActor) * GetSizeFromBoundingBox(otherActor);
 					if (giantScale / tinyScale > SCALE_RATIO) {
 						NiPoint3 actorLocation = otherActor->GetPosition();
 
@@ -225,10 +225,12 @@ namespace Gts {
 										if (distance < maxFootDistance) {
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;
+											return false;
 										} else if (distance > maxFootDistance && distance < maxFootDistance*Calamity) {
 											nodeCollisions += 1;
 											DoDamage = false;
 											log::info("Damage False");
+											return false;
 										}
 										return true;
 									});
@@ -315,7 +317,7 @@ namespace Gts {
 		SizeHitEffects::GetSingleton().BreakBones(giant, tiny, damage_result * bbmult, random);
 		// ^ Chance to break bonues and inflict additional damage, as well as making target more vulerable to size damage
 
-		if (!tiny->IsDead()) {
+		if (!tiny->IsDead() && apply_damage) {
 			float experience = std::clamp(damage_result/500, 0.0f, 0.05f);
 			ModSizeExperience(giant, experience);
 		}

@@ -26,7 +26,7 @@ namespace Gts {
 		float power = BASE_POWER * SkillMult;
 
 		float bonus = 1.0;
-		if (Runtime::HasMagicEffect(PlayerCharacter::GetSingleton(), "EffectSizeAmplifyPotion")) {
+		if (Runtime::HasMagicEffect(caster, "EffectSizeAmplifyPotion")) {
 			bonus = get_visual_scale(caster) * 0.25 + 0.75;
 		}
 

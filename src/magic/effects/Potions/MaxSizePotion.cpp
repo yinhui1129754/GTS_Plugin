@@ -44,6 +44,7 @@ namespace Gts {
 		auto caster = GetCaster();
 		if (caster) {
 			BonusMaxSize_Modify(caster, this->Power);
+			Potion_Penalty(caster);
 		}
 	}
 

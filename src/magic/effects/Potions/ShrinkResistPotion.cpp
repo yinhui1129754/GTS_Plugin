@@ -42,6 +42,7 @@ namespace Gts {
 		if (caster) {
 			Potion_SetShrinkResistance(caster, this->Resistance);
             log::info("Setting shrink resistance to {}", this->Resistance);
+			Potion_Penalty(caster);
 		}
 	}
 

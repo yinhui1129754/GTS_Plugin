@@ -74,7 +74,15 @@ namespace Hooks {
 						float Might = 1.0 + Potion_GetMightBonus(actor);
 						float modifier = (get_giantess_scale(actor) / game_getactorscale(actor)) * Might; // Compensate it, since SetScale() already boosts jump height by default
 						float scale = std::clamp(modifier, 0.8f, 99999.0f);
+						log::info("Jump Result: {}", result);
 						result *= scale;
+						log::info("Jump Multiplier: {}", scale);
+
+						if (!actor->IsInMidair()) {
+							SpawnParticle(actor, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), actor->GetPosition(), scale * 3.0, 7, nullptr);
+							GRumble::Once("MassiveJump", actor, 14.0 * Might, 0.20);
+							StaggerActor_Around(actor, 48 * Might, true);
+						}
 					}
 					//log::info("Value: {}", result);
 				}

@@ -243,7 +243,7 @@ namespace Gts {
 	void ChanceToScare(Actor* giant, Actor* tiny);
 	void StaggerActor(Actor* receiver, float power);
 	void StaggerActor(Actor* giant, Actor* tiny, float power);
-	void StaggerActor_Around(Actor* giant, const float radius);
+	void StaggerActor_Around(Actor* giant, const float radius, bool launch);
 	
 
 	float GetMovementModifier(Actor* giant);

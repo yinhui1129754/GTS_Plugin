@@ -56,8 +56,21 @@ namespace {
 		}
 		return threshold;
 	}
+}
 
-	void ApplyLaunchTo(Actor* giant, Actor* tiny, float force, float launch_power) {
+
+namespace Gts {
+
+	LaunchActor& LaunchActor::GetSingleton() noexcept {
+		static LaunchActor instance;
+		return instance;
+	}
+
+	std::string LaunchActor::DebugName() {
+		return "LaunchActor";
+	}
+
+	void LaunchActor::ApplyLaunchTo(Actor* giant, Actor* tiny, float force, float launch_power) {
 		auto profiler = Profilers::Profile("Other: Launch Actors Decide");
 		if (IsBeingHeld(giant, tiny)) {
 			return;
@@ -139,20 +152,6 @@ namespace {
 				return true;
 			});
 		}
-	}
-
-}
-
-
-namespace Gts {
-
-	LaunchActor& LaunchActor::GetSingleton() noexcept {
-		static LaunchActor instance;
-		return instance;
-	}
-
-	std::string LaunchActor::DebugName() {
-		return "LaunchActor";
 	}
 
 	void LaunchActor::ApplyLaunch_At(Actor* giant, float radius, float power, FootEvent kind) {

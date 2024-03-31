@@ -38,8 +38,12 @@ namespace Gts {
 		}
 	}
 
-	inline void Potion_Penalty(Actor* giant, float damage) { // Normal people just die if they drink them, duh
-		return;
+	inline void Potion_Penalty(Actor* giant) { // Normal people just die if they drink them
+		if (giant->formID != 0x14 && !IsTeammate(giant)) {
+			float currentscale = get_visual_scale(giant);
+			update_target_scale(giant, -currentscale * 0.5, SizeEffectType::kNeutral);
+			giant->KillImmediate();
+		}
 	}
 
 	inline void AdjustSizeReserve(Actor* giant, float value) {

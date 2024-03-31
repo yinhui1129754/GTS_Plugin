@@ -21,12 +21,9 @@ namespace Gts {
 		}
 		float Power = GetActiveEffect()->magnitude;
 		SizeManager::GetSingleton().SetSizeHungerBonus(caster, Power);
+		Potion_Penalty(caster);
 
 	}
-
-	void SizeHunger::OnUpdate() {
-	}
-
 
 	void SizeHunger::OnFinish() {
 		auto caster = GetCaster();

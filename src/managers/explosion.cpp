@@ -16,6 +16,10 @@ using namespace std;
 namespace {
 	void CreateParticle(Actor* actor, NiPoint3 position, float scale) {
 		auto profiler = Profilers::Profile("Explosions: CreateParticle");
+		float fallmod = 1.0 + (GetFallModifier(actor) - 1.0);
+
+		scale *= fallmod; // Make dust clouds visually bigger when we jump land to sell the power
+
 		if (HighHeelManager::IsWearingHH(actor)) {
 			SpawnParticle(actor, 4.60, "GTS/Effects/Footstep_High_Heel.nif", NiMatrix3(), position, scale * 2.9, 7, nullptr);
 			SpawnParticle(actor, 4.60, "GTS/Effects/Footstep.nif", NiMatrix3(), position, scale * 2.9, 7, nullptr); // Spawn both

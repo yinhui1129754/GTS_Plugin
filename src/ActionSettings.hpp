@@ -128,6 +128,9 @@ namespace Gts {
     const float Push_Object_Upwards = 0.2f;
     const float Push_Object_Forward = 0.6f;
 
+    // For launching actor when we jump
+    const float Push_Jump_Launch_Threshold = 8.0f;
+
 //-----------------------------------------Default effect radius variables
 
     const float Radius_Default_Idle = 6.2f;

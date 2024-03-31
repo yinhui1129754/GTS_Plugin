@@ -33,7 +33,7 @@ namespace Gts {
 		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionStrong")) {
 			this->power = 1.5;
 		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionExtreme")) {
-			this->power = 2.0;
+			this->power = 2.5;
 		} 
 	}
 
@@ -51,6 +51,7 @@ namespace Gts {
 
 		Potion_SetUnderGrowth(caster, true);
 		PlayGrowthAudio(caster, true);
+		Potion_Penalty(caster);
 	}
 
 	void GrowthPotion::OnUpdate() {

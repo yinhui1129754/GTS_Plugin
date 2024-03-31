@@ -19,7 +19,7 @@ namespace Gts {
 			[[nodiscard]] static LaunchActor& GetSingleton() noexcept;
 
 			virtual std::string DebugName() override;
-
+			static void ApplyLaunchTo(Actor* giant, Actor* tiny, float force, float launch_power);
 			void ApplyLaunch_At(Actor* giant, float radius, float power, FootEvent kind);
 
 			void LaunchAtNode(Actor* giant, float radius, float power, std::string_view node);

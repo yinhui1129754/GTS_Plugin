@@ -66,7 +66,7 @@ namespace Gts {
 			return;
 		}
 		static Timer warningtimer = Timer(3.0);
-		float CasterScale = get_giantess_scale(caster);
+		float CasterScale = get_target_scale(caster);
 		float bonus = GetSMTBonus(caster);
 		float penalty = GetSMTPenalty(caster);
 
@@ -94,7 +94,7 @@ namespace Gts {
 	void TinyCalamity::OnFinish() {
 		auto caster = GetCaster();
 		if (caster) {
-			float CasterScale = get_giantess_scale(caster);
+			float CasterScale = get_target_scale(caster);
 			float naturalscale = get_natural_scale(caster, true);
 			if (CasterScale < naturalscale) {
 				set_target_scale(caster, naturalscale);

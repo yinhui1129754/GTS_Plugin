@@ -871,6 +871,7 @@ namespace Gts {
 										if (distance < maxFootDistance) {
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
+											return false;
 										}
 										return true;
 									});
@@ -1003,6 +1004,7 @@ namespace Gts {
 										if (distance < maxFootDistance) {
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;
+											return false;
 										}
 										return true;
 									});

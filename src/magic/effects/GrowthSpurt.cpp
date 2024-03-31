@@ -127,7 +127,7 @@ namespace Gts {
 		GrowthSpurt_RegenerateAttributes(caster);
 
 		if (scale < limit && scale < MaxSize) {
-			if (Runtime::HasMagicEffect(PlayerCharacter::GetSingleton(), "EffectSizeAmplifyPotion")) {
+			if (Runtime::HasMagicEffect(caster, "EffectSizeAmplifyPotion")) {
 				bonus = get_visual_scale(caster) * 0.25 + 0.75;
 			}
 			DoGrowth(caster, this->power * bonus);

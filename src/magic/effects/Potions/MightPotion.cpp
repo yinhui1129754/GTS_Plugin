@@ -34,6 +34,7 @@ namespace Gts {
 		auto caster = GetCaster();
 		if (caster) {
 			Potion_SetMightBonus(caster, this->Power, true); // Disallow potions to stack
+			Potion_Penalty(caster);
 		}
 	}
 

@@ -83,7 +83,7 @@ namespace {
 			}
 			float scale = get_visual_scale(giantref);
 
-			StaggerActor_Around(giantref, 48.0);
+			StaggerActor_Around(giantref, 48.0, false);
 
 			auto node = find_node(giantref, "NPC Root [Root]");
 			Runtime::PlaySoundAtNode("Magic_BreakTinyProtection", giantref, 1.0, 1.0, "NPC COM [COM ]");
@@ -2529,7 +2529,7 @@ namespace Gts {
 		StaggerActor_Directional(giant, power, tiny);
 	}
 
-	void StaggerActor_Around(Actor* giant, const float radius) {
+	void StaggerActor_Around(Actor* giant, const float radius, bool launch) {
 		if (!giant) {
 			return;
 		}
@@ -2539,7 +2539,7 @@ namespace Gts {
 		}
 		NiPoint3 NodePosition = node->world.translate;
 
-		float giantScale = get_visual_scale(giant);
+		float giantScale = get_visual_scale(giant) * GetSizeFromBoundingBox(giant);
 		float CheckDistance = radius * giantScale;
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant))) {
@@ -2549,7 +2549,7 @@ namespace Gts {
 		NiPoint3 giantLocation = giant->GetPosition();
 		for (auto otherActor: find_actors()) {
 			if (otherActor != giant) {
-				float tinyScale = get_visual_scale(otherActor);
+				float tinyScale = get_visual_scale(otherActor) * GetSizeFromBoundingBox(giant);
 				NiPoint3 actorLocation = otherActor->GetPosition();
 				if ((actorLocation - giantLocation).Length() < CheckDistance*3) {
 					int nodeCollisions = 0;
@@ -2569,7 +2569,15 @@ namespace Gts {
 						});
 					}
 					if (nodeCollisions > 0) {
-						StaggerActor(giant, otherActor, 0.50);
+						if (!launch) {
+							StaggerActor(giant, otherActor, 0.50);
+						} else {
+							if (giantScale/tinyScale < Push_Jump_Launch_Threshold) {
+								StaggerActor(giant, otherActor, 0.50);
+							} else {
+								LaunchActor::ApplyLaunchTo(otherActor, 1.0, 0.33);
+							}
+						}
 					}
 				}
 			}

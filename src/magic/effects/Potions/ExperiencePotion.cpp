@@ -18,6 +18,7 @@ namespace Gts {
 		if (caster) {
             int RNG = rand() % 30;
             ModSizeExperience(caster, 1.0 * (1.0 + (RNG * 0.01)));
+			Potion_Penalty(caster);
         }
 	}
 }

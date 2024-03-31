@@ -263,7 +263,7 @@ namespace Gts {
 				shrinkRate = Runtime::GetFloat("ShrinkModeRate");
 
 			} else if (actor->formID != 0x14 && IsTeammate(actor)) {
-				if (Runtime::HasMagicEffect(PlayerCharacter::GetSingleton(), "EffectSizeAmplifyPotion")) {
+				if (Runtime::HasMagicEffect(actor, "EffectSizeAmplifyPotion")) {
 					bonus = scale * 0.25 + 0.75;
 				}
 				game_mode_int = Runtime::GetInt("ChosenGameModeNPC");
