@@ -215,8 +215,8 @@ namespace {
 			return;
 		}
 
-		float initialScale = 1.0; //GetInitialScale(actor); // Incorperate the NIF scale into our edits
-		float GameScale = 1.0; //game_getactorscale(actor); // * by GetScale
+		float initialScale = GetInitialScale(actor); // Incorperate the NIF scale into our edits
+		float GameScale = game_getactorscale(actor); // * by GetScale
 		
 		update_model_visuals(actor, visual_scale * initialScale * GameScale); // We've set the values, now update model size based on them
 	}
@@ -247,7 +247,7 @@ namespace {
 		persi_actor_data->anim_speed = speedmultcalc*perkspeed;//MS_mult;
 	}
 
-	void update_effective_multi(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data) {
+	/*void update_effective_multi(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data) {
 		auto profiler = Profilers::Profile("Manager: update_effective_multi");
 		if (!actor) {
 			return;
@@ -260,13 +260,13 @@ namespace {
 		} else {
 			persi_actor_data->effective_multi = 1.0;
 		}
-	}
+	}*/
 
 	void update_actor(Actor* actor) {
 		auto profiler = Profilers::Profile("Manager: update_actor");
 		auto temp_data = Transient::GetSingleton().GetActorData(actor);
 		auto saved_data = Persistent::GetSingleton().GetActorData(actor);
-		update_effective_multi(actor, saved_data, temp_data);
+		//update_effective_multi(actor, saved_data, temp_data);
 		update_height(actor, saved_data, temp_data);
 	}
 

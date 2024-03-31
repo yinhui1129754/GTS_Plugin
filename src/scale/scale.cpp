@@ -58,9 +58,9 @@ namespace Gts {
 		auto profiler = Profilers::Profile("Scale: ModTargetScale");
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			if (Runtime::GetFloatOr("cameraAlternateX", 1.0) == 2.0) {
-				amt /= get_natural_scale(&actor, true);
-			}
+
+			amt /= get_natural_scale(&actor, true);
+			
 			if (amt - EPS < 0.0) {
 				// If neative change always: allow
 				actor_data->target_scale += amt;

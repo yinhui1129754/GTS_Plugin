@@ -131,22 +131,27 @@ namespace Gts {
 		if (!actor->Is3DLoaded()) {
 			return false;
 		}
+
+		if (Runtime::GetFloatOr("cameraAlternateX", 1.0) != 2.0) {
+			return false;
+		}
+
 		bool result = false;
 
-    	//UpdateInitScale(actor); // This will update the inital scales BEFORE we alter them
+    	UpdateInitScale(actor); // This will update the inital scales BEFORE we alter them
 
 		auto model = actor->Get3D(false);
 		if (model) {
 			result = true;
 			model->local.scale = target_scale;
-			//update_node(model);
+			update_node(model);
 		}
 
 		auto first_model = actor->Get3D(true);
 		if (first_model) {
 			result = true;
 			first_model->local.scale = target_scale;
-			//update_node(first_model);
+			update_node(first_model);
 		}
 		return result;
 	}
