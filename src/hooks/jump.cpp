@@ -12,6 +12,32 @@
 using namespace RE;
 using namespace SKSE;
 
+namespace {
+	void Jump_ApplyExtraJumpEffects(Actor* giant, float size, float Might) {
+		if (!actor->IsInMidair()) {
+			NiPoint3 pos = actor->GetPosition(); 
+			pos.z += 4.0; //shift it up a little
+
+			float calc_radius = ((54.0 / 3.0) * size) - 54.0;
+			float stagger_radius = std::clamp(calc_radius, 0.0f, 54.0f); // Should start to appear at the scale of x3.0
+
+			if (stagger_radius > 1.0) {
+				
+				float power = stagger_radius / 54;
+
+				SpawnParticle(actor, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), pos, size * power * 2.0, 7, nullptr);
+				PushObjectsUpwards(actor, pos, 1.2 * Might * power, 0.2 * power); // Launch cabbages and stuff up
+				StaggerActor_Around(actor, stagger_radius * Might, true); // Radius is scaled inside the function
+
+				log::info("Jump Power: {}", power);
+				log::info("Jump Radius: {}", stagger_radius);
+
+				GRumble::Once("MassiveJump", actor, 28.0 * power * Might, 0.15 * power);
+			}
+		}
+	}
+}
+
 namespace Hooks {
 
 	void Hook_Jumping::Hook(Trampoline& trampoline) {
@@ -74,38 +100,20 @@ namespace Hooks {
 				//log::info("Original jump height: {}", result);
 				if (actor) {
 					if (actor->formID == 0x14) {
-						float Might = 1.0 + Potion_GetMightBonus(actor);
-						float modifier = (get_giantess_scale(actor) / game_getactorscale(actor)) * Might; // Compensate it, since SetScale() already boosts jump height by default
-						float scale = std::clamp(modifier, 0.8f, 99999.0f);
-						log::info("Jump Result: {}", result);
-						result *= scale;
-						log::info("Jump Multiplier: {}", scale);
+						float size = get_giantess_scale(actor);
+						float might = 1.0 + Potion_GetMightBonus(actor);
+						float modifier = (size / game_getactorscale(actor)) * might; // Compensate it, since SetScale() already boosts jump height by default
+						float scaled = std::clamp(modifier, 0.01f, 99999.0f);
 
-						if (!actor->IsInMidair()) {
-							SpawnParticle(actor, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), actor->GetPosition(), scale * 3.0, 7, nullptr);
-							GRumble::Once("MassiveJump", actor, 14.0 * Might, 0.20);
-							StaggerActor_Around(actor, 48 * Might, true);
-						}
+						Jump_ApplyExtraJumpEffects(actor, size, might); // Push items and actors, spawn dust ring and shake the ground
+
+						log::info("Jump Result: {}", result);
+						result *= scaled;
+						log::info("Jump Multiplier: {}", scaled);
 					}
-					//log::info("Value: {}", result);
 				}
 				return result;
 			}
 		);
 	}
-
-	
-
-	/*float Hook_Jumping::GetScaleJumpHook(TESObjectREFR* a_this) {
-		float result = _GetScaleJumpHook(a_this);
-		Actor* actor = skyrim_cast<Actor*>(a_this);
-		if (actor) {
-			float scale = get_visual_scale(actor);
-			if (scale > 1e-4) {
-				log::info("Jump Hook: {} for {}", scale, actor->GetDisplayFullName());
-				result *= scale;
-			}
-		}
-		return result;
-	}*/
 }
