@@ -79,9 +79,9 @@ namespace {
 
 
 		if (HasSMT(giant)) {
-			giantSize += 4.0;
+			giantSize += 3.0;
 			threshold = 0.8;
-			force += 0.20;
+			force += 0.025;
 		}
 		float Adjustment = GetSizeFromBoundingBox(tiny);
 		float tinySize = get_visual_scale(tiny) * Adjustment;

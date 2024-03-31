@@ -225,7 +225,8 @@ namespace Gts {
 										if (distance < maxFootDistance) {
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;
-										} else if (distance < maxFootDistance*Calamity) {
+										} else if (distance > maxFootDistance && distance < maxFootDistance*Calamity) {
+											nodeCollisions += 1;
 											DoDamage = false;
 											log::info("Damage False");
 										}
@@ -294,8 +295,6 @@ namespace Gts {
 
 		float sprintdamage = 1.0; // default Sprint damage of 1.0
 		float weightdamage = 1.0 + (giant->GetWeight()*0.01);
-
-		TinyCalamity_CrushCheck(giant, tiny);
 
 		if (giant->AsActorState()->IsSprinting()) {
 			sprintdamage = 1.5 * sizemanager.GetSizeAttribute(giant, SizeAttribute::Sprint);
