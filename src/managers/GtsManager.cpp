@@ -304,9 +304,9 @@ void GtsManager::Update() {
 	auto profiler = Profilers::Profile("Manager: Update()");
 
 	UpdateFalling();
-	ManageActorControl();
+	ManageActorControl(); // Sadly have to call it non stop since im unsure how to easily fix it otherwise :(
 
-	for (auto actor: FindSomeActors("ManagerActors", 2)) {// find_actors()) {
+	for (auto actor: find_actors()) {
 		if (!actor) {
 			return; 
 		}
