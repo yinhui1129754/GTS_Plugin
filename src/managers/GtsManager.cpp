@@ -303,7 +303,7 @@ void GtsManager::Start() {
 void GtsManager::Update() {
 	auto profiler = Profilers::Profile("Manager: Update()");
 
-	static Timer UpdateTimer = Timer(0.0167);
+	static Timer UpdateTimer = Timer(0.064);
 
 	if (!UpdateTimer.ShouldRunFrame()) {
 		return;

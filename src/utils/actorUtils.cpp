@@ -323,13 +323,13 @@ namespace Gts {
 
 	void PlayMoanSound(Actor* actor, float volume) {
 		if (IsFemale(actor) && IsHuman(actor)) {
-			float falloff = 0.11 * get_visual_scale(actor);
+			float falloff = 0.125 * get_visual_scale(actor);
 			Runtime::PlaySoundAtNode_FallOff("MoanSound", actor, volume, 1.0, "NPC Head [Head]", falloff);
 		}
 	}
 
 	void PlayLaughSound(Actor* actor, float volume, int type) {
-		float falloff = 0.11 * get_visual_scale(actor);
+		float falloff = 0.125 * get_visual_scale(actor);
 		if (IsFemale(actor) && IsHuman(actor)) {
 			if (type == 2) {
 				Runtime::PlaySoundAtNode_FallOff("LaughSound_Type2", actor, volume, 1.0, "NPC Head [Head]", falloff);

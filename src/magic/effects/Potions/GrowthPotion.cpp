@@ -12,8 +12,9 @@ namespace {
 	void PlayGrowthAudio(Actor* giant, bool checkTimer) {
 		if (checkTimer) {
 			Rumbling::Once("GrowthPotion", giant, 2.0, 0.05);
+			float falloff = 0.125 * scale;
 			float Volume = clamp(0.20, 2.0, get_visual_scale(giant)/10);
-			Runtime::PlaySoundAtNode("growthSound", giant, Volume, 1.0, "NPC Pelvis [Pelv]");
+			Runtime::PlaySoundAtNode_FallOff("growthSound", giant, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 	}
 }
