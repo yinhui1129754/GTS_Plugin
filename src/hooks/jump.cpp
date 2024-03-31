@@ -1,10 +1,13 @@
-#include "hooks/jump.hpp"
+#include "managers/Attributes.hpp"
+#include "utils/actorUtils.hpp"
+#include "managers/Rumble.hpp"
+#include "scale/modscale.hpp"
 #include "hooks/callhook.hpp"
 #include "scale/scale.hpp"
 #include "data/plugin.hpp"
-#include "managers/Attributes.hpp"
-#include "utils/actorUtils.hpp"
-#include "scale/modscale.hpp"
+#include "hooks/jump.hpp"
+
+
 
 using namespace RE;
 using namespace SKSE;
