@@ -14,9 +14,9 @@ namespace {
 			
 			float scale = get_visual_scale(giant);
 
-			float falloff = 0.125 * scale;
+			float falloff = 0.16 * scale;
 			float Volume = clamp(0.20, 2.0, scale/10);
-			
+
 			Rumbling::Once("GrowthPotion", giant, 2.0, 0.05);
 
 			Runtime::PlaySoundAtNode_FallOff("growthSound", giant, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);

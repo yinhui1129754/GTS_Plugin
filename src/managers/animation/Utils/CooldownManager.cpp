@@ -134,6 +134,12 @@ namespace Gts {
             case CooldownSource::Action_Hugs:
                 return time <= (data.lastHugTime + HUGS_COOLDOWN);
                 break;   
+            case CooldownSource::Emotion_Laugh:   
+                return time <= (data.lastLaughTime + LAUGH_COOLDOWN);
+                break; 
+            case CooldownSource::Emotion_Moan: 
+                return time <= (data.lastMoanTime + MOAN_COOLDOWN);
+                break;  
             }
         return false; 
     }
