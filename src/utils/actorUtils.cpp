@@ -1495,15 +1495,13 @@ namespace Gts {
 		if (source) {
 			auto ai = source->GetActorRuntimeData().currentProcess;
 			if (ai) {
-				if (ai->InHighProcess()) {
-					if (receiver->Is3DLoaded()) {
-						if (source->Is3DLoaded()) {
-							NiPoint3 direction = receiver->GetPosition() - source->GetPosition();
-							direction = direction / direction.Length();
-							typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
-							REL::Relocation<DefPushActorAway> RealPushActorAway{ RELOCATION_ID(38858, 39895) };
-							RealPushActorAway(ai, receiver, direction, afKnockBackForce);
-						}
+				if (receiver->Is3DLoaded()) {
+					if (source->Is3DLoaded()) {
+						NiPoint3 direction = NiPoint3();//receiver->GetPosition() - source->GetPosition();
+						//direction = direction / direction.Length();
+						typedef void (*DefPushActorAway)(AIProcess *ai, Actor* actor, NiPoint3& direction, float force);
+						REL::Relocation<DefPushActorAway> RealPushActorAway{ RELOCATION_ID(38858, 39895) };
+						RealPushActorAway(ai, receiver, direction, afKnockBackForce);
 					}
 				}
 			}
