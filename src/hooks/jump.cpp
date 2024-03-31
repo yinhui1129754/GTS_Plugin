@@ -24,8 +24,12 @@ namespace {
 				
 				float power = stagger_radius / 54;
 
+				std::vector<NiPoint3> position = {
+					pos,
+				};
+
 				SpawnParticle(actor, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), pos, size * power * 2.0, 7, nullptr);
-				PushObjectsUpwards(actor, pos, 1.2 * Might * power, 0.2 * power); // Launch cabbages and stuff up
+				PushObjectsUpwards(actor, position, 1.2 * Might * power, 0.2 * power); // Launch cabbages and stuff up
 				StaggerActor_Around(actor, stagger_radius * Might, true); // Radius is scaled inside the function
 
 				log::info("Jump Power: {}", power);
