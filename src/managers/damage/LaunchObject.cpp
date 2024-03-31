@@ -56,7 +56,7 @@ namespace {
 					
 					if (body) {
 						auto motion_2 = skyrim_cast<hkpMotion*>(body);
-						if (Motion_2) {
+						if (motion_2) {
 							log::info("Motion 2 found!");
 						}
 						// Goal: Somehow read  hkpMotion->GetMass()
