@@ -123,7 +123,7 @@ namespace {
 			dust = 1.45;
 		}
 
-		GRumble::Once("StompR", giant, 2.20 * shake, 0.0, Node);
+		Rumbling::Once("StompR", giant, 2.20 * shake, 0.0, Node);
 
 		// TO ANDY: i commented it out for tests
 		//MoveUnderFoot(giant, Node); 
@@ -153,7 +153,7 @@ namespace {
 			shake = 4.0;
 		}
 		
-		GRumble::Once(rumble, giant, 1.25 * shake, 0.05, Node);
+		Rumbling::Once(rumble, giant, 1.25 * shake, 0.05, Node);
 		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 25, 0.25, Event, 1.0, DamageSource::CrushedRight);
 		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
 		DoFootstepSound(giant, 1.0 + animSpeed/14, Event, RNode);
@@ -173,7 +173,7 @@ namespace {
 			data.animSpeed = 1.33 + GetRandomBoost()/2;
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", true, 1.8);
-		GRumble::Start("StompR", &data.giant, 0.35, 0.15, RNode);
+		Rumbling::Start("StompR", &data.giant, 0.35, 0.15, RNode);
 		ManageCamera(&data.giant, true, CameraTracking::R_Foot);
 
 	}
@@ -186,7 +186,7 @@ namespace {
 			data.animSpeed = 1.33 + GetRandomBoost()/2;
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", true, 1.8);
-		GRumble::Start("StompL", &data.giant, 0.45, 0.15, LNode);
+		Rumbling::Start("StompL", &data.giant, 0.45, 0.15, LNode);
 		ManageCamera(&data.giant, true, CameraTracking::L_Foot);
 	}
 
@@ -221,15 +221,15 @@ namespace {
 	}
 
 	void GTS_Next(AnimationEventData& data) {
-		GRumble::Stop("StompR", &data.giant);
-		GRumble::Stop("StompL", &data.giant);
-		GRumble::Stop("StompRL", &data.giant);
-		GRumble::Stop("StompLL", &data.giant);
+		Rumbling::Stop("StompR", &data.giant);
+		Rumbling::Stop("StompL", &data.giant);
+		Rumbling::Stop("StompRL", &data.giant);
+		Rumbling::Stop("StompLL", &data.giant);
 	}
 
 	void GTSBEH_Exit(AnimationEventData& data) {
-		GRumble::Stop("StompR", &data.giant);
-		GRumble::Stop("StompL", &data.giant);
+		Rumbling::Stop("StompR", &data.giant);
+		Rumbling::Stop("StompL", &data.giant);
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", false, 1.8);
 		DrainStamina(&data.giant, "StaminaDrain_StrongStomp", "DestructionBasics", false, 2.8);
 		ManageCamera(&data.giant, false, CameraTracking::L_Foot);

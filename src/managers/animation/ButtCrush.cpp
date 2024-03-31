@@ -64,14 +64,14 @@ namespace {
 	void StartRumble(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: ALL_RUMBLE_NODES) {
 			std::string rumbleName = std::format("ButtCrush_{}{}", tag, node_name);
-			GRumble::Start(rumbleName, &actor, power, halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power, halflife, node_name);
 		}
 	}
 
 	void StopRumble(std::string_view tag, Actor& actor) {
 		for (auto& node_name: ALL_RUMBLE_NODES) {
 			std::string rumbleName = std::format("ButtCrush_{}{}", tag, node_name);
-			GRumble::Stop(rumbleName, &actor);
+			Rumbling::Stop(rumbleName, &actor);
 		}
 	}
 
@@ -103,7 +103,7 @@ namespace {
 			dust = 1.25;
 		}
 
-		GRumble::Once(rumble, giant, 2.20 * shake, 0.0, Node);
+		Rumbling::Once(rumble, giant, 2.20 * shake, 0.0, Node);
 		DoDamageEffect(giant, Damage_ButtCrush_FootImpact, Radius_ButtCrush_FootImpact, 10, 0.25, Event, 1.0, Source);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);
@@ -186,8 +186,8 @@ namespace {
 				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Left, "NPC L Butt");
 				DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
 				DoLaunch(&data.giant, 1.30 * perk, 4.20, FootEvent::Butt);
-				GRumble::Once("Butt_L", &data.giant, 3.60 * damage, 0.02, "NPC R Butt");
-				GRumble::Once("Butt_R", &data.giant, 3.60 * damage, 0.02, "NPC L Butt");
+				Rumbling::Once("Butt_L", &data.giant, 3.60 * damage, 0.02, "NPC R Butt");
+				Rumbling::Once("Butt_R", &data.giant, 3.60 * damage, 0.02, "NPC L Butt");
 			}
 		} else {
 			if (!ButtR) {

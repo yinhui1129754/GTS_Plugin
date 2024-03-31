@@ -11,7 +11,7 @@
 namespace {
 	void PlayGrowthAudio(Actor* giant, bool checkTimer) {
 		if (checkTimer) {
-			GRumble::Once("GrowthPotion", giant, 2.0, 0.05);
+			Rumbling::Once("GrowthPotion", giant, 2.0, 0.05);
 			float Volume = clamp(0.20, 2.0, get_visual_scale(giant)/10);
 			Runtime::PlaySoundAtNode("growthSound", giant, Volume, 1.0, "NPC Pelvis [Pelv]");
 		}
@@ -69,7 +69,7 @@ namespace Gts {
 		}
 
 		float AlchemyLevel = clamp(1.0, 2.0, caster->AsActorValueOwner()->GetActorValue(ActorValue::kAlchemy)/100 + 1.0);
-		GRumble::Once("GrowthPotion", caster, 0.4, 0.05);
+		Rumbling::Once("GrowthPotion", caster, 0.4, 0.05);
 		
 		PlayGrowthAudio(caster, this->timer.ShouldRun());
 
@@ -79,7 +79,7 @@ namespace Gts {
 		float Power = BASE_POWER * AlchemyLevel;
 
 		Grow(caster, Power, 0.0);
-		GRumble::Once("GrowButton", caster, 0.6, 0.05);
+		Rumbling::Once("GrowButton", caster, 0.6, 0.05);
 		log::info("This Power: {}", this->power);
 		log::info("Enlarging {} with the power of {}", caster->GetDisplayFullName(), Power);
 	}

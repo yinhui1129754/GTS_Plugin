@@ -102,7 +102,7 @@ namespace {
 		if (giant->formID == 0x14) {
 			shake_camera(giant, 0.80, 0.35);
 		} else {
-			GRumble::Once("Calamity_R", giant, 4.25, 0.15, "NPC R Hand [RHnd]");
+			Rumbling::Once("Calamity_R", giant, 4.25, 0.15, "NPC R Hand [RHnd]");
 		}
 	}
 

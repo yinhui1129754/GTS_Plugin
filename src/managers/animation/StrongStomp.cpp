@@ -44,30 +44,30 @@ namespace {
 	const std::string_view LNode = "NPC L Foot [Lft ]";
 
 
-	void StartLegRumble(std::string_view tag, Actor& actor, float power, float halflife, std::string_view type) {
+	void StartLeRumbling(std::string_view tag, Actor& actor, float power, float halflife, std::string_view type) {
 		if (type == "Left") {
 			for (auto& node_name: L_LEG_RUMBLE_NODES) {
 				std::string rumbleName = std::format("{}{}", tag, node_name);
-				GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+				Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 			}
 		} else if (type == "Right") {
 			for (auto& node_name: R_LEG_RUMBLE_NODES) {
 				std::string rumbleName = std::format("{}{}", tag, node_name);
-				GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+				Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 			}
 		}
 	}
 
-	void StopLegRumble(std::string_view tag, Actor& actor, std::string_view type) {
+	void StopLeRumbling(std::string_view tag, Actor& actor, std::string_view type) {
 		if (type == "Left") {
 			for (auto& node_name: L_LEG_RUMBLE_NODES) {
 				std::string rumbleName = std::format("{}{}", tag, node_name);
-				GRumble::Stop(rumbleName, &actor);
+				Rumbling::Stop(rumbleName, &actor);
 			}
 		} else if (type == "Right") {
 			for (auto& node_name: R_LEG_RUMBLE_NODES) {
 				std::string rumbleName = std::format("{}{}", tag, node_name);
-				GRumble::Stop(rumbleName, &actor);
+				Rumbling::Stop(rumbleName, &actor);
 			}
 		}
 	}
@@ -76,7 +76,7 @@ namespace {
 		if (HasSMT(giant)) {
 			force *= 12.0;
 		}
-		GRumble::Once(name, giant, force, 0.05, node);
+		Rumbling::Once(name, giant, force, 0.05, node);
 	}
 
 	void DoSounds(Actor* giant, float animspeed, std::string_view feet) {
@@ -127,7 +127,7 @@ namespace {
 			data.animSpeed += GetRandomBoost()/3;
 		}
 		ManageCamera(giant, true, CameraTracking::R_Foot);
-		StartLegRumble("StrongStompR", data.giant, 0.35 *data.animSpeed - 0.35, 0.10, "Right");
+		StartLeRumbling("StrongStompR", data.giant, 0.35 *data.animSpeed - 0.35, 0.10, "Right");
 		DrainStamina(&data.giant, "StaminaDrain_StrongStomp", "DestructionBasics", true, 3.4);
 	}
 
@@ -139,7 +139,7 @@ namespace {
 			data.animSpeed += GetRandomBoost()/3;
 		}
 		ManageCamera(giant, true, CameraTracking::L_Foot);
-		StartLegRumble("StrongStompL", data.giant, 0.35 *data.animSpeed - 0.35, 0.10, "Left");
+		StartLeRumbling("StrongStompL", data.giant, 0.35 *data.animSpeed - 0.35, 0.10, "Left");
 		DrainStamina(&data.giant, "StaminaDrain_StrongStomp", "DestructionBasics", true, 3.4);
 	}
 
@@ -156,10 +156,10 @@ namespace {
 		}
 	}
 	void GTS_StrongStomp_LR_End(AnimationEventData& data) {
-		StopLegRumble("StrongStompR", data.giant, "Right");
+		StopLeRumbling("StrongStompR", data.giant, "Right");
 	}
 	void GTS_StrongStomp_LL_End(AnimationEventData& data) {
-		StopLegRumble("StrongStompL", data.giant, "Left");
+		StopLeRumbling("StrongStompL", data.giant, "Left");
 	}
 
 	void GTS_StrongStomp_ImpactR(AnimationEventData& data) {
@@ -177,25 +177,25 @@ namespace {
 		StrongStomp_DoEverything(&data.giant, data.animSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "HeavyStompL");
 	}
 
-	void GTS_StrongStomp_ReturnRL_Start(AnimationEventData& data) {StartLegRumble("StrongStompR", data.giant, 0.25, 0.10, "Right");}
-	void GTS_StrongStomp_ReturnLL_Start(AnimationEventData& data) {StartLegRumble("StrongStompL", data.giant, 0.25, 0.10, "Left");}
+	void GTS_StrongStomp_ReturnRL_Start(AnimationEventData& data) {StartLeRumbling("StrongStompR", data.giant, 0.25, 0.10, "Right");}
+	void GTS_StrongStomp_ReturnLL_Start(AnimationEventData& data) {StartLeRumbling("StrongStompL", data.giant, 0.25, 0.10, "Left");}
 
 	void GTS_StrongStomp_ReturnRL_End(AnimationEventData& data) {
-		StopLegRumble("StrongStompR", data.giant, "Right");
+		StopLeRumbling("StrongStompR", data.giant, "Right");
 		ManageCamera(&data.giant, false, CameraTracking::R_Foot);
 	}
 	void GTS_StrongStomp_ReturnLL_End(AnimationEventData& data) {
-		StopLegRumble("StrongStompL", data.giant, "Left");
+		StopLeRumbling("StrongStompL", data.giant, "Left");
 		ManageCamera(&data.giant, false, CameraTracking::L_Foot);
 	}
 	void GTS_StrongStomp_End(AnimationEventData& data) {
-		StopLegRumble("StrongStompR", data.giant, "Right");
-		StopLegRumble("StrongStompL", data.giant, "Left");
+		StopLeRumbling("StrongStompR", data.giant, "Right");
+		StopLeRumbling("StrongStompL", data.giant, "Left");
 	}
 
 
 	void GTS_Next(AnimationEventData& data) {
-		GRumble::Stop("StompR", &data.giant);
+		Rumbling::Stop("StompR", &data.giant);
 	}
 
 	void GTSBEH_Exit(AnimationEventData& data) {
@@ -204,7 +204,7 @@ namespace {
 			ResetCameraTracking();
 		}
 
-		GRumble::Stop("StompR", &data.giant);
+		Rumbling::Stop("StompR", &data.giant);
 	}
 
 	void RightStrongStompEvent(const InputEventData& data) {

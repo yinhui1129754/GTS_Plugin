@@ -217,7 +217,7 @@ namespace {
 			launch = 1.5;
 			dust = 1.25;
 		}
-		GRumble::Once("StompR", &data.giant, 1.50 * shake, 0.0, RNode);
+		Rumbling::Once("StompR", &data.giant, 1.50 * shake, 0.0, RNode);
 		DoDamageEffect(&data.giant, 1.1 * launch * data.animSpeed * perk, 1.0 * launch * data.animSpeed, 10, 0.20, FootEvent::Right, 1.0, DamageSource::CrushedRight);
 		DoFootstepSound(&data.giant, 1.0, FootEvent::Right, RNode);
 		DoDustExplosion(&data.giant, dust, FootEvent::Right, RNode);
@@ -237,7 +237,7 @@ namespace {
 			launch = 1.5;
 			dust = 1.25;
 		}
-		GRumble::Once("StompL", &data.giant, 1.50 * shake, 0.0, LNode);
+		Rumbling::Once("StompL", &data.giant, 1.50 * shake, 0.0, LNode);
 		DoDamageEffect(&data.giant, 1.1 * launch * data.animSpeed * perk, 1.0 * launch * data.animSpeed, 10, 0.20, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
 		DoFootstepSound(&data.giant, 1.0, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, dust, FootEvent::Left, LNode);
@@ -322,7 +322,7 @@ namespace {
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
 		ManageCamera(giant, false, CameraTracking::Grab_Left);
-		GRumble::Once("ThrowFoe", &data.giant, 2.50, 0.10, "NPC L Hand [LHnd]");
+		Rumbling::Once("ThrowFoe", &data.giant, 2.50, 0.10, "NPC L Hand [LHnd]");
 		AnimationManager::StartAnim("TinyDied", giant);
 
 		Grab::DetachActorTask(giant);

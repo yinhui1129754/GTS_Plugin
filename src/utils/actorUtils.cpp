@@ -97,8 +97,8 @@ namespace {
 				std::string name_com = std::format("BreakProtect_{}", giantref->formID);
 				std::string name_root = std::format("BreakProtect_Root_{}", giantref->formID);
 
-				GRumble::Once(name_com, giantref, 8.6, 0.20, "NPC COM [COM ]");
-				GRumble::Once(name_root, giantref, 8.6, 0.20, "NPC Root [Root]");
+				Rumbling::Once(name_com, giantref, 8.6, 0.20, "NPC COM [COM ]");
+				Rumbling::Once(name_root, giantref, 8.6, 0.20, "NPC Root [Root]");
 
 				SpawnParticle(giantref, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), position, scale * 3.4, 7, nullptr); // Spawn it
 			}
@@ -2314,7 +2314,7 @@ namespace Gts {
 		float CheckDistance = BASE_DISTANCE*giantScale*gigantism*radius;
 
 		Runtime::PlaySoundAtNode("ShrinkOutburstSound", giant, explosion, 1.0, "NPC Pelvis [Pelv]");
-		GRumble::For("ShrinkOutburst", giant, 20.0, 0.15, "NPC COM [COM ]", 0.60);
+		Rumbling::For("ShrinkOutburst", giant, 20.0, 0.15, "NPC COM [COM ]", 0.60);
 
 		SpawnParticle(giant, 6.00, "GTS/Shouts/ShrinkOutburst.nif", NiMatrix3(), NodePosition, giantScale*explosion*3.0, 7, nullptr); // Spawn effect
 
@@ -2369,8 +2369,8 @@ namespace Gts {
 					std::string name_com = std::format("Protect_{}", actor->formID);
 					std::string name_root = std::format("Protect_Root_{}", actor->formID);
 
-					GRumble::Once(name_com, actor, 8.6, 0.20, "NPC COM [COM ]");
-					GRumble::Once(name_root, actor, 8.6, 0.20, "NPC Root [Root]");
+					Rumbling::Once(name_com, actor, 8.6, 0.20, "NPC COM [COM ]");
+					Rumbling::Once(name_root, actor, 8.6, 0.20, "NPC Root [Root]");
 				}
 
 				LaunchImmunityTask(actor, Balance);

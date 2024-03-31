@@ -55,7 +55,7 @@ namespace {
 		DoDamageEffect(giant, Damage_Trample * perk, Radius_Trample, 100, 0.10, Event, 1.10, Source);
 		DrainStamina(giant, "StaminaDrain_Trample", "DestructionBasics", true, 0.6); // start stamina drain
 
-		GRumble::Once(rumble, giant, 1.60 * shake, 0.0, Node);
+		Rumbling::Once(rumble, giant, 1.60 * shake, 0.0, Node);
 		DoLaunch(giant, 0.65 * perk, 0.75 * perk, Event);
 		DoDustExplosion(giant, dust, Event, Node);
 		DoFootstepSound(giant, 1.0, Event, Node);
@@ -76,7 +76,7 @@ namespace {
 			shake = 4.0;
 			dust = 1.25;
 		}
-		GRumble::Once(rumble, giant, 2.20 * shake, 0.0, Node);
+		Rumbling::Once(rumble, giant, 2.20 * shake, 0.0, Node);
 		DoDamageEffect(giant, Damage_Trample_Repeat * perk, Radius_Trample_Repeat, 1, 0.12, Event, 1.10, Source);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);
@@ -94,7 +94,7 @@ namespace {
 			dust = 1.50;
 		}
 		DoDamageEffect(giant, Damage_Trample_Finisher * perk, Radius_Trample_Finisher, 1, 0.25, Event, 0.85, Source);
-		GRumble::Once(rumble, giant, 3.20 * shake, 0.0, Node);
+		Rumbling::Once(rumble, giant, 3.20 * shake, 0.0, Node);
 		DoLaunch(giant, 1.25 * perk, 3.20 * perk, Event);
 		DoFootstepSound(giant, 1.15, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);

@@ -62,7 +62,7 @@ namespace {
 
 				DamageAV(caster, ActorValue::kMagicka, 0.45 * (target_scale * 0.25 + 0.75) * magicka * bonus * timeDelta * power);
 				Grow(target, 0.0030 * magicka * bonus, 0.0);
-				GRumble::Once("GrowOtherButton", target, 1.0, 0.05);
+				Rumbling::Once("GrowOtherButton", target, 1.0, 0.05);
 
 				return true;
 			});
@@ -113,7 +113,7 @@ namespace {
 				if (target_scale > get_natural_scale(target, true)) {
 					DamageAV(caster, ActorValue::kMagicka, 0.25 * (target_scale * 0.25 + 0.75) * magicka * bonus * TimeScale() * power);
 					ShrinkActor(target, 0.0030 * magicka * bonus, 0.0);
-					GRumble::Once("ShrinkOtherButton", target, 1.0, 0.05);
+					Rumbling::Once("ShrinkOtherButton", target, 1.0, 0.05);
 				}
 				return true;
 			});
@@ -158,7 +158,7 @@ namespace {
 
 			Grow(caster, 0.0030 * stamina, 0.0);
 
-			GRumble::Once("GrowButton", caster, 1.0, 0.05);
+			Rumbling::Once("GrowButton", caster, 1.0, 0.05);
 
 			return true;
 		});
@@ -202,7 +202,7 @@ namespace {
 			if (target_scale > Minimum_Actor_Scale) {
 				DamageAV(caster, ActorValue::kStamina, 0.25 * (caster_scale * 0.5 + 0.5) * stamina * TimeScale());
 				ShrinkActor(caster, 0.0020 * stamina, 0.0);
-				GRumble::Once("ShrinkButton", caster, 0.60, 0.05);
+				Rumbling::Once("ShrinkButton", caster, 0.60, 0.05);
 			} else {
 				set_target_scale(caster, Minimum_Actor_Scale);
 				return false;

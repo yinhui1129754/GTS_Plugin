@@ -174,7 +174,7 @@ namespace {
 				Attacked(grabbedActor, giant);
 			}
 		}
-		GRumble::Once("GrabCatch", giant, 2.0, 0.15);
+		Rumbling::Once("GrabCatch", giant, 2.0, 0.15);
 	}
 
 	void GTSGrab_Catch_End(AnimationEventData& data) {
@@ -589,27 +589,27 @@ namespace Gts {
 	void StartRHandRumble(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: RHAND_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 		}
 	}
 
 	void StartLHandRumble(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: LHAND_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 		}
 	}
 
 	void StopRHandRumble(std::string_view tag, Actor& actor) {
 		for (auto& node_name: RHAND_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Stop(rumbleName, &actor);
+			Rumbling::Stop(rumbleName, &actor);
 		}
 	}
 	void StopLHandRumble(std::string_view tag, Actor& actor) {
 		for (auto& node_name: RHAND_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Stop(rumbleName, &actor);
+			Rumbling::Stop(rumbleName, &actor);
 		}
 	}
 

@@ -10,7 +10,7 @@
 namespace {
 	void PlayGrowthAudio(Actor* giant, bool checkTimer) {
 		if (checkTimer) {
-			GRumble::Once("ShrinkResistPotion", giant, 2.0, 0.05);
+			Rumbling::Once("ShrinkResistPotion", giant, 2.0, 0.05);
 			float Volume = clamp(0.20, 2.0, get_visual_scale(giant)/10);
 			Runtime::PlaySoundAtNode("growthSound", giant, Volume, 1.0, "NPC Pelvis [Pelv]");
 		}

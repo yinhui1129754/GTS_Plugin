@@ -41,40 +41,40 @@ namespace Gts {
 	ActorRumbleData::ActorRumbleData()  : delay(Timer(0.40)) {
 	}
 
-	GRumble& GRumble::GetSingleton() noexcept {
-		static GRumble instance;
+	Rumbling& Rumbling::GetSingleton() noexcept {
+		static Rumbling instance;
 		return instance;
 	}
 
-	std::string GRumble::DebugName() {
-		return "GRumble";
+	std::string Rumbling::DebugName() {
+		return "Rumbling";
 	}
 
-	void GRumble::Reset() {
+	void Rumbling::Reset() {
 		this->data.clear();
 	}
-	void GRumble::ResetActor(Actor* actor) {
+	void Rumbling::ResetActor(Actor* actor) {
 		this->data.erase(actor);
 	}
 
-	void GRumble::Start(std::string_view tag, Actor* giant, float intensity, float halflife, std::string_view node) {
-		GRumble::For(tag, giant, intensity, halflife, node, 0);
+	void Rumbling::Start(std::string_view tag, Actor* giant, float intensity, float halflife, std::string_view node) {
+		Rumbling::For(tag, giant, intensity, halflife, node, 0);
 	}
-	void GRumble::Start(std::string_view tag, Actor* giant, float intensity, float halflife) {
-		GRumble::For(tag, giant, intensity, halflife, "NPC COM [COM ]", 0);
+	void Rumbling::Start(std::string_view tag, Actor* giant, float intensity, float halflife) {
+		Rumbling::For(tag, giant, intensity, halflife, "NPC COM [COM ]", 0);
 	}
-	void GRumble::Stop(std::string_view tagsv, Actor* giant) {
+	void Rumbling::Stop(std::string_view tagsv, Actor* giant) {
 		string tag = std::string(tagsv);
-		auto& me = GRumble::GetSingleton();
+		auto& me = Rumbling::GetSingleton();
 		try {
 			me.data.at(giant).tags.at(tag).state = RumpleState::RampingDown;
 		} catch (std::out_of_range e) {}
 	}
 
-	void GRumble::For(std::string_view tagsv, Actor* giant, float intensity, float halflife, std::string_view nodesv, float duration) {
+	void Rumbling::For(std::string_view tagsv, Actor* giant, float intensity, float halflife, std::string_view nodesv, float duration) {
 		std::string tag = std::string(tagsv);
 		std::string node = std::string(nodesv);
-		auto& me = GRumble::GetSingleton();
+		auto& me = Rumbling::GetSingleton();
 		me.data.try_emplace(giant);
 		me.data.at(giant).tags.try_emplace(tag, intensity, duration, halflife, node);
 		// Reset if alreay there (but don't reset the intensity this will let us smooth into it)
@@ -82,16 +82,16 @@ namespace Gts {
 		me.data.at(giant).tags.at(tag).ChangeDuration(duration);
 	}
 
-	void GRumble::Once(std::string_view tag, Actor* giant, float intensity, float halflife, std::string_view node) {
-		GRumble::For(tag, giant, intensity, halflife, node, 1.0);
+	void Rumbling::Once(std::string_view tag, Actor* giant, float intensity, float halflife, std::string_view node) {
+		Rumbling::For(tag, giant, intensity, halflife, node, 1.0);
 	}
 
-	void GRumble::Once(std::string_view tag, Actor* giant, float intensity, float halflife) {
-		GRumble::Once(tag, giant, intensity, halflife, "NPC Root [Root]");
+	void Rumbling::Once(std::string_view tag, Actor* giant, float intensity, float halflife) {
+		Rumbling::Once(tag, giant, intensity, halflife, "NPC Root [Root]");
 	}
 
 
-	void GRumble::Update() {
+	void Rumbling::Update() {
 		auto profiler = Profilers::Profile("Rumble: Update");
 		for (auto& [actor, data]: this->data) {
 			//if (data.delay.ShouldRun()) {

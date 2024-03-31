@@ -93,9 +93,9 @@ namespace {
 		for (auto& node_name: BODY_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
 			if (!once) {
-				GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+				Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 			} else {
-				GRumble::Once(rumbleName, &actor, power, halflife, node_name);
+				Rumbling::Once(rumbleName, &actor, power, halflife, node_name);
 			}
 		}
 	}
@@ -103,27 +103,27 @@ namespace {
 	void StartRHandRumble(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: RHAND_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 		}
 	}
 
 	void StartLHandRumble(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: LHAND_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 		}
 	}
 
 	void StopRHandRumble(std::string_view tag, Actor& actor) {
 		for (auto& node_name: RHAND_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Stop(rumbleName, &actor);
+			Rumbling::Stop(rumbleName, &actor);
 		}
 	}
 	void StopLHandRumble(std::string_view tag, Actor& actor) {
 		for (auto& node_name: RHAND_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Stop(rumbleName, &actor);
+			Rumbling::Stop(rumbleName, &actor);
 		}
 	}
 
@@ -151,14 +151,14 @@ namespace {
 			tiny->NotifyAnimationGraph("GTS_EnterFear");
 		}
 		VoreData.AllowToBeVored(false);
-		GRumble::Once("StompLS", &data.giant, 0.95, 0.05, LNode);
+		Rumbling::Once("StompLS", &data.giant, 0.95, 0.05, LNode);
 		DoFootstepSound(&data.giant, 0.90, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, 0.90, FootEvent::Left, LNode);
 		DoDamageEffect(&data.giant, 1.8, 1.3, 30, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
 	}
 
 	void GTSvore_sit_end(AnimationEventData& data) {
-		GRumble::Stop("BodyRumble", &data.giant);
+		Rumbling::Stop("BodyRumble", &data.giant);
 		AdjustFacialExpression(&data.giant, 2, 1.0, "expression"); // smile (expression)
 	}
 
@@ -293,7 +293,7 @@ namespace {
 	}
 
 	void GTSvore_impactRS(AnimationEventData& data) {
-		GRumble::Once("StompRS", &data.giant, 0.95, 0.05, RNode);
+		Rumbling::Once("StompRS", &data.giant, 0.95, 0.05, RNode);
 		float perk = GetPerkBonus_Basics(&data.giant);
 		DoFootstepSound(&data.giant, 0.90, FootEvent::Right, RNode);
 		DoDustExplosion(&data.giant, 0.90, FootEvent::Right, RNode);
@@ -308,7 +308,7 @@ namespace {
 		if (Runtime::GetBool("FreeLookOnVore") && giant->formID == 0x14) {
 			EnableFreeCamera();
 		}
-		GRumble::Stop("BodyRumble", &data.giant);
+		Rumbling::Stop("BodyRumble", &data.giant);
 	}
 }
 

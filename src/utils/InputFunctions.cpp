@@ -36,7 +36,7 @@ namespace {
 			DamageAV(player, ActorValue::kStamina, 0.15 * perk * (scale * 0.5 + 0.5) * stamina * TimeScale());
 			Grow(player, 0.0010 * stamina, 0.0);
 			float Volume = clamp(0.20, 2.0, get_visual_scale(player)/16);
-			GRumble::Once("ColossalGrowth", player, scale/10, 0.05);
+			Rumbling::Once("ColossalGrowth", player, scale/10, 0.05);
 			static Timer timergrowth = Timer(2.00);
 			if (timergrowth.ShouldRun()) {
 				Runtime::PlaySoundAtNode("growthSound", player, Volume, 1.0, "NPC Pelvis [Pelv]");
@@ -59,7 +59,7 @@ namespace {
 			}
 
 			float Volume = clamp(0.10, 1.0, get_visual_scale(player) * 0.10);
-			GRumble::Once("ColossalGrowth", player, scale/14, 0.05);
+			Rumbling::Once("ColossalGrowth", player, scale/14, 0.05);
 			static Timer timergrowth = Timer(2.00);
 			if (timergrowth.ShouldRun()) {
 				Runtime::PlaySound("shrinkSound", player, Volume, 1.0);
@@ -82,7 +82,7 @@ namespace {
 					DamageAV(player, ActorValue::kMagicka, 0.15 * perk * (npcscale * 0.5 + 0.5) * magicka * TimeScale());
 					Grow(actor, 0.0010 * magicka, 0.0);
 					float Volume = clamp(0.20, 2.0, get_visual_scale(actor)/16);
-					GRumble::Once("TotalControlOther", actor, 0.25, 0.05);
+					Rumbling::Once("TotalControlOther", actor, 0.25, 0.05);
 					static Timer timergrowth = Timer(2.00);
 					if (timergrowth.ShouldRun()) {
 						Runtime::PlaySoundAtNode("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
@@ -107,7 +107,7 @@ namespace {
 					DamageAV(player, ActorValue::kMagicka, 0.07 * perk * (npcscale * 0.5 + 0.5) * magicka * TimeScale());
 					ShrinkActor(actor, 0.0010 * magicka, 0.0);
 					float Volume = clamp(0.10, 1.0, get_visual_scale(actor) * 0.10);
-					GRumble::Once("TotalControlOther", actor, 0.20, 0.05);
+					Rumbling::Once("TotalControlOther", actor, 0.20, 0.05);
 					static Timer timergrowth = Timer(2.00);
 					if (timergrowth.ShouldRun()) {
 						Runtime::PlaySound("shrinkSound", actor, Volume, 1.0);
@@ -145,7 +145,7 @@ namespace {
 		}
 		if (Cache->SizeReserve > 0.0) {
 			float duration = data.Duration();
-			GRumble::Once("SizeReserve", player, Cache->SizeReserve/15 * duration, 0.05);
+			Rumbling::Once("SizeReserve", player, Cache->SizeReserve/15 * duration, 0.05);
 
 			if (duration >= 1.2 && Runtime::HasPerk(player, "SizeReserve") && Cache->SizeReserve > 0) {
 				float SizeCalculation = duration - 1.2;

@@ -134,28 +134,28 @@ namespace {
 	void StartBodyRumble(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: L_LEG_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 		}
 	}
 
 	void StopBodyRumble(std::string_view tag, Actor& actor) {
 		for (auto& node_name: L_LEG_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Stop(rumbleName, &actor);
+			Rumbling::Stop(rumbleName, &actor);
 		}
 	}
 
-	void StartLeftLegRumble(std::string_view tag, Actor& actor, float power, float halflife) {
+	void StartLeftLeRumbling(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: L_LEG_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Start(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 		}
 	}
 
-	void StopLeftLegRumble(std::string_view tag, Actor& actor) {
+	void StopLeftLeRumbling(std::string_view tag, Actor& actor) {
 		for (auto& node_name: L_LEG_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			GRumble::Stop(rumbleName, &actor);
+			Rumbling::Stop(rumbleName, &actor);
 		}
 	}
 
@@ -194,7 +194,7 @@ namespace {
 		}
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		sandwichdata.EnableSuffocate(false);
-		StartLeftLegRumble("LLSandwich", data.giant, 0.10, 0.12);
+		StartLeftLeRumbling("LLSandwich", data.giant, 0.10, 0.12);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", true, 1.0);
 	}
 
@@ -207,7 +207,7 @@ namespace {
 		}
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		sandwichdata.EnableSuffocate(false);
-		StartLeftLegRumble("LLSandwichHeavy", data.giant, 0.15, 0.15);
+		StartLeftLeRumbling("LLSandwichHeavy", data.giant, 0.15, 0.15);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", true, 2.5);
 	}
 
@@ -215,7 +215,7 @@ namespace {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		Runtime::PlaySoundAtNode("ThighSandwichImpact", &data.giant, 1.0, 1.0, "AnimObjectB");
 		sandwichdata.EnableSuffocate(true);
-		GRumble::Once("ThighImpact", &data.giant, 0.4, 0.15, "AnimObjectA");
+		Rumbling::Once("ThighImpact", &data.giant, 0.4, 0.15, "AnimObjectA");
 		for (auto tiny: sandwichdata.GetActors()) {
 			DoThighDamage(&data.giant, tiny, data.animSpeed, 1.0, 1.0);
 			tiny->NotifyAnimationGraph("ragdoll");
@@ -230,7 +230,7 @@ namespace {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		Runtime::PlaySoundAtNode("ThighSandwichImpact", &data.giant, 1.2, 1.0, "AnimObjectA");
 		sandwichdata.EnableSuffocate(true);
-		GRumble::Once("ThighImpact", &data.giant, 0.75, 0.15, "AnimObjectA");
+		Rumbling::Once("ThighImpact", &data.giant, 0.75, 0.15, "AnimObjectA");
 		for (auto tiny: sandwichdata.GetActors()) {
 			DoThighDamage(&data.giant, tiny, data.animSpeed, 2.2, 0.75);
 			Attacked(tiny, &data.giant);
@@ -243,13 +243,13 @@ namespace {
 	void GTSSandwich_MoveLL_end(AnimationEventData& data) {
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
-		StopLeftLegRumble("LLSandwich", data.giant);
+		StopLeftLeRumbling("LLSandwich", data.giant);
 	}
 
 	void GTSSandwich_MoveLL_end_H(AnimationEventData& data) {
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
-		StopLeftLegRumble("LLSandwichHeavy", data.giant);
+		StopLeftLeRumbling("LLSandwichHeavy", data.giant);
 	}
 
 	void GTSSandwich_ThighLoop_Enter(AnimationEventData& data) {

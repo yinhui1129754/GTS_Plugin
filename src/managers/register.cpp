@@ -49,7 +49,7 @@ namespace Gts {
 		EventDispatcher::AddListener(&FootStepManager::GetSingleton()); // Manages footstep sounds
 		EventDispatcher::AddListener(&TremorManager::GetSingleton()); // Manages tremors on footstop
 		EventDispatcher::AddListener(&ExplosionManager::GetSingleton()); // Manages clouds/exposions on footstep
-		EventDispatcher::AddListener(&GRumble::GetSingleton()); // Manages rumbling of contoller/camera for multiple frames
+		EventDispatcher::AddListener(&Rumbling::GetSingleton()); // Manages rumbling of contoller/camera for multiple frames
 
 		EventDispatcher::AddListener(&AttributeManager::GetSingleton()); // Adjusts most attributes
 		EventDispatcher::AddListener(&RandomGrowth::GetSingleton()); // Manages random growth perk

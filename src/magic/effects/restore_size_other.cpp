@@ -37,7 +37,7 @@ namespace Gts {
 		if (this->timer.ShouldRun()) {
 			float Volume = clamp(0.15, 1.0, get_visual_scale(target) * 0.1);
 			Runtime::PlaySound("shrinkSound", target, Volume, 1.0);
-			GRumble::Once("RestoreSizeOther", target, 0.6, 0.05);
+			Rumbling::Once("RestoreSizeOther", target, 0.6, 0.05);
 		}
 
 		if (!Revert(target, Power, Power/2.5)) { // Returns false when restore size is complete

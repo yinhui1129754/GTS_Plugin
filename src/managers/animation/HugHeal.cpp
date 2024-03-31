@@ -96,7 +96,7 @@ namespace {
 			float sizedifference = get_visual_scale(giantref)/get_visual_scale(tinyref);
 			shake_camera(giantref, 0.30 * sizedifference, 0.05);
 		} else {
-			GRumble::Once("HugSteal", giantref, 3.25, 0.10);
+			Rumbling::Once("HugSteal", giantref, 3.25, 0.10);
 		}
 		tinyref->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, maxhp * 0.004 * 0.15 * TimeScale());
 

@@ -71,7 +71,7 @@ namespace {
 			} else {
 				Runtime::PlaySoundAtNode("SoftHandAttack", receiver, 1.0, 1.0, "NPC L Hand [LHnd]");
 			}
-			GRumble::Once("GrabAttackKill", receiver, 8.0, 0.15, "NPC L Hand [LHnd]");
+			Rumbling::Once("GrabAttackKill", receiver, 8.0, 0.15, "NPC L Hand [LHnd]");
 			AnimationManager::StartAnim("GrabAbort", receiver); // Abort Grab animation
 			Grab::Release(receiver);
 		}
@@ -102,7 +102,7 @@ namespace {
 		if (IsFirstPerson()) {
 			value *= 0.05;
 		}
-		GRumble::Once("HitGrowth", receiver, value, 0.15);
+		Rumbling::Once("HitGrowth", receiver, value, 0.15);
 	}
 
 	void HitGrowth(Actor* receiver, Actor* attacker, float GrowthValue, float SizeDifference, float BalanceMode) {

@@ -111,7 +111,7 @@ namespace Gts {
 		// log::info("Rip");
 		manager->UnequipObject(Act, Slot);
 		Runtime::PlaySound("ClothTearSound", Act, 1.0, 1.0);
-		GRumble::Once("ClothManager", Act, (32 * get_visual_scale(Act)), 0.05);
+		Rumbling::Once("ClothManager", Act, (32 * get_visual_scale(Act)), 0.05);
 	}
 
 	void ClothManager::CheckRip() {

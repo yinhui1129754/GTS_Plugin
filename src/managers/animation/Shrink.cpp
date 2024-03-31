@@ -81,7 +81,7 @@ namespace {
 				return false;
 			}
 
-			GRumble::Once("ShrinkButton", caster, 4.0 * stamina, 0.05, "NPC Pelvis [Pelv]");
+			Rumbling::Once("ShrinkButton", caster, 4.0 * stamina, 0.05, "NPC Pelvis [Pelv]");
 			if (elapsed >= 0.99) {
 				SetHalfLife(caster, 1.0);
 				return false;

@@ -121,8 +121,8 @@ namespace {
 				DoFootstepSound(giant, 1.2, FootEvent::Right, RNode);
 				DoFootstepSound(giant, 1.2, FootEvent::Left, LNode);
 				DoLaunch(&data.giant, 0.95, 4.2, FootEvent::Butt);
-				GRumble::Once("Butt_L", &data.giant, 3.80, 0.02, "NPC R Butt");
-				GRumble::Once("Butt_R", &data.giant, 3.80, 0.02, "NPC L Butt");
+				Rumbling::Once("Butt_L", &data.giant, 3.80, 0.02, "NPC R Butt");
+				Rumbling::Once("Butt_R", &data.giant, 3.80, 0.02, "NPC L Butt");
 			}
 		}
 	}
