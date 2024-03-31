@@ -1254,12 +1254,13 @@ namespace Gts {
 			if (scale >= 1.0) {
 				amt /= GetGrowthReduction(scale); // Enabled if BalanceMode is True. Decreases Grow Efficiency.
 			}
-		} else if (amt - EPS < 0.0) {
-			// If neative change: add stolen attributes
+		} else if (giant->formID == 0x14 && amt - EPS < 0.0) {
+			// If negative change: add stolen attributes
 			DistributeStolenAttributes(giant, -amt * GetGrowthReduction(scale)); // Adjust max attributes
 		}
-		if (type == SizeEffectType::kShrink) {
-			Edge = GetPerkBonus_OnTheEdge(giant, amt);
+
+		if (giant->formID == 0x14 && type == SizeEffectType::kShrink) {
+			Edge = GetPerkBonus_OnTheEdge(giant, amt); // Play Exclusive
 		}
 
 		mod_target_scale(giant, amt * Edge); // set target scale value
@@ -1274,15 +1275,17 @@ namespace Gts {
 			if (scale >= 1.0) {
 				amt /= GetGrowthReduction(scale); // Enabled if BalanceMode is True. Decreases Grow Efficiency.
 			}
-		} else if (amt - EPS < 0.0) {
-			// If neative change: add stolen attributes
+		} else if (giant->formID == 0x14 && amt - EPS < 0.0) {
+			// If negative change: add stolen attributes
 			DistributeStolenAttributes(giant, -amt * GetGrowthReduction(scale)); // Adjust max attributes
 		}
-		if (type == SizeEffectType::kShrink) {
-			Edge = GetPerkBonus_OnTheEdge(giant, amt);
+		
+		if (giant->formID == 0x14 && type == SizeEffectType::kShrink) {
+			Edge = GetPerkBonus_OnTheEdge(giant, amt); // Play Exclusive
 		}
 
 		mod_target_scale(giant, amt * Edge); // set target scale value
+		
 		return amt * Edge;
 	}
 
@@ -2260,7 +2263,7 @@ namespace Gts {
 			shrinkpower *= 1.40;
 		}
 
-		//update_target_scale(tiny, -(shrinkpower * gigantism), SizeEffectType::kShrink);
+		update_target_scale(tiny, -(shrinkpower * gigantism), SizeEffectType::kShrink);
 		Attacked(tiny, giant);
 
 		ModSizeExperience(giant, (shrinkpower * gigantism) * 0.80);
@@ -2563,7 +2566,7 @@ namespace Gts {
 							if (giantScale/tinyScale < Push_Jump_Launch_Threshold) {
 								StaggerActor(giant, otherActor, 0.50);
 							} else {
-								LaunchActor::ApplyLaunchTo(giant, otherActor, 1.0, 0.60);
+								LaunchActor::ApplyLaunchTo(giant, otherActor, 1.0, 0.33);
 							}
 						}
 					}
