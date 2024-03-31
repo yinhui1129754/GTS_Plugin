@@ -1,3 +1,4 @@
+#include "managers/damage/LaunchObject.hpp"
 #include "managers/Attributes.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
@@ -7,13 +8,11 @@
 #include "data/plugin.hpp"
 #include "hooks/jump.hpp"
 
-
-
 using namespace RE;
 using namespace SKSE;
 
 namespace {
-	void Jump_ApplyExtraJumpEffects(Actor* giant, float size, float Might) {
+	void Jump_ApplyExtraJumpEffects(Actor* actor, float size, float Might) {
 		if (!actor->IsInMidair()) {
 			NiPoint3 pos = actor->GetPosition(); 
 			pos.z += 4.0; //shift it up a little
