@@ -78,7 +78,6 @@ namespace Gts {
 		if (IsBeingGrinded(tiny)) {
 			return; // Disallow to launch if we're grinding an actor
 		}
-		auto& CollisionDamage = CollisionDamage::GetSingleton();
 
 		float DamageMult = 0.6;
 		float giantSize = get_visual_scale(giant);
@@ -90,23 +89,19 @@ namespace Gts {
 
 		bool OwnsPerk = false;
 
-
 		if (HasSMT(giant)) {
 			giantSize += 3.0;
 			threshold = 0.8;
 			force += 0.025;
 		}
 		float Adjustment = GetSizeFromBoundingBox(tiny);
-		float tinySize = get_visual_scale(tiny) * Adjustment;
-		float sizeRatio = giantSize/tinySize;
+
+		float sizeRatio = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
 
 		float knockBack = LAUNCH_KNOCKBACK * giantSize * force;
 
-		auto& sizemanager = SizeManager::GetSingleton();
 		bool IsLaunching = IsActionOnCooldown(tiny, CooldownSource::Damage_Launch);
-		if (IsLaunching) {
-			return;
-		}
+		if (!IsLaunching) {
 
 		if (force >= 0.10) {
 			float power = (1.0 * launch_power) / Adjustment;
@@ -129,14 +124,12 @@ namespace Gts {
 					}
 				}
 			}
-			NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
 
 			PushActorAway(giant, tiny, 1.0);
+			NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
 
 			std::string name = std::format("LaunchOther_{}", tiny->formID);
-
 			ActorHandle tinyHandle = tiny->CreateRefHandle();
-
 			double startTime = Time::WorldTimeElapsed();
 
 			TaskManager::Run(name, [=](auto& update){
@@ -151,6 +144,7 @@ namespace Gts {
 				}
 				return true;
 			});
+		}
 		}
 	}
 

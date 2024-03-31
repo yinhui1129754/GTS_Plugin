@@ -1519,28 +1519,17 @@ namespace Gts {
 		// It may be a good idea to wait about 0.05 sec before callind it after actor has been pushed, else it may not work
 		hkVector4 impulse = hkVector4(afX * Multiplier, afY * Multiplier, afZ * Multiplier, 1.0);
 
-		if (impulse.Length3() < 1e-4 || impulse.SqrLength3() < 1e-4) {
-			//log::info("Havok prevented, length is invalid");
-			return;
-		}
-
-		for (auto bools: {true, false}) {
-			auto collision = target->Get3D(bools)->GetCollisionObject();
-			if (collision) {
-				auto rigidbody = collision->GetRigidBody();
-				if (rigidbody) {
-					auto body = rigidbody->AsBhkRigidBody();
-					if (body) {
-						SetLinearImpulse(body, impulse);
-						//log::info("Bdy found, Applying impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
-					}
+		auto collision = target->Get3D(false)->GetCollisionObject();
+		if (collision) {
+			auto rigidbody = collision->GetRigidBody();
+			if (rigidbody) {
+				auto body = rigidbody->AsBhkRigidBody();
+				if (body) {
+					SetLinearImpulse(body, impulse);
+					//log::info("Bdy found, Applying impulse {} to {}", Vector2Str(impulse), target->GetDisplayFullName());
 				}
 			}
 		}
-	}
-
-	void ApplyHavokImpulse(TESObjectREFR* target, float afX, float afY, float afZ, float afMagnitude) {
-		CallFunctionOn(target, "ObjectReference", "ApplyHavokImpulse", afX, afY, afZ, afMagnitude);
 	}
 
 	void CompleteDragonQuest(Actor* tiny, bool vore, bool dead) {
@@ -2576,7 +2565,7 @@ namespace Gts {
 							if (giantScale/tinyScale < Push_Jump_Launch_Threshold) {
 								StaggerActor(giant, otherActor, 0.50);
 							} else {
-								LaunchActor::ApplyLaunchTo(giant, otherActor, 1.0, 0.33);
+								LaunchActor::ApplyLaunchTo(giant, otherActor, 1.0, 0.60);
 							}
 						}
 					}

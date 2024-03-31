@@ -12,6 +12,8 @@ using namespace RE;
 using namespace SKSE;
 
 namespace {
+	const float launch_up_radius = 24.0f;
+
 	void Jump_ApplyExtraJumpEffects(Actor* actor, float size, float Might) {
 		if (!actor->IsInMidair()) {
 			NiPoint3 pos = actor->GetPosition(); 
@@ -29,8 +31,8 @@ namespace {
 				};
 
 				SpawnParticle(actor, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), pos, size * power * 2.0, 7, nullptr);
-				PushObjectsUpwards(actor, position, 1.2 * Might * power, 0.2 * power); // Launch cabbages and stuff up
-				StaggerActor_Around(actor, stagger_radius * Might, true); // Radius is scaled inside the function
+				PushObjectsUpwards(actor, position, launch_up_radius * Might * power, 0.2 * power); // Launch cabbages and stuff up
+				StaggerActor_Around(actor, stagger_radius * Might, true); // Launch actors up, Radius is scaled inside the function
 
 				log::info("Jump Power: {}", power);
 				log::info("Jump Radius: {}", stagger_radius);

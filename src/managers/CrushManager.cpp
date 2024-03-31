@@ -153,79 +153,77 @@ namespace Gts {
 				ProgressQuest(giant, tiny);
 				data.state = CrushState::Crushing;
 			} else if (data.state == CrushState::Crushing) {
-				if (data.delay.ShouldRun()) {
-					Attacked(tiny, giant);
+				Attacked(tiny, giant);
 
-					float currentSize = get_visual_scale(tiny);
+				float currentSize = get_visual_scale(tiny);
 
-					data.state = CrushState::Crushed;
-					if (giant->formID == 0x14 && IsDragon(tiny)) {
-						CompleteDragonQuest(tiny, false, tiny->IsDead());
-					}
-					
-					std::string taskname = std::format("CrushTiny {}", tiny->formID);
-
-					MoanOrLaugh(giant, tiny);
-					GrowAfterTheKill(giant, tiny);
-
-					GRumble::Once("CrushRumble", tiny, 1.4, 0.15);
-					if (giant->formID == 0x14) {
-						if (IsLiving(tiny)) {
-							TriggerScreenBlood(50);
-						}
-					}
-					std::random_device rd;
-					std::mt19937 gen(rd());
-					std::uniform_real_distribution<float> dis(-0.2, 0.2);
-
-					AddSMTDuration(giant, 5.0);
-					ScareChance(giant);
-
-					// Do crush
-					KillActor(giant, tiny);
-
-					if (!IsLiving(tiny) || LessGore()) {
-						SpawnDustParticle(giant, tiny, "NPC Root [Root]", 3.0);
-					} else {
-						if (!LessGore()) {
-							auto root = find_node(tiny, "NPC Root [Root]");
-							if (root) {
-								SpawnParticle(tiny, 0.60, "GTS/Damage/Explode.nif", root->world.rotate, root->world.translate, currentSize * 2.5, 7, root);
-								SpawnParticle(tiny, 0.60, "GTS/Damage/Explode.nif", root->world.rotate, root->world.translate, currentSize * 2.5, 7, root);
-								SpawnParticle(tiny, 0.60, "GTS/Damage/Crush.nif", root->world.rotate, root->world.translate, currentSize * 2.5, 7, root);
-								SpawnParticle(tiny, 0.60, "GTS/Damage/Crush.nif", root->world.rotate, root->world.translate, currentSize * 2.5, 7, root);
-								SpawnParticle(tiny, 1.20, "GTS/Damage/ShrinkOrCrush.nif", NiMatrix3(), root->world.translate, currentSize * 25, 7, root);
-							}
-							Runtime::CreateExplosion(tiny, get_visual_scale(tiny)/4,"BloodExplosion");
-							Runtime::PlayImpactEffect(tiny, "GtsBloodSprayImpactSet", "NPC Root [Root]", NiPoint3{0, 0, -1}, 512, false, true);
-						}
-					}
-					ActorHandle giantHandle = giant->CreateRefHandle();
-					ActorHandle tinyHandle = tiny->CreateRefHandle();
-					TaskManager::RunOnce(taskname, [=](auto& update){
-						if (!tinyHandle) {
-							return;
-						}
-						if (!giantHandle) {
-							return;
-						}
-
-						auto giant = giantHandle.get().get();
-						auto tiny = tinyHandle.get().get();
-						float scale = get_visual_scale(tiny);
-						TransferInventory(tiny, giant, scale, false, true, DamageSource::Crushed, true);
-						// Actor Reset is done inside TransferInventory:StartResetTask!
-					});
-
-					if (tiny->formID != 0x14) {
-						Disintegrate(tiny, true); // Set critical stage 4 on actors
-					} else if (tiny->formID == 0x14) {
-						TriggerScreenBlood(50);
-						tiny->SetAlpha(0.0); // Player can't be disintegrated, so we make player Invisible
-					}
-
-					FearChance(giant);
+				data.state = CrushState::Crushed;
+				if (giant->formID == 0x14 && IsDragon(tiny)) {
+					CompleteDragonQuest(tiny, false, tiny->IsDead());
 				}
+				
+				std::string taskname = std::format("CrushTiny {}", tiny->formID);
+
+				MoanOrLaugh(giant, tiny);
+				GrowAfterTheKill(giant, tiny);
+
+				GRumble::Once("CrushRumble", tiny, 1.4, 0.15);
+				if (giant->formID == 0x14) {
+					if (IsLiving(tiny)) {
+						TriggerScreenBlood(50);
+					}
+				}
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_real_distribution<float> dis(-0.2, 0.2);
+
+				AddSMTDuration(giant, 5.0);
+				ScareChance(giant);
+
+				// Do crush
+				KillActor(giant, tiny);
+
+				if (!IsLiving(tiny) || LessGore()) {
+					SpawnDustParticle(giant, tiny, "NPC Root [Root]", 3.0);
+				} else {
+					if (!LessGore()) {
+						auto root = find_node(tiny, "NPC Root [Root]");
+						if (root) {
+							SpawnParticle(tiny, 0.60, "GTS/Damage/Explode.nif", root->world.rotate, root->world.translate, currentSize * 2.5, 7, root);
+							SpawnParticle(tiny, 0.60, "GTS/Damage/Explode.nif", root->world.rotate, root->world.translate, currentSize * 2.5, 7, root);
+							SpawnParticle(tiny, 0.60, "GTS/Damage/Crush.nif", root->world.rotate, root->world.translate, currentSize * 2.5, 7, root);
+							SpawnParticle(tiny, 0.60, "GTS/Damage/Crush.nif", root->world.rotate, root->world.translate, currentSize * 2.5, 7, root);
+							SpawnParticle(tiny, 1.20, "GTS/Damage/ShrinkOrCrush.nif", NiMatrix3(), root->world.translate, currentSize * 25, 7, root);
+						}
+						Runtime::CreateExplosion(tiny, get_visual_scale(tiny)/4,"BloodExplosion");
+						Runtime::PlayImpactEffect(tiny, "GtsBloodSprayImpactSet", "NPC Root [Root]", NiPoint3{0, 0, -1}, 512, false, true);
+					}
+				}
+				ActorHandle giantHandle = giant->CreateRefHandle();
+				ActorHandle tinyHandle = tiny->CreateRefHandle();
+				TaskManager::RunOnce(taskname, [=](auto& update){
+					if (!tinyHandle) {
+						return;
+					}
+					if (!giantHandle) {
+						return;
+					}
+
+					auto giant = giantHandle.get().get();
+					auto tiny = tinyHandle.get().get();
+					float scale = get_visual_scale(tiny);
+					TransferInventory(tiny, giant, scale, false, true, DamageSource::Crushed, true);
+					// Actor Reset is done inside TransferInventory:StartResetTask!
+				});
+
+				if (tiny->formID != 0x14) {
+					Disintegrate(tiny, true); // Set critical stage 4 on actors
+				} else if (tiny->formID == 0x14) {
+					TriggerScreenBlood(50);
+					tiny->SetAlpha(0.0); // Player can't be disintegrated, so we make player Invisible
+				}
+
+				FearChance(giant);
 			}
 		}
 	}
