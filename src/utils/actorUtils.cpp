@@ -2576,7 +2576,7 @@ namespace Gts {
 							if (giantScale/tinyScale < Push_Jump_Launch_Threshold) {
 								StaggerActor(giant, otherActor, 0.50);
 							} else {
-								LaunchActor::ApplyLaunchTo(otherActor, 1.0, 0.33);
+								LaunchActor::ApplyLaunchTo(giant, otherActor, 1.0, 0.33);
 							}
 						}
 					}
