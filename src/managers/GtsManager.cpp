@@ -300,7 +300,7 @@ void GtsManager::Start() {
 }
 
 // Poll for updates
-void GtsManager::CameraUpdate() {
+void GtsManager::HavokUpdate() {
 	auto profiler = Profilers::Profile("Manager: Update()");
 
 	UpdateFalling();

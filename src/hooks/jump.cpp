@@ -112,9 +112,7 @@ namespace Hooks {
 
 						Jump_ApplyExtraJumpEffects(actor, size, might); // Push items and actors, spawn dust ring and shake the ground
 
-						log::info("Jump Result: {}", result);
 						result *= scaled;
-						log::info("Jump Multiplier: {}", scaled);
 					}
 				}
 				return result;

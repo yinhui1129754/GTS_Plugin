@@ -1545,10 +1545,12 @@ namespace Gts {
 				float duration = 1.5 + ((rand() % 100) * 0.01);
 				duration *= multiply;
 
+				ApplyActionCooldown(giant, CooldownSource::Emotion_Laugh);
+				
 				if (!otherActor->IsDead()) {
 					PlayLaughSound(giant, 1.0, 1);
 					Task_FacialEmotionTask_Smile(giant, duration, name);
-					ApplyActionCooldown(giant, CooldownSource::Emotion_Laugh);
+					
 				}
 			}
 		}
