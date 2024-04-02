@@ -169,7 +169,7 @@ namespace Gts {
 			result.POS_Last_Hand_L = POS_Last_Hand_L;
 			result.POS_Last_Hand_R = POS_Last_Hand_R;
 
-			result POS_LastCheckTime = POS_LastCheckTime;
+			result.POS_LastCheckTime = POS_LastCheckTime;
 
 			result.IsInControl = IsInControl;
 			
