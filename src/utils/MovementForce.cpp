@@ -19,7 +19,7 @@ namespace Gts {
 		NiPoint3 DataCoordinates = NiPoint3();
 		NiAVObject* Node = nullptr;
 
-		float MovementForce = 0.0;
+		float NodeMovementForce = 0.0;
 		
 		switch (Type) {
 			case NodeMovementType::Movement_LeftLeg: 
@@ -44,7 +44,7 @@ namespace Gts {
 			InputCoordinates = Node->world.translate; // Record input node coordinates
 			log::info("Input coords: {}", InputCoordinates);
 			if (InputCoordinates.Length() > 0 && DataCoordinates.Length() > 0) {
-				MovementForce = (InputCoordinates - DataCoordinates).Length();
+				NodeMovementForce = (InputCoordinates - DataCoordinates).Length();
 
 				// ^ Compare values, get movement force of Node X over 1 frame
 				// ^ And also compensate speed with scale, since nodes travel further distance at large distances
@@ -54,10 +54,10 @@ namespace Gts {
 			log::info("Data coords: {}", DataCoordinates);
 		}
 		
-		log::info("Movement Force: {}", MovementForce);
+		log::info("Movement Force: {}", NodeMovementForce);
 		// Compensate speed with scale
-		if (MovementForce > 0) {
-			return MovementForce;
+		if (NodeMovementForce > 0) {
+			return NodeMovementForce;
 		}
 		return 0.0;
 	}
