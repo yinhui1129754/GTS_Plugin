@@ -17,7 +17,7 @@ namespace Gts {
 		float NodeMovementForce = 0.0;
 		float scale = get_visual_scale(giant);
 		
-		NiPoint3& DataCoordinates = NiPoint3();
+		NiPoint3 DataCoordinates = NiPoint3();
 		NiPoint3 InputCoordinates = NiPoint3();
 		
 		auto Data = Transient::GetSingleton().GetData(giant);
@@ -28,26 +28,30 @@ namespace Gts {
 			float& TimePassed_Data = Data->POS_LastCheckTime;
 
 			switch (Type) {
-				case NodeMovementType::Movement_LeftLeg: 
+				case NodeMovementType::Movement_LeftLeg: {
 					Node = find_node(giant, "NPC L Foot [Lft ]");
 					NiPoint3& LL = Data->POS_Last_Leg_L;
 					DataCoordinates = LL;
-				break;
-				case NodeMovementType::Movement_RightLeg: 
+					break;
+				}
+				case NodeMovementType::Movement_RightLeg: {
 					Node = find_node(giant, "NPC R Foot [Rft ]");
 					NiPoint3& RL = Data->POS_Last_Leg_R;
 					DataCoordinates = RL;
-				break;
-				case NodeMovementType::Movement_LeftHand: 
+					break;
+				}
+				case NodeMovementType::Movement_LeftHand: {
 					Node = find_node(giant, "NPC L Hand [LHnd]");
 					NiPoint3& LH = Data->POS_Last_Hand_L;
 					DataCoordinates = LH;
 				break;
-				case NodeMovementType::Movement_RightHand: 
+				}
+				case NodeMovementType::Movement_RightHand: {
 					Node = find_node(giant, "NPC R Hand [RHnd]");
 					NiPoint3& RH = Data->POS_Last_Hand_R;
 					DataCoordinates = RH;
 				break;
+				}
 			}
 
 			if (Node) {
@@ -57,7 +61,7 @@ namespace Gts {
 				NodeMovementForce = (InputCoordinates - DataCoordinates).Length();
 				// ^ Compare values, get movement force of Node X over 1 frame
 				// ^ And also compensate speed with scale, since nodes travel further distance at large distances
-				
+
 				log::info("Data coords: {}", Vector2Str(DataCoordinates));
 				if (TimePassed_This != TimePassed_Data) {
 					TimePassed_Data = TimePassed_This;
