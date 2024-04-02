@@ -25,7 +25,7 @@ namespace Gts {
 		if (Data) {
 			
 			float TimePassed_This = Time::WorldTimeElapsed();
-			float TimePassed_Data = Data->POS_LastCheckTime;
+			float& TimePassed_Data = Data->POS_LastCheckTime;
 
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: 
