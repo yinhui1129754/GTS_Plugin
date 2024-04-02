@@ -17,7 +17,7 @@ namespace Gts {
 		float NodeMovementForce = 0.0;
 		float scale = get_visual_scale(giant);
 		
-		NiPoint3 DataCoordinates = NiPoint3();
+		NiPoint3& DataCoordinates = &NiPoint3();
 		NiPoint3 InputCoordinates = NiPoint3();
 		
 		auto Data = Transient::GetSingleton().GetData(giant);
@@ -57,10 +57,12 @@ namespace Gts {
 			if (Node) {
 				InputCoordinates = Node->world.translate; // Record input node coordinates
 				log::info("Input coords: {}", Vector2Str(InputCoordinates));
-
-				NodeMovementForce = (InputCoordinates - DataCoordinates).Length();
-				// ^ Compare values, get movement force of Node X over 1 frame
-				// ^ And also compensate speed with scale, since nodes travel further distance at large distances
+				if (DataCoordinates.Length() > 0) {
+					NodeMovementForce = (InputCoordinates - DataCoordinates).Length();
+					log::info("Data length > 0");
+					// ^ Compare values, get movement force of Node X over 1 frame
+					// ^ And also compensate speed with scale, since nodes travel further distance at large distances
+				}
 
 				log::info("Data coords: {}", Vector2Str(DataCoordinates));
 				if (TimePassed_This != TimePassed_Data) {
