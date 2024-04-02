@@ -61,6 +61,8 @@ namespace Gts {
 		NiPoint3 POS_Last_Hand_L;
 		NiPoint3 POS_Last_Hand_R;
 
+		float POS_LastCheckTime;
+
 		Actor* IsInControl;
 
 		TESObjectREFR* disable_collision_with;

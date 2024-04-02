@@ -23,6 +23,10 @@ namespace Gts {
 		auto Data = Transient::GetSingleton().GetData(giant);
 
 		if (Data) {
+			
+			float TimePassed_This = Time::WorldTimeElapsed();
+			float TimePassed_Data = Data->POS_LastCheckTime;
+
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: 
 					Node = find_node(giant, "NPC L Foot [Lft ]");
@@ -51,9 +55,12 @@ namespace Gts {
 					// ^ Compare values, get movement force of Node X over 1 frame
 					// ^ And also compensate speed with scale, since nodes travel further distance at large distances
 				}
-
-				DataCoordinates = Node->world.translate; // Record new pos of bone
-				log::info("Data coords: {}", Vector2Str(DataCoordinates));
+				if (TimePassed_This != TimePassed_Data) {
+					TimePassed_Data = TimePassed_This;
+					DataCoordinates = Node->world.translate; // Record new pos of bone
+					log::info("Data coords: {}", Vector2Str(DataCoordinates));
+					log::info("TimePassed: {}", TimePassed_Data);
+				}
 			}
 		}
 		

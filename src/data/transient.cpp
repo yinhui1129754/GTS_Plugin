@@ -94,6 +94,8 @@ namespace Gts {
 			NiPoint3 POS_Last_Hand_L = NiPoint3(0.0, 0.0, 0.0);
 			NiPoint3 POS_Last_Hand_R = NiPoint3(0.0, 0.0, 0.0);
 
+			float POS_LastCheckTime = 0.0;
+
 			Actor* IsInControl = nullptr;
 
 			TESObjectREFR* disable_collision_with = nullptr;
@@ -166,6 +168,8 @@ namespace Gts {
 			result.POS_Last_Leg_R = POS_Last_Leg_R;
 			result.POS_Last_Hand_L = POS_Last_Hand_L;
 			result.POS_Last_Hand_R = POS_Last_Hand_R;
+
+			result POS_LastCheckTime = POS_LastCheckTime;
 
 			result.IsInControl = IsInControl;
 			
