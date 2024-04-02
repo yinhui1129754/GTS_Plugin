@@ -13,8 +13,8 @@ namespace {
 	float Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out, TempActorData* Data) {
 		float NodeMovementForce = 0.0;
 		if (Node) {
-			float TimePassed_This = Time::WorldTimeElapsed();
-			float& TimePassed_Data = Data->POS_LastCheckTime;
+			//float TimePassed_This = Time::WorldTimeElapsed();
+			//float& TimePassed_Data = Data->POS_LastCheckTime;
 
 			NiPoint3 coords_in = Node->world.translate;
 
@@ -25,8 +25,8 @@ namespace {
 			}
 
 			log::info("Data coords: {}", Vector2Str(coords_out));
-			if (TimePassed_This != TimePassed_Data) { // We don't want to apply it on the same frame, will result in 0
-				TimePassed_Data = TimePassed_This;
+			if (coords_in != coords_out) { // We don't want to apply it on the same frame, will result in 0
+				//TimePassed_Data = TimePassed_This;
 				coords_out = coords_in; // Record new pos of bone
 			}
 		}
@@ -43,8 +43,6 @@ namespace Gts {
 		float NodeMovementForce = 0.0;
 		float scale = get_visual_scale(giant);
 		
-		NiPoint3 InputCoordinates = NiPoint3();
-		
 		auto Data = Transient::GetSingleton().GetData(giant);
 
 		if (Data) {
@@ -56,11 +54,13 @@ namespace Gts {
 
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
+					log::info("-------for Left Leg: ");
 					Node = find_node(giant, "NPC L Foot [Lft ]");
 					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LL, Data);
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
+					log::info("for Right Leg: ");
 					Node = find_node(giant, "NPC R Foot [Rft ]");
 					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RL, Data);
 					break;
