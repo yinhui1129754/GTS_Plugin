@@ -14,6 +14,7 @@
 #include "managers/GtsManager.hpp"
 #include "managers/Attributes.hpp"
 #include "managers/hitmanager.hpp"
+#include "utils/MovementForce.hpp"
 #include "utils/DynamicScale.hpp"
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
@@ -317,6 +318,11 @@ void GtsManager::Update() {
 		auto& sizemanager = SizeManager::GetSingleton();
 
 		if (actor->formID == 0x14 || IsTeammate(actor)) {
+			float value_RL = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_RightLeg);
+			float value_LL = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_LeftLeg);
+			float value_RH = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_RightHand);
+			float value_LH = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_LeftHand);
+
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);
 			

@@ -1268,7 +1268,7 @@ namespace Gts {
 		mod_target_scale(giant, amt * OnTheEdge); // set target scale value
 	}
 
-	float get_update_target_scale(Actor* giant, float amt, SizeEffectType type) {
+	float get_update_target_scale(Actor* giant, float amt, SizeEffectType type) { // Used for growth spurt
 		float OnTheEdge = 1.0;
 		
 		if (amt > 0 && (giant->formID == 0x14 || IsTeammate(giant))) {

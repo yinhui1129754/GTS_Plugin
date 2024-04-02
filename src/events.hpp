@@ -76,6 +76,13 @@ namespace Gts {
 		ObjectB,
 	};
 
+	enum class NodeMovementType {
+		Movement_LeftLeg,
+		Movement_RightLeg,
+		Movement_RightHand,
+		Movement_LeftHand,
+	};
+
 	enum class DamageSource {
 		HandCrawlRight,
 		HandCrawlLeft,

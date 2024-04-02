@@ -222,7 +222,9 @@ namespace {
 	}
 
 	float GetMaxScale(StaticFunctionTag*, Actor* actor) {
-		return get_max_scale(actor) * get_natural_scale(actor, true);
+		return get_max_scale(actor) * get_natural_scale(actor, true); 
+		// Naturally we / the scale by natural scale inside GtsSizeManager.cpp, so we compensate it here
+		// Else it will report x3.0 instead of x8.0 for example (when the SetScale is x2.5)
 	}
 
 	void ModMaxScale(StaticFunctionTag*, Actor* actor, float amt) {
