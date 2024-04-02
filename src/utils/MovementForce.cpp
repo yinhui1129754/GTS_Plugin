@@ -13,14 +13,13 @@ namespace Gts {
 	float Get_Bone_Movement_Speed(Actor* giant, NodeMovementType Type) {
 		float scale = get_visual_scale(giant);
 		auto Data = Transient::GetSingleton().GetData(giant);
+		NiPoint3 InputCoordinates = NiPoint3();
+		NiPoint3 DataCoordinates = NiPoint3();
+		NiAVObject* Node = nullptr;
 
+		float NodeMovementForce = 0.0;
+		
 		if (Data) {
-			NiPoint3 InputCoordinates = NiPoint3();
-			NiPoint3 DataCoordinates = NiPoint3();
-			NiAVObject* Node = nullptr;
-
-			float NodeMovementForce = 0.0;
-			
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: 
 					Node = find_node(giant, "NPC L Foot [Lft ]");
