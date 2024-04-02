@@ -9,6 +9,32 @@ using namespace RE;
 using namespace SKSE;
 using namespace std;
 
+namespace {
+	float Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out, TempActorData* Data) {
+		float NodeMovementForce = 0.0;
+		if (Node) {
+			float TimePassed_This = Time::WorldTimeElapsed();
+			float& TimePassed_Data = Data->POS_LastCheckTime;
+
+			NiPoint3 coords_in = Node->world.translate;
+
+			log::info("Input coords: {}", Vector2Str(coords_in));
+			if (coords_in.Length() > 0 && coords_out.Length() > 0) {
+				NodeMovementForce = (coords_in - coords_out).Length();
+				// ^ Compare values, get movement force of Node X over 1 frame
+			}
+
+			log::info("Data coords: {}", Vector2Str(coords_out));
+			if (TimePassed_This != TimePassed_Data) { // We don't want to apply it on the same frame, will result in 0
+				TimePassed_Data = TimePassed_This;
+				coords_out = coords_in; // Record new pos of bone
+			}
+		}
+		
+		return NodeMovementForce;
+	}
+}
+
 namespace Gts {
 	float Get_Bone_Movement_Speed(Actor* giant, NodeMovementType Type) {
 
@@ -23,57 +49,38 @@ namespace Gts {
 
 		if (Data) {
 
-			NiPoint3& DataCoordinates = Data->POS_Last_Leg_L;
-			
-			float TimePassed_This = Time::WorldTimeElapsed();
-			float& TimePassed_Data = Data->POS_LastCheckTime;
+			NiPoint3& DataCoordinates_LL = Data->POS_Last_Leg_L;
+			NiPoint3& DataCoordinates_RL = Data->POS_Last_Leg_R;
+			NiPoint3& DataCoordinates_LH = Data->POS_Last_Hand_L;
+			NiPoint3& DataCoordinates_RH = Data->POS_Last_Hand_R;
 
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
 					Node = find_node(giant, "NPC L Foot [Lft ]");
-					DataCoordinates = Data->POS_Last_Leg_L;
+					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LL, Data);
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
 					Node = find_node(giant, "NPC R Foot [Rft ]");
-					DataCoordinates = Data->POS_Last_Leg_R;
+					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RL, Data);
 					break;
 				}
 				case NodeMovementType::Movement_LeftHand: 
 					Node = find_node(giant, "NPC L Hand [LHnd]");
-					DataCoordinates = Data->POS_Last_Hand_L;
+					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LH, Data);
 				break;
 				case NodeMovementType::Movement_RightHand: 
 					Node = find_node(giant, "NPC R Hand [RHnd]");
-					DataCoordinates = Data->POS_Last_Hand_R;
+					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RH, Data);
 				break;
-			}
-
-			if (Node) {
-				InputCoordinates = Node->world.translate; // Record input node coordinates
-				log::info("Input coords: {}", Vector2Str(InputCoordinates));
-				if (DataCoordinates.Length() > 0) {
-					NodeMovementForce = (InputCoordinates - DataCoordinates).Length();
-					log::info("Data length > 0");
-					// ^ Compare values, get movement force of Node X over 1 frame
-					// ^ And also compensate speed with scale, since nodes travel further distance at large distances
-				}
-
-				log::info("Data coords: {}", Vector2Str(DataCoordinates));
-				if (TimePassed_This != TimePassed_Data) {
-					TimePassed_Data = TimePassed_This;
-					DataCoordinates = InputCoordinates; // Record new pos of bone
-					log::info("Recording new coords");
-				}
-				
-				//log::info("TimePassed: Data: {}, (Transient: {}), This: {}", TimePassed_Data, Data->POS_LastCheckTime, TimePassed_This);
 			}
 		}
 		
 		log::info("Movement Force: {}", NodeMovementForce);
-		// The function doesn't work as expected since all calcs seem to happen on the same frame
-		// Needs a different method or even rework.
+
 		if (NodeMovementForce > 0) {
+			NodeMovementForce /= 100.0;
+			log::info("Scaled movement force: {}", NodeMovementForce);
 			return NodeMovementForce;
 		}
 		return 0.0;
