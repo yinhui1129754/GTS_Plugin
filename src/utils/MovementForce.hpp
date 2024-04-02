@@ -20,6 +20,8 @@ namespace Gts {
 			NiPoint3 POS_Last_Hand_R;
 	};
 
+	float Get_Bone_Movement_Speed(Actor* actor, NodeMovementType type);
+
 	class MovementForce : public EventListener {
 		public:
 			[[nodiscard]] static MovementForce& GetSingleton();
@@ -27,8 +29,6 @@ namespace Gts {
 			virtual std::string DebugName() override;
 
 			static MovementForceData& GetData(Actor* actor);
-
-			float Get_Bone_Movement_Speed(Actor* actor, NodeMovementType type);
 
 			std::unordered_map<FormID, MovementForceData> data;
 	};
