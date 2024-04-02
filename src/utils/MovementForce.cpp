@@ -17,12 +17,13 @@ namespace Gts {
 		float NodeMovementForce = 0.0;
 		float scale = get_visual_scale(giant);
 		
-		NiPoint3& DataCoordinates = Data->POS_Last_Leg_L;
 		NiPoint3 InputCoordinates = NiPoint3();
 		
 		auto Data = Transient::GetSingleton().GetData(giant);
 
 		if (Data) {
+
+			NiPoint3& DataCoordinates = Data->POS_Last_Leg_L;
 			
 			float TimePassed_This = Time::WorldTimeElapsed();
 			float& TimePassed_Data = Data->POS_LastCheckTime;
