@@ -11,13 +11,16 @@ using namespace std;
 
 namespace Gts {
 	float Get_Bone_Movement_Speed(Actor* giant, NodeMovementType Type) {
-		float scale = get_visual_scale(giant);
-		auto Data = Transient::GetSingleton().GetData(giant);
-		NiPoint3 InputCoordinates = NiPoint3();
-		NiPoint3 DataCoordinates = NiPoint3();
+
 		NiAVObject* Node = nullptr;
 
 		float NodeMovementForce = 0.0;
+		float scale = get_visual_scale(giant);
+		
+		NiPoint3 DataCoordinates = NiPoint3();
+		NiPoint3 InputCoordinates = NiPoint3();
+		
+		auto Data = Transient::GetSingleton().GetData(giant);
 
 		if (Data) {
 			switch (Type) {
@@ -55,7 +58,8 @@ namespace Gts {
 		}
 		
 		log::info("Movement Force: {}", NodeMovementForce);
-		// Compensate speed with scale
+		// The function doesn't work as expected since all calcs seem to happen on the same frame
+		// Needs a different method or even rework.
 		if (NodeMovementForce > 0) {
 			return NodeMovementForce;
 		}
