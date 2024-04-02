@@ -17,7 +17,7 @@ namespace Gts {
 		float NodeMovementForce = 0.0;
 		float scale = get_visual_scale(giant);
 		
-		NiPoint3& DataCoordinates = &NiPoint3();
+		NiPoint3& DataCoordinates = Data->POS_Last_Leg_L;
 		NiPoint3 InputCoordinates = NiPoint3();
 		
 		auto Data = Transient::GetSingleton().GetData(giant);
@@ -30,28 +30,22 @@ namespace Gts {
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
 					Node = find_node(giant, "NPC L Foot [Lft ]");
-					NiPoint3& LL = Data->POS_Last_Leg_L;
-					DataCoordinates = LL;
+					DataCoordinates = Data->POS_Last_Leg_L;
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
 					Node = find_node(giant, "NPC R Foot [Rft ]");
-					NiPoint3& RL = Data->POS_Last_Leg_R;
-					DataCoordinates = RL;
+					DataCoordinates = Data->POS_Last_Leg_R;
 					break;
 				}
-				case NodeMovementType::Movement_LeftHand: {
+				case NodeMovementType::Movement_LeftHand: 
 					Node = find_node(giant, "NPC L Hand [LHnd]");
-					NiPoint3& LH = Data->POS_Last_Hand_L;
-					DataCoordinates = LH;
+					DataCoordinates = Data->POS_Last_Hand_L;
 				break;
-				}
-				case NodeMovementType::Movement_RightHand: {
+				case NodeMovementType::Movement_RightHand: 
 					Node = find_node(giant, "NPC R Hand [RHnd]");
-					NiPoint3& RH = Data->POS_Last_Hand_R;
-					DataCoordinates = RH;
+					DataCoordinates = Data->POS_Last_Hand_R;
 				break;
-				}
 			}
 
 			if (Node) {
