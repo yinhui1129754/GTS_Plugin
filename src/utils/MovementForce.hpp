@@ -11,8 +11,6 @@ using namespace Gts;
 namespace Gts {
     class MovementForceData {
 		public:
-			MovementForceData();
-
 			NiPoint3 POS_Last_Leg_L = NiPoint3(0.0, 0.0, 0.0);
 			NiPoint3 POS_Last_Leg_R = NiPoint3(0.0, 0.0, 0.0);
 
