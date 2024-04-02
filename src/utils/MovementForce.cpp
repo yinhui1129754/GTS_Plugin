@@ -55,12 +55,13 @@ namespace Gts {
 					// ^ Compare values, get movement force of Node X over 1 frame
 					// ^ And also compensate speed with scale, since nodes travel further distance at large distances
 				}
-				if (TimePassed_This != TimePassed_Data) {
+				if (TimePassed_This > TimePassed_Data) {
 					TimePassed_Data = TimePassed_This;
-					DataCoordinates = Node->world.translate; // Record new pos of bone
-					log::info("Data coords: {}", Vector2Str(DataCoordinates));
-					log::info("TimePassed: {}", TimePassed_Data);
+					DataCoordinates = InputCoordinates; // Record new pos of bone
+					log::info("Recording new coords");
 				}
+				log::info("Data coords: {}", Vector2Str(DataCoordinates));
+				log::info("TimePassed: Data: {}, (Transient: {}), This: {}", TimePassed_Data, Data->POS_LastCheckTime, TimePassed_This);
 			}
 		}
 		
