@@ -3,6 +3,10 @@ logLevel = "info"
 flushLevel = "trace"
 profile = false
 
+# ^ Profile reports timings of operations into gtsplugin.log
+# Used to debug performance hit by specific functions
+# Accepts only true/false. Making any typo in this setting will crash the game.
+
 [frame]
 initDelay = 0
 step = 0
