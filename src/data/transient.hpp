@@ -56,6 +56,11 @@ namespace Gts {
 
 		float IsNotImmune;
 
+		NiPoint3 POS_Last_Leg_L;
+		NiPoint3 POS_Last_Leg_R;
+		NiPoint3 POS_Last_Hand_L;
+		NiPoint3 POS_Last_Hand_R;
+
 		Actor* IsInControl;
 
 		TESObjectREFR* disable_collision_with;
