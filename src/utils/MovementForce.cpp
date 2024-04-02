@@ -18,7 +18,7 @@ namespace Gts {
 		NiAVObject* Node = nullptr;
 
 		float NodeMovementForce = 0.0;
-		
+
 		if (Data) {
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: 
@@ -41,7 +41,7 @@ namespace Gts {
 
 			if (Node) {
 				InputCoordinates = Node->world.translate; // Record input node coordinates
-				log::info("Input coords: {}", InputCoordinates);
+				log::info("Input coords: {}", Vector2Str(InputCoordinates));
 				if (InputCoordinates.Length() > 0 && DataCoordinates.Length() > 0) {
 					NodeMovementForce = (InputCoordinates - DataCoordinates).Length();
 
@@ -50,7 +50,7 @@ namespace Gts {
 				}
 
 				DataCoordinates = Node->world.translate; // Record new pos of bone
-				log::info("Data coords: {}", DataCoordinates);
+				log::info("Data coords: {}", Vector2Str(DataCoordinates));
 			}
 		}
 		
