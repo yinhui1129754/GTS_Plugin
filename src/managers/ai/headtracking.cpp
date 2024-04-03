@@ -157,20 +157,21 @@ namespace {
 					finalAngle = std::clamp(angleFromForward * REDUCTION_FACTOR, -60.f, 60.f);
 					log::info("  - finalAngle: {}", finalAngle);
 				}
+			
+			} else {
+				// Not in dialog
+				if (fabs(data.spineSmooth.value) < 1e-3) {
+					// Finihed smoothing back to zero
+					giant->SetGraphVariableBool("GTSIsInDialogue", false); // Disallow
+					log::info("Setting InDialogue to false");
+				}
 			}
-		} else {
-			// Not in dialog
-			if (fabs(data.spineSmooth.value) < 1e-3) {
-				// Finihed smoothing back to zero
-				giant->SetGraphVariableBool("GTSIsInDialogue", false); // Disallow
-				log::info("Setting InDialogue to false");
-			}
+			data.spineSmooth.target = finalAngle;
+
+			giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value * (Runtime::GetFloatOr("cameraAlternateX", 1.0) + 1.0));
+
+			log::info("Pitch Override of {} is {}", giant->GetDisplayFullName(), data.spineSmooth.value);
 		}
-		data.spineSmooth.target = finalAngle;
-
-		giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value * (Runtime::GetFloatOr("cameraAlternateX", 1.0) + 1.0));
-
-		log::info("Pitch Override of {} is {}", giant->GetDisplayFullName(), data.spineSmooth.value);
 	}
 
 	/*void RotateCaster(Actor* giant, HeadtrackingData& data) { // Unused
