@@ -58,9 +58,11 @@ namespace {
 				// ^ Compare values, get movement force of Node X over 1 frame
 			}
 			log::info("Output coords: {}", Vector2Str(coords_out));
-			if (coords_in != coords_out) { // We don't want to apply it on the same frame, will result in 0
-				coords_out = coords_in; // Record new pos of bone
+			if (coords_in == coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
+				return NodeMovementForce;
 			}
+			coords_out = coords_in;
+			// Else Record new pos of bone
 		}
 		
 		return NodeMovementForce;
@@ -113,7 +115,7 @@ namespace Gts {
 		
 		if (NodeMovementForce > 0) {
 			log::info("movement force: {}", NodeMovementForce);
-			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce, 0.0f, 1.0f);
+			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce / 10.0f, 0.0f, 1.0f);
 			log::info("Clamped movement force: {}", NodeMovementForce_Clamped);
 			return NodeMovementForce_Clamped;
 		}
