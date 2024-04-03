@@ -263,7 +263,7 @@ namespace Gts {
 		if (ai) {
 			auto targetObjHandle = ai->GetHeadtrackTarget();
 			if (targetObjHandle) {
-				auto target = target_get.get().get();
+				auto target = targetObjHandle.get().get();
 				auto asActor = skyrim_cast<Actor*>(target);
 				if (asActor) {
 					tiny = asActor;
