@@ -311,6 +311,9 @@ void GtsManager::Update() {
 		auto& sizemanager = SizeManager::GetSingleton();
 
 		if (actor->formID == 0x14 || IsTeammate(actor)) {
+			
+			ScareActors(actor);
+
 			float value_RL = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_RightLeg);
 			float value_LL = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_LeftLeg);
 			//float value_RH = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_RightHand);

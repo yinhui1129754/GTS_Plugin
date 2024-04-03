@@ -47,17 +47,17 @@ namespace {
 		return Type;
 	}
 
-	float Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out, TempActorData* Data) {
+	float Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out) {
 		float NodeMovementForce = 0.0;
 		if (Node) {
 			NiPoint3 coords_in = Node->world.translate;
 
-			//log::info("Input coords: {}", Vector2Str(coords_in));
+			log::info("Input coords: {}", Vector2Str(coords_in));
 			if (coords_in.Length() > 0 && coords_out.Length() > 0) {
 				NodeMovementForce = (coords_in - coords_out).Length();
 				// ^ Compare values, get movement force of Node X over 1 frame
 			}
-
+			log::info("Output coords: {}", Vector2Str(coords_out));
 			if (coords_in != coords_out) { // We don't want to apply it on the same frame, will result in 0
 				coords_out = coords_in; // Record new pos of bone
 			}
@@ -86,24 +86,24 @@ namespace Gts {
 
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
-					//log::info("-------for Left Leg: ");
+					log::info("-------for Left Leg: ");
 					Node = find_node(giant, "NPC L Foot [Lft ]");
-					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LL, Data);
+					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LL);
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
-					//log::info("-------for Right Leg: ");
+					log::info("-------for Right Leg: ");
 					Node = find_node(giant, "NPC R Foot [Rft ]");
-					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RL, Data);
+					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RL);
 					break;
 				}
 				case NodeMovementType::Movement_LeftHand: 
 					Node = find_node(giant, "NPC L Hand [LHnd]");
-					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LH, Data);
+					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LH);
 				break;
 				case NodeMovementType::Movement_RightHand: 
 					Node = find_node(giant, "NPC R Hand [RHnd]");
-					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RH, Data);
+					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RH);
 				break;
 				case NodeMovementType::Movement_None:
 					return 1.0; // Always allow for actions that are supposed to stagger always
@@ -112,10 +112,10 @@ namespace Gts {
 		}
 		
 		if (NodeMovementForce > 0) {
-			//log::info("movement force / 10: {}", NodeMovementForce);
+			log::info("movement force: {}", NodeMovementForce);
 			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce, 0.0f, 1.0f);
-			//log::info("Clamped movement force: {}", NodeMovementForce_Clamped);
-			return NodeMovementForce;
+			log::info("Clamped movement force: {}", NodeMovementForce_Clamped);
+			return NodeMovementForce_Clamped;
 		}
 		return 0.0;
 	}
