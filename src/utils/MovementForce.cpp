@@ -73,26 +73,30 @@ namespace {
 
 namespace Gts {
 	void Update_Movement_Data(Actor* giant) {
-		NiPoint3& DataCoordinates_LL = Data->POS_Last_Leg_L;
-		NiPoint3& DataCoordinates_RL = Data->POS_Last_Leg_R;
 
-		Node_LL = find_node(giant, "NPC L Foot [Lft ]");
-		Node_RL = find_node(giant, "NPC R Foot [Rft ]");
+		auto Data = Transient::GetSingleton().GetData(giant);
+		if (Data) {
+			NiPoint3& DataCoordinates_LL = Data->POS_Last_Leg_L;
+			NiPoint3& DataCoordinates_RL = Data->POS_Last_Leg_R;
 
-		Record_Node_Coordinates(Node_LL, DataCoordinates_LL);
-		Record_Node_Coordinates(Node_RL, DataCoordinates_RL);
+			Node_LL = find_node(giant, "NPC L Foot [Lft ]");
+			Node_RL = find_node(giant, "NPC R Foot [Rft ]");
 
-		if (IsCrawling(giant)) {
-			NiPoint3& DataCoordinates_LH = Data->POS_Last_Hand_L;
-			NiPoint3& DataCoordinates_RH = Data->POS_Last_Hand_R;
+			Record_Node_Coordinates(Node_LL, DataCoordinates_LL);
+			Record_Node_Coordinates(Node_RL, DataCoordinates_RL);
 
-			Node_LH = find_node(giant, "NPC L Hand [LHnd]");
-			Node_RH = find_node(giant, "NPC R Hand [RHnd]");
+			if (IsCrawling(giant)) {
+				NiPoint3& DataCoordinates_LH = Data->POS_Last_Hand_L;
+				NiPoint3& DataCoordinates_RH = Data->POS_Last_Hand_R;
 
-			Record_Node_Coordinates(Node_RH, DataCoordinates_RH);
-			Record_Node_Coordinates(Node_LH, DataCoordinates_LH);
+				Node_LH = find_node(giant, "NPC L Hand [LHnd]");
+				Node_RH = find_node(giant, "NPC R Hand [RHnd]");
+
+				Record_Node_Coordinates(Node_RH, DataCoordinates_RH);
+				Record_Node_Coordinates(Node_LH, DataCoordinates_LH);
+			}
 		}
-}
+	}
 
 	float Get_Bone_Movement_Speed(Actor* giant, NodeMovementType Type) {
 		auto profiler = Profilers::Profile("NodeMovement");
