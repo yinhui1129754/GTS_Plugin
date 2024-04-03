@@ -80,7 +80,7 @@ namespace {
 		if (get_visual_scale(actor) < 1.5) {
 			return;
 		}
-		/*if ((actor->formID == 0x14 || IsTeammate(actor))) {
+		if ((actor->formID == 0x14 || IsTeammate(actor))) {
 			auto node = find_node(actor, "skeleton_female.nif");
 			NiAVObject* skeleton = node;
 
@@ -92,7 +92,7 @@ namespace {
 					}
 				}
 			}
-		}*/
+		}
 	}
 
 	void update_height(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data) {
