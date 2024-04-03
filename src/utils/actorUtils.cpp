@@ -432,7 +432,7 @@ namespace Gts {
 	}
 
 	bool IsFootGrinding(Actor* actor) {
-		bool grind;
+		bool grind = false;
 		actor->GetGraphVariableBool("GTS_IsFootGrinding", grind);
 		return grind;
 	}
@@ -2030,14 +2030,12 @@ namespace Gts {
 
 	void Utils_PushCheck(Actor* giant, Actor* tiny, float force) {
 		auto model = tiny->GetCurrent3D();
-		auto& sizemanager = SizeManager::GetSingleton();
 	
-		bool moving = false; // IsMoving(giant);
-
 		if (model) {
-			log::info("Trying to push: {}, force: {}", tiny->GetDisplayFullName(), force);
+			//log::info("Trying to push: {}, force: {}", tiny->GetDisplayFullName(), force);
 			bool isdamaging = IsActionOnCooldown(tiny, CooldownSource::Push_Basic);
-			if (!isdamaging && (force >= 0.12 ||IsFootGrinding(giant))) {
+			if (!isdamaging && (force >= 0.12 || IsFootGrinding(giant))) {
+				log::info("Check passed, pushing {}, force: {}", tiny->GetDisplayFullName(), force);
 				StaggerOr(giant, tiny, 0, 0, 0, 0);
 				ApplyActionCooldown(tiny, CooldownSource::Push_Basic);
 			}

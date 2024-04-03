@@ -52,12 +52,12 @@ namespace {
 		if (Node) {
 			NiPoint3 coords_in = Node->world.translate;
 
-			log::info("Input coords: {}", Vector2Str(coords_in));
+			//log::info("Input coords: {}", Vector2Str(coords_in));
 			if (coords_in.Length() > 0 && coords_out.Length() > 0) {
 				NodeMovementForce = (coords_in - coords_out).Length();
 				// ^ Compare values, get movement force of Node X over 1 frame
 			}
-			log::info("Output coords: {}", Vector2Str(coords_out));
+			//log::info("Output coords: {}", Vector2Str(coords_out));
 			if (coords_in == coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
 				return NodeMovementForce;
 			}
@@ -88,13 +88,13 @@ namespace Gts {
 
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
-					log::info("-------for Left Leg: ");
+					//log::info("-------for Left Leg: ");
 					Node = find_node(giant, "NPC L Foot [Lft ]");
 					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LL);
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
-					log::info("-------for Right Leg: ");
+					//log::info("-------for Right Leg: ");
 					Node = find_node(giant, "NPC R Foot [Rft ]");
 					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RL);
 					break;
@@ -114,7 +114,7 @@ namespace Gts {
 		}
 		
 		if (NodeMovementForce > 0) {
-			log::info("movement force: {}", NodeMovementForce);
+			//log::info("movement force: {}", NodeMovementForce);
 			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce / 10.0f, 0.0f, 1.0f);
 			log::info("Clamped movement force: {}", NodeMovementForce_Clamped);
 			return NodeMovementForce_Clamped;
