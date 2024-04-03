@@ -86,6 +86,8 @@ namespace {
 					hkpRigidBody* object = bumpedCharCollisionObject.get();
 					hkVector4 mass_get = object->motion.inertiaAndMassInv;
 					float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
+					float scale = get_visual_scale(player);
+					object->motion.SetMassInv(0.01 * (scale * scale * scale));
 					log::info("(3) Mass: {}", mass);
 				}
 			}
