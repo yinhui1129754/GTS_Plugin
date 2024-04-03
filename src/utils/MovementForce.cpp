@@ -112,7 +112,6 @@ namespace Gts {
 		}
 		
 		if (NodeMovementForce > 0) {
-			NodeMovementForce /= 10.0;
 			//log::info("movement force / 10: {}", NodeMovementForce);
 			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce, 0.0f, 1.0f);
 			//log::info("Clamped movement force: {}", NodeMovementForce_Clamped);

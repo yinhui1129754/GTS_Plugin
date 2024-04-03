@@ -2035,8 +2035,9 @@ namespace Gts {
 		bool moving = false; // IsMoving(giant);
 
 		if (model) {
+			log::info("Trying to push: {}, force: {}", tiny->GetDisplayFullName(), force);
 			bool isdamaging = IsActionOnCooldown(tiny, CooldownSource::Push_Basic);
-			if (!isdamaging && (force >= 0.12 || moving || IsFootGrinding(giant))) {
+			if (!isdamaging && (force >= 0.12 ||IsFootGrinding(giant))) {
 				StaggerOr(giant, tiny, 0, 0, 0, 0);
 				ApplyActionCooldown(tiny, CooldownSource::Push_Basic);
 			}
