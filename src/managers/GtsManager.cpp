@@ -71,7 +71,7 @@ namespace {
 					auto motionstate = object->GetMotionState();
 					if (motionstate) {
 						log::info("(1) Motion found");
-						auto Motion_2 = skyrim_cast<hkpMotion*>(motionstate);
+						auto Motion_2 = static_cast<hkpMotion*>(motionstate);
 						if (Motion_2) {
 							log::info("(1) hkpMotion found!");
 							float mass = Motion_2->GetMass();
@@ -85,7 +85,7 @@ namespace {
 					auto motionstate = object->GetMotionState();
 					if (motionstate) {
 						log::info("(2) Motion found");
-						auto Motion_2 = skyrim_cast<hkpMotion*>(motionstate);
+						auto Motion_2 = static_cast<hkpMotion*>(motionstate);
 						if (Motion_2) {
 							log::info("(2) hkpMotion found!");
 							float mass = Motion_2->GetMass();
@@ -99,7 +99,7 @@ namespace {
 					auto motionstate = object->GetMotionState();
 					if (motionstate) {
 						log::info("(3) Motion found");
-						auto Motion_2 = skyrim_cast<hkpMotion*>(motionstate);
+						auto Motion_2 = static_cast<hkpMotion*>(motionstate);
 						if (Motion_2) {
 							log::info("(3) hkpMotion found!");
 							float mass = Motion_2->GetMass();
