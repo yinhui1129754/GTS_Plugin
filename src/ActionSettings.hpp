@@ -125,12 +125,16 @@ namespace Gts {
     const float Push_Kick_Normal = 1.40f;
     const float Push_Kick_Strong = 2.25f;
 
-    // For launching objects
-    const float Push_Object_Upwards = 0.10f;
-    const float Push_Object_Forward = 0.20f;
-
     // For launching actor when we jump
     const float Push_Jump_Launch_Threshold = 8.0f;
+
+    // For launching/pushing actors ^
+
+    // Below is For launching objects
+    const float Push_Object_Upwards = 0.06f;
+    const float Push_Object_Forward = 0.18f;
+
+    
 
 //-----------------------------------------Default effect radius variables
 

@@ -407,8 +407,8 @@ MainQuest = "GTS.esp|005E3A"
 ManagerQuest = "GTS.esp|000D62"
 
 [factions]
-FollowerFaction = "Skyrim.esm|084D1B"
-FollowerFaction_Old = "Skyrim.esm|05C84E"
+FollowerFaction = "Skyrim.esm|05C84E"
+FollowerFaction_Old = "Skyrim.esm|084D1B" 
 DwarwenAutomatonFaction = "Skyrim.esm|043598"
 DraugrFaction = "Skyrim.esm|02430D"
 

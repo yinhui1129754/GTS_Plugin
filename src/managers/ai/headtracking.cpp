@@ -117,9 +117,9 @@ namespace {
 
 	// Rotate spine to look at an actor either leaning back or looking down
 	void RotateSpine(Actor* giant, Actor* tiny, HeadtrackingData& data) {
-		if (giant->formID == 0x14) {
+		/*if (giant->formID == 0x14) {
 			return;
-		}
+		}*/
 		if (tiny) { // giant is the actor that is looking, tiny is the one that is being looked at (Player for example)
 			log::info("Tiny is: {}", tiny->GetDisplayFullName());
 			bool Collision_Installed = false; //Detects 'Precision' mod
@@ -135,7 +135,7 @@ namespace {
 			auto dialoguetarget = giant->GetActorRuntimeData().dialogueItemTarget;
 			if (dialoguetarget) {
 				// In dialogue
-				if (giant != tiny) {
+				if (giant != tiny) { // Just to make sure
 					// With valid look at target
 					giant->SetGraphVariableBool("GTSIsInDialogue", true); // Allow spine edits
 					auto meHead = HeadLocation(giant);
@@ -168,7 +168,7 @@ namespace {
 			}
 			data.spineSmooth.target = finalAngle;
 
-			giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value * (Runtime::GetFloatOr("cameraAlternateX", 1.0) + 1.0));
+			giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value);
 
 			log::info("Pitch Override of {} is {}", giant->GetDisplayFullName(), data.spineSmooth.value);
 		}
@@ -255,21 +255,18 @@ namespace Gts {
 
 	void Headtracking::SpineUpdate(Actor* me) {
 		auto profiler = Profilers::Profile("Headtracking: SpineUpdate");
-		if (me->formID == 0x14) {
+		/*if (me->formID == 0x14) {
 			return;
-		}
+		}*/
 		auto ai = me->GetActorRuntimeData().currentProcess;
 		Actor* tiny = nullptr;
 		if (ai) {
 			auto targetObjHandle = ai->GetHeadtrackTarget();
 			if (targetObjHandle) {
-				auto target_get = targetObjHandle;
-				if (target_get) {
-					auto target = target_get.get().get();
-					auto asActor = skyrim_cast<Actor*>(target);
-					if (asActor) {
-						tiny = asActor;
-					}
+				auto target = target_get.get().get();
+				auto asActor = skyrim_cast<Actor*>(target);
+				if (asActor) {
+					tiny = asActor;
 				}
 			}
 		}

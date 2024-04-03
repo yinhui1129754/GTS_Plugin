@@ -254,7 +254,7 @@ namespace Gts {
 
 		bool PreciseScan = Runtime::GetBoolOr("AccurateCellScan", false);
 
-		if (!PreciseScan) { // Scan single cell only
+		if (!PreciseScan || !REL::Module::IsSE()) { // Scan single cell only
 			TESObjectCELL* cell = giant->GetParentCell();
 			if (cell) {
 				auto data = cell->GetRuntimeData();
