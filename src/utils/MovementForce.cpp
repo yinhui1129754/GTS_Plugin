@@ -47,27 +47,16 @@ namespace {
 		return Type;
 	}
 
-	float Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out) {
-		float NodeMovementForce = 0.0;
+	void Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out) {
 		if (Node) {
 			NiPoint3 coords_in = Node->world.translate;
 			//log::info("Output coords: {}", Vector2Str(coords_out));
 
-			if (coords_in.Length() > 0 && coords_out.Length() > 0) {
-				NodeMovementForce = (coords_in - coords_out).Length();
-				// ^ Compare values, get movement force of Node X over 1 frame
-			}
-
-			if (coords_in == coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
-				return NodeMovementForce;
-			} else {
+			if (coords_in != coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
 				coords_out = coords_in; // Else Record new pos of bone
 			}
 			//log::info("Input coords: {}", Vector2Str(coords_in));
-			
 		}
-		
-		return NodeMovementForce;
 	}
 }
 
@@ -79,8 +68,8 @@ namespace Gts {
 			NiPoint3& DataCoordinates_LL = Data->POS_Last_Leg_L;
 			NiPoint3& DataCoordinates_RL = Data->POS_Last_Leg_R;
 
-			Node_LL = find_node(giant, "NPC L Foot [Lft ]");
-			Node_RL = find_node(giant, "NPC R Foot [Rft ]");
+			NiAVObject* Node_LL = find_node(giant, "NPC L Foot [Lft ]");
+			NiAVObject* Node_RL = find_node(giant, "NPC R Foot [Rft ]");
 
 			Record_Node_Coordinates(Node_LL, DataCoordinates_LL);
 			Record_Node_Coordinates(Node_RL, DataCoordinates_RL);
@@ -89,8 +78,8 @@ namespace Gts {
 				NiPoint3& DataCoordinates_LH = Data->POS_Last_Hand_L;
 				NiPoint3& DataCoordinates_RH = Data->POS_Last_Hand_R;
 
-				Node_LH = find_node(giant, "NPC L Hand [LHnd]");
-				Node_RH = find_node(giant, "NPC R Hand [RHnd]");
+				NiAVObject* Node_LH = find_node(giant, "NPC L Hand [LHnd]");
+				NiAVObject* Node_RH = find_node(giant, "NPC R Hand [RHnd]");
 
 				Record_Node_Coordinates(Node_RH, DataCoordinates_RH);
 				Record_Node_Coordinates(Node_LH, DataCoordinates_LH);
@@ -106,6 +95,8 @@ namespace Gts {
 		float scale = get_visual_scale(giant);
 		
 		auto Data = Transient::GetSingleton().GetData(giant);
+		NiPoint3 coordinates = NiPoint3();
+		NiAVObject* Node = nullptr;
 
 		if (Data) {
 			log::info("Movement Owner: {}", giant->GetDisplayFullName());
@@ -116,25 +107,36 @@ namespace Gts {
 
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
-					return DataCoordinates_LL;
+					Node = find_node(giant, "NPC L Foot [Lft ]");
+					coordinates = DataCoordinates_LL;
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
-					return DataCoordinates_RL;
+					Node = find_node(giant, "NPC R Foot [Rft ]");
+					coordinates = DataCoordinates_RL;
 					break;
 				}
 				case NodeMovementType::Movement_LeftHand: 
-					return DataCoordinates_LH;
+					Node = find_node(giant, "NPC L Hand [LHnd]");
+					coordinates = DataCoordinates_LH;
 				break;
 				case NodeMovementType::Movement_RightHand: 
-					return DataCoordinates_RL;
+					Node = find_node(giant, "NPC R Hand [RHnd]");
+					coordinates = DataCoordinates_RL;
 				break;
 				case NodeMovementType::Movement_None:
 					return 1.0; // Always allow for actions that are supposed to stagger always
 				break;
 			}
 		}
-		
+		if (Node) {
+			NiPoint3 NodeCoords = Node->world.translate;
+			if (NodeCoords.Length() > 0 && coordinates.Length() > 0) {
+				NodeMovementForce = (NodeCoords - coordinates).Length();
+				// ^ Compare values, get movement force of Node X over 1 frame
+			}
+		}
+
 		if (NodeMovementForce > 0) {
 			//log::info("movement force: {}", NodeMovementForce);
 			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce / 10.0f, 0.0f, 1.0f);
