@@ -60,7 +60,7 @@ namespace {
 	void TestPushbackResistance() {
 		Actor* player = PlayerCharacter::GetSingleton();
 		if (player) {
-			bhkCharacterController* cont = actor->GetCharController();
+			bhkCharacterController* cont = player->GetCharController();
 			if (cont) {
 				auto SupportBody = cont->supportBody;
 				auto bumpedBody = cont->bumpedBody;
@@ -73,7 +73,7 @@ namespace {
 						log::info("(1) Motion found");
 						auto Motion_2 = skyrim_cast<hkpMotion*>(motionstate);
 						if (Motion_2) {
-							log::Info("(1) hkpMotion found!");
+							log::info("(1) hkpMotion found!");
 							float mass = Motion_2->GetMass();
 							log::info("(1) Mass: {}", mass);
 						}
@@ -87,7 +87,7 @@ namespace {
 						log::info("(2) Motion found");
 						auto Motion_2 = skyrim_cast<hkpMotion*>(motionstate);
 						if (Motion_2) {
-							log::Info("(2) hkpMotion found!");
+							log::info("(2) hkpMotion found!");
 							float mass = Motion_2->GetMass();
 							log::info("(2) Mass: {}", mass);
 						}
@@ -101,7 +101,7 @@ namespace {
 						log::info("(3) Motion found");
 						auto Motion_2 = skyrim_cast<hkpMotion*>(motionstate);
 						if (Motion_2) {
-							log::Info("(3) hkpMotion found!");
+							log::info("(3) hkpMotion found!");
 							float mass = Motion_2->GetMass();
 							log::info("(3) Mass: {}", mass);
 						}
