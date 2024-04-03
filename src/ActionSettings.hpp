@@ -126,7 +126,7 @@ namespace Gts {
     const float Push_Kick_Strong = 2.25f;
 
     // For launching objects
-    const float Push_Object_Upwards = 0.25f;
+    const float Push_Object_Upwards = 0.2f;
     const float Push_Object_Forward = 1.0f; // Because of movement math we have to make it stronger
 
     // For launching actor when we jump

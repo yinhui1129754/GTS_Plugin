@@ -187,8 +187,19 @@ namespace Gts {
 
 		int nodeCollisions = 0;
 
-		float distance = (point - object->GetPosition()).Length();
-		if (distance < maxDistance) {
+		auto model = object->Get3D1(false);
+		if (model) {
+			VisitNodes(model, [&nodeCollisions, point, maxDistance](NiAVObject& a_obj) {
+				float distance = (point - a_obj.world.translate).Length();
+				if (distance < maxDistance) {
+					nodeCollisions += 1;
+					return false;
+				}
+				return true;
+			});
+		}
+
+		if (nodeCollisions > 0) {
 		
 			float Start = Time::WorldTimeElapsed();
 			ActorHandle gianthandle = giant->CreateRefHandle();
