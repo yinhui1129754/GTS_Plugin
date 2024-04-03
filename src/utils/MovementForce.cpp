@@ -121,7 +121,7 @@ namespace Gts {
 				break;
 				case NodeMovementType::Movement_RightHand: 
 					Node = find_node(giant, "NPC R Hand [RHnd]");
-					coordinates = DataCoordinates_RL;
+					coordinates = DataCoordinates_RH;
 				break;
 				case NodeMovementType::Movement_None:
 					return 1.0; // Always allow for actions that are supposed to stagger always
