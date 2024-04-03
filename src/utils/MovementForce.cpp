@@ -51,7 +51,9 @@ namespace {
 		if (Node) {
 			NiPoint3 coords_in = Node->world.translate;
 			
-			if (coords_in != coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
+			if (coords_in == coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
+				return;
+			} else {
 				coords_out = coords_in; // Else Record new pos of bone
 			}
 			log::info("Input coords: {}", Vector2Str(coords_in));
