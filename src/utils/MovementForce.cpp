@@ -47,17 +47,13 @@ namespace {
 		return Type;
 	}
 
-	void Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out) {
-		if (Node) {
-			NiPoint3 coords_in = Node->world.translate;
-			
-			if (coords_in == coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
-				log::info("Coords are the same");
-				return;
-			} else {
-				log::info("Coords are different: {} : {}", Vector2Str(coords_in), Vector2Str(coords_out));
-				coords_out = coords_in; // Else Record new pos of bone
-			}
+	void Record_Node_Coordinates(NiPoint3& coords_in, NiPoint3& coords_out) {
+		if (coords_in == coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
+			log::info("Coords are the same");
+			return;
+		} else {
+			log::info("Coords are different: {} : {}", Vector2Str(coords_in), Vector2Str(coords_out));
+			coords_out = coords_in; // Else Record new pos of bone
 		}
 	}
 
@@ -82,9 +78,10 @@ namespace Gts {
 
 			NiAVObject* Node_LL = find_node(giant, "NPC L Foot [Lft ]");
 			NiAVObject* Node_RL = find_node(giant, "NPC R Foot [Rft ]");
-
-			Record_Node_Coordinates(Node_LL, DataCoordinates_LL);
-			Record_Node_Coordinates(Node_RL, DataCoordinates_RL);
+			if (Node_LL) {
+				Record_Node_Coordinates(Node_LL->world.translate, DataCoordinates_LL);
+				Record_Node_Coordinates(Node_RL->world.translate, DataCoordinates_RL);
+			}
 
 			if (IsCrawling(giant)) {
 				NiPoint3& DataCoordinates_LH = Data->POS_Last_Hand_L;
@@ -92,9 +89,10 @@ namespace Gts {
 
 				NiAVObject* Node_LH = find_node(giant, "NPC L Hand [LHnd]");
 				NiAVObject* Node_RH = find_node(giant, "NPC R Hand [RHnd]");
-
-				Record_Node_Coordinates(Node_RH, DataCoordinates_RH);
-				Record_Node_Coordinates(Node_LH, DataCoordinates_LH);
+				if (Node_LH) {
+					Record_Node_Coordinates(Node_RH->world.translate, DataCoordinates_RH);
+					Record_Node_Coordinates(Node_LH->world.translate, DataCoordinates_LH);
+				}
 			}
 		}
 	}
