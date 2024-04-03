@@ -89,13 +89,13 @@ namespace Gts {
 
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
-					log::info("-------for Left Leg: ");
+					//log::info("-------for Left Leg: ");
 					Node = find_node(giant, "NPC L Foot [Lft ]");
 					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LL);
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
-					log::info("-------for Right Leg: ");
+					//log::info("-------for Right Leg: ");
 					Node = find_node(giant, "NPC R Foot [Rft ]");
 					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RL);
 					break;
@@ -117,7 +117,7 @@ namespace Gts {
 		if (NodeMovementForce > 0) {
 			//log::info("movement force: {}", NodeMovementForce);
 			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce / 10.0f, 0.0f, 1.0f);
-			log::info("Clamped movement force: {}", NodeMovementForce_Clamped);
+			//log::info("Clamped movement force: {}", NodeMovementForce_Clamped);
 			return NodeMovementForce_Clamped;
 		}
 		return 0.0;
@@ -126,9 +126,9 @@ namespace Gts {
 	float Get_Bone_Movement_Speed(Actor* giant, DamageSource Source) {
 		auto profiler = Profilers::Profile("ConvertMovement");
 		NodeMovementType Type = Convert_To_MovementType(Source);
-		if (giant->formID == 0x14) {
+		/*if (giant->formID == 0x14) {
 			log::info("Returning type: {}", static_cast<int>(Type));
-		}
+		}*/
 		return Get_Bone_Movement_Speed(giant, Type);
 	}
 }

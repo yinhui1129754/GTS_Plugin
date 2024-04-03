@@ -32,6 +32,9 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
+	const float REDUCTION_FACTOR = 0.44;
+	const float PI = 3.14159;
+
 	NiPoint3 HeadLocation(TESObjectREFR& obj, const float& scale) {
 		NiPoint3 headOffset(0.0, 0.0, 0.0);
 		auto location = obj.GetPosition();
@@ -117,43 +120,42 @@ namespace {
 		if (giant->formID == 0x14) {
 			return;
 		}
-		const float REDUCTION_FACTOR = 0.44;
-		const float PI = 3.14159;
-		bool Collision_Installed = false; //Used to detect 'Precision' mod
-		float Collision_PitchMult = 0.0;
-		giant->GetGraphVariableBool("Collision_Installed", Collision_Installed);
-		if (Collision_Installed == true) {
-			giant->GetGraphVariableFloat("Collision_PitchMult", Collision_PitchMult); // If true, obtain value to apply it
-			//giant->SetGraphVariableFloat("Collision_PitchMult", 0.0);
-			//log::info("Callision Pitch Mult: {}", Collision_PitchMult);
-		}
-		float finalAngle = 0.0;
+		if (tiny) { // giant is the actor that is looking, tiny is the one that is being looked at (Player for example)
+			log::info("Tiny is: {}", tiny->GetDisplayFullName());
+			bool Collision_Installed = false; //Detects 'Precision' mod
+			float Collision_PitchMult = 0.0;
+			giant->GetGraphVariableBool("Collision_Installed", Collision_Installed);
+			if (Collision_Installed == true) {
+				giant->GetGraphVariableFloat("Collision_PitchMult", Collision_PitchMult); // If true, obtain value to apply it
+				//giant->SetGraphVariableFloat("Collision_PitchMult", 0.0);
+				log::info("Collision Pitch Mult: {}", Collision_PitchMult);
+			}
+			float finalAngle = 0.0;
 
-		auto dialoguetarget = giant->GetActorRuntimeData().dialogueItemTarget.get().get();
-		if (dialoguetarget) {
-			// In dialogue
-			if (tiny) {
+			auto dialoguetarget = giant->GetActorRuntimeData().dialogueItemTarget;
+			if (dialoguetarget) {
+				// In dialogue
 				if (giant != tiny) {
 					// With valid look at target
 					giant->SetGraphVariableBool("GTSIsInDialogue", true); // Allow spine edits
 					auto meHead = HeadLocation(giant);
-					//log::info("  - meHead: {}", Vector2Str(meHead));
+					log::info("  - meHead: {}", Vector2Str(meHead));
 					auto targetHead = HeadLocation(tiny);
-					//log::info("  - targetHead: {}", Vector2Str(targetHead));
+					log::info("  - targetHead: {}", Vector2Str(targetHead));
 					auto directionToLook = targetHead - meHead;
-					//log::info("  - directionToLook: {}", Vector2Str(directionToLook));
+					log::info("  - directionToLook: {}", Vector2Str(directionToLook));
 					directionToLook = directionToLook * (1/directionToLook.Length());
-					//log::info("  - Norm(directionToLook): {}", Vector2Str(directionToLook));
+					log::info("  - Norm(directionToLook): {}", Vector2Str(directionToLook));
 					NiPoint3 upDirection = NiPoint3(0.0, 0.0, 1.0);
 					auto sinAngle = directionToLook.Dot(upDirection);
-					//log::info("  - cosAngle: {}", sinAngle);
+					log::info("  - cosAngle: {}", sinAngle);
 					auto angleFromUp = fabs(acos(sinAngle) * 180.0 / PI);
-					//log::info("  - angleFromUp: {}", angleFromUp);
+					log::info("  - angleFromUp: {}", angleFromUp);
 					float angleFromForward = -(angleFromUp - 90.0) * REDUCTION_FACTOR;
-					//log::info("  - angleFromForward: {}", angleFromForward);
+					log::info("  - angleFromForward: {}", angleFromForward);
 
 					finalAngle = std::clamp(angleFromForward * REDUCTION_FACTOR, -60.f, 60.f);
-					//log::info("  - finalAngle: {}", finalAngle);
+					log::info("  - finalAngle: {}", finalAngle);
 				}
 			}
 		} else {
@@ -161,13 +163,14 @@ namespace {
 			if (fabs(data.spineSmooth.value) < 1e-3) {
 				// Finihed smoothing back to zero
 				giant->SetGraphVariableBool("GTSIsInDialogue", false); // Disallow
+				log::info("Setting InDialogue to false");
 			}
 		}
 		data.spineSmooth.target = finalAngle;
 
-		giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value);
+		giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value * (Runtime::GetFloatOr("cameraAlternateX", 1.0) + 1.0));
 
-		//log::info("Pitch Override of {} is {}", giant->GetDisplayFullName(), data.spineSmooth.value);
+		log::info("Pitch Override of {} is {}", giant->GetDisplayFullName(), data.spineSmooth.value);
 	}
 
 	/*void RotateCaster(Actor* giant, HeadtrackingData& data) { // Unused
@@ -243,10 +246,9 @@ namespace Gts {
 	void Headtracking::Update() {
 		for (auto actor: find_actors()) {
 			this->data.try_emplace(actor->formID);
-			/*if (actor->formID == 0x14 || IsTeammate(actor)) {
-				ScareActors(actor);
+			if (actor->formID == 0x14 || IsTeammate(actor)) {
 				SpineUpdate(actor);
-			}*/
+			}
 		}
 	}
 
@@ -260,8 +262,9 @@ namespace Gts {
 		if (ai) {
 			auto targetObjHandle = ai->GetHeadtrackTarget();
 			if (targetObjHandle) {
-				auto target = targetObjHandle.get().get();
-				if (target) {
+				auto target_get = targetObjHandle;
+				if (target_get) {
+					auto target = target_get.get().get();
 					auto asActor = skyrim_cast<Actor*>(target);
 					if (asActor) {
 						tiny = asActor;
