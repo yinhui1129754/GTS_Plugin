@@ -54,7 +54,7 @@ namespace {
 						float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
 						log::info("Mass of object is {}", mass);
 						if (mass > 0) {
-							push /= mass;
+							push /= (mass * 0.5);
 						}
 					}
 	

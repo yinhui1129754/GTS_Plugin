@@ -119,32 +119,40 @@ namespace Gts {
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
 					Node = find_node(giant, "NPC L Foot [Lft ]");
-					coordinates = DataCoordinates_LL;
+					if (Node) {
+						NiPoint3 NodeCoords = Node->world.translate;
+						NodeMovementForce = Calculate_Movement(NodeCoords, DataCoordinates_LL);
+					}
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
 					Node = find_node(giant, "NPC R Foot [Rft ]");
-					coordinates = DataCoordinates_RL;
+					if (Node) {
+						NiPoint3 NodeCoords = Node->world.translate;
+						NodeMovementForce = Calculate_Movement(NodeCoords, DataCoordinates_RL);
+					}
 					break;
 				}
 				case NodeMovementType::Movement_LeftHand: 
 					Node = find_node(giant, "NPC L Hand [LHnd]");
-					coordinates = DataCoordinates_LH;
+					if (Node) {
+						NiPoint3 NodeCoords = Node->world.translate;
+						NodeMovementForce = Calculate_Movement(NodeCoords, DataCoordinates_LH);
+					}
 				break;
 				case NodeMovementType::Movement_RightHand: 
 					Node = find_node(giant, "NPC R Hand [RHnd]");
-					coordinates = DataCoordinates_RH;
+					if (Node) {
+						NiPoint3 NodeCoords = Node->world.translate;
+						NodeMovementForce = Calculate_Movement(NodeCoords, DataCoordinates_RH);
+					}
 				break;
 				case NodeMovementType::Movement_None:
 					return 1.0; // Always allow for actions that are supposed to stagger always
 				break;
 			}
 		}
-		if (Node) {
-			NiPoint3 NodeCoords = Node->world.translate;
-			NodeMovementForce = Calculate_Movement(NodeCoords, coordinates);
-		}
-
+		
 		if (NodeMovementForce > 0) {
 			log::info("movement force: {}", NodeMovementForce);
 			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce / 10.0f, 0.0f, 1.0f);
@@ -157,7 +165,7 @@ namespace Gts {
 	float Get_Bone_Movement_Speed(Actor* giant, DamageSource Source) {
 		auto profiler = Profilers::Profile("ConvertMovement");
 		NodeMovementType Type = Convert_To_MovementType(Source);
-		
+
 		return Get_Bone_Movement_Speed(giant, Type);
 	}
 }
