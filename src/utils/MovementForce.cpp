@@ -125,7 +125,7 @@ namespace Gts {
 		auto profiler = Profilers::Profile("ConvertMovement");
 		NodeMovementType Type = Convert_To_MovementType(Source);
 		if (giant->formID == 0x14) {
-			log::info("Returning type: {}", Type);
+			log::info("Returning type: {}", static_cast<int>(Type));
 		}
 		return Get_Bone_Movement_Speed(giant, Type);
 	}

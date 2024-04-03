@@ -56,7 +56,7 @@ namespace {
 		if (difference > threshold) {
 			return true;
 		}
-
+	
 		bool is_walking = (cause == DamageSource::WalkLeft || cause == DamageSource::WalkRight);
 		bool knee_crawling = (cause == DamageSource::KneeLeft || cause == DamageSource::KneeRight);
 		bool hand_crawling = (cause == DamageSource::HandCrawlLeft ||cause == DamageSource::HandCrawlRight);
