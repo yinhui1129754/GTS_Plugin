@@ -45,14 +45,13 @@ namespace {
 		if (Node) {
 			auto collision = Node->GetCollisionObject();
 			if (collision) {
-				auto rigidbody = collision->GetRigidBody();
-				if (rigidbody) {
-					auto body = rigidbody->AsBhkRigidBody();
+				bhkRigidBody* body = collision->GetRigidBody();
+				if (body) {
 					hkVector4 mass_get = body->motion.inertiaAndMassInv;
 					float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
 					log::info("Mass of object is {}", mass);
 					if (mass > 0) {
-						push /= mass;
+						push *= mass;
 					}
 					if (body) {
 						//log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
