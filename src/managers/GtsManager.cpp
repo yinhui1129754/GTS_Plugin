@@ -62,8 +62,8 @@ namespace {
 		if (player) {
 			bhkCharacterController* cont = player->GetCharController();
 			if (cont) {
-				log::info("Bumped Force: {}", cont->bumpedForce);
-				cont->bumpedForce = 0.0;
+				//log::info("Bumped Force: {}", cont->bumpedForce);
+				//cont->bumpedForce = 0.0;
 				/*auto SupportBody = cont->supportBody;
 				auto bumpedBody = cont->bumpedBody;
 				auto bumpedCharCollisionObject = cont->bumpedCharCollisionObject;
