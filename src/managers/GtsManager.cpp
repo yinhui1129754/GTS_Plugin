@@ -68,21 +68,21 @@ namespace {
 				if (SupportBody) {
 					log::info("Found support body");
 					hkpRigidBody* object = SupportBody.get();
-					float mass = object->motion.GetMass();
+					float mass = object->motion.motionState.GetMass();
 					log::info("(1) Mass: {}", mass);
 					
 				}
 				if (bumpedBody) {
 					log::info("Found bumpedBody");
 					hkpRigidBody* object = bumpedBody.get();
-					float mass = object->motion.GetMass();
+					float mass = object->motion.motionState.GetMass();
 					log::info("(2) Mass: {}", mass);
 					
 				}
 				if (bumpedCharCollisionObject) {
 					log::info("Found charCollisionObject");
 					hkpRigidBody* object = bumpedCharCollisionObject.get();
-					float mass = object->motion.GetMass();
+					float mass = object->motion.motionState.GetMass();
 					log::info("(3) Mass: {}", mass);
 				}
 			}
