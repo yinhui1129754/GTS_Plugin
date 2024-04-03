@@ -34,15 +34,18 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
-	float Multiply_By_Mass(bhkRigidBody* Body) {
+	float Multiply_By_Mass(bhkRigidBody* body) {
 		float mass_total = 1.0;
 		if (body->referencedObject) {
 			if (const auto havokRigidBody = static_cast<hkpRigidBody*>(body->referencedObject.get())) {
 				hkVector4 mass_get = havokRigidBody->motion.inertiaAndMassInv;
 				float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
-				log::info("Mass of object is {}", mass);
+				
 				if (mass > 0) {
-					mass_base /= (mass * 0.5); // Decrease effect of mass by 50%
+					log::info("Basic Mass is {}", mass);
+					mass_total /= mass;
+					log::info("Mass of object is {}", mass_total);
+					mass_total *= 0.5; // Just to have old push force on objects
 				}
 			}
 		}
