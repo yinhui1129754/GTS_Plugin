@@ -34,6 +34,21 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
+	float Multiply_By_Mass(bhkRigidBody* Body) {
+		float mass_total = 1.0;
+		if (body->referencedObject) {
+			if (const auto havokRigidBody = static_cast<hkpRigidBody*>(body->referencedObject.get())) {
+				hkVector4 mass_get = havokRigidBody->motion.inertiaAndMassInv;
+				float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
+				log::info("Mass of object is {}", mass);
+				if (mass > 0) {
+					mass_base /= (mass * 0.5); // Decrease effect of mass by 50%
+				}
+			}
+		}
+		return mass_total;
+	}
+
     void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force, float scale) {
 		force *= GetLaunchPower_Object(scale, true); // Should be * 0.40
 
@@ -46,27 +61,16 @@ namespace {
 			auto collision = Node->GetCollisionObject();
 			if (collision) {
 				bhkRigidBody* body = collision->GetRigidBody();
-				
-				if (body && body->referencedObject) {
-					if (const auto havokRigidBody = static_cast<hkpRigidBody*>(body->referencedObject.get())) {
-
-						hkVector4 mass_get = havokRigidBody->motion.inertiaAndMassInv;
-						float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
-						log::info("Mass of object is {}", mass);
-						if (mass > 0) {
-							push /= (mass * 0.5);
-						}
-					}
-	
-					if (body) {
-						//log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
-						SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
-					}
+				if (body) {
+					push *= Multiply_By_Mass(body);
+					//log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
+					SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
 				}
 			}
 		}
 	}
 }
+
 
 
 namespace Gts {
@@ -126,12 +130,10 @@ namespace Gts {
 								if (Object1) {
 									auto collision = Object1->GetCollisionObject();
 									if (collision) {
-										auto rigidbody = collision->GetRigidBody();
-										if (rigidbody) {
-											auto body = rigidbody->AsBhkRigidBody();
-											if (body) {
-												SetLinearImpulse(body, hkVector4(0, 0, push, push));
-											}
+										auto body = collision->GetRigidBody();
+										if (body) {
+											push *= Multiply_By_Mass(body);
+											SetLinearImpulse(body, hkVector4(0, 0, push, push));
 										}
 									}
 								}
@@ -141,7 +143,8 @@ namespace Gts {
 				}
 			}
 		}
-    }
+	}
+    
             
     void PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power, float radius, bool Kick) {
 		auto profiler = Profilers::Profile("Other: Launch Objects");
