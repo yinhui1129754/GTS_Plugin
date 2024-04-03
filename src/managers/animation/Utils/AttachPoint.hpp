@@ -431,7 +431,11 @@ namespace Gts {
 		NiPoint3 globalOffset = breastRotation * offset;
 
 		// rotate tiny to face the same direction as gts
-		tiny->data.angle.z = giant->data.angle.z;
+		if (tiny->formID == 0x14 && IsFirstPerson()) {
+			// do nothing
+		} else {
+			tiny->data.angle.z = giant->data.angle.z;
+		}
 
 		clevagePos += globalOffset;
 

@@ -121,14 +121,14 @@ namespace {
 			return;
 		}*/
 		if (tiny) { // giant is the actor that is looking, tiny is the one that is being looked at (Player for example)
-			log::info("Tiny is: {}", tiny->GetDisplayFullName());
+			//log::info("Tiny is: {}", tiny->GetDisplayFullName());
 			bool Collision_Installed = false; //Detects 'Precision' mod
 			float Collision_PitchMult = 0.0;
 			giant->GetGraphVariableBool("Collision_Installed", Collision_Installed);
 			if (Collision_Installed == true) {
 				giant->GetGraphVariableFloat("Collision_PitchMult", Collision_PitchMult); // If true, obtain value to apply it
 				//giant->SetGraphVariableFloat("Collision_PitchMult", 0.0);
-				log::info("Collision Pitch Mult: {}", Collision_PitchMult);
+				//log::info("Collision Pitch Mult: {}", Collision_PitchMult);
 			}
 			float finalAngle = 0.0;
 
@@ -139,23 +139,23 @@ namespace {
 					// With valid look at target
 					giant->SetGraphVariableBool("GTSIsInDialogue", true); // Allow spine edits
 					auto meHead = HeadLocation(giant);
-					log::info("  - meHead: {}", Vector2Str(meHead));
+					//log::info("  - meHead: {}", Vector2Str(meHead));
 					auto targetHead = HeadLocation(tiny);
-					log::info("  - targetHead: {}", Vector2Str(targetHead));
+					//log::info("  - targetHead: {}", Vector2Str(targetHead));
 					auto directionToLook = targetHead - meHead;
-					log::info("  - directionToLook: {}", Vector2Str(directionToLook));
+					//log::info("  - directionToLook: {}", Vector2Str(directionToLook));
 					directionToLook = directionToLook * (1/directionToLook.Length());
-					log::info("  - Norm(directionToLook): {}", Vector2Str(directionToLook));
+					//log::info("  - Norm(directionToLook): {}", Vector2Str(directionToLook));
 					NiPoint3 upDirection = NiPoint3(0.0, 0.0, 1.0);
 					auto sinAngle = directionToLook.Dot(upDirection);
-					log::info("  - cosAngle: {}", sinAngle);
+					//log::info("  - cosAngle: {}", sinAngle);
 					auto angleFromUp = fabs(acos(sinAngle) * 180.0 / PI);
-					log::info("  - angleFromUp: {}", angleFromUp);
+					//log::info("  - angleFromUp: {}", angleFromUp);
 					float angleFromForward = -(angleFromUp - 90.0) * REDUCTION_FACTOR;
-					log::info("  - angleFromForward: {}", angleFromForward);
+					//log::info("  - angleFromForward: {}", angleFromForward);
 
 					finalAngle = std::clamp(angleFromForward * REDUCTION_FACTOR, -60.f, 60.f);
-					log::info("  - finalAngle: {}", finalAngle);
+					//log::info("  - finalAngle: {}", finalAngle);
 				}
 			
 			} else {
@@ -163,14 +163,14 @@ namespace {
 				if (fabs(data.spineSmooth.value) < 1e-3) {
 					// Finihed smoothing back to zero
 					giant->SetGraphVariableBool("GTSIsInDialogue", false); // Disallow
-					log::info("Setting InDialogue to false");
+					//log::info("Setting InDialogue to false");
 				}
 			}
 			data.spineSmooth.target = finalAngle;
 
 			giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value);
 
-			log::info("Pitch Override of {} is {}", giant->GetDisplayFullName(), data.spineSmooth.value);
+			//log::info("Pitch Override of {} is {}", giant->GetDisplayFullName(), data.spineSmooth.value);
 		}
 	}
 
