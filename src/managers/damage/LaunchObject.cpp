@@ -47,16 +47,17 @@ namespace {
 			if (collision) {
 				bhkRigidBody* body = collision->GetRigidBody();
 				
-				if (body) {
-					hkpRigidBody* hkpBody = skyrim_cast<hkpRigidBody*>(body);
-					if (hkpBody) {
-						hkVector4 mass_get = hkpBody->motion.inertiaAndMassInv;
+				if (body && body->referencedObject) {
+					if (const auto havokRigidBody = static_cast<hkpRigidBody*>(body->referencedObject.get())) {
+
+						hkVector4 mass_get = havokRigidBody->motion.inertiaAndMassInv;
 						float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
 						log::info("Mass of object is {}", mass);
 						if (mass > 0) {
 							push *= mass;
 						}
 					}
+	
 					if (body) {
 						//log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
 						SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
