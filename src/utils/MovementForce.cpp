@@ -96,7 +96,6 @@ namespace Gts {
 		
 		auto Data = Transient::GetSingleton().GetData(giant);
 		NiPoint3 coordinates = NiPoint3();
-		NiAVObject* Node = nullptr;
 
 		if (Data) {
 			log::info("Movement Owner: {}", giant->GetDisplayFullName());
