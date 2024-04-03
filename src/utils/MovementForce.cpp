@@ -60,6 +60,16 @@ namespace {
 			log::info("Output coords: {}", Vector2Str(coords_out));
 		}
 	}
+
+	float Calculate_Movement(NiPoint3& input, NiPoint3& output) {
+		float movement = 0.0;
+		log::info("Input: {}, Output: {}", Vector2Str(input), Vector2Str(output));
+		if (input.Length() > 0 && output.Length() > 0) {
+			movement = (input - output).Length();
+			// ^ Compare values, get movement force of Node X over 1 frame
+		}
+		return movement;
+	}
 }
 
 namespace Gts {
@@ -132,11 +142,7 @@ namespace Gts {
 		}
 		if (Node) {
 			NiPoint3 NodeCoords = Node->world.translate;
-			log::info("Input: {}, Output: {}", Vector2Str(NodeCoords), Vector2Str(coordinates));
-			if (NodeCoords.Length() > 0 && coordinates.Length() > 0) {
-				NodeMovementForce = (NodeCoords - coordinates).Length();
-				// ^ Compare values, get movement force of Node X over 1 frame
-			}
+			NodeMovementForce = Calculate_Movement(NodeCoords, coordinates);
 		}
 
 		if (NodeMovementForce > 0) {
@@ -151,9 +157,7 @@ namespace Gts {
 	float Get_Bone_Movement_Speed(Actor* giant, DamageSource Source) {
 		auto profiler = Profilers::Profile("ConvertMovement");
 		NodeMovementType Type = Convert_To_MovementType(Source);
-		if (giant->formID == 0x14) {
-			//log::info("Returning type: {}", static_cast<int>(Type));
-		}
+		
 		return Get_Bone_Movement_Speed(giant, Type);
 	}
 }
