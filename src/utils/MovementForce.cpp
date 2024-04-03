@@ -53,16 +53,18 @@ namespace {
 			NiPoint3 coords_in = Node->world.translate;
 			//log::info("Output coords: {}", Vector2Str(coords_out));
 
+			if (coords_in.Length() > 0 && coords_out.Length() > 0) {
+				NodeMovementForce = (coords_in - coords_out).Length();
+				// ^ Compare values, get movement force of Node X over 1 frame
+			}
+
 			if (coords_in == coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
 				return NodeMovementForce;
 			} else {
 				coords_out = coords_in; // Else Record new pos of bone
 			}
 			//log::info("Input coords: {}", Vector2Str(coords_in));
-			if (coords_in.Length() > 0 && coords_out.Length() > 0) {
-				NodeMovementForce = (coords_in - coords_out).Length();
-				// ^ Compare values, get movement force of Node X over 1 frame
-			}
+			
 		}
 		
 		return NodeMovementForce;

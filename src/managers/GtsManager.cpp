@@ -57,7 +57,7 @@ namespace {
 		}
 	}
 
-	void TestPushbackResistance() { // Doesn't seems to work/
+	void TestPushbackResistance() { // Doesn't prevent the Player from being pushed away by collision with another. Rip.
 		Actor* player = PlayerCharacter::GetSingleton();
 		if (player) {
 			bhkCharacterController* cont = player->GetCharController();
@@ -337,7 +337,6 @@ void GtsManager::Update() {
 
 	UpdateFalling();
 	ManageActorControl(); // Sadly have to call it non stop since im unsure how to easily fix it otherwise :(
-	TestPushbackResistance();
 
 	for (auto actor: find_actors()) {
 		if (!actor) {
@@ -352,11 +351,6 @@ void GtsManager::Update() {
 		if (actor->formID == 0x14 || IsTeammate(actor)) {
 			
 			ScareActors(actor);
-
-			//float value_RL = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_RightLeg);
-			//float value_LL = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_LeftLeg);
-			//float value_RH = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_RightHand);
-			//float value_LH = Get_Bone_Movement_Speed(actor, NodeMovementType::Movement_LeftHand);
 
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);
