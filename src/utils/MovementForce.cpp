@@ -50,12 +50,12 @@ namespace {
 	void Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out) {
 		if (Node) {
 			NiPoint3 coords_in = Node->world.translate;
-			//log::info("Output coords: {}", Vector2Str(coords_out));
-
+			
 			if (coords_in != coords_out) { // We don't want to apply it on the same frame in that case, will result in 0
 				coords_out = coords_in; // Else Record new pos of bone
 			}
-			//log::info("Input coords: {}", Vector2Str(coords_in));
+			log::info("Input coords: {}", Vector2Str(coords_in));
+			log::info("Output coords: {}", Vector2Str(coords_out));
 		}
 	}
 }
@@ -95,10 +95,10 @@ namespace Gts {
 		float scale = get_visual_scale(giant);
 		
 		auto Data = Transient::GetSingleton().GetData(giant);
-		NiPoint3 coordinates = NiPoint3();
+		NiPoint3 coordinates = NiPoint3(0.0, 0.0, 0.0);
 
 		if (Data) {
-			log::info("Movement Owner: {}", giant->GetDisplayFullName());
+			//log::info("Movement Owner: {}", giant->GetDisplayFullName());
 			NiPoint3& DataCoordinates_LL = Data->POS_Last_Leg_L;
 			NiPoint3& DataCoordinates_RL = Data->POS_Last_Leg_R;
 			NiPoint3& DataCoordinates_LH = Data->POS_Last_Hand_L;
@@ -130,6 +130,7 @@ namespace Gts {
 		}
 		if (Node) {
 			NiPoint3 NodeCoords = Node->world.translate;
+			log::info("Input: {}, Output: {}", Vector2Str(NodeCoords), Vector2Str(coordinates));
 			if (NodeCoords.Length() > 0 && coordinates.Length() > 0) {
 				NodeMovementForce = (NodeCoords - coordinates).Length();
 				// ^ Compare values, get movement force of Node X over 1 frame
@@ -137,7 +138,7 @@ namespace Gts {
 		}
 
 		if (NodeMovementForce > 0) {
-			//log::info("movement force: {}", NodeMovementForce);
+			log::info("movement force: {}", NodeMovementForce);
 			float NodeMovementForce_Clamped = std::clamp(NodeMovementForce / 10.0f, 0.0f, 1.0f);
 			//log::info("Clamped movement force: {}", NodeMovementForce_Clamped);
 			return NodeMovementForce_Clamped;
