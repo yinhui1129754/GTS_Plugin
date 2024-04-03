@@ -48,10 +48,13 @@ namespace {
 				auto rigidbody = collision->GetRigidBody();
 				if (rigidbody) {
 					auto body = rigidbody->AsBhkRigidBody();
-					auto motion = skyrim_cast<hkpMotion*>(rigidbody);
-					
+					hkVector4 mass_get = body->motion.inertiaAndMassInv;
+					float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
+					log::info("Mass of object is {}", mass);
+					if (mass > 0) {
+						push /= mass;
+					}
 					if (body) {
-						// Goal: Somehow read  hkpMotion->GetMass()
 						//log::info("Applying force to object, Push: {}, Force: {}, Result: {}", Vector2Str(push), force, Vector2Str(push * force));
 						SetLinearImpulse(body, hkVector4(push.x * force, push.y * force, push.z * force, 1.0));
 					}

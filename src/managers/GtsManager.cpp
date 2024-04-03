@@ -57,12 +57,14 @@ namespace {
 		}
 	}
 
-	void TestPushbackResistance() {
+	void TestPushbackResistance() { // Doesn't seems to work/
 		Actor* player = PlayerCharacter::GetSingleton();
 		if (player) {
 			bhkCharacterController* cont = player->GetCharController();
 			if (cont) {
-				auto SupportBody = cont->supportBody;
+				log::info("Bumped Force: {}", cont->bumpedForce);
+				cont->bumpedForce = 0.0;
+				/*auto SupportBody = cont->supportBody;
 				auto bumpedBody = cont->bumpedBody;
 				auto bumpedCharCollisionObject = cont->bumpedCharCollisionObject;
 				if (SupportBody) {
@@ -71,7 +73,6 @@ namespace {
 					hkVector4 mass_get = object->motion.inertiaAndMassInv;
 					float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
 					log::info("(1) Mass: {}", mass);
-					
 				}
 				if (bumpedBody) {
 					log::info("Found bumpedBody");
@@ -89,7 +90,7 @@ namespace {
 					float scale = get_visual_scale(player);
 					object->motion.SetMassInv(100 * (scale * scale * scale));
 					log::info("(3) Mass: {}", mass);
-				}
+				}*/
 			}
 		}
 	}
