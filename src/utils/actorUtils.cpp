@@ -2032,7 +2032,7 @@ namespace Gts {
 		auto model = tiny->GetCurrent3D();
 		auto& sizemanager = SizeManager::GetSingleton();
 	
-		bool moving = IsMoving(giant);
+		bool moving = false; // IsMoving(giant);
 
 		if (model) {
 			bool isdamaging = IsActionOnCooldown(tiny, CooldownSource::Push_Basic);

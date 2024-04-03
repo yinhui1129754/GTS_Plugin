@@ -81,6 +81,7 @@ namespace Gts {
 		Movement_RightLeg,
 		Movement_RightHand,
 		Movement_LeftHand,
+		Movement_None,
 	};
 
 	enum class DamageSource {

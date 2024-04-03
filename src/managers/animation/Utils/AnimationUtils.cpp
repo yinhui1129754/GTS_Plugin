@@ -12,6 +12,7 @@
 #include "managers/GtsSizeManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "magic/effects/common.hpp"
+#include "utils/MovementForce.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "managers/highheel.hpp"
 #include "managers/explosion.hpp"
@@ -1246,7 +1247,7 @@ namespace Gts {
 											ApplyActionCooldown(otherActor, CooldownSource::Damage_Thigh);
 										}
 									} else {
-										Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
+										Utils_PushCheck(actor, otherActor, Get_Bone_Movement_Speed(actor, Cause)); // pass original un-altered force
 										CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, true);
 									}
 								}

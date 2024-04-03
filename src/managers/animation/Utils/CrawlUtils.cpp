@@ -6,6 +6,7 @@
 #include "managers/animation/Crawling.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/CrushManager.hpp"
+#include "utils/MovementForce.hpp"
 #include "managers/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
@@ -200,7 +201,7 @@ namespace Gts {
 								damage /= damage_zones_applied;
 								float aveForce = std::clamp(force, 0.14f, 0.70f);
 								
-								Utils_PushCheck(giant, otherActor, aveForce); 
+								Utils_PushCheck(giant, otherActor, Get_Bone_Movement_Speed(giant, Cause)); 
 								
 								CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 							}

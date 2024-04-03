@@ -9,6 +9,7 @@
 #include "managers/CrushManager.hpp"
 #include "managers/InputManager.hpp"
 #include "magic/effects/common.hpp"
+#include "utils/MovementForce.hpp"
 #include "managers/GtsManager.hpp"
 #include "managers/Attributes.hpp"
 #include "managers/hitmanager.hpp"
@@ -246,12 +247,12 @@ namespace Gts {
 									auto& sizemanager = SizeManager::GetSingleton();
 									bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
 									if (!OnCooldown) {
-										Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
+										Utils_PushCheck(actor, otherActor, Get_Bone_Movement_Speed(actor, Cause)); // pass original un-altered force
 										CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, DoDamage);
 										ApplyActionCooldown(otherActor, CooldownSource::Damage_Thigh);
 									}
 								} else {
-									Utils_PushCheck(actor, otherActor, force); // pass original un-altered force
+									Utils_PushCheck(actor, otherActor, Get_Bone_Movement_Speed(actor, Cause)); // pass original un-altered force
 									CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, DoDamage);
 								}
 							}

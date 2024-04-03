@@ -10,6 +10,43 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
+	NodeMovementType Convert_To_MovementType(DamageSource Source) {
+		NodeMovementType Type = NodeMovementType::Movement_None;
+		switch (Source) {
+			case DamageSource::HandDropRight:
+			case DamageSource::HandSwipeRight:
+			case DamageSource::HandSlamRight:
+			case DamageSource::HandCrawlRight:
+				Type = NodeMovementType::Movement_RightHand;
+			break;	
+			case DamageSource::HandDropLeft:
+			case DamageSource::HandSwipeLeft:
+			case DamageSource::HandSlamLeft:
+			case DamageSource::HandCrawlLeft:
+				Type = NodeMovementType::Movement_LeftHand;
+			break;
+			case DamageSource::WalkRight:
+			case DamageSource::CrushedRight:
+			case DamageSource::FootGrindedRight:
+			case DamageSource::KickedRight:
+			case DamageSource::KneeRight:
+				Type = NodeMovementType::Movement_RightLeg;
+			break;	
+			case DamageSource::WalkLeft:
+			case DamageSource::CrushedLeft:
+			case DamageSource::FootGrindedLeft:
+			case DamageSource::KickedLeft:
+			case DamageSource::KneeLeft:
+				Type = NodeMovementType::Movement_LeftLeg;
+			break;	
+			default: {
+				return NodeMovementType::Movement_None;
+			break;
+			}
+		}
+		return Type;
+	}
+
 	float Record_Node_Coordinates(NiAVObject* Node, NiPoint3& coords_out, TempActorData* Data) {
 		float NodeMovementForce = 0.0;
 		if (Node) {
@@ -68,6 +105,9 @@ namespace Gts {
 					Node = find_node(giant, "NPC R Hand [RHnd]");
 					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RH, Data);
 				break;
+				case NodeMovementType::Movement_None:
+					return 1.0; // Always allow for actions that are supposed to stagger always
+				break;
 			}
 		}
 		
@@ -79,5 +119,14 @@ namespace Gts {
 			return NodeMovementForce;
 		}
 		return 0.0;
+	}
+
+	float Get_Bone_Movement_Speed(Actor* giant, DamageSource Source) {
+		auto profiler = Profilers::Profile("ConvertMovement");
+		NodeMovementType Type = Convert_To_MovementType(Source);
+		if (giant->formID == 0x14) {
+			log::info("Returning type: {}", Type);
+		}
+		return Get_Bone_Movement_Speed(giant, Type);
 	}
 }
