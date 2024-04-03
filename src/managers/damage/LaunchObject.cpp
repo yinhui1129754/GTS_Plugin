@@ -50,7 +50,7 @@ namespace {
 				if (body) {
 					hkpRigidBody* hkpBody = skyrim_cast<hkpRigidBody*>(body);
 					if (hkpBody) {
-						hkVector4 mass_get = body->motion.inertiaAndMassInv;
+						hkVector4 mass_get = hkpBody->motion.inertiaAndMassInv;
 						float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
 						log::info("Mass of object is {}", mass);
 						if (mass > 0) {
