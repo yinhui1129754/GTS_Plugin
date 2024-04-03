@@ -309,7 +309,7 @@ namespace Gts {
 
 		damage_result *= Might;
 
-		TinyCalamity_ShrinkActor(giant, tiny, damage_result * 0.33 * GetDamageSetting());
+		TinyCalamity_ShrinkActor(giant, tiny, damage_result * 0.66 * GetDamageSetting());
 
 		if (giant->IsSneaking()) {
 			damage_result *= 0.70;

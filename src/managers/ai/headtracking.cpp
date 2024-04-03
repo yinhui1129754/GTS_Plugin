@@ -117,9 +117,10 @@ namespace {
 
 	// Rotate spine to look at an actor either leaning back or looking down
 	void RotateSpine(Actor* giant, Actor* tiny, HeadtrackingData& data) {
-		/*if (giant->formID == 0x14) {
+		if (giant->formID == 0x14) {
 			return;
-		}*/
+		}
+		float finalAngle = 0.0;
 		if (tiny) { // giant is the actor that is looking, tiny is the one that is being looked at (Player for example)
 			//log::info("Tiny is: {}", tiny->GetDisplayFullName());
 			bool Collision_Installed = false; //Detects 'Precision' mod
@@ -130,8 +131,6 @@ namespace {
 				//giant->SetGraphVariableFloat("Collision_PitchMult", 0.0);
 				//log::info("Collision Pitch Mult: {}", Collision_PitchMult);
 			}
-			float finalAngle = 0.0;
-
 			auto dialoguetarget = giant->GetActorRuntimeData().dialogueItemTarget;
 			if (dialoguetarget) {
 				// In dialogue
@@ -166,12 +165,10 @@ namespace {
 					//log::info("Setting InDialogue to false");
 				}
 			}
-			data.spineSmooth.target = finalAngle;
-
-			giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value);
-
 			//log::info("Pitch Override of {} is {}", giant->GetDisplayFullName(), data.spineSmooth.value);
 		}
+		data.spineSmooth.target = finalAngle;
+		giant->SetGraphVariableFloat("GTSPitchOverride", data.spineSmooth.value);
 	}
 
 	/*void RotateCaster(Actor* giant, HeadtrackingData& data) { // Unused
@@ -255,9 +252,9 @@ namespace Gts {
 
 	void Headtracking::SpineUpdate(Actor* me) {
 		auto profiler = Profilers::Profile("Headtracking: SpineUpdate");
-		/*if (me->formID == 0x14) {
+		if (me->formID == 0x14) {
 			return;
-		}*/
+		}
 		auto ai = me->GetActorRuntimeData().currentProcess;
 		Actor* tiny = nullptr;
 		if (ai) {

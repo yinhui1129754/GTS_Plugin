@@ -92,7 +92,7 @@ namespace Gts {
 		if (HasSMT(giant)) {
 			giantSize += 3.0;
 			threshold = 0.8;
-			force += 0.025;
+			force += 0.20;
 		}
 		float Adjustment = GetSizeFromBoundingBox(tiny);
 

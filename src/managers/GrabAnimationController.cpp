@@ -173,7 +173,7 @@ namespace Gts {
 		}
 
 		if (GetSizeDifference(pred, prey, SizeType::VisualScale, false, false) < Action_Grab) {
-			ShrinkUntil(pred, prey, 12.0, shrinkrate, true);
+			ShrinkUntil(pred, prey, 10.2, shrinkrate, true);
 			return;
 		}
 

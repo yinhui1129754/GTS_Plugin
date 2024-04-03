@@ -2084,7 +2084,7 @@ namespace Gts {
 				NiPoint3 vector = endCoords - startCoords;
 				float distanceTravelled = vector.Length();
 				float timeTaken = endTime - startTime;
-				float speed = distanceTravelled / timeTaken;
+				float speed = (distanceTravelled / timeTaken) / GetAnimationSlowdown(giant);
 				NiPoint3 direction = vector / vector.Length();
 
 				if (sizecheck) {
