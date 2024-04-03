@@ -67,7 +67,7 @@ namespace {
 				auto bumpedCharCollisionObject = cont->bumpedCharCollisionObject;
 				if (SupportBody) {
 					log::info("Found support body");
-					auto object = SupportBody.get().get();
+					auto object = SupportBody.get();
 					auto motionstate = object->GetMotionState();
 					if (motionstate) {
 						log::info("(1) Motion found");
@@ -81,7 +81,7 @@ namespace {
 				}
 				if (bumpedBody) {
 					log::info("Found bumpedBody");
-					auto object = bumpedBody.get().get();
+					auto object = bumpedBody.get();
 					auto motionstate = object->GetMotionState();
 					if (motionstate) {
 						log::info("(2) Motion found");
@@ -95,7 +95,7 @@ namespace {
 				}
 				if (bumpedCharCollisionObject) {
 					log::info("Found charCollisionObject");
-					auto object = bumpedCharCollisionObject.get().get();
+					auto object = bumpedCharCollisionObject.get();
 					auto motionstate = object->GetMotionState();
 					if (motionstate) {
 						log::info("(3) Motion found");
