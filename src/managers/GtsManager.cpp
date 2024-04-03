@@ -80,16 +80,9 @@ namespace {
 		if (get_visual_scale(actor) < 1.5) {
 			return;
 		}
-		if ((actor->formID == 0x14 || IsTeammate(actor))) {
+		/*if ((actor->formID == 0x14 || IsTeammate(actor))) {
 			auto node = find_node(actor, "skeleton_female.nif");
 			NiAVObject* skeleton = node;
-
-			/*auto ref = actor->GetCharController();
-			if (ref) {
-				log::info("LOD Distance of {} is {}", actor->GetDisplayFullName(), ref->lodDistance);
-				// ^ It is always -1
-				actor->UpdateFadeSettings(ref);
-			}*/
 
 			if (node) {
 				BSFadeNode* fadenode = node->AsFadeNode();
@@ -99,7 +92,7 @@ namespace {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 	void update_height(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data) {
