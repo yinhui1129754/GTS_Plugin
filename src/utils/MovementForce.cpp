@@ -72,6 +72,28 @@ namespace {
 }
 
 namespace Gts {
+	void Update_Movement_Data(Actor* giant) {
+		NiPoint3& DataCoordinates_LL = Data->POS_Last_Leg_L;
+		NiPoint3& DataCoordinates_RL = Data->POS_Last_Leg_R;
+
+		Node_LL = find_node(giant, "NPC L Foot [Lft ]");
+		Node_RL = find_node(giant, "NPC R Foot [Rft ]");
+
+		Record_Node_Coordinates(Node_LL, DataCoordinates_LL);
+		Record_Node_Coordinates(Node_RL, DataCoordinates_RL);
+
+		if (IsCrawling(giant)) {
+			NiPoint3& DataCoordinates_LH = Data->POS_Last_Hand_L;
+			NiPoint3& DataCoordinates_RH = Data->POS_Last_Hand_R;
+
+			Node_LH = find_node(giant, "NPC L Hand [LHnd]");
+			Node_RH = find_node(giant, "NPC R Hand [RHnd]");
+
+			Record_Node_Coordinates(Node_RH, DataCoordinates_RH);
+			Record_Node_Coordinates(Node_LH, DataCoordinates_LH);
+		}
+}
+
 	float Get_Bone_Movement_Speed(Actor* giant, NodeMovementType Type) {
 		auto profiler = Profilers::Profile("NodeMovement");
 		NiAVObject* Node = nullptr;
@@ -90,24 +112,18 @@ namespace Gts {
 
 			switch (Type) {
 				case NodeMovementType::Movement_LeftLeg: {
-					//log::info("-------for Left Leg: ");
-					Node = find_node(giant, "NPC L Foot [Lft ]");
-					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LL);
+					return DataCoordinates_LL;
 					break;
 				}
 				case NodeMovementType::Movement_RightLeg: {
-					//log::info("-------for Right Leg: ");
-					Node = find_node(giant, "NPC R Foot [Rft ]");
-					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RL);
+					return DataCoordinates_RL;
 					break;
 				}
 				case NodeMovementType::Movement_LeftHand: 
-					Node = find_node(giant, "NPC L Hand [LHnd]");
-					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_LH);
+					return DataCoordinates_LH;
 				break;
 				case NodeMovementType::Movement_RightHand: 
-					Node = find_node(giant, "NPC R Hand [RHnd]");
-					NodeMovementForce = Record_Node_Coordinates(Node, DataCoordinates_RH);
+					return DataCoordinates_RL;
 				break;
 				case NodeMovementType::Movement_None:
 					return 1.0; // Always allow for actions that are supposed to stagger always

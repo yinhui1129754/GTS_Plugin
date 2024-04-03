@@ -351,6 +351,7 @@ void GtsManager::Update() {
 		if (actor->formID == 0x14 || IsTeammate(actor)) {
 			
 			ScareActors(actor);
+			Update_Movement_Data(actor); // Record bone positions
 
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);
