@@ -116,14 +116,14 @@ namespace Gts {
 
 //-----------------------------------------Default Push Power variables
     // For crawling
-    const float Push_Crawl_HandSwipe = 1.25f;    
-    const float Push_Crawl_HandSwipe_Strong = 2.80f;   
+    const float Push_Crawl_HandSwipe = 1.35f;           // Used for both Push Actor and Push Object
+    const float Push_Crawl_HandSwipe_Strong = 4.2f;     // Used for both Push Actor and Push Object
     // For Sneaking
     const float Push_Sneak_HandSwipe = 1.6f;    
-    const float Push_Sneak_HandSwipe_Strong = 6.0f;   // Larger value because of anim speed by default
+    const float Push_Sneak_HandSwipe_Strong = 4.2f;     // Larger value because of anim speed by default
 
-    const float Push_Kick_Normal = 1.20f; // Used for both Push Actor and Push Object
-    const float Push_Kick_Strong = 2.45f; // Used for both Push Actor and Push Object
+    const float Push_Kick_Normal = 1.40f;               // Used for both Push Actor and Push Object
+    const float Push_Kick_Strong = 3.00f;               // Used for both Push Actor and Push Object
 
     // For launching actor when we jump
     const float Push_Jump_Launch_Threshold = 8.0f;
@@ -131,8 +131,8 @@ namespace Gts {
     // For launching/pushing actors ^
 
     // Below is For launching objects
-    const float Push_Object_Upwards = 0.24f;
-    const float Push_Object_Forward = 0.04f;
+    const float Push_Object_Upwards = 0.24f;            // Used for objects only
+    const float Push_Object_Forward = 0.06f;            // Used for objects only
 
     
 

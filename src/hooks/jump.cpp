@@ -20,7 +20,7 @@ namespace {
 			pos.z += 4.0; //shift it up a little
 
 			if (HasSMT(actor)) {
-				size += 3.5;
+				size += 2.8;
 			}
 
 			float calc_radius = ((54.0 / 3.0) * size) - 54.0;

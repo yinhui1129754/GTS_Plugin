@@ -42,9 +42,9 @@ namespace {
 				float mass = reinterpret_cast<float*>(&mass_get.quad)[3];
 				
 				if (mass > 0) {
-					log::info("Basic Mass is {}", mass);
+					//log::info("Basic Mass is {}", mass);
 					mass_total /= mass;
-					log::info("Mass of object is {}", mass_total);
+					//log::info("Mass of object is {}", mass_total);
 					mass_total *= 0.5; // Just to have old push force on objects
 				}
 			}
@@ -89,8 +89,8 @@ namespace Gts {
 			return soft_power(sizeRatio, launch);
 		} else {
 			SoftPotential kick {
-			.k = 1.42,
-			.n = 0.78,
+			.k = 1.6,//1.42,
+			.n = 0.62,//0.78
 			.s = 0.6,
 			.a = 0.0,
 			};
@@ -106,6 +106,10 @@ namespace Gts {
 		}
 
 		float giantScale = get_visual_scale(giant);
+
+		if (HasSMT(giant)) {
+			giantScale += 8.0;
+		}
 
 		float start_power = Push_Object_Upwards * (1.0 + Potion_GetMightBonus(giant));
 
@@ -187,8 +191,19 @@ namespace Gts {
 
 		int nodeCollisions = 0;
 
-		float distance = (point - object->GetPosition()).Length();
-		if (distance < maxDistance) {
+		auto model = object->Get3D1(false);
+		if (model) {
+			VisitNodes(model, [&nodeCollisions, point, maxDistance](NiAVObject& a_obj) {
+				float distance = (point - a_obj.world.translate).Length();
+				if (distance < maxDistance) {
+					nodeCollisions += 1;
+					return false;
+				}
+				return true;
+			});
+		}
+
+		if (nodeCollisions > 0) {
 			float Start = Time::WorldTimeElapsed();
 			ActorHandle gianthandle = giant->CreateRefHandle();
 			ObjectRefHandle objectref = object->CreateRefHandle();

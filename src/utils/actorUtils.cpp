@@ -2541,7 +2541,6 @@ namespace Gts {
 		NiPoint3 giantLocation = giant->GetPosition();
 		for (auto otherActor: find_actors()) {
 			if (otherActor != giant) {
-				float tinyScale = get_visual_scale(otherActor) * GetSizeFromBoundingBox(giant);
 				NiPoint3 actorLocation = otherActor->GetPosition();
 				if ((actorLocation - giantLocation).Length() < CheckDistance*3) {
 					int nodeCollisions = 0;
@@ -2564,7 +2563,7 @@ namespace Gts {
 						if (!launch) {
 							StaggerActor(giant, otherActor, 0.50);
 						} else {
-							if (giantScale/tinyScale < Push_Jump_Launch_Threshold) {
+							if (GetSizeDifference(giant, otherActor, SizeType::VisualScale, true, false) < Push_Jump_Launch_Threshold) {
 								StaggerActor(giant, otherActor, 0.50);
 							} else {
 								LaunchActor::ApplyLaunchTo(giant, otherActor, 1.0, 0.33);
