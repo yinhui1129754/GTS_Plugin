@@ -17,7 +17,7 @@ namespace Gts {
 	const float Action_Vore = 8.0f;
 	const float Action_Grab = 8.0f;
 	const float Action_Hug = 0.92f; // for hug grab/drop threshold 
-    const float Action_FingerGrind = 6.0f;
+    const float Action_FingerGrind = 6.0f; 
 
 //-----------------------------------------Default Damage Values
 
