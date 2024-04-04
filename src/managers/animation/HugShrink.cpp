@@ -203,11 +203,8 @@ namespace {
 		}
 		if (CanDoPaired(player) && !IsSynced(player) && !IsTransferingTiny(player)) {
 			auto& Hugging = HugAnimationController::GetSingleton();
-			std::size_t numberOfPrey = 1;
-			if (Runtime::HasPerkTeam(player, "MassVorePerk")) {
-				numberOfPrey = 1 + (get_visual_scale(player)/3);
-			}
-			std::vector<Actor*> preys = Hugging.GetHugTargetsInFront(player, numberOfPrey);
+
+			std::vector<Actor*> preys = Hugging.GetHugTargetsInFront(player, Vore_GetMaxVoreCount(player));
 			for (auto prey: preys) {
 				Hugging.StartHug(player, prey);
 			}

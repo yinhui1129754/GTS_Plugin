@@ -304,11 +304,8 @@ namespace {
 			return; // Disallow Grabbing if Behavior is busy doing other stuff.
 		}
 		auto& Grabbing = GrabAnimationController::GetSingleton();
-		std::size_t numberOfPrey = 1;
-		if (Runtime::HasPerkTeam(player, "MassVorePerk")) {
-			numberOfPrey = 1 + (get_visual_scale(player)/3);
-		}
-		std::vector<Actor*> preys = Grabbing.GetGrabTargetsInFront(player, numberOfPrey);
+
+		std::vector<Actor*> preys = Grabbing.GetGrabTargetsInFront(player, Vore_GetMaxVoreCount(player));
 		for (auto prey: preys) {
 			Grabbing.StartGrab(player, prey);
 		}

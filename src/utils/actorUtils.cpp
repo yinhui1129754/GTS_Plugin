@@ -980,7 +980,19 @@ namespace Gts {
 		}
 		return fallmod;
 	}
-	
+
+	std::size_t Vore_GetMaxVoreCount(Actor* giant) {
+		float numberOfPrey = 1;
+		if (Runtime::HasPerk(giant, "MassVorePerk")) {
+			numberOfPrey = 1 + (get_visual_scale(giant)/3);
+			if (HasSMT(giant)) {
+				numberOfPrey += 4.0;
+			}
+		}
+		log::info("Max Vore for {} is {}", giant->GetDisplayFullName(), numberOfPrey);
+		return numberOfPrey;
+	}
+
 	float GetHPThreshold(Actor* actor) {
 		float hp = 0.20;
 		if (Runtime::HasPerkTeam(actor, "HugCrush_MightyCuddles")) {
@@ -1935,22 +1947,28 @@ namespace Gts {
 
 	void DoFootstepSound(Actor* giant, float modifier, FootEvent kind, std::string_view node) {
 		auto& footstep = FootStepManager::GetSingleton();
+
+		std::vector<NiAVObject*> points = {find_node(giant, node)};
+
 		Impact impact_data = Impact {
 			.actor = giant,
 			.kind = kind,
 			.scale = get_visual_scale(giant) * modifier,
-			.nodes = find_node(giant, node),
+			.nodes = points,
 		};
 		footstep.OnImpact(impact_data); // Play sound
 	}
 
 	void DoDustExplosion(Actor* giant, float modifier, FootEvent kind, std::string_view node) {
 		auto& explosion = ExplosionManager::GetSingleton();
+
+		std::vector<NiAVObject*> points = {find_node(giant, node)};
+
 		Impact impact_data = Impact {
 			.actor = giant,
 			.kind = kind,
 			.scale = get_visual_scale(giant) * modifier,
-			.nodes = find_node(giant, node),
+			.nodes = points,
 		};
 		explosion.OnImpact(impact_data); // Play explosion
 	}

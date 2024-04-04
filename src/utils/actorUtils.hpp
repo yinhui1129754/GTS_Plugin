@@ -116,7 +116,7 @@ namespace Gts {
 	float GetDamageSetting();
 	float GetFallModifier(Actor* giant);
 
-	
+	std::size_t Vore_GetMaxVoreCount(Actor* giant);
 
 	float GetHPThreshold(Actor* actor);
 

@@ -38,14 +38,8 @@ namespace {
 
 		if (voreTimer.ShouldRunFrame()) {
 			auto& VoreManager = Vore::GetSingleton();
-			std::size_t numberOfPrey = 1;
-			if (Runtime::HasPerk(pred, "MassVorePerk")) {
-				numberOfPrey = 1 + (get_visual_scale(pred)/3);
-				if (HasSMT(pred)) {
-					numberOfPrey += 4.0;
-				}
-			}
-			std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, numberOfPrey);
+
+			std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, Vore_GetMaxVoreCount(pred));
 			for (auto prey: preys) {
 				VoreManager.StartVore(pred, prey);
 			}

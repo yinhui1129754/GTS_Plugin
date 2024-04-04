@@ -116,11 +116,8 @@ namespace Gts {
 			return;
 		}
 		auto& Sandwiching = ThighSandwichController::GetSingleton();
-		std::size_t numberOfPrey = 1;
-		if (Runtime::HasPerkTeam(pred, "MassVorePerk")) {
-			numberOfPrey = 1 + (get_visual_scale(pred)/3);
-		}
-		std::vector<Actor*> preys = Sandwiching.GetSandwichTargetsInFront(pred, numberOfPrey);
+
+		std::vector<Actor*> preys = Sandwiching.GetSandwichTargetsInFront(pred, Vore_GetMaxVoreCount(pred));
 		for (auto prey: preys) {
 			if (CanPerformAnimationOn(pred, prey)) { // player check is done inside CanSandwich()
 				Sandwiching.StartSandwiching(pred, prey);

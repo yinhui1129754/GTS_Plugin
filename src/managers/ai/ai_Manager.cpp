@@ -43,10 +43,6 @@ namespace {
 		log::info("PerformRandomVore started");
 		auto& VoreManager = Vore::GetSingleton();
 
-		std::size_t numberOfPrey = 1;
-		if (Runtime::HasPerkTeam(pred, "MassVorePerk")) {
-			numberOfPrey = 1 + (get_visual_scale(pred)/3);
-		}
 		for (auto actor: find_actors()) {
 			if (!actor->Is3DLoaded() || actor->IsDead()) {
 				return;
@@ -57,7 +53,7 @@ namespace {
 			int trigger_threshold = 2;
 			if (random <= trigger_threshold) {
 				log::info("Random < threshold");
-				std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, numberOfPrey);
+				std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, Vore_GetMaxVoreCount(pred));
 				for (auto prey: preys) {
 					VoreManager.StartVore(pred, prey);
 					log::info("StartVore called, can vore: {}", VoreManager.CanVore(pred, prey));

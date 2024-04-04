@@ -232,11 +232,8 @@ namespace {
 		}
 		if (Runtime::HasPerk(player, "ButtCrush_NoEscape")) {
 			auto& ButtCrush = ButtCrushController::GetSingleton();
-			std::size_t numberOfPrey = 3;
-			if (Runtime::HasPerk(player, "MassVorePerk")) {
-				numberOfPrey = 3 + (get_visual_scale(player)/3);
-			}
-			std::vector<Actor*> preys = ButtCrush.GetButtCrushTargets(player, numberOfPrey);
+
+			std::vector<Actor*> preys = ButtCrush.GetButtCrushTargets(player, Vore_GetMaxVoreCount(player));
 			for (auto prey: preys) {
 				ButtCrush.StartButtCrush(player, prey); // attaches actors to AnimObjectB
 			}
