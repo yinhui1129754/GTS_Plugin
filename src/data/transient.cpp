@@ -94,9 +94,11 @@ namespace Gts {
 			NiPoint3 POS_Last_Hand_L = NiPoint3(0.0, 0.0, 0.0);
 			NiPoint3 POS_Last_Hand_R = NiPoint3(0.0, 0.0, 0.0);
 
-			float POS_LastCheckTime = 0.0;
+			float shrink_until = 0.0;
 
 			Actor* IsInControl = nullptr;
+
+			std::vector<Actor*> shrinkies = {};
 
 			TESObjectREFR* disable_collision_with = nullptr;
 			TESObjectREFR* Throw_Offender = nullptr;
@@ -169,7 +171,9 @@ namespace Gts {
 			result.POS_Last_Hand_L = POS_Last_Hand_L;
 			result.POS_Last_Hand_R = POS_Last_Hand_R;
 
-			result.POS_LastCheckTime = POS_LastCheckTime;
+			result.shrinkies = shrinkies;
+
+			result.shrink_until = shrink_until;
 
 			result.IsInControl = IsInControl;
 			

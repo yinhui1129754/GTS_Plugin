@@ -103,9 +103,7 @@ namespace Gts {
 		if (!CanPerformAnimation(pred, 2)) {
 			return {};
 		}
-		if (IsGtsBusy(pred)) {
-			return {};
-		}
+
 		if (!pred) {
 			return {};
 		}

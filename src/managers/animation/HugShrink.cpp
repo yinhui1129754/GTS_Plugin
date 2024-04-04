@@ -204,7 +204,7 @@ namespace {
 		if (CanDoPaired(player) && !IsSynced(player) && !IsTransferingTiny(player)) {
 			auto& Hugging = HugAnimationController::GetSingleton();
 
-			std::vector<Actor*> preys = Hugging.GetHugTargetsInFront(player, Vore_GetMaxVoreCount(player));
+			std::vector<Actor*> preys = Hugging.GetHugTargetsInFront(player, 1.0);
 			for (auto prey: preys) {
 				Hugging.StartHug(player, prey);
 			}

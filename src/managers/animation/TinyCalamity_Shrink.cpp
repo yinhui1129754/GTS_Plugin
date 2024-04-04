@@ -107,26 +107,31 @@ namespace {
 	}
 
     void GTS_TC_ShrinkStart(AnimationEventData& data) {
-        auto victim = Animation_TinyCalamity::GetShrinkActor(&data.giant);
-        if (victim) {
-			SpawnRuneOnTiny(victim);
-            float until = Animation_TinyCalamity::GetShrinkUntil(&data.giant);
-            ShrinkUntil(&data.giant, victim, until, 0.26, false);
-            StartCombat(victim, &data.giant);
+        auto victims = Animation_TinyCalamity::GetShrinkActors(&data.giant);
+		for (auto victim: victims) {
+			if (victims.size() > 0 && victim) {
+				SpawnRuneOnTiny(victim);
+				float until = Animation_TinyCalamity::GetShrinkUntil(&data.giant);
+				ShrinkUntil(&data.giant, victim, until, 0.26, false);
+				StartCombat(victim, &data.giant);
 
-			Runtime::PlaySoundAtNode("TinyCalamity_SpawnRune", victim, 1.0, 1.0, "NPC Root [Root]");
-			Runtime::PlaySoundAtNode("TinyCalamity_AbsorbTiny", victim, 1.0, 1.0, "NPC Root [Root]");
-        }
-    }
+				Runtime::PlaySoundAtNode("TinyCalamity_SpawnRune", victim, 1.0, 1.0, "NPC Root [Root]");
+				Runtime::PlaySoundAtNode("TinyCalamity_AbsorbTiny", victim, 1.0, 1.0, "NPC Root [Root]");
+			}
+		}
+	}
+    
     void GTS_TC_ShrinkStop(AnimationEventData& data) {
-        auto victim = Animation_TinyCalamity::GetShrinkActor(&data.giant);
-        if (victim) {
-            StaggerActor_Directional(&data.giant, 0.25, victim);
-        }
+        auto victims = Animation_TinyCalamity::GetShrinkActors(&data.giant);
+		for (auto victim: victims) {
+			if (victims.size() > 0 && victim) {
+				StaggerActor_Directional(&data.giant, 0.25, victim);
+			}
+		}
     }
     void GTS_TC_RuneEnd(AnimationEventData& data) {
         AttachRune(&data.giant, true, 1.4, 0.60);
-        Animation_TinyCalamity::GetSingleton().ResetActor(&data.giant);
+        Animation_TinyCalamity::GetSingleton().ResetActors(&data.giant);
     }
     // GTSBEH_TC_Shrink (Start it)
 }
@@ -154,40 +159,40 @@ namespace Gts
 		AnimationManager::RegisterTrigger("Calamity_ShrinkOther", "Calamity", "GTSBEH_TC_Shrink");
 	}
 
-    void Animation_TinyCalamity::Reset() {
-		this->data.clear();
-	}
 
-	void Animation_TinyCalamity::ResetActor(Actor* actor) {
-		this->data.erase(actor);
+	void Animation_TinyCalamity::ResetActors(Actor* actor) {
+		auto tranData = Transient::GetSingleton().GetData(actor);
+		if (tranData) {
+			tranData->shrinkies = {}; // Reset array of actors to shrink
+		}
 	}
 
     void Animation_TinyCalamity::AddToData(Actor* giant, Actor* tiny, float until) {
-        Animation_TinyCalamity::GetSingleton().data.try_emplace(giant, tiny, until);
-    }
+        auto tranData_gts = Transient::GetSingleton().GetData(giant);
+		auto tranData_tiny = Transient::GetSingleton().GetData(tiny);
 
-	void Animation_TinyCalamity::Remove(Actor* giant) {
-		Animation_TinyCalamity::GetSingleton().data.erase(giant);
-	}
-
-    Actor* Animation_TinyCalamity::GetShrinkActor(Actor* giant) {
-		try {
-			auto& me = Animation_TinyCalamity::GetSingleton();
-			return me.data.at(giant).tiny;
-		} catch (std::out_of_range e) {
-			return nullptr;
+		if (tranData_gts) {
+			tranData_gts->shrinkies.push_back(tiny);
 		}
-	}
-
-    float Animation_TinyCalamity::GetShrinkUntil(Actor* giant) {
-        try {
-			auto& me = Animation_TinyCalamity::GetSingleton();
-			return me.data.at(giant).until;
-		} catch (std::out_of_range e) {
-			return 1.0;
+		if (tranData_tiny) {
+			tranData_tiny->shrink_until = until;
 		}
     }
 
-    CalamityData::CalamityData(Actor* tiny, float until) : tiny(tiny), until(until) {
+
+    std::vector<Actor*> Animation_TinyCalamity::GetShrinkActors(Actor* giant) {
+		 auto tranData_gts = Transient::GetSingleton().GetData(giant);
+		 if (tranData_gts) {
+			return tranData_gts->shrinkies;
+		 }
+		 return {};
 	}
+
+    float Animation_TinyCalamity::GetShrinkUntil(Actor* tiny) {
+        auto tranData_tiny = Transient::GetSingleton().GetData(tiny);
+		if (tranData_tiny) {
+			return tranData_tiny->shrink_until;
+		}
+		return 1.0;
+    }
 }
