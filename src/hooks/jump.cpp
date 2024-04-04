@@ -19,6 +19,10 @@ namespace {
 			NiPoint3 pos = actor->GetPosition(); 
 			pos.z += 4.0; //shift it up a little
 
+			if (HasSMT(actor)) {
+				size += 3.5;
+			}
+
 			float calc_radius = ((54.0 / 3.0) * size) - 54.0;
 			float stagger_radius = std::clamp(calc_radius, 0.0f, 54.0f); // Should start to appear at the scale of x3.0
 
@@ -106,9 +110,6 @@ namespace Hooks {
 				if (actor) {
 					if (actor->formID == 0x14) {
 						float size = get_giantess_scale(actor);
-						if (HasSMT(actor)) {
-							size += 4.0;
-						}
 						float might = 1.0 + Potion_GetMightBonus(actor);
 						float modifier = (size / game_getactorscale(actor)) * might; // Compensate it, since SetScale() already boosts jump height by default
 						float scaled = std::clamp(modifier, 0.01f, 99999.0f);

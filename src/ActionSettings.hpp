@@ -122,8 +122,8 @@ namespace Gts {
     const float Push_Sneak_HandSwipe = 1.6f;    
     const float Push_Sneak_HandSwipe_Strong = 6.0f;   // Larger value because of anim speed by default
 
-    const float Push_Kick_Normal = 1.40f;
-    const float Push_Kick_Strong = 2.25f;
+    const float Push_Kick_Normal = 1.20f; // Used for both Push Actor and Push Object
+    const float Push_Kick_Strong = 2.45f; // Used for both Push Actor and Push Object
 
     // For launching actor when we jump
     const float Push_Jump_Launch_Threshold = 8.0f;
@@ -131,8 +131,8 @@ namespace Gts {
     // For launching/pushing actors ^
 
     // Below is For launching objects
-    const float Push_Object_Upwards = 0.06f;
-    const float Push_Object_Forward = 0.18f;
+    const float Push_Object_Upwards = 0.24f;
+    const float Push_Object_Forward = 0.04f;
 
     
 

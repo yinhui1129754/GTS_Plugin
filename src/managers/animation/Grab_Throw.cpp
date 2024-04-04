@@ -82,9 +82,11 @@ namespace {
 
 				if (!giant->IsSneaking()) { // Goal is to fix standing throw direction
 
-					float angle_x = Runtime::GetFloat("cameraAlternateX"); // 10
-					float angle_y = Runtime::GetFloat("cameraAlternateY");//0.0;
+					float angle_x = 10;//Runtime::GetFloat("cameraAlternateX");
+					float angle_y = 0;//Runtime::GetFloat("cameraAlternateY");
 					float angle_z = 0;//::GetFloat("combatCameraAlternateX"); // 0
+
+					speed *= 1.35;
 
 					// Conversion to radians
 					const float PI = 3.141592653589793;
@@ -108,10 +110,10 @@ namespace {
 					direction = giantRot * (customDirection / customDirection.Length());
 				} else {
 				    if (IsCrawling(giant)) { // Strongest throw, needs custom throw direction again
-						speed *= 0.28; // Hand travels fast so it's a good idea to decrease its power
+						speed *= 0.20; // Hand travels fast so it's a good idea to decrease its power
 
-						float angle_x = Runtime::GetFloat("cameraAlternateX"); // 0
-						float angle_y = Runtime::GetFloat("cameraAlternateY");//0.008;
+						float angle_x = 0; // Runtime::GetFloat("cameraAlternateX")
+						float angle_y = 0.008; // Runtime::GetFloat("cameraAlternateY");
 						float angle_z = 0.0;// Runtime::GetFloat("combatCameraAlternateX"); // 0
 
 						// Conversion to radians
