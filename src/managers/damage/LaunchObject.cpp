@@ -108,7 +108,7 @@ namespace Gts {
 		float giantScale = get_visual_scale(giant);
 
 		if (HasSMT(giant)) {
-			giantScale += 8.0;
+			power *= 8.0;
 		}
 
 		float start_power = Push_Object_Upwards * (1.0 + Potion_GetMightBonus(giant));

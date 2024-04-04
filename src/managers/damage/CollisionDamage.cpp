@@ -132,7 +132,7 @@ namespace Gts {
 		if (SMT) {
 			giantScale += 0.20;
 			SCALE_RATIO = 0.7;
-			Calamity = 4.0; // larger range for shrinking radius with Tiny Calamity
+			Calamity = 3.0 * Get_Bone_Movement_Speed(actor, Cause); // larger range for shrinking radius with Tiny Calamity
 		}
 
 		// Get world HH offset
@@ -215,22 +215,19 @@ namespace Gts {
 							// Check the tiny's nodes against the giant's foot points
 							int nodeCollisions = 0;
 							bool DoDamage = true;
-							float force = 0.0;
 
 							auto model = otherActor->GetCurrent3D();
 
 							if (model) {
 								for (auto point: footPoints) {
-									VisitNodes(model, [&nodeCollisions, &Calamity, &DoDamage, &force, point, maxFootDistance](NiAVObject& a_obj) {
+									VisitNodes(model, [&nodeCollisions, &Calamity, &DoDamage, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
 										if (distance < maxFootDistance) {
 											nodeCollisions += 1;
-											force = 1.0 - distance / maxFootDistance;
 											return false;
 										} else if (distance > maxFootDistance && distance < maxFootDistance*Calamity) {
 											nodeCollisions += 1;
 											DoDamage = false;
-											log::info("Damage False");
 											return false;
 										}
 										return true;
@@ -318,7 +315,7 @@ namespace Gts {
 		SizeHitEffects::GetSingleton().BreakBones(giant, tiny, damage_result * bbmult, random);
 		// ^ Chance to break bonues and inflict additional damage, as well as making target more vulerable to size damage
 
-		if (!tiny->IsDead() && apply_damage) {
+		if (!tiny->IsDead()) {
 			float experience = std::clamp(damage_result/500, 0.0f, 0.05f);
 			ModSizeExperience(giant, experience);
 		}

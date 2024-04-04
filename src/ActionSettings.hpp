@@ -112,7 +112,8 @@ namespace Gts {
 
     ////////////////Throw
 
-    const float Damage_Throw_Collision = 10.0f; // unused for now, buggy
+    const float Damage_Throw_Collision = 10.0f; // unused for now, buggy: 
+    // actor collides with air and that deals damage, need to fix that first
 
 //-----------------------------------------Default Push Power variables
     // For crawling
@@ -121,14 +122,14 @@ namespace Gts {
     // For Sneaking
     const float Push_Sneak_HandSwipe = 1.6f;    
     const float Push_Sneak_HandSwipe_Strong = 4.2f;     // Larger value because of anim speed by default
-
+    // For kicking
     const float Push_Kick_Normal = 1.40f;               // Used for both Push Actor and Push Object
-    const float Push_Kick_Strong = 3.00f;               // Used for both Push Actor and Push Object
+    const float Push_Kick_Strong = 3.80f;               // Used for both Push Actor and Push Object
 
-    // For launching actor when we jump
+    // For launching actor(s) when we do initial jump (Not jump land!)
     const float Push_Jump_Launch_Threshold = 8.0f;
 
-    // For launching/pushing actors ^
+    // ----------------------For launching/pushing actors ^-----------------------------------------------
 
     // Below is For launching objects
     const float Push_Object_Upwards = 0.24f;            // Used for objects only

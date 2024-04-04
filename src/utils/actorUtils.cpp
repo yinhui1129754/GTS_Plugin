@@ -2566,7 +2566,11 @@ namespace Gts {
 							if (GetSizeDifference(giant, otherActor, SizeType::VisualScale, true, false) < Push_Jump_Launch_Threshold) {
 								StaggerActor(giant, otherActor, 0.50);
 							} else {
-								LaunchActor::ApplyLaunchTo(giant, otherActor, 1.0, 0.33);
+								float launch_power = 0.33;
+								if (HasSMT(giant)) {
+									launch_power *= 6.0;
+								}
+								LaunchActor::ApplyLaunchTo(giant, otherActor, 1.0, launch_power);
 							}
 						}
 					}

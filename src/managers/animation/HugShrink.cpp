@@ -443,6 +443,12 @@ namespace Gts {
 
 			if (!FaceOpposite(giantref, tinyref)) { // Makes the actor face us
 				// If face towards fails then actor is invalid
+				AbortHugAnimation(giantref, tinyref);
+				return false;
+			}
+
+			if (!IsHugging(giantref)) { // If for some reason we're not in the hug anim and actor is still attached to us: cancel it
+				AbortHugAnimation(giantref, tinyref);
 				return false;
 			}
 			

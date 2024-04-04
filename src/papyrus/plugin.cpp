@@ -6,6 +6,7 @@
 #include "managers/GtsManager.hpp"
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/GtsSizeManager.hpp"
+#include "utils/ItemDistributor.hpp"
 #include "magic/effects/common.hpp"
 #include <math.h>
 #include <sstream>
@@ -254,6 +255,10 @@ namespace {
 
 	void SetUndeadVore(StaticFunctionTag*, bool enabled) {
 		Persistent::GetSingleton().AllowUndeadVore = enabled;
+	}
+
+	void DistributeRandomItems(StaticFunctionTag*) {
+		DistributeChestItems();
 	}
 
 	void SetOnlyCombatVore(StaticFunctionTag*, bool enabled) {
@@ -509,6 +514,7 @@ namespace Gts {
 		vm->RegisterFunction("SetAllowPlayerVore", PapyrusClass, SetAllowPlayerVore);
 		vm->RegisterFunction("SetInsectVore", PapyrusClass, SetInsectVore);
 		vm->RegisterFunction("SetUndeadVore", PapyrusClass, SetUndeadVore);
+		vm->RegisterFunction("DistributeRandomItems", PapyrusClass, DistributeRandomItems);
 		vm->RegisterFunction("SetOnlyCombatVore", PapyrusClass, SetOnlyCombatVore);
 		vm->RegisterFunction("SetLaunchObjects", PapyrusClass, SetLaunchObjects);
 		vm->RegisterFunction("IncreaseSizeLimit", PapyrusClass, IncreaseSizeLimit);

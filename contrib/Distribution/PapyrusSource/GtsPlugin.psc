@@ -219,7 +219,8 @@ Function SetDevourmentCompatibility(Bool enabled) global native
 
 function SetInsectVore(bool enabled) global native
 function SetUndeadVore(bool enabled) global native
-
+function DistributeRandomItems() global native
+    
 function SetLaunchObjects(Bool enabled) global native
 
 function IncreaseSizeLimit(float value, Actor caster) global native

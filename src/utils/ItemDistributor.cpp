@@ -121,6 +121,14 @@ namespace Gts {
     }
 
     void DistributeChestItems() {
+        // It is called in 2 cases:
+        // 1) Player loaded a save
+        // 2) Player started the quest
+        float QuestStage = Runtime::GetStage("MainQuest");
+        if (QuestStage < 10) { // We don't want to spawn it too early
+            log::info("Quest requirements aren't met");
+            return;
+        }
         for (auto Chest: FindAllChests()) {
             if (Chest) {
                 AddItemToChests(Chest);
