@@ -125,7 +125,6 @@ namespace Gts {
 	}
 
 	void ForceFlee(Actor* giant, Actor* tiny, float duration) {
-
 		float oldConfidence = GetAV(tiny, ActorValue::kConfidence);
 
 		float Start = Time::WorldTimeElapsed();

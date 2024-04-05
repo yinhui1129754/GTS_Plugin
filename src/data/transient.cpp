@@ -176,7 +176,6 @@ namespace Gts {
 			result.shrink_until = shrink_until;
 
 			result.IsInControl = IsInControl;
-			
 
 			result.is_teammate = actor->formID != 0x14 && actor->IsPlayerTeammate();
 

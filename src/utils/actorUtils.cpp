@@ -2506,19 +2506,20 @@ namespace Gts {
 		}
 	}
 
-	void ChanceToScare(Actor* giant, Actor* tiny) {
+	void ChanceToScare(Actor* giant, Actor* tiny, float duration, int random) {
 		if (tiny->formID == 0x14 || IsTeammate(tiny)) {
 			return;
 		}
 		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
 		if (sizedifference > 1.15 && !tiny->IsDead()) {
-			int rng = rand() % 600;
+			int rng = rand() % random;
 			rng /= sizedifference;
+			log::info("RNG: {}", rng);
 			if (rng <= 1.0 * sizedifference) {
 				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
 				if (!IsScared && GetAV(tiny, ActorValue::kConfidence) > 0) {
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
-					ForceFlee(giant, tiny, 5.0);
+					ForceFlee(giant, tiny, duration); // always scare
 				}
 			}
 		}
@@ -2674,13 +2675,14 @@ namespace Gts {
 			float preyscale = get_target_scale(tiny) * Adjustment_Tiny;
 			float targetScale = predscale/(expected * Adjustment_Tiny);
 
-			log::info("Trying to Shrink {}", tiny->GetDisplayFullName());
+			/*log::info("Trying to Shrink {}", tiny->GetDisplayFullName());
 			log::info("----Adjustment: GTS: {}", Adjustment_Gts);
 			log::info("----Adjustment: Tiny: {}", Adjustment_Tiny);
 			log::info("----Pred scale: {}", predscale);
 			log::info("----Prey scale: {}", preyscale);
 			log::info("----Targeted Scale: {}", targetScale);
 			log::info("----Get Target Scale: {}", get_target_scale(tiny));
+			*/
 
 			if (preyscale > targetScale) { // Apply ONLY if target is bigger than requirement
 

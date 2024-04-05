@@ -305,7 +305,7 @@ namespace {
 		}
 		auto& Grabbing = GrabAnimationController::GetSingleton();
 
-		std::vector<Actor*> preys = Grabbing.GetGrabTargetsInFront(player, Vore_GetMaxVoreCount(player));
+		std::vector<Actor*> preys = Grabbing.GetGrabTargetsInFront(player, 1.0);
 		for (auto prey: preys) {
 			Grabbing.StartGrab(player, prey);
 		}

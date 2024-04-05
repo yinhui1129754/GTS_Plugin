@@ -5,6 +5,7 @@
 #include "managers/damage/LaunchActor.hpp"
 #include "managers/cameras/camutil.hpp"
 #include "managers/GtsSizeManager.hpp"
+#include "managers/ai/aifunctions.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/InputManager.hpp"
 #include "managers/footstep.hpp"
@@ -24,6 +25,13 @@ using namespace Gts;
 // AnimObjectR
 
 namespace {
+	void slow_down(Actor* tiny, float value) {
+		auto tranData = Transient::GetSingleton().GetData(tiny);
+		if (tranData) {
+			tranData->MovementSlowdown -= value;
+		}
+	}
+
 	void SpawnRuneOnTiny(Actor* tiny) {
 		auto node = find_node(tiny, "NPC Root [Root]");
 		if (node) {
@@ -31,7 +39,7 @@ namespace {
 		}
 	}
 
-    void AttachRune(Actor* giant, bool ShrinkRune, float speed, float scale) {
+    void AttachRune(Actor* giant, bool ShrinkRune, float speed, float scale) { // A task that scales/shrinks the runes
 		string node_name = "ShrinkRune-Obj";
 
         float Start = Time::WorldTimeElapsed();
@@ -111,9 +119,13 @@ namespace {
 		for (auto victim: victims) {
 			if (victims.size() > 0 && victim) {
 				SpawnRuneOnTiny(victim);
-				float until = Animation_TinyCalamity::GetShrinkUntil(&data.giant);
+				float until = Animation_TinyCalamity::GetShrinkUntil(victim);
 				ShrinkUntil(&data.giant, victim, until, 0.26, false);
 				StartCombat(victim, &data.giant);
+
+				ChanceToScare(&data.giant, victim, 5, 3.2); // chance to force actor to flee 
+
+				slow_down(victim, 0.50); // decrease MS by 50%
 
 				Runtime::PlaySoundAtNode("TinyCalamity_SpawnRune", victim, 1.0, 1.0, "NPC Root [Root]");
 				Runtime::PlaySoundAtNode("TinyCalamity_AbsorbTiny", victim, 1.0, 1.0, "NPC Root [Root]");
@@ -121,19 +133,20 @@ namespace {
 		}
 	}
     
-    void GTS_TC_ShrinkStop(AnimationEventData& data) {
-        auto victims = Animation_TinyCalamity::GetShrinkActors(&data.giant);
+    void GTS_TC_RuneEnd(AnimationEventData& data) {
+		auto victims = Animation_TinyCalamity::GetShrinkActors(&data.giant);
 		for (auto victim: victims) {
 			if (victims.size() > 0 && victim) {
-				StaggerActor_Directional(&data.giant, 0.25, victim);
+				slow_down(victim, -0.50); // restore normal MS
 			}
 		}
-    }
-    void GTS_TC_RuneEnd(AnimationEventData& data) {
         AttachRune(&data.giant, true, 1.4, 0.60);
-        Animation_TinyCalamity::GetSingleton().ResetActors(&data.giant);
     }
-    // GTSBEH_TC_Shrink (Start it)
+
+	void GTS_TC_ShrinkStop(AnimationEventData& data) {
+		Animation_TinyCalamity::GetSingleton().ResetActors(&data.giant);
+    }
+    // GTSBEH_TC_Shrink (Starts the animation of GTS)
 }
 
 namespace Gts
