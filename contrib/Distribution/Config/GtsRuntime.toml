@@ -144,6 +144,11 @@ EffectMightPotionExtreme = "GTS.esp|7D8218"
 
 SizeMasteryPotionBasic = "GTS.esp|7CE013"
 
+EssencePotionPotionWeak = "GTS.esp|7EC62B"
+EssencePotionPotionNormal = "GTS.esp|7EC62C"
+EssencePotionPotionStrong = "GTS.esp|7EC62D"
+EssencePotionPotionExtreme = "GTS.esp|7EC62E"
+
 ResistShrinkPotionWeak = "GTS.esp|3D4583"
 ResistShrinkPotionNormal = "GTS.esp|7C8F09"
 ResistShrinkPotionStrong = "GTS.esp|7C8F0A"
@@ -328,6 +333,8 @@ BalanceMode = "GTS.esp|42F7D3"
 
 Cleavage_OffsetY = "GTS.esp|271EFF"
 Cleavage_OffsetZ = "GTS.esp|142206"
+
+ExtraPotionSize = "GTS.esp|15151C"
 
 FirstPersonMode = "GTS.esp|2B8D35"
 ProneOffsetFP = "GTS.esp|2C2F38"

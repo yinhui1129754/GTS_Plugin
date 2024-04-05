@@ -18,6 +18,7 @@
 #include "magic/effects/Potions/GrowthPotion.hpp"
 #include "magic/effects/Potions/MaxSizePotion.hpp"
 #include "magic/effects/Potions/SizeHunger.hpp"
+#include "magic/effects/Potions/EssencePotion.hpp"
 #include "magic/effects/Potions/ExperiencePotion.hpp"
 #include "magic/effects/Poisons/Poison_Of_Shrinking.hpp"
 #include "magic/effects/Potions/ShrinkResistPotion.hpp"
@@ -227,6 +228,11 @@ namespace Gts {
 		RegisterMagic<MightPotion>("EffectMightPotionExtreme");
 
 		RegisterMagic<ExperiencePotion>("SizeMasteryPotionBasic");
+
+		RegisterMagic<EssencePotion>("EssencePotionPotionWeak");
+		RegisterMagic<EssencePotion>("EssencePotionPotionNormal");
+		RegisterMagic<EssencePotion>("EssencePotionPotionStrong");
+		RegisterMagic<EssencePotion>("EssencePotionPotionExtreme");
 
 		RegisterMagic<ShrinkResistPotion>("ResistShrinkPotionWeak");
 		RegisterMagic<ShrinkResistPotion>("ResistShrinkPotionNormal");
