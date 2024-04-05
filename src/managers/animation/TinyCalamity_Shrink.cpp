@@ -29,6 +29,7 @@ namespace {
 		auto tranData = Transient::GetSingleton().GetData(tiny);
 		if (tranData) {
 			tranData->MovementSlowdown -= value;
+			//log::info("Slowdown of {} is {}", tiny->GetDisplayFullName(), tranData->MovementSlowdown);
 		}
 	}
 
@@ -123,9 +124,9 @@ namespace {
 				ShrinkUntil(&data.giant, victim, until, 0.26, false);
 				StartCombat(victim, &data.giant);
 
-				ChanceToScare(&data.giant, victim, 5, 3.2); // chance to force actor to flee 
+				ChanceToScare(&data.giant, victim, 10, 3.2, false); // chance to force actor to flee 
 
-				slow_down(victim, 0.50); // decrease MS by 50%
+				slow_down(victim, 0.60); // decrease MS by 60%
 
 				Runtime::PlaySoundAtNode("TinyCalamity_SpawnRune", victim, 1.0, 1.0, "NPC Root [Root]");
 				Runtime::PlaySoundAtNode("TinyCalamity_AbsorbTiny", victim, 1.0, 1.0, "NPC Root [Root]");
@@ -137,7 +138,7 @@ namespace {
 		auto victims = Animation_TinyCalamity::GetShrinkActors(&data.giant);
 		for (auto victim: victims) {
 			if (victims.size() > 0 && victim) {
-				slow_down(victim, -0.50); // restore normal MS
+				slow_down(victim, -0.60); // restore normal MS
 			}
 		}
         AttachRune(&data.giant, true, 1.4, 0.60);
@@ -146,7 +147,6 @@ namespace {
 	void GTS_TC_ShrinkStop(AnimationEventData& data) {
 		Animation_TinyCalamity::GetSingleton().ResetActors(&data.giant);
     }
-    // GTSBEH_TC_Shrink (Starts the animation of GTS)
 }
 
 namespace Gts

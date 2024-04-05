@@ -146,7 +146,7 @@ namespace Gts {
 
 		Attacked(target, caster); // make it work like a hostile spell
 
-		ChanceToScare(caster, target, 5.0, 660);
+		ChanceToScare(caster, target, 5.0, 1000, true);
 
 		if (ShrinkToNothing(caster, target)) { // STN when size difference is met
 		}

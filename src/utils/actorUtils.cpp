@@ -2506,15 +2506,16 @@ namespace Gts {
 		}
 	}
 
-	void ChanceToScare(Actor* giant, Actor* tiny, float duration, int random) {
+	void ChanceToScare(Actor* giant, Actor* tiny, float duration, int random, bool apply_sd) {
 		if (tiny->formID == 0x14 || IsTeammate(tiny)) {
 			return;
 		}
 		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, true);
 		if (sizedifference > 1.15 && !tiny->IsDead()) {
 			int rng = rand() % random;
-			rng /= sizedifference;
-			log::info("RNG: {}", rng);
+			if (apply_sd) {
+				rng /= sizedifference;
+			}
 			if (rng <= 1.0 * sizedifference) {
 				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
 				if (!IsScared && GetAV(tiny, ActorValue::kConfidence) > 0) {

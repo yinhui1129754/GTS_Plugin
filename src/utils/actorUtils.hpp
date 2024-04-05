@@ -239,7 +239,7 @@ namespace Gts {
 	hkaRagdollInstance* GetRagdoll(Actor* actor);
 
 	void ManageRagdoll(Actor* tinyref, float deltaLength, NiPoint3 deltaLocation, NiPoint3 targetLocation);
-	void ChanceToScare(Actor* giant, Actor* tiny, float duration, int random);
+	void ChanceToScare(Actor* giant, Actor* tiny, float duration, int random, bool apply_sd);
 	void StaggerActor(Actor* receiver, float power);
 	void StaggerActor(Actor* giant, Actor* tiny, float power);
 	void StaggerActor_Around(Actor* giant, const float radius, bool launch);

@@ -1062,7 +1062,7 @@ namespace Gts {
 
 
 		if (HasSMT(giant)) {
-			giantScale += 3.00; // enough to push giants around, but not mammoths/dragons
+			giantScale += 2.40; // enough to push giants around, but not mammoths/dragons
 			SMT = true; // set SMT to true
 		}
 
