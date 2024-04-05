@@ -144,10 +144,10 @@ EffectMightPotionExtreme = "GTS.esp|7D8218"
 
 SizeMasteryPotionBasic = "GTS.esp|7CE013"
 
-EssencePotionPotionWeak = "GTS.esp|7EC62B"
-EssencePotionPotionNormal = "GTS.esp|7EC62C"
-EssencePotionPotionStrong = "GTS.esp|7EC62D"
-EssencePotionPotionExtreme = "GTS.esp|7EC62E"
+EffectEssencePotionWeak = "GTS.esp|7EC62B"
+EffectEssencePotionNormal = "GTS.esp|7EC62C"
+EffectEssencePotionStrong = "GTS.esp|7EC62D"
+EffectEssencePotionExtreme = "GTS.esp|7EC62E"
 
 ResistShrinkPotionWeak = "GTS.esp|3D4583"
 ResistShrinkPotionNormal = "GTS.esp|7C8F09"

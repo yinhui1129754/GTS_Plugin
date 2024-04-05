@@ -229,10 +229,10 @@ namespace Gts {
 
 		RegisterMagic<ExperiencePotion>("SizeMasteryPotionBasic");
 
-		RegisterMagic<EssencePotion>("EssencePotionPotionWeak");
-		RegisterMagic<EssencePotion>("EssencePotionPotionNormal");
-		RegisterMagic<EssencePotion>("EssencePotionPotionStrong");
-		RegisterMagic<EssencePotion>("EssencePotionPotionExtreme");
+		RegisterMagic<EssencePotion>("EffectEssencePotionWeak");
+		RegisterMagic<EssencePotion>("EffectEssencePotionNormal");
+		RegisterMagic<EssencePotion>("EffectEssencePotionStrong");
+		RegisterMagic<EssencePotion>("EffectEssencePotionExtreme");
 
 		RegisterMagic<ShrinkResistPotion>("ResistShrinkPotionWeak");
 		RegisterMagic<ShrinkResistPotion>("ResistShrinkPotionNormal");

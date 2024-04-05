@@ -989,7 +989,7 @@ namespace Gts {
 				numberOfPrey += 4.0;
 			}
 		}
-		log::info("Max Vore for {} is {}", giant->GetDisplayFullName(), numberOfPrey);
+		//log::info("Max Vore for {} is {}", giant->GetDisplayFullName(), numberOfPrey);
 		return numberOfPrey;
 	}
 

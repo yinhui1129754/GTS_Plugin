@@ -21,11 +21,11 @@ namespace {
     }
 
     void spawn_particle(Actor* giant, float scale) {
-        auto node = find_node(giant, "NPC Root [Root]");
+        auto node = find_node(giant, "NPC Spine2 [Spn2]");
 		log::info("Spawning particle");
 		if (node) {
 			NiPoint3 pos = node->world.translate;
-			SpawnParticle(giant, 4.60, "GTS/Magic/Life_Drain.nif", NiMatrix3(), pos, scale, 7, nullptr);
+			SpawnParticle(giant, 4.60, "GTS/Magic/Life_Drain.nif", NiMatrix3(), pos, scale, 7, nullptr); 
         }
     }
 }
@@ -57,11 +57,17 @@ namespace Gts {
 			if (caster->formID == 0x14) {
 				float scale = get_visual_scale(caster);
 
-				float BonusSize = Runtime::GetGlobal("ExtraPotionSize")->value;
-				BonusSize += this->power;
+				TESGlobal* BonusSize = Runtime::GetGlobal("ExtraPotionSize"); 
+				// Bonus size is added on top of all size calculations through this global
+				if (BonusSize) {
+					BonusSize->value += this->power/1.82; // convert to m
+				}
 
-				spawn_particle(caster, scale * (this->power * 30));
-				do_moan(caster);
+				spawn_particle(caster, scale * (this->power * 40)); // Just some nice visuals
+
+				if (this->power >= 0.02) {
+					do_moan(caster);
+				}
 			}
 			Potion_Penalty(caster);
         }
