@@ -20,7 +20,7 @@ namespace Gts {
 			return;
 		}
 
-		float GtsSkillLevel = GetGtsSkillLevel();
+		float GtsSkillLevel = GetGtsSkillLevel(caster);
 
 		float SkillMult = 1.0 + (GtsSkillLevel * 0.01);
 		float HpRegen = GetMaxAV(caster, ActorValue::kHealth) * 0.00005;

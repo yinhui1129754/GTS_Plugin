@@ -147,7 +147,7 @@ namespace Gts {
 					break;
 				}
 				case ChosenGameMode::CurseOfGrowth: {
-					float GtsSkillLevel = GetGtsSkillLevel();                                                         // Based on GTS skill level
+					float GtsSkillLevel = GetGtsSkillLevel(actor);                                                   // Based on GTS skill level
 					float MaxSize = Runtime::GetFloat("CurseOfGrowthMaxSize");                                       // Slider that determines max size cap.
 					float sizelimit = clamp(1.0, MaxSize, 1.00 * (GtsSkillLevel/100 * MaxSize));                     // Size limit between 1 and [Slider]], based on GTS Skill. Cap is Slider value.
 					int Random = rand() % 20;                                                                        // Randomize power

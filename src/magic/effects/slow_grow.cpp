@@ -19,7 +19,7 @@ namespace Gts {
 		if (!caster) {
 			return;
 		}
-		auto GtsSkillLevel = GetGtsSkillLevel();
+		auto GtsSkillLevel = GetGtsSkillLevel(caster);
 
 		float AlterBonus = 1.0 + (GtsSkillLevel * 0.01); // Calculate bonus power. At the Alteration of 100 it becomes 200%.
 		float power = BASE_POWER * AlterBonus;

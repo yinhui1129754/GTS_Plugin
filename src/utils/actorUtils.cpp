@@ -1913,7 +1913,7 @@ namespace Gts {
 		float reduction_1 = 0.0;
 		float reduction_2 = 1.0;
 		if (Runtime::HasPerkTeam(giant, "SkilledGTS")) {
-			reduction_1 += std::clamp(GetGtsSkillLevel() * 0.0035f, 0.0f, 0.35f);
+			reduction_1 += std::clamp(GetGtsSkillLevel(giant) * 0.0035f, 0.0f, 0.35f);
 		}
 		if (giant->formID == 0x14 && HasGrowthSpurt(giant)) {
 			if (Runtime::HasPerkTeam(giant, "GrowthOfStrength")) {
@@ -2270,7 +2270,7 @@ namespace Gts {
 		bool DarkArts1 = Runtime::HasPerk(giant, "DarkArts_Aug");
 		bool DarkArts2 = Runtime::HasPerk(giant, "DarkArts_Aug2");
 
-		float shrinkpower = (shrink * 0.35) * (1.0 + (GetGtsSkillLevel() * 0.005)) * CalcEffeciency(giant, tiny);
+		float shrinkpower = (shrink * 0.35) * (1.0 + (GetGtsSkillLevel(giant) * 0.005)) * CalcEffeciency(giant, tiny);
 
 		float Adjustment = GetSizeFromBoundingBox(tiny);
 
@@ -2613,21 +2613,19 @@ namespace Gts {
 		return modifier;
 	}
 
-	float GetGtsSkillLevel() {
-		auto GtsSkillLevel = Runtime::GetGlobal("GtsSkillLevel");
-		return GtsSkillLevel->value;
+	float GetGtsSkillLevel(Actor* giant) {
+		if (giant->formID == 0x14) {
+			auto GtsSkillLevel = Runtime::GetGlobal("GtsSkillLevel");
+			return GtsSkillLevel->value;
+		} else {
+			float Alteration = std::clamp(GetAV(giant, ActorValue::kAlteration), 1.0f, 100.0f);
+			return Alteration;
+		}
 	}
 
 	float GetXpBonus() {
 		float xp = Persistent::GetSingleton().experience_mult;
 		return xp;
-	}
-
-	float GetAttributePower() {
-		float normal = 0.20;
-		float level = std::clamp(GetGtsSkillLevel() * 0.008f, 80.0f, 0.0f);
-		log::info("total boost: {}", normal + level);
-		return normal + level;
 	}
 
 	void AddSMTDuration(Actor* actor, float duration) {
@@ -3008,7 +3006,7 @@ namespace Gts {
 		if (!receiver->IsDead()) {
 			float HpPercentage = GetHealthPercentage(receiver);
 			float difficulty = 2.0; // taking Legendary Difficulty as a base
-			float levelbonus = 1.0 + ((GetGtsSkillLevel() * 0.01) * 0.50);
+			float levelbonus = 1.0 + ((GetGtsSkillLevel(attacker) * 0.01) * 0.50);
 			value *= levelbonus;
 
 			if (HpPercentage < 0.70) { // Mostly a warning to indicate that actor dislikes it (They don't always aggro right away, with mods at least)

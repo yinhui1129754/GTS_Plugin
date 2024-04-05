@@ -246,7 +246,7 @@ namespace Gts {
 	
 
 	float GetMovementModifier(Actor* giant);
-	float GetGtsSkillLevel();
+	float GetGtsSkillLevel(Actor* giant);
 	float GetXpBonus();
 
 	void AddSMTDuration(Actor* actor, float duration);

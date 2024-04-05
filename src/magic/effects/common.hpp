@@ -319,7 +319,7 @@ namespace Gts {
 		AdjustSizeLimit(0.0300 * target_scale * power, caster);
 		AdjustMassLimit(0.0040 * target_scale * power, caster);
 
-		auto GtsSkillLevel = GetGtsSkillLevel();
+		auto GtsSkillLevel = GetGtsSkillLevel(caster);
 
 		float alteration_level_bonus = 0.0380 + (GtsSkillLevel * 0.000360); // + 100% bonus at level 100
 		Steal(target, caster, power, power * alteration_level_bonus, transfer_effeciency, source);

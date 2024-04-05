@@ -19,7 +19,7 @@ namespace Gts {
 		if (!caster) {
 			return;
 		}
-		auto GtsSkillLevel = GetGtsSkillLevel();
+		auto GtsSkillLevel = GetGtsSkillLevel(caster);
 
 		float SkillMult = 1.0 + (GtsSkillLevel * 0.01);
 
