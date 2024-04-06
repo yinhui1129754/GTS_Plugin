@@ -39,9 +39,9 @@ namespace {
 			float scale = get_visual_scale(actor);
 			float falltime = charCont->fallTime;
 			float threshold = 0.04 * scale;
-			log::info("Fall time of {} is {}", actor->GetDisplayFullName(), falltime);
+			//log::info("Fall time of {} is {}", actor->GetDisplayFullName(), falltime);
 			if (falltime < threshold) {
-				log::info("Blocking anim");
+				//log::info("Blocking anim");
 				block = true;
 			}
 		}
@@ -50,7 +50,7 @@ namespace {
 
 	bool PreventJumpFall(FormID idle, Actor* performer) {
 		if (idle == FallRoot) {
-			log::info("Checking fall root");
+			//log::info("Checking fall root");
 			return ShouldBlockFalling(performer);
 		}
 		return false;
@@ -109,10 +109,10 @@ namespace {
 
 		if (performer) {
 
-			auto* EventName = idle->GetFormEditorID();
+			//auto* EventName = idle->GetFormEditorID();
 
 			if (PreventKillMove(Form, params, performer, params->targetRef)) {
-				log::info("KILLMOVE PREVENTED");
+				//log::info("KILLMOVE PREVENTED");
 				return true;
 			}
 
@@ -121,7 +121,7 @@ namespace {
 			}
 
 			if (performer->formID == 0x14 && IsGtsBusy(performer) && IsFreeCameraEnabled()) {
-				return true; // The only of two cases when we alter anims for Player. 
+				return true; 							// One of cases when we alter anims for Player. 
 				// Needed because it's problematic to disallow specific controls through controls.hpp
 			}
 
@@ -166,21 +166,15 @@ namespace Hooks {
 			REL::RelocationID(24067, 24570),
 			// 24067 = sub_140358150 (SE)
 			// 24570 = FUN_14036ec80 (AE)
-
-			// OLD HOOKS BELOW (used CallHook on these, but for some reason it's not called on AE, so we hook function itself)
-
-			//REL::RelocationID(24068, 24571), REL::Relocate(0x5E, 0x53),
-			// 24068 = 0x140358250 [SE] ; 0x140358250 - 0x1403582ae = 0x5E
-			// 24571 = 0x14036ee00 [AE] ; 0x14036ee00 - 0x14036ee53 = 0x53
 			[](TESIdleForm* a_this, ConditionCheckParams* params, void* unk3) {
                 // Return nullptr When we don't want specific anims to happen
-                // This hook prevents them from playing (KillMoves and Sheathe/Unsheathe/Jump anims)
+                // This hook prevents them from playing (KillMoves and Sheathe/Unsheathe/Jump/Jump Root anims)
 				
 				auto* result = IdleFormHook(a_this, params, unk3);
 
 				if (a_this) {
 					if (BlockAnimation(a_this, params)) {
-						result = nullptr;
+						result = nullptr; // cancel anim
 					}
 				}
 

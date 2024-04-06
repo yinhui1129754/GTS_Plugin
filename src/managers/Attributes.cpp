@@ -182,7 +182,7 @@ namespace Gts {
 				float Multy = clamp(0.70, 1.0, MS_mult);
 				float speed_mult_walk = soft_core(scale, this->speed_adjustment_walk);
 				float bonusspeed = clamp(0.90, 1.0, speed_mult_walk);
-				float PerkSpeed = 1.0;
+				
 				auto actorData = Persistent::GetSingleton().GetData(actor);
 				float Bonus = 1.0;
 
@@ -191,11 +191,8 @@ namespace Gts {
 				if (actorData) {
 					Bonus = actorData->smt_run_speed;
 				}
-				if (Runtime::HasPerk(actor, "BonusSpeedPerk")) {
-					PerkSpeed = clamp(0.80, 1.0, speed_mult_walk);
-				}
 
-				float power = 1.0 * Slowdown * (Bonus/2.2 + 1.0)/MS_mult/MS_mult_limit/Multy/bonusspeed/PerkSpeed;
+				float power = 1.0 * Slowdown * (Bonus/2.2 + 1.0)/MS_mult/MS_mult_limit/Multy/bonusspeed;
 				if (scale > 1.0) {
 					return power;
 				} else {

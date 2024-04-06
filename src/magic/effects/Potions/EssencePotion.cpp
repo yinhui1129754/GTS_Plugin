@@ -9,15 +9,19 @@
 // A potion that increases max possible size
 
 namespace {
-    void do_moan(Actor* giant) {
-        bool Blocked = IsActionOnCooldown(giant, CooldownSource::Emotion_Moan);
-        if (!Blocked) {
-            PlayMoanSound(giant, 1.0);
-            ApplyActionCooldown(giant, CooldownSource::Emotion_Moan);
-        }
-        if (giant->formID == 0x14) {
-            shake_camera(giant, 0.50, 0.33);
-        }
+    void shake_screen_do_moan(Actor* giant, float power) {
+		if (power >= 0.07) {
+			bool Blocked = IsActionOnCooldown(giant, CooldownSource::Emotion_Moan);
+			if (!Blocked) {
+				PlayMoanSound(giant, 1.0);
+				ApplyActionCooldown(giant, CooldownSource::Emotion_Moan);
+			}
+		}
+
+		if (giant->formID == 0x14) {
+			float shake = 12.0 * power;
+			shake_camera(giant, 0.50 * shake, 0.38 * shake);
+		}
     }
 
     void spawn_particle(Actor* giant, float scale) {
@@ -63,10 +67,7 @@ namespace Gts {
 				}
 
 				spawn_particle(caster, scale * (this->power * 25)); // Just some nice visuals
-
-				if (this->power >= 0.08) {
-					do_moan(caster);
-				}
+				shake_screen_do_moan(caster, this->power);
 			}
 			Potion_Penalty(caster);
         }

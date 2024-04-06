@@ -24,6 +24,14 @@ using namespace Gts;
 
 
 namespace {
+	void regenerate_health(Actor* giant, float value) {
+		if (Runtime::HasPerk(giant, "SizeReserveAug2")) {
+			float maxhp = GetMaxAV(giant, ActorValue::kHealth);
+			float regenerate = maxhp * 0.25 * value; // 25% of health
+
+			giant->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, regenerate * TimeScale());
+		}
+	}
 
 	void TotalControlGrowEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
@@ -159,6 +167,8 @@ namespace {
 				}
 
 				update_target_scale(player, (SizeCalculation/80) * gigantism, SizeEffectType::kNeutral);
+				regenerate_health(player, (SizeCalculation/80) * gigantism);
+
 				Cache->SizeReserve -= SizeCalculation/80;
 				if (Cache->SizeReserve <= 0) {
 					Cache->SizeReserve = 0.0; // Protect against negative values.
