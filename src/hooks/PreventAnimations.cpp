@@ -21,6 +21,9 @@ namespace {
 	const auto JumpStandingStart =        	0x884A2;   // 558242
 	const auto JumpDirectionalStart =       0x884A3;   // 558243
 
+	const auto JumpFall =                   0xA791D;   // 686365 
+	const auto FallRoot =                   0xA790E;   // 686350 // The "falling down" anim
+
 	// Killmoves that we want to prevent
 	const auto KillMoveFrontSideRoot =      0x24CD4;
 	const auto KillMoveDragonToNPC =        0xC1F20;
@@ -28,6 +31,30 @@ namespace {
 	const auto KillMoveBackSideRoot =       0xE8458;
 	const auto KillMoveFrontSideRoot00 =    0x100e8B;
 	const auto KillMoveBackSideRoot00 =     0x100F16;
+
+	bool ShouldBlockFalling(Actor* actor) {
+		bool block = false;
+		auto charCont = actor->GetCharController();
+		if (charCont) {
+			float scale = get_visual_scale(actor);
+			float falltime = charCont->fallTime;
+			float threshold = 0.04 * scale;
+			log::info("Fall time of {} is {}", actor->GetDisplayFullName(), falltime);
+			if (falltime < threshold) {
+				log::info("Blocking anim");
+				block = true;
+			}
+		}
+		return block;
+	}
+
+	bool PreventJumpFall(FormID idle, Actor* performer) {
+		if (idle == FallRoot) {
+			log::info("Checking fall root");
+			return ShouldBlockFalling(performer);
+		}
+		return false;
+	}
 
 	bool PreventKillMove(FormID idle, ConditionCheckParams* params, Actor* performer, TESObjectREFR* victim) {
 		// KillMoves
@@ -81,18 +108,26 @@ namespace {
 		Actor* performer = params->actionRef->As<RE::Actor>();
 
 		if (performer) {
+
+			auto* EventName = idle->GetFormEditorID();
+
 			if (PreventKillMove(Form, params, performer, params->targetRef)) {
 				log::info("KILLMOVE PREVENTED");
 				return true;
 			}
 
+			if (PreventJumpFall(Form, performer)) {
+				return true; // Disable fall down anim for GTS so it won't look off/annoying at large scales
+			}
+
 			if (performer->formID == 0x14 && IsGtsBusy(performer) && IsFreeCameraEnabled()) {
-				return true; // The only case when we alter anims for Player. 
+				return true; // The only of two cases when we alter anims for Player. 
 				// Needed because it's problematic to disallow specific controls through controls.hpp
 			}
 
 			if (performer->formID == 0x14 || !IsGtsBusy(performer)) {
-                // Do not affect the player: we already disable player controls through other hook
+                // Do not affect the player/non-gts-busy actors
+				// we already disable player controls through other hook
 				return false;
 			}
 
@@ -117,6 +152,7 @@ namespace {
 				break;
 				return false;
 			}
+
 			return false;
 		}
 		return false;
@@ -143,11 +179,7 @@ namespace Hooks {
 				auto* result = IdleFormHook(a_this, params, unk3);
 
 				if (a_this) {
-					auto* EventName = a_this->GetFormEditorID();
-					
 					if (BlockAnimation(a_this, params)) {
-                        log::info("Performer: {}", params->actionRef->GetDisplayFullName());
-						log::info("Returning nullptr");
 						result = nullptr;
 					}
 				}

@@ -39,13 +39,13 @@ namespace Gts {
 		auto base_spell = GetBaseEffect();
 
 		if (base_spell == Runtime::GetMagicEffect("EffectEssencePotionWeak")) {
-			this->power = 0.01;
-		} else if (base_spell == Runtime::GetMagicEffect("EffectEssencePotionNormal")) {
-			this->power = 0.015;
-		} else if (base_spell == Runtime::GetMagicEffect("EffectEssencePotionStrong")) {
 			this->power = 0.02;
+		} else if (base_spell == Runtime::GetMagicEffect("EffectEssencePotionNormal")) {
+			this->power = 0.04;
+		} else if (base_spell == Runtime::GetMagicEffect("EffectEssencePotionStrong")) {
+			this->power = 0.06;
 		} else if (base_spell == Runtime::GetMagicEffect("EffectEssencePotionExtreme")) {
-			this->power = 0.03; 
+			this->power = 0.08; 
 		} 
 	}
 
@@ -62,9 +62,9 @@ namespace Gts {
 					BonusSize->value += this->power/1.82; // convert to m
 				}
 
-				spawn_particle(caster, scale * (this->power * 40)); // Just some nice visuals
+				spawn_particle(caster, scale * (this->power * 25)); // Just some nice visuals
 
-				if (this->power >= 0.02) {
+				if (this->power >= 0.08) {
 					do_moan(caster);
 				}
 			}
