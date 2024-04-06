@@ -21,8 +21,7 @@ namespace {
     }
 
     void spawn_particle(Actor* giant, float scale) {
-        auto node = find_node(giant, "NPC Spine2 [Spn2]");
-		log::info("Spawning particle");
+        auto node = find_node(giant, "NPC COM [COM ]");
 		if (node) {
 			NiPoint3 pos = node->world.translate;
 			SpawnParticle(giant, 4.60, "GTS/Magic/Life_Drain.nif", NiMatrix3(), pos, scale, 7, nullptr); 
@@ -46,7 +45,7 @@ namespace Gts {
 		} else if (base_spell == Runtime::GetMagicEffect("EffectEssencePotionStrong")) {
 			this->power = 0.02;
 		} else if (base_spell == Runtime::GetMagicEffect("EffectEssencePotionExtreme")) {
-			this->power = 0.03;
+			this->power = 0.03; 
 		} 
 	}
 
