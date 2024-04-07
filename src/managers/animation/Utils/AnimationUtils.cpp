@@ -1421,7 +1421,7 @@ namespace Gts {
 		auto random = rand() % 8;
 		if (random <= 4) {
 			if (MoanTimer.ShouldRunFrame()) {
-				shake_camera_at_node(giantref, "NPC COM [COM ]", 24.0, 0.20);
+				ApplyShakeAtNode(giantref, 6.0, "NPC COM [COM ]", 124.0);
 				auto node = find_node(giantref, "NPC COM [COM ]");
 				ModSizeExperience(giantref, 0.14);
 				PlayMoanSound(giantref, 1.0);

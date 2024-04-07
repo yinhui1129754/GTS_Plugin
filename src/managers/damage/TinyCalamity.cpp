@@ -109,7 +109,6 @@ namespace {
                 CanApplyEffect = true;
             } else if (speed >= 1.0 && CanApplyEffect) {
                 CanApplyEffect = false;
-                shake_camera_at_node(giant, "NPC COM [COM ]", 24.0, 0.15);
                 //Runtime::PlaySoundAtNode("TinyCalamity_ReachedSpeed", giant, 1.0, 1.0, "NPC COM [COM ]");
             } 
         }

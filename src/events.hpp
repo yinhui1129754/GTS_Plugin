@@ -236,6 +236,9 @@ namespace Gts {
 			// Called when an actor has an item equipped
 			virtual void ActorEquip(Actor* actor);
 
+			// Called when Player absorbs dragon soul
+			virtual void DragonSoulAbsorption();
+
 			// Called when an actor has is fully loaded
 			virtual void ActorLoaded(Actor* actor);
 
@@ -283,6 +286,7 @@ namespace Gts {
 			static void DoDataReady();
 			static void DoResetActor(Actor* actor);
 			static void DoActorEquip(Actor* actor);
+			static void DoDragonSoulAbsorption();
 			static void DoActorLoaded(Actor* actor);
 			static void DoHitEvent(const TESHitEvent* evt);
 			static void DoUnderFootEvent(const UnderFoot& evt);

@@ -15,6 +15,7 @@ namespace Gts {
 			event_sources->AddEventSink<TESHitEvent>(this);
 			event_sources->AddEventSink<TESObjectLoadedEvent>(this);
 			event_sources->AddEventSink<TESEquipEvent>(this);
+			event_sources->AddEventSink<TESTrackedStatsEvent>(this);
 		}
 		auto ui = UI::GetSingleton();
 		if (ui) {
@@ -67,6 +68,20 @@ namespace Gts {
 			auto* actor = TESForm::LookupByID<Actor>(evn->actor->formID);
 			if (actor) {
 				EventDispatcher::DoActorEquip(actor);
+			}
+		}
+		return BSEventNotifyControl::kContinue;
+	}
+
+	BSEventNotifyControl ReloadManager::ProcessEvent(const TESTrackedStatsEvent* evn, BSTEventSource<TESTrackedStatsEvent>* dispatcher)
+	{
+		if (evn) {
+			std::string_view stat = evn->stat;
+			string dragon_stat = "Dragon Souls Collected";
+			log::info("Tracked Stat sent!");
+			if (stat == dragon_stat) {
+				log::info("Stat is dragon stat!");
+				EventDispatcher::DoDragonSoulAbsorption();
 			}
 		}
 		return BSEventNotifyControl::kContinue;

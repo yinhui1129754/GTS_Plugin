@@ -12,6 +12,7 @@ namespace Gts {
 		public BSTEventSink<TESObjectLoadedEvent>,
 		public BSTEventSink<TESResetEvent>,
 		public BSTEventSink<TESEquipEvent>,
+		public BSTEventSink<TESTrackedStatsEvent>,
 		public BSTEventSink<MenuOpenCloseEvent> {
 		public:
 			[[nodiscard]] static ReloadManager& GetSingleton() noexcept;
@@ -24,6 +25,7 @@ namespace Gts {
 			virtual BSEventNotifyControl ProcessEvent(const TESObjectLoadedEvent * evn, BSTEventSource<TESObjectLoadedEvent> * dispatcher) override;
 			virtual BSEventNotifyControl ProcessEvent(const TESResetEvent* evn, BSTEventSource<TESResetEvent>* dispatcher) override;
 			virtual BSEventNotifyControl ProcessEvent(const TESEquipEvent* evn, BSTEventSource<TESEquipEvent>* dispatcher) override;
+			virtual BSEventNotifyControl ProcessEvent(const TESTrackedStatsEvent* evn, BSTEventSource<TESTrackedStatsEvent>* dispatcher) override;
 			virtual BSEventNotifyControl ProcessEvent(const MenuOpenCloseEvent* a_event, BSTEventSource<MenuOpenCloseEvent>* a_eventSource) override;
 	};
 }

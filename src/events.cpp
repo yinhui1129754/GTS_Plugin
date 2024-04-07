@@ -58,6 +58,10 @@ namespace Gts {
 	void EventListener::ActorEquip(Actor* actor) {
 
 	}
+	// Called when Player absorbs dragon soul
+	void EventListener::DragonSoulAbsorption() {
+
+	}
 
 	// Called when an actor has is fully loaded
 	void EventListener::ActorLoaded(Actor* actor) {
@@ -175,6 +179,14 @@ namespace Gts {
 			listener->ActorEquip(actor);
 		}
 	}
+
+	void EventDispatcher::DoDragonSoulAbsorption() {
+		for (auto listener: EventDispatcher::GetSingleton().listeners) {
+			auto profiler = Profilers::Profile(listener->DebugName());
+			listener->DragonSoulAbsorption();
+		}
+	}
+
 	void EventDispatcher::DoActorLoaded(Actor* actor) {
 		for (auto listener: EventDispatcher::GetSingleton().listeners) {
 			auto profiler = Profilers::Profile(listener->DebugName());

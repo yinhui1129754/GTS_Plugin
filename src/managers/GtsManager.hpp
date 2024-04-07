@@ -28,6 +28,8 @@ namespace Gts {
 
 			virtual void OnAddPerk(const AddPerkEvent& evt) override;
 
+			virtual void DragonSoulAbsorption() override;
+
 			virtual std::string DebugName() override;
 			virtual void Start() override;
 			virtual void Update() override;

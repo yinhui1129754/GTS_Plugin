@@ -2628,6 +2628,46 @@ namespace Gts {
 		return xp;
 	}
 
+	void DragonAbsorptionBonuses() {
+		Actor* player = PlayerCharacter::GetSingleton();
+		TESGlobal* BonusSize = Runtime::GetGlobal("ExtraPotionSize"); 
+		if (BonusSize) {
+			Notify("You feel like something is growing inside you");
+			BonusSize->value += 0.04; // 
+			int rng = rand() % 5 + 1;
+			int dur_rng = rand() % 3 + 1;
+			if (rng <= 1) {
+				PlayMoanSound(player, 1.0);
+				shake_camera(player, 0.5, 0.33);
+			}
+
+			auto node = find_node(player, "NPC COM [COM ]");
+			if (node) {
+				NiPoint3 pos = node->world.translate;
+				float scale = get_visual_scale(player);
+				SpawnParticle(player, 4.60, "GTS/Magic/Life_Drain.nif", NiMatrix3(), pos, scale * 1.6, 7, nullptr); 
+			}
+
+			ActorHandle gianthandle = player->CreateRefHandle();
+			std::string name = std::format("DragonGrowth_{}", player->formID);
+
+			float HpRegen = GetMaxAV(player, ActorValue::kHealth) * 0.00125;
+			float Gigantism = 1.0 + Ench_Aspect_GetPower(player);
+
+			TaskManager::RunFor(name, 2.0 * dur_rng, [=](auto& progressData) {
+				if (!gianthandle) {
+					return false;
+				}
+				auto giantref = gianthandle.get().get();
+				ApplyShakeAtNode(giantref, 2.0, "NPC COM [COM ]", 36);
+				update_target_scale(giantref, 0.0026 * Gigantism * TimeScale(), SizeEffectType::kGrow);
+				giantref->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HpRegen * TimeScale());
+				log::info("Growing in size, TimeScale: {}", TimeScale());
+				return true;
+			});
+		}
+	}
+
 	void AddSMTDuration(Actor* actor, float duration) {
 		if (!HasSMT(actor)) {
 			return;

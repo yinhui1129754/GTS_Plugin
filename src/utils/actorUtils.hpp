@@ -249,6 +249,8 @@ namespace Gts {
 	float GetGtsSkillLevel(Actor* giant);
 	float GetXpBonus();
 
+	void DragonAbsorptionBonuses();
+
 	void AddSMTDuration(Actor* actor, float duration);
 	void AddSMTPenalty(Actor* actor, float penalty);
 
