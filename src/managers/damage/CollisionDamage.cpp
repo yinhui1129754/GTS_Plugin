@@ -138,7 +138,7 @@ namespace Gts {
 		// Get world HH offset
 		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(actor);
 
-		float offset_side = -1.6;
+		float offset_side = 0.0;//-0.8;
 
 		std::string_view FootLookup = leftFootLookup;
 		std::string_view CalfLookup = leftCalfLookup;
@@ -148,7 +148,7 @@ namespace Gts {
 			FootLookup = rightFootLookup;
 			CalfLookup = rightCalfLookup;
 			ToeLookup = rightToeLookup;
-			offset_side = 1.6;
+			offset_side = 0.0;//0.8;
 		}
 
 		auto Foot = find_node(actor, FootLookup);
@@ -172,13 +172,19 @@ namespace Gts {
 			NiPoint3 forward = inverseFoot*toe->world.translate;
 			forward = forward / forward.Length();
 
-			NiPoint3 up = inverseFoot*calf->world.translate;
+			NiPoint3 point_mid = (calf->world.translate + foot->world.translate) / 2; 		// Middle between knee and foot 			|---|---|
+			NiPoint3 point_low = (point_mid + foot->world.translate) / 2; 					// Middle of middle between knee and foot 	|---|-|-|
+			NiPoint3 point_low_2 = (point_low + foot->world.translate) / 2;  // Lowest point in general 					|---|--||
+			NiPoint3 point_lowest = inverseFoot*((point_low_2 + foot->world.translate) / 2);
+
+			NiPoint3 up = point_lowest;//inverseFoot*calf->world.translate;
+
 			up = up / up.Length();
 
-			NiPoint3 right = forward.UnitCross(up);
-			forward = up.UnitCross(right); // Reorthonalize
+			NiPoint3 side = forward.UnitCross(up);
+			forward = up.UnitCross(side); // Reorthonalize
 
-			RotMat = NiMatrix3(right, forward, up);
+			RotMat = NiMatrix3(side, forward, up);
 		}
 
 		float damage_zones_applied = 0.0;
@@ -187,9 +193,14 @@ namespace Gts {
 		float hh = hhOffsetbase[2] / get_npcparentnode_scale(actor);
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
-			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
-			NiPoint3(offset_side, 7.7 + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward and to the side
-			NiPoint3(0.0, (hh/50), -0.25 + (-hh * 1.15)), // Offset for HH
+			// x = side, y = forward, z = up/down      
+			NiPoint3(0.0, hh/10, -(0.25 + hh * 0.25)), 	// basic foot pos
+			// ^ Point 1: ---()  
+			NiPoint3(offset_side, 8.0 + hh/10, -hh * 1.10), // Toe point		
+			// ^ Point 2: ()---   
+			NiPoint3(0.0, hh/70, -hh * 1.10), // Underheel point 
+			//            -----
+			// ^ Point 3: ---()  
 		};
 		std::tuple<NiAVObject*, NiMatrix3> adjust(Foot, RotMat);
 
