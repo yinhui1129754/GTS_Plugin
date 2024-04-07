@@ -2630,7 +2630,7 @@ namespace Gts {
 
 	void DragonAbsorptionBonuses() { // The function is ugly but im a bit lazy to make it look pretty
 		int rng = rand() % 5 + 1;
-		int dur_rng = rand() % 3 + 1;
+		int dur_rng = rand() % 3;
 
 		Actor* player = PlayerCharacter::GetSingleton();
 		TESGlobal* BonusSize = Runtime::GetGlobal("ExtraPotionSize"); 
@@ -2659,7 +2659,9 @@ namespace Gts {
 			float HpRegen = GetMaxAV(player, ActorValue::kHealth) * 0.00125;
 			float Gigantism = 1.0 + Ench_Aspect_GetPower(player);
 
-			TaskManager::RunFor(name, 2.0 * dur_rng, [=](auto& progressData) {
+			float duration = 6.0 + dur_rng;
+
+			TaskManager::RunFor(name, duration, [=](auto& progressData) {
 				if (!gianthandle) {
 					return false;
 				}

@@ -258,7 +258,7 @@ namespace {
 	}
 
 	void DistributeRandomItems(StaticFunctionTag*) {
-		DistributeChestItems();
+		//DistributeChestItems();
 	}
 
 	void SetOnlyCombatVore(StaticFunctionTag*, bool enabled) {
