@@ -12,12 +12,18 @@
 
 namespace {
 	void ResetMovementSlowdown(Actor* tiny) {
+		if (IsDragon(tiny)) { // Looks like applying it to dragons messes up their wings
+			return;
+		}
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
 			transient->MovementSlowdown = 1.0;
 		}
 	}
-	void SetMovementSlowdown(Actor* giant, Actor* tiny) {
+	void SetMovementSlowdown(Actor* giant, Actor* tiny) { 
+		if (IsDragon(tiny)) { // Looks like applying it to dragons messes up their wings
+			return;
+		}
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
 			float slow = 0.75;
@@ -146,7 +152,7 @@ namespace Gts {
 
 		Attacked(target, caster); // make it work like a hostile spell
 
-		ChanceToScare(caster, target, 5.0, 1000, true);
+		ChanceToScare(caster, target, 5.0, 1200, true);
 
 		if (ShrinkToNothing(caster, target)) { // STN when size difference is met
 		}

@@ -2634,6 +2634,9 @@ namespace Gts {
 
 		Actor* player = PlayerCharacter::GetSingleton();
 		TESGlobal* BonusSize = Runtime::GetGlobal("ExtraPotionSize"); 
+
+		ModSizeExperience(player, 0.45);
+
 		if (BonusSize) {
 			Notify("You feel like something is growing inside you");
 			BonusSize->value += 0.04; // 

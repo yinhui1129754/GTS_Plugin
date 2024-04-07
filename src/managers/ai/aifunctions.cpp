@@ -152,7 +152,7 @@ namespace Gts {
 
 			float timepassed = Finish - Start;
 			if (IsMoving(tinyRef)) {
-				int FallChance = rand() % 2000;// Chance to Trip
+				int FallChance = rand() % 6000;// Chance to Trip
 				if (FallChance <= 2 && !IsRagdolled(tinyRef)) {
 					PushActorAway(giantRef, tinyRef, 1.0);
 				}
