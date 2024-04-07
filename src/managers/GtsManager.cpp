@@ -357,7 +357,7 @@ void GtsManager::OnAddPerk(const AddPerkEvent& evt) {
 }
 
 void GtsManager::DragonSoulAbsorption() {
-	DragonAbsorptionBonuses();
+	DragonAbsorptionBonuses(); 
 }
 
 void GtsManager::reapply(bool force) {

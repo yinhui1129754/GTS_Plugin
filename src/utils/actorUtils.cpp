@@ -2628,14 +2628,16 @@ namespace Gts {
 		return xp;
 	}
 
-	void DragonAbsorptionBonuses() {
+	void DragonAbsorptionBonuses() { // The function is ugly but im a bit lazy to make it look pretty
+		int rng = rand() % 5 + 1;
+		int dur_rng = rand() % 3 + 1;
+
 		Actor* player = PlayerCharacter::GetSingleton();
 		TESGlobal* BonusSize = Runtime::GetGlobal("ExtraPotionSize"); 
 		if (BonusSize) {
 			Notify("You feel like something is growing inside you");
 			BonusSize->value += 0.04; // 
-			int rng = rand() % 5 + 1;
-			int dur_rng = rand() % 3 + 1;
+
 			if (rng <= 1) {
 				PlayMoanSound(player, 1.0);
 				shake_camera(player, 0.5, 0.33);
