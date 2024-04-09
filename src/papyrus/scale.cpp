@@ -256,6 +256,10 @@ namespace {
 	float GetGiantessScale(StaticFunctionTag*, Actor* actor) {
 		return get_giantess_scale(actor);
 	}
+
+	float GetNaturalScale(StaticFunctionTag*, Actor* actor) {
+		return get_natural_scale(actor, true);
+	}
 }
 
 namespace Gts {
@@ -294,6 +298,7 @@ namespace Gts {
 
 		vm->RegisterFunction("GetGiantessScale", PapyrusClass, GetGiantessScale);
 
+		vm->RegisterFunction("GetNaturalScale", PapyrusClass, GetNaturalScale);
 
 		return true;
 	}

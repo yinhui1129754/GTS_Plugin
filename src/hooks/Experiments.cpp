@@ -85,12 +85,51 @@ namespace {
 
 		return true;
 	}
+
+	void FixScaleTask(Actor* actor) {
+		std::string name = std::format("ScaleFix_{}", actor->formID);
+		ActorHandle gianthandle = actor->CreateRefHandle();
+		float Start = Time::WorldTimeElapsed();
+
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			Actor* target = gianthandle.get().get();
+			float Finish = Time::WorldTimeElapsed();
+
+			if (Finish - Start > 0.10) {
+				float natural_scale = get_natural_scale(target);
+				float target_scale = get_target_scale(target);
+				if (target_scale < natural_scale) {
+					set_target_scale(target, natural_scale);
+					log::info("Reverting {} to natural scale", target->GetDisplayFullName());
+				}
+				return false;
+			}
+			return true;
+		});
+	}
 }
 
 
 namespace Hooks {
 
 	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is commented out inside hooks.cpp
+		/*static FunctionHook<void(Actor* target, float amt)>SetScaleHook(
+			REL::RelocationID(19239, 19665),
+			// [SE]: 0x1402F4710 ; 21586
+			[](Actor* target, float amt) {
+				log::info("SetScale hooked!");
+				if (target) {
+					log::info("Param 1: {}", target->GetDisplayFullName());
+					FixScaleTask(target);
+				}
+				log::info("Param 2: {}", amt);
+					
+				return SetScaleHook(target, amt);
+            }
+        );*/
 		// return func(actor, a_caster, a_hasTargetAnim, a_target, a_leftHand);
 
 		//							  																

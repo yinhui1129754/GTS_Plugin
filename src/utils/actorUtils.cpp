@@ -2669,7 +2669,6 @@ namespace Gts {
 				ApplyShakeAtNode(giantref, 2.0, "NPC COM [COM ]", 36);
 				update_target_scale(giantref, 0.0026 * Gigantism * TimeScale(), SizeEffectType::kGrow);
 				giantref->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HpRegen * TimeScale());
-				log::info("Growing in size, TimeScale: {}", TimeScale());
 				return true;
 			});
 		}

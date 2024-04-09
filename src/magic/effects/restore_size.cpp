@@ -1,4 +1,5 @@
 
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "magic/effects/restore_size.hpp"
 #include "magic/effects/common.hpp"
 #include "managers/GtsManager.hpp"
@@ -7,6 +8,42 @@
 #include "data/runtime.hpp"
 #include "timer.hpp"
 #include "managers/Rumble.hpp"
+
+namespace {
+	void Task_RestoreSizeTask(Actor* caster, bool dual_casted) {
+
+		float Power = 0.00065;
+
+		if (dual_casted) {
+			Power *= 2.0;
+		}
+
+		std::string name = std::format("RevertSize_{}", caster->formID);
+		ActorHandle casterhandle = caster->CreateRefHandle();
+
+		TaskManager::RunFor(name, 180.0, [=](auto& progressData) {
+			if (!casterhandle) {
+				return false;
+			}
+			auto casterref = casterhandle.get().get();
+
+			bool BlockSound = IsActionOnCooldown(casterref, CooldownSource::Misc_RevertSound);
+
+			if (!BlockSound) {
+				float Volume = clamp(0.15, 1.0, get_visual_scale(casterref) * 0.1);
+				ApplyActionCooldown(casterref, CooldownSource::Misc_RevertSound);
+				Runtime::PlaySound("shrinkSound", casterref, Volume, 1.0);
+			}
+
+			Rumbling::Once("RestoreSizeOther", casterref, 0.6, 0.05);
+
+			if (!Revert(casterref, Power, Power/2.5)) { // Terminate the task once revert size is complete
+				return false;
+			}
+			return true;
+		});
+	}
+}
 
 namespace Gts {
 	std::string RestoreSize::GetName() {
@@ -20,30 +57,7 @@ namespace Gts {
 		}
 		float Volume = clamp(0.10, 1.0, get_visual_scale(caster) * 0.1);
 		Runtime::PlaySound("shrinkSound", caster, Volume, 1.0);
-	}
 
-	void RestoreSize::OnUpdate() {
-		auto caster = GetCaster();
-		if (!caster) {
-			return;
-		}
-		float Power = 0.00065;
-
-		if (DualCasted()) {
-			Power *= 2.0;
-		}
-
-		if (this->timer.ShouldRun()) {
-			float Volume = clamp(0.10, 1.0, get_visual_scale(caster) * 0.1);
-			Runtime::PlaySound("shrinkSound", caster, Volume, 1.0);
-			Rumbling::Once("RestoreSize", caster, 0.60, 0.05);
-		}
-
-		if (!Revert(caster, Power, Power/2.5)) { // Returns false when restore size is complete
-			std::string taskname = std::format("DispelShrink_Other_{}", caster->formID);
-			TaskManager::RunOnce(taskname, [=](auto& update) {
-				Dispel();
-			});
-		}
+		Task_RestoreSizeTask(caster, DualCasted());
 	}
 }

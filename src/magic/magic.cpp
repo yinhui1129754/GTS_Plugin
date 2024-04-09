@@ -136,6 +136,7 @@ namespace Gts {
 	void Magic::Dispel() {
 		if (this->activeEffect) {
 			this->activeEffect->Dispel(false); // Not forced
+			// Seems to be CTD prone for some reason, best to not use it
 		}
 	}
 

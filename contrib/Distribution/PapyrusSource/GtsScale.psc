@@ -106,8 +106,12 @@ function ModTeammateScale(Float amount) global native
 
 ; Report real default scale after all size calculations (RaceMenu, Race Scale)
 ;
-function GetOtherScale(Actor* target) global native
+float function GetOtherScale(Actor target) global native
 
 ; Report visuals scale without any adjustments, pure scale value
 ;
 float function GetGiantessScale(Actor target) global native
+
+; Reports natural scale of actor
+;
+float function GetNaturalScale(Actor target) global native

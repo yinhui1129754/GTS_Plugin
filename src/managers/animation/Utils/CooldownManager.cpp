@@ -32,6 +32,8 @@ namespace {
     const double LAUGH_COOLDOWN = 5.0f;
 	const double MOAN_COOLDOWN = 5.0f;
 
+    const double SOUND_COOLDOWN = 2.0f;
+
 
     float Calculate_ButtCrushTimer(Actor* actor) {
 		bool lvl70 = Runtime::HasPerk(actor, "ButtCrush_UnstableGrowth");
@@ -101,9 +103,12 @@ namespace Gts {
                 break; 
             case CooldownSource::Emotion_Moan: 
                 data.lastMoanTime = Time::WorldTimeElapsed();
-                break;         
+                break;  
+             case CooldownSource::Misc_RevertSound: 
+                data.lastRevertTime = Time::WorldTimeElapsed();
+                break; 
+            }
         }
-    }
 
     bool IsActionOnCooldown(Actor* giant, CooldownSource source) {
         float time = Time::WorldTimeElapsed();
@@ -139,6 +144,9 @@ namespace Gts {
                 break; 
             case CooldownSource::Emotion_Moan: 
                 return time <= (data.lastMoanTime + MOAN_COOLDOWN);
+                break;  
+            case CooldownSource::Misc_RevertSound: 
+                return time <= (data.lastRevertTime + SOUND_COOLDOWN);
                 break;  
             }
         return false; 

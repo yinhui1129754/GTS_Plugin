@@ -13,11 +13,8 @@ namespace Gts {
 		public:
 			using Magic::Magic;
 
-			virtual void OnUpdate() override;
 			virtual void OnStart() override;
 
 			virtual std::string GetName() override;
-
-			Timer timer = Timer(2.33); // Run every 2.33s or as soon as we can
 	};
 }

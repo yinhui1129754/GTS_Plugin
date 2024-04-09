@@ -78,9 +78,7 @@ namespace Gts {
 		if (evn) {
 			std::string_view stat = evn->stat;
 			string dragon_stat = "Dragon Souls Collected";
-			log::info("Tracked Stat sent!");
 			if (stat == dragon_stat) {
-				log::info("Stat is dragon stat!");
 				EventDispatcher::DoDragonSoulAbsorption();
 			}
 		}
