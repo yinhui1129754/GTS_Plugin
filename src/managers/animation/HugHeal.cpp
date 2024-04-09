@@ -77,12 +77,9 @@ namespace {
 		bool Healing = IsHugHealing(giantref);
 		
 		if (Healing && HeartTimer.ShouldRunFrame()) {
-			NiPoint3 POS = GetHeartPosition(giantref, tinyref);
-			if (POS.Length() > 0) {
-				float scale = get_visual_scale(giantref);
-				SpawnParticle(giantref, 3.00, "GTS/Magic/Hearts.nif", NiMatrix3(), POS, scale * 2.4, 7, nullptr);
-			}
-		} 
+			float scale = get_visual_scale(giantref);
+			SpawnCustomParticle(giantref, ParticleType::Hearts, GetHeartPosition(giantref, tinyref), "NPC COM [COM ]", scale * 2.4);
+		}
 
 		if (!Healing && hp >= maxhp) {
 			AbortHugAnimation(giantref, tinyref);

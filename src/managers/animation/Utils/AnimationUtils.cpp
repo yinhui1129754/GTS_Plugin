@@ -258,7 +258,7 @@ namespace Gts {
 	void HugCrushOther(Actor* giant, Actor* tiny) {
 		Attacked(tiny, giant);
 		if (giant->formID == 0x14 && IsDragon(tiny)) {
-			CompleteDragonQuest(tiny, false, tiny->IsDead());
+			CompleteDragonQuest(tiny, ParticleType::Red, tiny->IsDead());
 		}
 		float currentSize = get_visual_scale(tiny);
 
@@ -1422,18 +1422,15 @@ namespace Gts {
 		if (random <= 4) {
 			if (MoanTimer.ShouldRunFrame()) {
 				ApplyShakeAtNode(giantref, 6.0, "NPC COM [COM ]", 124.0);
-				auto node = find_node(giantref, "NPC COM [COM ]");
 				ModSizeExperience(giantref, 0.14);
 				PlayMoanSound(giantref, 1.0);
+
 				Grow(giantref, 0, 0.016 * (1 + random));
 
 				Runtime::CastSpell(giantref, giantref, "GtsVoreFearSpell");
 
-				if (node) {
-					NiPoint3 pos = node->world.translate;
-					SpawnParticle(giantref, 4.60, "GTS/Magic/Soul_Drain.nif", NiMatrix3(), pos, get_visual_scale(giantref), 7, nullptr);
-					Task_FacialEmotionTask_Moan(giantref, 2.0, "Absorb");
-				}
+				SpawnCustomParticle(giantref, ParticleType::Blue, NiPoint3(), "NPC COM [COM ]", get_visual_scale(giantref));
+				Task_FacialEmotionTask_Moan(giantref, 2.0, "Absorb");
 			}	
 		}
 	}

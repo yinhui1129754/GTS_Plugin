@@ -1547,7 +1547,7 @@ namespace Gts {
 		}
 	}
 
-	void CompleteDragonQuest(Actor* tiny, bool vore, bool dead) {
+	void CompleteDragonQuest(Actor* tiny, ParticleType Type, bool dead) {
 		auto pc = PlayerCharacter::GetSingleton();
 		auto progressionQuest = Runtime::GetQuest("MainQuest");
 		if (progressionQuest) {
@@ -1557,7 +1557,7 @@ namespace Gts {
 				if (transient) {
 					Cprint("Quest is Completed");
 					transient->dragon_was_eaten = true;
-					SpawnProgressionParticle(tiny, vore);
+					SpawnCustomParticle(tiny, Type, NiPoint3(), "NPC Root [Root]", 1.0);
 				}
 			}
 		}
@@ -2377,19 +2377,16 @@ namespace Gts {
 		for (auto actor: find_actors()) {
 			if (actor == player || IsTeammate(actor)) {
 				float scale = get_visual_scale(actor);
-				auto node = find_node(actor, "NPC Root [Root]");
-				if (node) {
-					NiPoint3 pos = node->world.translate;
-					SpawnParticle(actor, 4.60, "GTS/Magic/Life_Drain.nif", NiMatrix3(), pos, scale * 1.15, 7, nullptr);
-					Runtime::PlaySoundAtNode("Magic_ProtectTinies", actor, 1.0, 1.0, "NPC COM [COM ]");
 
-					std::string name_com = std::format("Protect_{}", actor->formID);
-					std::string name_root = std::format("Protect_Root_{}", actor->formID);
+				SpawnCustomParticle(actor, ParticleType::Red, NiPoint3(), "NPC Root [Root]", scale * 1.15);
+				Runtime::PlaySoundAtNode("Magic_ProtectTinies", actor, 1.0, 1.0, "NPC COM [COM ]");
 
-					Rumbling::Once(name_com, actor, 8.6, 0.20, "NPC COM [COM ]");
-					Rumbling::Once(name_root, actor, 8.6, 0.20, "NPC Root [Root]");
-				}
+				std::string name_com = std::format("Protect_{}", actor->formID);
+				std::string name_root = std::format("Protect_Root_{}", actor->formID);
 
+				Rumbling::Once(name_com, actor, 8.6, 0.20, "NPC COM [COM ]");
+				Rumbling::Once(name_root, actor, 8.6, 0.20, "NPC Root [Root]");
+				
 				LaunchImmunityTask(actor, Balance);
 			}
 		}
@@ -2651,13 +2648,8 @@ namespace Gts {
 				shake_camera(player, 0.5, 0.33);
 			}
 
-			auto node = find_node(player, "NPC COM [COM ]");
-			if (node) {
-				NiPoint3 pos = node->world.translate;
-				float scale = get_visual_scale(player);
-				SpawnParticle(player, 4.60, "GTS/Magic/Life_Drain.nif", NiMatrix3(), pos, scale * 1.6, 7, nullptr); 
-			}
-
+			SpawnCustomParticle(player, ParticleType::Red, NiPoint3(), "NPC COM [COM ]", get_visual_scale(player) * 1.6); 
+			
 			ActorHandle gianthandle = player->CreateRefHandle();
 			std::string name = std::format("DragonGrowth_{}", player->formID);
 
@@ -2983,19 +2975,23 @@ namespace Gts {
 					Persistent::GetSingleton().StolenSize += value;
 				} else if (stage == 3 && queststage >= 30) {
 					Persistent::GetSingleton().CrushCount += value * bonus;
-					SpawnProgressionParticle(tiny, false);
+					SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
 				} else if (stage == 4 && queststage >= 40) {
 					Persistent::GetSingleton().STNCount += value * bonus;
-					SpawnProgressionParticle(tiny, false);
+					SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
 				} else if (stage == 5) {
 					Persistent::GetSingleton().HandCrushed += value * bonus;
-					SpawnProgressionParticle(tiny, false);
+					SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
 				} else if (stage == 6) {
 					Persistent::GetSingleton().VoreCount += value * bonus;
-					SpawnProgressionParticle(tiny, true);
+					SpawnCustomParticle(tiny, ParticleType::Blue, NiPoint3(), "NPC Root [Root]", 1.0);
 				} else if (stage == 7) {
 					Persistent::GetSingleton().GiantCount += value;
-					SpawnProgressionParticle(tiny, vore);
+					if (vore) {
+						SpawnCustomParticle(tiny, ParticleType::Blue, NiPoint3(), "NPC Root [Root]", 1.0);
+					} else {
+						SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
+					}
 				}
 			}
 		}
@@ -3012,26 +3008,47 @@ namespace Gts {
 	}
 
 
-	void SpawnProgressionParticle(Actor* tiny, bool vore) {
-		float scale = 1.0 * GetSizeFromBoundingBox(tiny);
+	void SpawnCustomParticle(Actor* actor, ParticleType Type, NiPoint3 spawn_at_point, std::string_view spawn_at_node, float scale_mult) {
+		float scale = scale_mult * GetSizeFromBoundingBox(actor);
 
-		if (tiny->IsDead()) {
+		if (actor->IsDead()) {
 			scale *= 0.33;
 		}
 
-		auto node = find_node(tiny, "NPC Root [Root]");
-		log::info("Spawning particle");
-		if (node) {
-			NiPoint3 pos = node->world.translate;
-			if (!vore) {
-				SpawnParticle(tiny, 4.60, "GTS/Magic/Life_Drain.nif", NiMatrix3(), pos, scale, 7, nullptr);
-				log::info("Soul false, spawning particle");
-			} else {
-				SpawnParticle(tiny, 4.60, "GTS/Magic/Soul_Drain.nif", NiMatrix3(), pos, scale, 7, nullptr);
-				log::info("Soul true, spawning particle");
-			}
+		auto node = find_node(actor, spawn_at_node);
+		if (!node) {
+			return;
 		}
+		const char* particle_path = "None";
+		log::info("Spawning particle");
+		switch (Type) {
+			case ParticleType::Red: 
+				particle_path = "GTS/Magic/Life_Drain.nif";
+			break;
+			case ParticleType::Green:
+				particle_path = "GTS/Magic/Slow_Grow.nif";
+			break;
+			case ParticleType::Blue:
+				particle_path = "GTS/Magic/Soul_Drain.nif";
+			break;
+			case ParticleType::Hearts:
+				particle_path = "GTS/Magic/Hearts.nif";
+			break;
+			case ParticleType::None:
+				return;
+			break;
+		}
+		NiPoint3 pos = NiPoint3(); // Empty point 3
+
+		if (spawn_at_point.Length() > 0.01) { // fill it up
+			pos = spawn_at_point;
+		} else {
+			pos = node->world.translate;
+		}
+
+		SpawnParticle(actor, 4.60, particle_path, NiMatrix3(), pos, scale, 7, nullptr);
 	}
+	
 
 	float GetQuestProgression(float stage) {
 		if (stage == 1) {

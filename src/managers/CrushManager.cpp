@@ -155,7 +155,7 @@ namespace Gts {
 
 				data.state = CrushState::Crushed;
 				if (giant->formID == 0x14 && IsDragon(tiny)) {
-					CompleteDragonQuest(tiny, false, tiny->IsDead());
+					CompleteDragonQuest(tiny, ParticleType::Red, tiny->IsDead());
 				}
 				
 				std::string taskname = std::format("CrushTiny {}", tiny->formID);

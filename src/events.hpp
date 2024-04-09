@@ -23,7 +23,13 @@ namespace Gts {
 		GiantessScale,
 		VisualScale,
 	};
-
+	enum class ParticleType {
+		Red,
+		Green,
+		Blue,
+		Hearts,
+		None,
+	};
 	enum class ShrinkSource {
 		other,
 		magic,

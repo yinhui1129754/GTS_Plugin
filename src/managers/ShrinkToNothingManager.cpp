@@ -64,7 +64,7 @@ namespace Gts {
 					Attacked(tiny, giant);
 					ModSizeExperience(giant, 0.24 * GetXPModifier(tiny)); // Adjust Size Matter skill
 					if (giant->formID == 0x14 && IsDragon(tiny)) {
-						CompleteDragonQuest(tiny, false, tiny->IsDead());
+						CompleteDragonQuest(tiny, ParticleType::Red, tiny->IsDead());
 					}
 					// Do shrink
 					float currentSize = get_visual_scale(tiny);

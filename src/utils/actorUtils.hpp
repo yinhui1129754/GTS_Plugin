@@ -170,7 +170,7 @@ namespace Gts {
 	void KnockAreaEffect(TESObjectREFR* source, float afMagnitude, float afRadius);
 	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float Multiplier);
 
-	void CompleteDragonQuest(Actor* tiny, bool vore, bool dead);
+	void CompleteDragonQuest(Actor* tiny, ParticleType Type, bool dead);
 
 	float get_distance_to_actor(Actor* receiver, Actor* target);
 	float GetHighHeelsBonusDamage(Actor* actor);
@@ -270,7 +270,7 @@ namespace Gts {
 	bool CanPerformAnimation(Actor* giant, float type);
 	void AdvanceQuestProgression(Actor* giant, float stage, float value);
 	void AdvanceQuestProgression(Actor* giant, Actor* tiny, float stage, float value, bool vore);
-	void SpawnProgressionParticle(Actor* tiny, bool vore);
+	void SpawnCustomParticle(Actor* actor, ParticleType Type, NiPoint3 spawn_at_point, std::string_view spawn_at_node, float scale_mult);
 	void ResetQuest();
 	float GetQuestProgression(float stage);
 	void InflictSizeDamage(Actor* attacker, Actor* receiver, float value);
