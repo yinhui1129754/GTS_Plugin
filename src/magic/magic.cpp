@@ -257,9 +257,9 @@ namespace Gts {
 
 		RegisterMagic<Gigantism>("EnchGigantism");
 
-
 		RegisterMagic<SwordOfSize>("SwordEnchant");
 		RegisterMagic<SlowGrow>("SlowGrowth");
+		RegisterMagic<SlowGrow>("SlowGrowthDual");
 		RegisterMagic<TinyCalamity>("TinyCalamity");
 		RegisterMagic<Growth>("GrowthSpell");
 		RegisterMagic<Growth>("GrowthSpellAdept");

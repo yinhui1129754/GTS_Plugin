@@ -35,7 +35,7 @@ namespace {
             return true;
         }
 		Actor* Controlled = GetPlayerOrControlled();
-		if (Controlled ->formID != 0x14) {
+		if (Controlled->formID != 0x14) {
 			if (IsThighSandwiching(Controlled)) { // Disallow player movement if we have control over other actor and actor does thigh sandwich
 				return false;
 			} if (IsBetweenBreasts(Controlled)) {

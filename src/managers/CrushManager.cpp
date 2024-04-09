@@ -89,10 +89,6 @@ namespace {
 			if (Runtime::HasPerkTeam(caster, "AdditionalGrowth")) {
 				Rate *= 2.0;
 			}
-			if (Runtime::HasPerkTeam(caster, "AdditionalGrowth_p2")) {
-				Rate *= 1.6;
-				caster->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, 25.0);
-			}
 			CrushGrow(caster, 0, Rate * SizeSteal_GetPower(caster, target));
 		}
 		PleasureText(caster);

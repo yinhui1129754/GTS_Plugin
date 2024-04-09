@@ -13,9 +13,11 @@ namespace Gts {
 		public:
 			using Magic::Magic;
 
-			virtual void OnUpdate() override;
-
+			SlowGrow(ActiveEffect* effect);
+			
 			virtual void OnStart() override;
+
+			virtual void OnUpdate() override;
 
 			virtual void OnFinish() override;
 
@@ -23,6 +25,6 @@ namespace Gts {
 		private:
 			bool IsDual = false;
 			Timer timer = Timer(2.33); // Run every 2.33s or as soon as we can
-			Timer MoanTimer = Timer(4.66);
+			Timer MoanTimer = Timer(6.00);
 	};
 }

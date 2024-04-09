@@ -116,6 +116,12 @@ namespace {
 				return true;
 			}
 
+			if (IsThighSandwiching(performer)) { // Disallow anims in these 2 cases 
+				return true;
+			} if (IsBetweenBreasts(performer)) {
+				return true;
+			}
+
 			if (PreventJumpFall(Form, performer)) {
 				return true; // Disable fall down anim for GTS so it won't look off/annoying at large scales
 			}
@@ -125,7 +131,7 @@ namespace {
 				// Needed because it's problematic to disallow specific controls through controls.hpp
 			}
 
-			if (performer->formID == 0x14 || !IsGtsBusy(performer)) {
+			if (!IsGtsBusy(performer)) {
                 // Do not affect the player/non-gts-busy actors
 				// we already disable player controls through other hook
 				return false;

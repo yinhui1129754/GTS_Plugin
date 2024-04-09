@@ -2633,6 +2633,11 @@ namespace Gts {
 		int dur_rng = rand() % 3;
 
 		Actor* player = PlayerCharacter::GetSingleton();
+
+		if (!Runtime::HasPerk(player, "MightOfDragons")) {
+			return;
+		}
+
 		TESGlobal* BonusSize = Runtime::GetGlobal("ExtraPotionSize"); 
 
 		ModSizeExperience(player, 0.45);

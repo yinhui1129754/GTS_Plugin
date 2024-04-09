@@ -112,7 +112,7 @@ namespace Hooks {
 						float size = get_giantess_scale(actor);
 						float might = 1.0 + Potion_GetMightBonus(actor);
 						float modifier = (size / game_getactorscale(actor)) * might; // Compensate it, since SetScale() already boosts jump height by default
-						float scaled = std::clamp(modifier, 0.01f, 99999.0f);
+						float scaled = std::clamp(modifier, 1.0f, 99999.0f); // Can't have smaller jump heigh than x1.0
 
 						Jump_ApplyExtraJumpEffects(actor, size, might); // Push items and actors, spawn dust ring and shake the ground
 
