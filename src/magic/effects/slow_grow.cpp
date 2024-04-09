@@ -1,25 +1,17 @@
+#include "managers/animation/Utils/AnimationUtils.hpp"
 #include "magic/effects/slow_grow.hpp"
 #include "magic/effects/common.hpp"
 #include "utils/actorUtils.hpp"
+#include "managers/Rumble.hpp"
+#include "data/runtime.hpp"
 #include "magic/magic.hpp"
 #include "scale/scale.hpp"
-#include "data/runtime.hpp"
 #include "timer.hpp"
-#include "managers/Rumble.hpp"
+
 
 namespace Gts {
 	std::string SlowGrow::GetName() {
 		return "SlowGrow";
-	}
-
-	bool GetIsDualCasting(Actor* actor) {
-		auto _currentProcess = actor->GetActorRuntimeData().currentProcess;
-		if (!_currentProcess) {
-			return false;
-		}
-
-		const auto highProcess = _currentProcess->high;
-		return highProcess && highProcess->isDualCasting;
 	}
 
 	SlowGrow::SlowGrow(ActiveEffect* effect) : Magic(effect) {
