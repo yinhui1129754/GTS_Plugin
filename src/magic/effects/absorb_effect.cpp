@@ -82,6 +82,12 @@ namespace Gts {
 	void Absorb::OnFinish() {
 		auto caster = GetCaster();
 		auto target = GetTarget();
+		if (!caster) {
+			return;
+		} 
+		if (!target) {
+			return;
+		}
 		Task_TrackSizeTask(caster, target, "Absorb");
 	}
 }

@@ -75,6 +75,12 @@ namespace Gts {
 	void SwordOfSize::OnFinish() {
 		auto Caster = GetCaster();
 		auto Target = GetTarget();
+		if (!Caster) {
+			return;
+		}
+		if (!Target) {
+			return;
+		}
 		Task_TrackSizeTask(Caster, Target, "Sword");
 	}
 }

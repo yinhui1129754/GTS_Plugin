@@ -162,6 +162,13 @@ namespace Gts {
 		auto Caster = GetCaster();
 		auto Target = GetTarget();
 
+		if (!Caster) {
+			return;
+		}
+		if (!Target) {
+			return;
+		}
+
 		Task_TrackSizeTask(Caster, Target, "Spell");
 		ResetMovementSlowdown(Target);
 	}

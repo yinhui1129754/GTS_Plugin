@@ -243,7 +243,7 @@ namespace {
 			if (!actor->Is3DLoaded()) {
 				continue;
 			}
-			if (actor->IsPlayerTeammate()) {
+			if (IsTeammate(actor)) {
 				mod_target_scale(actor, amt);
 			}
 		}

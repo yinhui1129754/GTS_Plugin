@@ -333,8 +333,11 @@ namespace Gts {
 		if (!caster) {
 			return false;
 		}
+		if (!target) {
+			return false;
+		}
 
-		if (target_scale <= SHRINK_TO_NOTHING_SCALE && !Runtime::HasMagicEffect(target,"ShrinkToNothing") && !target->IsPlayerTeammate()) {
+		if (target_scale <= SHRINK_TO_NOTHING_SCALE && !Runtime::HasMagicEffect(target,"ShrinkToNothing") && !IsTeammate(target)) {
 			if (!ShrinkToNothingManager::CanShrink(caster, target)) {
 				return false;
 			}

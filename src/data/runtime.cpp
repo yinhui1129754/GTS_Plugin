@@ -675,7 +675,7 @@ namespace Gts {
 		if (Runtime::HasMagicEffectOr(actor, tag, default_value)) {
 			return true;
 		}
-		if (Runtime::InFaction(actor, "FollowerFaction") || actor->IsPlayerTeammate()) {
+		if (IsTeammate(actor)) {
 			auto player = PlayerCharacter::GetSingleton();
 			return Runtime::HasMagicEffectOr(player, tag, default_value);
 		} else {
@@ -691,7 +691,7 @@ namespace Gts {
 		if (Runtime::HasSpellTeam(actor, tag)) {
 			return true;
 		}
-		if (Runtime::InFaction(actor, "FollowerFaction") || actor->IsPlayerTeammate()) {
+		if (IsTeammate(actor)) {
 			auto player = PlayerCharacter::GetSingleton();
 			return Runtime::HasSpellTeamOr(player, tag, default_value);
 		} else {
@@ -707,7 +707,7 @@ namespace Gts {
 		if (Runtime::HasPerk(actor, tag)) {
 			return true;
 		}
-		if (Runtime::InFaction(actor, "FollowerFaction") || actor->IsPlayerTeammate()) {
+		if (IsTeammate(actor)) {
 			auto player = PlayerCharacter::GetSingleton();
 			return Runtime::HasPerkOr(player, tag, default_value);
 		} else {

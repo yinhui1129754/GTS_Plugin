@@ -81,7 +81,7 @@ namespace {
 				if (!actor) {
 					continue;
 				}
-				if (actor->formID != 0x14 && (actor->IsPlayerTeammate() || Runtime::InFaction(actor, "FollowerFaction"))) {
+				if (actor->formID != 0x14 && (IsTeammate(actor))) {
 
 					float perk = Perk_GetCostReduction(player);
 
@@ -106,7 +106,7 @@ namespace {
 				if (!actor) {
 					continue;
 				}
-				if (actor->formID != 0x14 && (actor->IsPlayerTeammate() || Runtime::InFaction(actor, "FollowerFaction"))) {
+				if (actor->formID != 0x14 && (IsTeammate(actor))) {
 					
 					float perk = Perk_GetCostReduction(player);
 
@@ -191,7 +191,7 @@ namespace {
 
 	void PartyReportEvent(const InputEventData& data) {
 		for (auto actor: find_actors()) {
-			if (actor->formID != 0x14 && Runtime::InFaction(actor, "FollowerFaction") || actor->IsPlayerTeammate()) {
+			if (actor->formID != 0x14 && IsTeammate(actor)) {
 				float hh = HighHeelManager::GetBaseHHOffset(actor)[2]/100;
 				float gigantism = Ench_Aspect_GetPower(actor) * 100;
 				float naturalscale = get_natural_scale(actor, true);

@@ -48,7 +48,7 @@ namespace {
 			if (!actor->Is3DLoaded()) {
 				continue;
 			}
-			if (actor->IsPlayerTeammate() || Runtime::InFaction(actor, "FollowerFaction")) {
+			if (IsTeammate(actor)) {
 				mod_target_height(actor, amt);
 			}
 		}
