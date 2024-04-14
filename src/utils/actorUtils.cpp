@@ -1,4 +1,5 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
+#include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/animation/TinyCalamity_Shrink.hpp"
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/damage/CollisionDamage.hpp"
@@ -69,7 +70,7 @@ namespace {
 
 		if (!force_cancel && Balance) {
 			float perk = Perk_GetCostReduction(giantref);
-			float damage = 0.12 * TimeScale() * perk;
+			float damage = 0.08 * TimeScale() * perk;
 			if (giantref->formID != 0x14) {
 				damage *= 0.5; // less stamina drain for NPC's
 			}
@@ -2409,7 +2410,7 @@ namespace Gts {
 
 			float Finish = Time::WorldTimeElapsed();
 			float timepassed = Finish - Start;
-			if (timepassed < 60.0) {
+			if (timepassed < 180.0) {
 				auto giantref = gianthandle.get().get();
 				if (Utils_ManageTinyProtection(giant, false, Balance)) {
 					return true; // Disallow to check further
@@ -2645,6 +2646,7 @@ namespace Gts {
 
 			if (rng <= 1) {
 				PlayMoanSound(player, 1.0);
+				Task_FacialEmotionTask_Moan(player, 1.6, "DragonVored");
 				shake_camera(player, 0.5, 0.33);
 			}
 

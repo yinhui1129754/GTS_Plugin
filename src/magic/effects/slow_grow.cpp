@@ -26,7 +26,16 @@ namespace Gts {
 	}
 
 	void SlowGrow::OnStart() {
-
+		Actor* caster = GetCaster();
+		if (caster) {
+			float scale = get_visual_scale(caster);
+			float mult = 0.40;
+			if (this->IsDual) {
+				Rumbling::For("SlowGrow", caster, 6.0, 0.10, "NPC COM [COM ]", 0.35);
+				mult = 0.85;
+			}
+			SpawnCustomParticle(caster, ParticleType::Green, NiPoint3(), "NPC Root [Root]", scale * mult);
+		}
 	}
 
 	void SlowGrow::OnUpdate() {
@@ -45,7 +54,7 @@ namespace Gts {
 			float Volume = clamp(0.20, 1.0, get_visual_scale(caster)/8);
 			Runtime::PlaySoundAtNode("growthSound", caster, Volume, 1.0,  "NPC Pelvis [Pelv]");
 		}
-		if (this->MoanTimer.ShouldRun() && Runtime::GetFloat("AllowMoanSounds") == 1.0 && IsFemale(caster)) {
+		if (Runtime::GetFloat("AllowMoanSounds") == 1.0 && this->MoanTimer.ShouldRun() && IsFemale(caster)) {
 			float MoanVolume = clamp(0.25, 2.0, get_visual_scale(caster)/8);
 			Task_FacialEmotionTask_Moan(caster, 1.4, "SlowGrow");
 			PlayMoanSound(caster, MoanVolume);

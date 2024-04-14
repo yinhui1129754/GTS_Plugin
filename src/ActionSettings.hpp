@@ -81,13 +81,13 @@ namespace Gts {
 
     ////////////////crawl
 
-    const float Damage_Crawl_Idle = 0.04f;
+    const float Damage_Crawl_Idle = 0.0006f;
 
     const float Damage_Crawl_KneeImpact_Drop = 14.0f;
     const float Damage_Crawl_HandImpact_Drop = 12.0f;
 
-    const float Damage_Crawl_KneeImpact = 8.0f;
-    const float Damage_Crawl_HandImpact = 6.0f;
+    const float Damage_Crawl_KneeImpact = 6.0f;
+    const float Damage_Crawl_HandImpact = 4.0f;
 
 	const float Damage_Crawl_HandSwipe = 5.0f;
 	const float Damage_Crawl_HandSwipe_Strong = 10.0f;
@@ -185,8 +185,8 @@ namespace Gts {
 
     ////////Crawling
     const float Radius_Crawl_HandSwipe = 20.0f;
-    const float Radius_Crawl_KneeImpact = 14.0f;
-    const float Radius_Crawl_HandImpact = 12.0f;
+    const float Radius_Crawl_KneeImpact = 10.0f;
+    const float Radius_Crawl_HandImpact = 10.0f;
 
     const float Radius_Crawl_KneeImpact_Fall = 18.0f;
     const float Radius_Crawl_HandImpact_Fall = 14.0f;
@@ -194,8 +194,8 @@ namespace Gts {
     const float Radius_Crawl_Slam = 10.0f;
     const float Radius_Crawl_Slam_Strong = 10.0f;
 
-    const float Radius_Crawl_KneeIdle = 7.4f;
-    const float Radius_Crawl_HandIdle = 7.2f;
+    const float Radius_Crawl_KneeIdle = 6.8f;
+    const float Radius_Crawl_HandIdle = 6.8f;
 
     const float Radius_Crawl_Vore_ButtImpact = 20.0f;
 

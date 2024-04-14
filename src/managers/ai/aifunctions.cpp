@@ -148,6 +148,11 @@ namespace Gts {
 			auto tinyRef = tinyHandle.get().get();
 			auto giantRef = giantHandle.get().get();
 
+			if (tinyRef->IsDead()) {
+				SetAV(tinyRef, ActorValue::kConfidence, oldConfidence);
+				return false; // To be safe
+			}
+
 			ApplyActionCooldown(tinyRef, CooldownSource::Action_ScareOther);
 
 			float timepassed = Finish - Start;

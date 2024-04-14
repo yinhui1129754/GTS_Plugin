@@ -58,7 +58,7 @@ namespace Gts {
 					BonusSize->value += this->power/1.82; // convert to m
 				}
 
-				SpawnCustomParticle(caster, ParticleType::Blue, NiPoint3(), "NPC COM [COM ]", scale * (this->power * 25)); // Just some nice visuals
+				SpawnCustomParticle(caster, ParticleType::Red, NiPoint3(), "NPC COM [COM ]", scale * (this->power * 25)); // Just some nice visuals
 
 				shake_screen_do_moan(caster, this->power);
 			}

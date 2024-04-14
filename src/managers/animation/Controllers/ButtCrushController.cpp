@@ -54,7 +54,7 @@ namespace {
 
 			float stamina = GetAV(giantref, ActorValue::kStamina);
 			ForceRagdoll(tinyref, false);
-			DamageAV(giantref, ActorValue::kStamina, 0.32 * GetButtCrushCost(giant));
+			DamageAV(giantref, ActorValue::kStamina, 0.06 * GetButtCrushCost(giant));
 
 			ApplyActionCooldown(giantref, CooldownSource::Action_ButtCrush); // Set butt crush on the cooldown
 
