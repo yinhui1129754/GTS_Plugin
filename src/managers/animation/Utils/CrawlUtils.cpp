@@ -231,13 +231,13 @@ namespace Gts {
 		} // CTD protection
 
 
-		DoDamageAtPoint(giant, Radius_Crawl_KneeIdle, Damage_Crawl_Idle, LC, random, bonedamage, 2.5, DamageSource::KneeLeft);         // Call Left Calf
-		DoDamageAtPoint(giant, Radius_Crawl_KneeIdle, Damage_Crawl_Idle, RC, random, bonedamage, 2.5, DamageSource::KneeRight);        // Call Right Calf
+		DoDamageAtPoint(giant, Radius_Crawl_KneeIdle, Damage_Crawl_Idle, LC, random, bonedamage, 2.5, DamageSource::KneeIdleL);         // Call Left Calf
+		DoDamageAtPoint(giant, Radius_Crawl_KneeIdle, Damage_Crawl_Idle, RC, random, bonedamage, 2.5, DamageSource::KneeIdleR);        // Call Right Calf
 
 		if (!IsTransferingTiny(giant)) { // Only do if we don't have someone in our left hand
-			DoDamageAtPoint(giant, Radius_Crawl_HandIdle, Damage_Crawl_Idle, LH, random, bonedamage, 2.5, DamageSource::HandCrawlLeft); // Call Left Hand
+			DoDamageAtPoint(giant, Radius_Crawl_HandIdle, Damage_Crawl_Idle, LH, random, bonedamage, 2.5, DamageSource::HandIdleL); // Call Left Hand
 		}
 
-		DoDamageAtPoint(giant, Radius_Crawl_HandIdle, Damage_Crawl_Idle, RH, random, bonedamage, 2.5, DamageSource::HandCrawlRight);    // Call Right Hand
+		DoDamageAtPoint(giant, Radius_Crawl_HandIdle, Damage_Crawl_Idle, RH, random, bonedamage, 2.5, DamageSource::HandIdleR);    // Call Right Hand
 	}
 }

@@ -93,6 +93,10 @@ namespace Gts {
 	enum class DamageSource {
 		HandCrawlRight,
 		HandCrawlLeft,
+		HandIdleL,
+		HandIdleR,
+		KneeIdleL,
+		KneeIdleR,
 		HandDropRight,
 		HandDropLeft,
 		HandSwipeRight,

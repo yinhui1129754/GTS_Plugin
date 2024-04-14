@@ -27,7 +27,6 @@ namespace Gts {
 
 	void SizeHunger::OnFinish() {
 		auto caster = GetCaster();
-
 		if (!caster) {
 			return;
 		}

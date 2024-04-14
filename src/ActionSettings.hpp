@@ -81,7 +81,7 @@ namespace Gts {
 
     ////////////////crawl
 
-    const float Damage_Crawl_Idle = 0.0006f;
+    const float Damage_Crawl_Idle = 0.004f;
 
     const float Damage_Crawl_KneeImpact_Drop = 14.0f;
     const float Damage_Crawl_HandImpact_Drop = 12.0f;

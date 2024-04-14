@@ -24,7 +24,6 @@ namespace Gts {
 
 	void Gigantism::OnFinish() {
 		auto caster = GetCaster();
-
 		if (!caster) {
 			return;
 		}
