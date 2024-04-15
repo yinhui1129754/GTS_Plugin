@@ -16,10 +16,7 @@ using namespace std;
 namespace {
 	void CreateParticle(Actor* actor, NiPoint3 position, float scale) {
 		auto profiler = Profilers::Profile("Explosions: CreateParticle");
-		float fallmod = 1.0 + (GetFallModifier(actor) - 1.0);
-
-		scale *= fallmod; // Make dust clouds visually bigger when we jump land to sell the power
-
+		
 		if (HighHeelManager::IsWearingHH(actor)) {
 			SpawnParticle(actor, 4.60, "GTS/Effects/Footstep_High_Heel.nif", NiMatrix3(), position, scale * 2.9, 7, nullptr);
 			SpawnParticle(actor, 4.60, "GTS/Effects/Footstep.nif", NiMatrix3(), position, scale * 2.9, 7, nullptr); // Spawn both
@@ -84,9 +81,12 @@ namespace Gts {
 			if (actor->IsSneaking()) {
 				scale *= 0.60; // Sneaking makes you seem smaller
 			}
+
 			FootEvent foot_kind = impact.kind;
+			
 			if (foot_kind == FootEvent::JumpLand) {
-				scale *= 2.25; // Jumping makes you sound bigger
+				float fallmod = 1.0 + (GetFallModifier(actor) - 1.0);
+				scale *= 2.25 * fallmod; // Jumping makes you sound bigger
 			}
 			if (HighHeelManager::IsWearingHH(actor)) {
 				scale *= 1.0 + GetHighHeelsBonusDamage(actor) * 2.5; // Wearing High Heels makes you bigger based on HH height

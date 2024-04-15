@@ -131,10 +131,10 @@ namespace {
 				particlescale = 2.2;
 				shrinkmult = 4.0;
 			}
-			update_target_scale(attacker, -GrowthValue/(6.0 * Adjustment*BalanceMode) * shrinkmult, SizeEffectType::kShrink); // Shrink Attacker
+			update_target_scale(attacker, -GrowthValue/(4.0 * Adjustment*BalanceMode) * shrinkmult, SizeEffectType::kShrink); // Shrink Attacker
 			update_target_scale(receiver, GrowthValue/(2.0 * Adjustment*BalanceMode), SizeEffectType::kGrow); // Grow receiver
 
-			SpawnCustomParticle(attacker, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
+			SpawnCustomParticle(attacker, ParticleType::Red, NiPoint3(), "NPC Root [Root]", particlescale);
 
 			if (get_target_scale(attacker) <= 0.12/Adjustment) {
 				set_target_scale(attacker, 0.12/Adjustment);
@@ -178,7 +178,7 @@ namespace {
 		float SizeHunger = 1.0 + Ench_Hunger_GetPower(receiver);
 		float Gigantism = 1.0 + Ench_Aspect_GetPower(receiver);
 		float SizeDifference = get_visual_scale(receiver)/get_visual_scale(attacker);
-		float DamageReduction = std::clamp(GetDamageResistance(receiver), 0.25f, 1.0f); // disallow going > than 1
+		float DamageReduction = 1.0; //std::clamp(GetDamageResistance(receiver), 0.50f, 1.0f); // disallow going > than 1 and < than 0.5
 
 		float resistance = Potion_GetShrinkResistance(receiver);
 	

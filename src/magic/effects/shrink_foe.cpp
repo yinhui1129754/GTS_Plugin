@@ -12,18 +12,12 @@
 
 namespace {
 	void ResetMovementSlowdown(Actor* tiny) {
-		if (IsDragon(tiny)) { // Looks like applying it to dragons messes up their wings
-			return;
-		}
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
 			transient->MovementSlowdown = 1.0;
 		}
 	}
 	void SetMovementSlowdown(Actor* giant, Actor* tiny) { 
-		if (IsDragon(tiny)) { // Looks like applying it to dragons messes up their wings
-			return;
-		}
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
 			float slow = 0.75;

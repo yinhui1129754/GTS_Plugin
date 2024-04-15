@@ -127,7 +127,7 @@ namespace Gts {
 		if (prey->formID == 0x14 && !Persistent::GetSingleton().vore_allowplayervore) {
 			return false;
 		}
-
+	
 		float pred_scale = get_visual_scale(pred);
 
 		float sizedifference = GetSizeDifference(pred, prey, SizeType::VisualScale, true, false);
@@ -147,6 +147,9 @@ namespace Gts {
 			return false;
 		}
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale) && sizedifference > MINIMUM_GRAB_SCALE) {
+			if (IsFlying(prey)) {
+				return false; // Disallow to grab flying dragons
+			}
 			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
 				return false;
 			} else {

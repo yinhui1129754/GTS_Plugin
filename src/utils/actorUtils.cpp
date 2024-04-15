@@ -710,7 +710,6 @@ namespace Gts {
 		float Resistance = 1.0;
 		if (transient) {
 			Resistance -= transient->ShrinkResistance;
-			//log::info("Fall mult :{}", transient->FallTimer);
 		}
 		if (Resistance <= 0.25) {
 			Resistance = 0.25; // cap it just in case
@@ -819,6 +818,15 @@ namespace Gts {
 		return reanimated;
 	}
 
+	bool IsFlying(Actor* actor) {
+		bool flying = false;
+		if (actor) {
+			flying = actor->AsActorState()->IsFlying();
+		}
+		log::info("{} is Flying: {}", actor->GetDisplayFullName(), flying);
+		return flying;
+	}
+
 	bool IsHeadtracking(Actor* giant) { // Used to report True when we lock onto something, should be Player Exclusive.
 		//Currently used to fix TDM mesh issues when we lock on someone.
 		//auto profiler = Profilers::Profile("ActorUtils: HeadTracking");
@@ -846,6 +854,10 @@ namespace Gts {
 		bool no_protection = Persistent::GetSingleton().FollowerInteractions;
 		bool Ignore_Protection = (giant->formID == 0x14 && Runtime::HasPerk(giant, "HugCrush_LovingEmbrace"));
 		bool allow_teammate = (giant->formID != 0x14 && no_protection && IsTeammate(tiny) && IsTeammate(giant));
+
+		if (IsFlying(tiny)) {
+			return false; // Disallow to do stuff with flying dragons
+		}
 
 		if (Busy) {
 			return false;
@@ -1612,7 +1624,7 @@ namespace Gts {
 			return;
 		}
 		float might = Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
-		
+
 		modifier *= might;
 		radius *= might;
 
@@ -2645,7 +2657,7 @@ namespace Gts {
 
 		if (BonusSize) {
 			Notify("You feel like something is growing inside you");
-			BonusSize->value += 0.044; // +8 cm
+			BonusSize->value += 0.055; // +10 cm
 
 			if (rng <= 1) {
 				PlayMoanSound(player, 1.0);

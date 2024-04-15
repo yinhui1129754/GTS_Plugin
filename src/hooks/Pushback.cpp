@@ -19,7 +19,7 @@ namespace {
 				if (HasSMT(giant)) {
 					size *= 2.5;
 				}
-				result = std::clamp(1.0f / (size*size*size), 0.01f, 1.0f);
+				result = std::clamp(1.0f / (size*size*size*size), 0.01f, 1.0f);
 			}
 
 			if (result <= 0.025) {

@@ -261,35 +261,11 @@ namespace Gts {
 		if (IsEssential(giant, tiny)) {
 			return false;
 		}
-		// Check if they are immune
-		const std::string_view CANT_CRUSH_EDITORID = "GtsCantStomp";
-		if (tiny->HasKeywordString(CANT_CRUSH_EDITORID)) {
-			// TODO: Check GtsCantStomp is a valid keyword
-			return false;
-		}
-		//Check for Essential
 
-		// Check skin
-		auto skin = tiny->GetSkin();
-		if (skin) {
-			if (skin->HasKeywordString(CANT_CRUSH_EDITORID)) {
-				return false;
-			}
+		if (IsFlying(tiny)) {
+			return false; // Disallow to crush flying dragons
 		}
-		const auto inv = tiny->GetInventory([](TESBoundObject& a_object) {
-			return a_object.IsArmor();
-		});
 
-		// Check worn armor
-		for (const auto& [item, invData] : inv) {
-			const auto& [count, entry] = invData;
-			if (count > 0 && entry->IsWorn()) {
-				const auto armor = item->As<TESObjectARMO>();
-				if (armor && armor->HasKeywordString(CANT_CRUSH_EDITORID)) {
-					return false;
-				}
-			}
-		}
 		//log::info("Can crush {}", tiny->GetDisplayFullName());
 		return true;
 	}

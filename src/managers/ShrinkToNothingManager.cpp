@@ -3,6 +3,7 @@
 #include "magic/effects/common.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
+#include "ActionSettings.hpp"
 #include "utils/looting.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
@@ -21,7 +22,6 @@ namespace {
 	float GetXPModifier(Actor* tiny) {
 		float mult = 1.0;
 		if (tiny->IsDead()) {
-			Cprint("Tiny is dead");
 			mult = 0.25;
 		}
 		
@@ -173,6 +173,12 @@ namespace Gts {
 			return false;
 		}
 		if (IsEssential(giant, tiny)) {
+			return false;
+		}
+		if (IsFlying(tiny)) {
+			if (get_visual_scale(tiny) < Minimum_Actor_Scale) {
+				set_target_scale(tiny, Minimum_Actor_Scale);
+			}
 			return false;
 		}
 

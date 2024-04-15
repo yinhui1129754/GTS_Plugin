@@ -94,6 +94,7 @@ namespace Gts {
 	bool IsLiving(Actor* actor);
 	bool IsUndead(Actor* actor, bool PerformCheck);
 	bool WasReanimated(Actor* actor);
+	bool IsFlying(Actor* actor);
 	bool IsHeadtracking(Actor* giant);
 	bool IsHostile(Actor* giant, Actor* tiny);
 	bool CanPerformAnimationOn(Actor* giant, Actor* tiny);

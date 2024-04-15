@@ -139,7 +139,7 @@ namespace Gts {
 		if (IsCrawling(pred) || IsTransitioning(pred) || IsBeingHeld(pred, prey)) {
 			return false;
 		}
-		if (DisallowHugs(pred) || DisallowHugs(prey) ) {
+		if (DisallowHugs(pred) || DisallowHugs(prey)) {
 			return false;
 		}
 
