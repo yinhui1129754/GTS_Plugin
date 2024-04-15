@@ -210,7 +210,7 @@ namespace Gts {
 		}
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale) && sizedifference >= MINIMUM_BUTTCRUSH_SCALE) {
 			if (IsFlying(prey)) {
-				return false; // Disallow to grab flying dragons
+				return false; // Disallow to butt crush flying dragons
 			}
 			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
 				std::string_view message = std::format("{} is Essential", prey->GetDisplayFullName());

@@ -223,6 +223,24 @@ exclusive = false
 duration = 0.33
 # Heavy Right Kick when not sneaking
 
+#============Low Kicks
+
+[[InputEvent]]
+name = "HeavyKickRight_Low"
+keys = ["LALT", "E"]
+trigger = "release"
+exclusive = false
+duration = 0.10
+# low version of Heavy Left Kick
+
+[[InputEvent]]
+name = "HeavyKickLeft_Low"
+keys = ["LALT", "Q"]
+trigger = "release"
+exclusive = false
+duration = 0.10
+# low version of Heavy Right Kick
+
 [[InputEvent]]
 name = "LightKickLeft"
 keys = ["LALT", "Q"]

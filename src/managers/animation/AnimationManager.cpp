@@ -123,6 +123,7 @@ namespace Gts {
 		InputFunctions::RegisterEvents();
 
 		AnimationKicks::RegisterEvents();
+		AnimationKicks::RegisterTriggers();
 
 		HugShrink::RegisterEvents();
 		HugShrink::RegisterTriggers();

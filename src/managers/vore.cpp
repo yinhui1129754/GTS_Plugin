@@ -621,7 +621,7 @@ namespace Gts {
 		}
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale) && sizedifference > MINIMUM_VORE_SCALE) {
 			if (IsFlying(prey)) {
-				return false; // Disallow to grab flying dragons
+				return false; // Disallow to vore flying dragons
 			}
 			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
 				Notify("{} is important and shouldn't be eaten.", prey->GetDisplayFullName());

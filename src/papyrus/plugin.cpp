@@ -203,7 +203,17 @@ namespace {
 	void SetToggleIcons(StaticFunctionTag*, bool enabled) {
 		Persistent::GetSingleton().EnableIcons = enabled;
 	}
-
+	void EnableCollisionLayerAndMotion(StaticFunctionTag*, TESObjectREFR* ref) {
+		if (!ref) {
+			return;
+		}
+		auto current3D = ref->GetCurrent3D();
+		if (!current3D) {
+			return; // Retry next frame
+		}
+		current3D->SetMotionType(7, true, true, true);
+		current3D->SetCollisionLayer(COL_LAYER::kCharController);
+	}
 	void DisableCollisionLayerAndMotion(StaticFunctionTag*, TESObjectREFR* ref) {
 		if (!ref) {
 			return;
@@ -492,6 +502,7 @@ namespace Gts {
 		vm->RegisterFunction("SetPCProtection", PapyrusClass, SetPCProtection);
 		vm->RegisterFunction("SetToggleIcons", PapyrusClass, SetToggleIcons);
 		vm->RegisterFunction("DisableCollisionLayerAndMotion", PapyrusClass, DisableCollisionLayerAndMotion);
+		vm->RegisterFunction("EnableCollisionLayerAndMotion", PapyrusClass, EnableCollisionLayerAndMotion);
 		vm->RegisterFunction("ResetQuestProgression", PapyrusClass, ResetQuestProgression);
 		vm->RegisterFunction("Quest_GetProgression", PapyrusClass, Quest_GetProgression);
 		vm->RegisterFunction("GetAspectOfGiantessPower", PapyrusClass, GetAspectOfGiantessPower);
