@@ -86,7 +86,7 @@ namespace {
     }
 
     bool Collision_AllowTinyCalamityCrush(Actor* giant, Actor* tiny) {
-        if (IsEssential(tiny)) {
+        if (IsEssential(giant, tiny)) {
             return false;
         }
         float giantHp = GetAV(giant, ActorValue::kHealth);
@@ -203,7 +203,7 @@ namespace Gts {
         Runtime::PlaySoundAtNode("TinyCalamity_Impact", giant, 1.0, 1.0, "NPC COM [COM ]");
         shake_camera_at_node(giant, "NPC COM [COM ]", 16.0, 1.0);
         
-        if (IsEssential(tiny)) {
+        if (IsEssential(giant, tiny)) {
             Notify("{} is essential", tiny->GetDisplayFullName());
         } else {
             Notify("{} is too tough to be crushed", tiny->GetDisplayFullName());

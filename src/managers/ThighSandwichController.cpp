@@ -309,7 +309,7 @@ namespace Gts {
 			return false;
 		}
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale) && sizedifference > MINIMUM_SANDWICH_SCALE) {
-			if ((prey->formID != 0x14 && IsEssential(prey))) {
+			if ((prey->formID != 0x14 && IsEssential(pred, prey))) {
 				return false;
 			} else {
 				return true;

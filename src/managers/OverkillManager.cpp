@@ -148,7 +148,7 @@ namespace Gts {
 		if (OverkillManager::AlreadyOverkilled(tiny)) {
 			return false;
 		}
-		if (IsEssential(tiny)) {
+		if (IsEssential(giant, tiny)) {
 			return false;
 		}
 

@@ -108,7 +108,7 @@ namespace Gts {
 			return;
 		}
 
-		if (IsEssential(target)) {
+		if (IsEssential(caster, target)) {
 			return; // Disallow shrinking Essentials
 		}
 

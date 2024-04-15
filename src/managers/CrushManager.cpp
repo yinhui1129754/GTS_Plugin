@@ -258,7 +258,7 @@ namespace Gts {
 		if (CrushManager::AlreadyCrushed(tiny)) {
 			return false;
 		}
-		if (IsEssential(tiny)) {
+		if (IsEssential(giant, tiny)) {
 			return false;
 		}
 		// Check if they are immune

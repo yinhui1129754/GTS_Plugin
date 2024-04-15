@@ -841,7 +841,7 @@ namespace Gts {
 		// If any of these is true = we disallow animation
 
 		bool Teammate = IsTeammate(tiny);
-		bool essential = IsEssential(tiny); // Teammate check is done here
+		bool essential = IsEssential(giant, tiny); // Teammate check is done here
 		bool hostile = IsHostile(giant, tiny);
 		bool no_protection = Persistent::GetSingleton().FollowerInteractions;
 		bool Ignore_Protection = (giant->formID == 0x14 && Runtime::HasPerk(giant, "HugCrush_LovingEmbrace"));
@@ -866,16 +866,18 @@ namespace Gts {
 		}
 	}
 
-	bool IsEssential(Actor* actor) {
+	bool IsEssential(Actor* giant, Actor* actor) {
 		bool essential = actor->IsEssential() && Runtime::GetBool("ProtectEssentials");
-		bool teammate = IsTeammate(actor);
 		bool protectfollowers = Persistent::GetSingleton().FollowerProtection;
+		bool teammate = IsTeammate(actor);
 		if (actor->formID == 0x14) {
 			return false; // we don't want to make the player immune
 		} if (!teammate && essential) {
 			return true;
 		} else if (teammate && protectfollowers) {
-			if (IsHostile(PlayerCharacter::GetSingleton(), actor)) {
+			if (IsHostile(giant, actor)) {
+				return false;
+			} else if (IsHostile(actor, giant)) {
 				return false;
 			} else {
 				return true;
@@ -1223,7 +1225,7 @@ namespace Gts {
 											if (HasSMT(giant) || LowHealth || (ForceCrush && Stamina > 0.50)) {
 												SpawnParticle(otherActor, 3.00, "GTS/UI/Icon_Hug_Crush.nif", NiMatrix3(), Position, iconScale, 7, node); // Spawn 'can be hug crushed'
 											}
-										} else if (!IsGtsBusy(giant) && IsEssential(otherActor)) {
+										} else if (!IsGtsBusy(giant) && IsEssential(giant, otherActor)) {
 											SpawnParticle(otherActor, 3.00, "GTS/UI/Icon_Essential.nif", NiMatrix3(), Position, iconScale, 7, node); 
 											// Spawn Essential icon
 										} else if (!IsGtsBusy(giant) && difference >= Action_Crush) {
@@ -1616,6 +1618,8 @@ namespace Gts {
 		if (!receiver) {
 			return;
 		}
+
+		modifier *= Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
 
 		float distance = get_distance_to_camera(coords);
 		float sourcesize = get_visual_scale(caster);
@@ -2268,7 +2272,7 @@ namespace Gts {
 	}
 
 	void ShrinkOutburst_Shrink(Actor* giant, Actor* tiny, float shrink, float gigantism) {
-		if (IsEssential(tiny)) { // Protect followers/essentials
+		if (IsEssential(giant, tiny)) { // Protect followers/essentials
 			return;
 		}
 		bool DarkArts1 = Runtime::HasPerk(giant, "DarkArts_Aug");
@@ -2645,7 +2649,7 @@ namespace Gts {
 
 		if (BonusSize) {
 			Notify("You feel like something is growing inside you");
-			BonusSize->value += 0.04; // 
+			BonusSize->value += 0.044; // +8 cm
 
 			if (rng <= 1) {
 				PlayMoanSound(player, 1.0);

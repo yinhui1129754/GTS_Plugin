@@ -309,7 +309,7 @@ namespace {
 		} else if (random == 2) {
 			Cprint("{} killed {} with her own hands", GiantName, TinyName);
 		} else if (random == 3) {
-			Cprint("{} was turned into red jam by {}", TinyName, GiantName);
+			Cprint("{} was turned into red jam by the hand of {}", TinyName, GiantName);
 		} else if (random == 4) {
 			Cprint("Last thing {} saw is a huge hand coming from above", TinyName);
 		} else if (random == 5) {

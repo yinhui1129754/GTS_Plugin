@@ -288,7 +288,7 @@ namespace Gts {
 		const float SMT_BONUS = 1.25;
 		float PERK_BONUS = 1.0;
 
-		if (IsEssential(target)) {
+		if (IsEssential(caster, target)) {
 			return;
 		}
 

@@ -97,7 +97,7 @@ namespace Gts {
 	bool IsHeadtracking(Actor* giant);
 	bool IsHostile(Actor* giant, Actor* tiny);
 	bool CanPerformAnimationOn(Actor* giant, Actor* tiny);
-	bool IsEssential(Actor* actor);
+	bool IsEssential(Actor* giant, Actor* actor);
 	bool AnimationsInstalled(Actor* giant);
 	bool IsInGodMode(Actor* giant);
 	bool IsFreeCameraEnabled();
