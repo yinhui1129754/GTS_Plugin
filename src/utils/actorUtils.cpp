@@ -2061,7 +2061,7 @@ namespace Gts {
 			//log::info("Trying to push: {}, force: {}", tiny->GetDisplayFullName(), force);
 			bool isdamaging = IsActionOnCooldown(tiny, CooldownSource::Push_Basic);
 			if (!isdamaging && (force >= 0.12 || IsFootGrinding(giant))) {
-				log::info("Check passed, pushing {}, force: {}", tiny->GetDisplayFullName(), force);
+				//log::info("Check passed, pushing {}, force: {}", tiny->GetDisplayFullName(), force);
 				StaggerOr(giant, tiny, 0, 0, 0, 0);
 				ApplyActionCooldown(tiny, CooldownSource::Push_Basic);
 			}

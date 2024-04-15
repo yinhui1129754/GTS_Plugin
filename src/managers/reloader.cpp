@@ -16,6 +16,7 @@ namespace Gts {
 			event_sources->AddEventSink<TESObjectLoadedEvent>(this);
 			event_sources->AddEventSink<TESEquipEvent>(this);
 			event_sources->AddEventSink<TESTrackedStatsEvent>(this);
+			event_sources->AddEventSink<TESResetEvent>(this);
 		}
 		auto ui = UI::GetSingleton();
 		if (ui) {
@@ -53,10 +54,15 @@ namespace Gts {
 
 	BSEventNotifyControl ReloadManager::ProcessEvent(const TESResetEvent* evn, BSTEventSource<TESResetEvent>* dispatcher)
 	{
+		log::info("Reset Event fired!");
 		if (evn) {
-			auto* actor = TESForm::LookupByID<Actor>(evn->object->formID);
-			if (actor) {
-				EventDispatcher::DoResetActor(actor);
+			auto* object = evn->object.get();
+			if (object) {
+				auto* actor = TESForm::LookupByID<Actor>(object->formID);
+				if (actor) {
+					log::info("Firing reset event for {}", actor->GetDisplayFullName());
+					EventDispatcher::DoResetActor(actor);
+				}
 			}
 		}
 		return BSEventNotifyControl::kContinue;
