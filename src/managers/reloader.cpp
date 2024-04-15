@@ -54,7 +54,6 @@ namespace Gts {
 
 	BSEventNotifyControl ReloadManager::ProcessEvent(const TESResetEvent* evn, BSTEventSource<TESResetEvent>* dispatcher)
 	{
-		log::info("Reset Event fired!");
 		if (evn) {
 			auto* object = evn->object.get();
 			if (object) {

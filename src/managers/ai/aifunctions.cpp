@@ -41,6 +41,33 @@ namespace {
 }
 
 namespace Gts {
+	void Task_InitHavokTask(Actor* tiny) {
+
+		float startTime = Time::WorldTimeElapsed();
+		ActorHandle tinyHandle = tiny->CreateRefHandle();
+		std::string taskname = std::format("EnterRagdoll_{}", tiny->formID);
+
+		TaskManager::Run(taskname, [=](auto& update){
+			if (!tinyHandle) {
+				return false;
+			}
+			Actor* tinyref = tinyHandle.get().get();
+			if (!tinyref) {
+				return false;
+			}
+			if (!tinyref->IsDead()) {
+				return false;
+			}
+			double endTime = Time::WorldTimeElapsed();
+
+			if ((endTime - startTime) > 0.05) {
+				tinyref->InitHavok(); // Hopefully will fix occasional Ragdoll issues
+				return false;
+			} 
+			return true;
+		});
+	}
+	
 	void KillActor(Actor* giant, Actor* tiny) {
 		if (!tiny->IsDead()) {
 			StartCombat(tiny, giant);
@@ -61,7 +88,7 @@ namespace Gts {
 			eventsource->SendEvent(&event);
 		}
 
-		tiny->InitHavok(); // Hopefully will fix occasional Ragdoll issues
+		Task_InitHavokTask(tiny);
 	}
 
 	// butt crush related things

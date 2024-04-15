@@ -9,22 +9,22 @@
 namespace {
 
     float GetPushMult(Actor* giant) {
-        auto tranData = Transient::GetSingleton().GetData(giant);
+		float result = 1.0;
+		if (giant->formID == 0x14 || IsTeammate(giant)) {
+			auto tranData = Transient::GetSingleton().GetData(giant);
+			if (tranData) {
+				result = tranData->push_force;
+			} else {
+				float size = get_giantess_scale(giant);
+				if (HasSMT(giant)) {
+					size *= 2.5;
+				}
+				result = std::clamp(1.0f / (size*size*size), 0.01f, 1.0f);
+			}
 
-        float result = 1.0;
-
-        if (tranData) {
-            result = tranData->push_force;
-        } else {
-            float size = get_giantess_scale(giant);
-            if (HasSMT(giant)) {
-			    size *= 2.5;
-		    }
-            result = std::clamp(1.0f / (size*size*size), 0.01f, 1.0f);
-        }
-
-		if (result <= 0.025) {
-			return 0.0;
+			if (result <= 0.025) {
+				return 0.0;
+			}
 		}
 
 		return result;

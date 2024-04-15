@@ -113,20 +113,25 @@ namespace {
 
 			if (PreventKillMove(Form, params, performer, params->targetRef)) {
 				//log::info("KILLMOVE PREVENTED");
+				log::info("Block PreventKillMove");
 				return true;
 			}
 
 			if (IsThighSandwiching(performer)) { // Disallow anims in these 2 cases 
+				log::info("Block IsThighSandwiching");
 				return true;
 			} if (IsBetweenBreasts(performer)) {
+				log::info("Block IsBetweenBreasts");
 				return true;
 			}
 
 			if (PreventJumpFall(Form, performer)) {
+				log::info("Block PreventJumpFall");
 				return true; // Disable fall down anim for GTS so it won't look off/annoying at large scales
 			}
 
 			if (performer->formID == 0x14 && IsGtsBusy(performer) && IsFreeCameraEnabled()) {
+				log::info("Block performer->formID == 0x14 && IsGtsBusy(performer) && IsFreeCameraEnabled()");
 				return true; 							// One of cases when we alter anims for Player. 
 				// Needed because it's problematic to disallow specific controls through controls.hpp
 			}
@@ -139,21 +144,27 @@ namespace {
 
 			switch (Form) {
 				case DefaultSheathe:
+					log::info("Block DefaultSheathe");
 					return true;
 				break;	
 				case JumpRoot:
+					log::info("Block JumpRoot");
 					return true;
 				break;	
 				case NonMountedDraw:
+					log::info("Block NonMountedDraw");
 					return true;
 				break;	
 				case NonMountedForceEquip:
+					log::info("Block NonMountedForceEquip");
 					return true;
 				break;	
 				case JumpStandingStart:
+					log::info("Block JumpStandingStart");
 					return true;	
 				break;	
 				case JumpDirectionalStart:
+					log::info("Block JumpDirectionalStart");
 					return true;	
 				break;
 				return false;
@@ -180,6 +191,11 @@ namespace Hooks {
 
 				if (a_this) {
 					if (BlockAnimation(a_this, params)) {
+						auto* EventName = a_this->GetFormEditorID();
+						Actor* performer = params->actionRef->As<RE::Actor>();
+						if (performer) {
+							log::info("Blocking anim: {} of {}", EventName, performer->GetDisplayFullName());
+						}
 						result = nullptr; // cancel anim
 					}
 				}

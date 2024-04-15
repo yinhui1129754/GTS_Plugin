@@ -111,6 +111,9 @@ namespace {
 		int LaughChance = rand() % 12;
 		int ShrinkChance = rand() % 5;
 
+		float particlescale = 1.0;
+		float shrinkmult = 1.0;
+
 		static Timer soundtimer = Timer(1.5);
 		static Timer laughtimer = Timer(4.0);
 
@@ -123,15 +126,21 @@ namespace {
 			Runtime::PlaySoundAtNode("growthSound", receiver, GrowthValue * 2, 1.0, "NPC Pelvis [Pelv]");
 		}
 		if (ShrinkChance >= 2) {
-			update_target_scale(attacker, -GrowthValue/(6.0 * Adjustment*BalanceMode), SizeEffectType::kShrink); // Shrink Attacker
+			if (SizeDifference >= 4.0 && LaughChance >= 11 && laughtimer.ShouldRunFrame()) {
+				PlayLaughSound(receiver, 1.0, 1);
+				particlescale = 2.2;
+				shrinkmult = 4.0;
+			}
+			update_target_scale(attacker, -GrowthValue/(6.0 * Adjustment*BalanceMode) * shrinkmult, SizeEffectType::kShrink); // Shrink Attacker
 			update_target_scale(receiver, GrowthValue/(2.0 * Adjustment*BalanceMode), SizeEffectType::kGrow); // Grow receiver
+
+			SpawnCustomParticle(attacker, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
+
 			if (get_target_scale(attacker) <= 0.12/Adjustment) {
 				set_target_scale(attacker, 0.12/Adjustment);
 			}
 		}
-		if (SizeDifference >= 4.0 && LaughChance >= 11 && laughtimer.ShouldRunFrame()) {
-			PlayLaughSound(receiver, 1.0, 1);
-		}
+		
 	}
 
 	void HitShrink(Actor* receiver, float ShrinkValue) {
@@ -176,6 +185,7 @@ namespace {
 		damage *= DamageReduction;
 
 		if (receiver->formID == 0x14 && Runtime::HasPerk(receiver, "GrowthOnHitPerk") && sizemanager.GetHitGrowth(receiver) >= 1.0) { // if has perk
+		    log::info("Applying hitgrowth for {}", damage);
 			float GrowthValue = std::clamp((-damage/2000) * SizeHunger * Gigantism, 0.0f, 0.25f * Gigantism);
 			HitGrowth(receiver, attacker, GrowthValue, SizeDifference, BalanceMode);
 			return;

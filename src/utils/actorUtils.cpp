@@ -409,19 +409,19 @@ namespace Gts {
 	}
 
 	bool IsHugCrushing(Actor* actor) {
-		bool IsHugCrushing;
+		bool IsHugCrushing = false;
 		actor->GetGraphVariableBool("IsHugCrushing", IsHugCrushing);
 		return IsHugCrushing;
 	}
 
 	bool IsHugHealing(Actor* actor) {
-		bool IsHugHealing;
+		bool IsHugHealing = false;
 		actor->GetGraphVariableBool("GTS_IsHugHealing", IsHugHealing);
 		return IsHugHealing;
 	}
 
 	bool IsHuggingFriendly(Actor* actor) {
-		bool friendly;
+		bool friendly = false;
 		actor->GetGraphVariableBool("GTS_IsFollower", friendly);
 		return friendly;
 	}
@@ -439,7 +439,7 @@ namespace Gts {
 	}
 
 	bool isTrampling(Actor* actor) {
-		bool trample;
+		bool trample = false;
 		actor->GetGraphVariableBool("GTS_IsTrampling", trample);
 		return trample;
 	}
@@ -475,44 +475,44 @@ namespace Gts {
 	}
 
 	bool IsTransferingTiny(Actor* actor) { // Reports 'Do we have someone grabed?'
-		int grabbed;
+		int grabbed = 0;
 		actor->GetGraphVariableInt("GTS_GrabbedTiny", grabbed);
 		return grabbed > 0;
 	}
 
 	bool IsUsingThighAnimations(Actor* actor) { // Do we currently use Thigh Crush / Thigh Sandwich?
-		int sitting;
+		int sitting = false;
 		actor->GetGraphVariableInt("GTS_Sitting", sitting);
 		return sitting > 0;
 	}
 
 	bool IsSynced(Actor* actor) {
-		bool sync;
+		bool sync = false;
 		actor->GetGraphVariableBool("bIsSynced", sync);
 		return sync;
 	}
 
 	bool CanDoPaired(Actor* actor) {
-		bool paired;
+		bool paired = false;
 		actor->GetGraphVariableBool("GTS_CanDoPaired", paired);
 		return paired;
 	}
 
 
 	bool IsThighCrushing(Actor* actor) { // Are we currently doing Thigh Crush?
-		int crushing;
+		int crushing = 0;
 		actor->GetGraphVariableInt("GTS_IsThighCrushing", crushing);
 		return crushing > 0;
 	}
 
 	bool IsThighSandwiching(Actor* actor) { // Are we currently Thigh Sandwiching?
-		int sandwiching;
+		int sandwiching = 0;
 		actor->GetGraphVariableInt("GTS_IsThighSandwiching", sandwiching);
 		return sandwiching > 0;
 	}
 
 	bool IsStomping(Actor* actor) {
-		int Stomping;
+		int Stomping = 0;
 		actor->GetGraphVariableInt("GTS_IsStomping", Stomping);
 		return Stomping > 0;
 	}
@@ -1392,14 +1392,7 @@ namespace Gts {
 			}
 			auto tiny = tinyref.get().get();
 
-			bool dragon = IsDragon(tiny);
-			if (dragon) {
-				tiny->Disable();
-				return;
-			}
-
 			SetCriticalStage(tiny, 4);
-			tiny->Disable();
 		});
 	}
 
@@ -1508,7 +1501,7 @@ namespace Gts {
 			return;
 		}
 
-		if (afKnockBackForce < 1.0) {
+		if (afKnockBackForce <= 1.0) {
 			afKnockBackForce = 1.0;
 		} 
 
@@ -1618,8 +1611,10 @@ namespace Gts {
 		if (!receiver) {
 			return;
 		}
-
-		modifier *= Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
+		float might = Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
+		
+		modifier *= might;
+		radius *= might;
 
 		float distance = get_distance_to_camera(coords);
 		float sourcesize = get_visual_scale(caster);
@@ -2150,7 +2145,7 @@ namespace Gts {
 		ActorHandle tinyHandle = tinyref->CreateRefHandle();
 		ActorHandle giantHandle = giantref->CreateRefHandle();
 
-		PushActorAway(giantref, tinyref, 1);
+		PushActorAway(giantref, tinyref, 1.0);
 
 		double startTime = Time::WorldTimeElapsed();
 
@@ -2194,7 +2189,7 @@ namespace Gts {
 		ActorHandle tinyHandle = tinyref->CreateRefHandle();
 		ActorHandle gianthandle = giantref->CreateRefHandle();
 		std::string taskname = std::format("PushOther_{}", tinyref->formID);
-		PushActorAway(giantref, tinyref, 1);
+		PushActorAway(giantref, tinyref, 1.0);
 		TaskManager::Run(taskname, [=](auto& update) {
 			if (!gianthandle) {
 				return false;
@@ -2535,6 +2530,7 @@ namespace Gts {
 		if (receiver->IsDead() || IsRagdolled(receiver) || GetAV(receiver, ActorValue::kHealth) <= 0.0) {
 			return;
 		}
+		log::info("Staggering {}", receiver->GetDisplayFullName());
 		receiver->SetGraphVariableFloat("staggerMagnitude", power);
 		receiver->NotifyAnimationGraph("staggerStart");
 	}
@@ -3095,8 +3091,8 @@ namespace Gts {
 				}
 			}
 			ApplyDamage(attacker, receiver, value * difficulty * GetDamageSetting());
-		} else if (receiver->IsDead() || GetAV(receiver, ActorValue::kHealth) < 0.0) {
-			receiver->InitHavok();
+		} else if (receiver->IsDead()) {
+			Task_InitHavokTask(receiver);
 			// ^ Needed to fix this issue:
 			//   https://www.reddit.com/r/skyrimmods/comments/402b69/help_looking_for_a_bugfix_dead_enemies_running_in/
 		}

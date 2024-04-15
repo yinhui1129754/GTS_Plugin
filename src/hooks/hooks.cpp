@@ -54,7 +54,7 @@ namespace Hooks
 		Hook_BGSImpactManager::Hook();
 		Hook_VM::Hook();
 		Hook_Havok::Hook(trampoline);
-		//Hook_MagicTarget::Hook();
+
 		Hook_hkbBehaviorGraph::Hook();
 		Hook_PlayerCharacter::Hook();
 		Hook_Actor::Hook(trampoline);
@@ -70,11 +70,15 @@ namespace Hooks
 		//}
 		Hook_Stealth::Hook(trampoline);
 		Hook_Movement::Hook(trampoline);
-		//Hook_Experiments::Hook(trampoline);
+		
 		Hook_HeadTracking::Hook(trampoline);
 		Hook_PreventAnimations::Hook(trampoline);
-		//Hook_ActorRotation::Hook(trampoline);
+		
 		HookCameraStates();
+
+		//Hook_MagicTarget::Hook();
+		//Hook_ActorRotation::Hook(trampoline);
+		//Hook_Experiments::Hook(trampoline);
 
 		log::info("Gts finished applying hooks...");
 	}

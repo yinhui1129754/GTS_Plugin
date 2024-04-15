@@ -8,6 +8,7 @@ using namespace RE;
 using namespace Gts;
 
 namespace Gts {
+	void Task_InitHavokTask(Actor* tiny);
 	void KillActor(Actor* giant, Actor* tiny);
 
 	float GetGrowthCount(Actor* giant);

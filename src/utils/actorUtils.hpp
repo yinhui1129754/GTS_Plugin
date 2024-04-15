@@ -166,7 +166,7 @@ namespace Gts {
 	void ForceRagdoll(Actor* actor, bool forceOn);
 
 	std::vector<hkpRigidBody*> GetActorRBs(Actor* actor);
-	void PushActorAway(Actor* source, Actor* receiver, float afKnockbackForce);
+	void PushActorAway(Actor* source_act, Actor* receiver, float force);
 	void KnockAreaEffect(TESObjectREFR* source, float afMagnitude, float afRadius);
 	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float Multiplier);
 
