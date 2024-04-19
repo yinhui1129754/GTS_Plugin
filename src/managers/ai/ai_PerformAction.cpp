@@ -19,6 +19,44 @@
 #include "profiler.hpp"
 #include "spring.hpp"
 #include "node.hpp"
+namespace {
+    const std::vector<std::string_view> light_kicks = {
+        "SwipeLight_Left",                  // 0
+        "SwipeLight_Right",                 // 1
+        "SwipeLight_Right",                 // 2, a fail-safe one in case random does funny stuff 
+    };
+
+    const std::vector<std::string_view> heavy_kicks = {
+        "SwipeHeavy_Right",                 // 0
+        "SwipeHeavy_Left",                  // 1
+        "StrongKick_Low_Right",             // 2
+        "StrongKick_Low_Left",              // 3
+        "StrongKick_Low_Left",              // 4, a fail-safe one in case random does funny stuff 
+    };
+
+    void AI_Heavy_Kicks(Actor* pred) {
+        int rng = rand() % 4;
+        int limit = 3;
+        if (IsCrawling(pred)) {
+            limit = 1;
+            rng = rand() % 2;
+        }  
+        if (rng > limit) {
+            rng = limit; // fail-safe thingie
+        }
+        log::info("Heavy Kicks rng for {} is {}", pred->GetDisplayFullName(), rng);
+        AnimationManager::StartAnim(heavy_kicks[rng], pred);
+    }
+    void AI_Light_Kicks(Actor* pred) {
+        int rng = rand() % 2;
+        int limit = 1;
+        if (rng > limit) {
+            rng = limit; // fail-safe thingie
+        }
+        log::info("Light Kicks rng for {} is {}", pred->GetDisplayFullName(), rng);
+        AnimationManager::StartAnim(light_kicks[rng], pred);
+    }
+}
 
 namespace Gts {
     
@@ -61,14 +99,10 @@ namespace Gts {
             return;
         }
         Utils_UpdateHighHeelBlend(pred, false);
-        if (rng <= 3) {
-            AnimationManager::StartAnim("SwipeHeavy_Right", pred);
-        } else if (rng <= 4) {
-            AnimationManager::StartAnim("SwipeHeavy_Left", pred);
-        } else if (rng <= 6) {
-            AnimationManager::StartAnim("SwipeLight_Left", pred);
+        if (rng <= 5) {
+            AI_Heavy_Kicks(pred);
         } else {
-            AnimationManager::StartAnim("SwipeLight_Right", pred);
+            AI_Light_Kicks(pred);
         }
     }
 

@@ -823,7 +823,6 @@ namespace Gts {
 		if (actor) {
 			flying = actor->AsActorState()->IsFlying();
 		}
-		log::info("{} is Flying: {}", actor->GetDisplayFullName(), flying);
 		return flying;
 	}
 

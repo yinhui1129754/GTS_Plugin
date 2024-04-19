@@ -79,7 +79,6 @@ namespace {
 			Actor* voreActor = AbleToVore[idx];
 			if (voreActor) {
 				AI_PerformRandomVore(voreActor);
-				log::info("Found actor for vore");
 			}
 		}
 	}

@@ -369,10 +369,6 @@ namespace Gts {
 			PlayMoanSound(caster, 1.0);
 		}
 
-		auto Cache = Persistent::GetSingleton().GetData(caster); // TODO: Fix this properly
-		if (!Cache) {
-			return;
-		}
 		if (caster->formID == 0x14) {
 			AdjustSizeReserve(caster, target_scale/25);
 			AdjustSizeLimit(0.0066 * target_scale, caster);

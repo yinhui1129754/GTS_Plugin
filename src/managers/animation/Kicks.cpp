@@ -31,27 +31,22 @@ namespace {
 	const std::string_view RNode = "NPC R Foot [Rft ]";
 	const std::string_view LNode = "NPC L Foot [Lft ]";
 
-	void StartDamageAt_L(Actor* actor, float power, float crush, float pushpower, std::string_view node) {
-		std::string name = std::format("LegKick_{}", actor->formID);
-		auto gianthandle = actor->CreateRefHandle();
-
-		std::vector<ObjectRefHandle> Objects = GetNearbyObjects(actor);
-
-		TaskManager::Run(name, [=](auto& progressData) {
-			if (!gianthandle) {
-				return false;
+	void PerformKick(std::string_view kick_type, float stamina_drain) {
+		auto player = PlayerCharacter::GetSingleton();
+		if (!CanPerformAnimation(player, 1) || IsGtsBusy(player)) {
+			return;
+		}
+		if (!player->IsSneaking() && !player->AsActorState()->IsSprinting()) {
+			float WasteStamina = stamina_drain * GetWasteMult(player);
+			if (GetAV(player, ActorValue::kStamina) > WasteStamina) {
+				AnimationManager::StartAnim(kick_type, player);
+			} else {
+				TiredSound(player, "You're too tired for a kick");
 			}
-			auto giant = gianthandle.get().get();
-			auto Leg = find_node(giant, node);
-			if (Leg) {
-				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, DamageSource::KickedLeft);
-				PushObjects(Objects, giant, Leg, pushpower, Radius_Kick, true);
-			}
-			return true;
-		});
+		}
 	}
 
-	void StartDamageAt_R(Actor* actor, float power, float crush, float pushpower, std::string_view node) {
+	void StartDamageAt(Actor* actor, float power, float crush, float pushpower, std::string_view node, DamageSource Source) {
 		std::string name = std::format("LegKick_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
 
@@ -64,7 +59,7 @@ namespace {
 			auto giant = gianthandle.get().get();
 			auto Leg = find_node(giant, node);
 			if (Leg) {
-				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, DamageSource::KickedRight);
+				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, Source);
 				PushObjects(Objects, giant, Leg, pushpower, Radius_Kick, true);
 			}
 			return true;
@@ -97,11 +92,11 @@ namespace {
 	}
 
 	void GTS_Kick_HitBox_On_R(AnimationEventData& data) {
-		StartDamageAt_R(&data.giant, Damage_Kick, 1.8, Push_Kick_Normal, "NPC R Toe0 [RToe]");
+		StartDamageAt(&data.giant, Damage_Kick, 1.8, Push_Kick_Normal, "NPC R Toe0 [RToe]", DamageSource::KickedRight);
 		DrainStamina(&data.giant, "StaminaDrain_StrongKick", "DestructionBasics", true, 4.0);
 	}
 	void GTS_Kick_HitBox_On_L(AnimationEventData& data) {
-		StartDamageAt_L(&data.giant, Damage_Kick, 1.8, Push_Kick_Normal, "NPC L Toe0 [LToe]");
+		StartDamageAt(&data.giant, Damage_Kick, 1.8, Push_Kick_Normal, "NPC L Toe0 [LToe]", DamageSource::KickedLeft);
 		DrainStamina(&data.giant, "StaminaDrain_StrongKick", "DestructionBasics", true, 4.0);
 	}
 	void GTS_Kick_HitBox_Off_R(AnimationEventData& data) {
@@ -112,11 +107,11 @@ namespace {
 	}
 
 	void GTS_Kick_HitBox_Power_On_R(AnimationEventData& data) {
-		StartDamageAt_R(&data.giant, Damage_Kick_Strong, 1.8, Push_Kick_Strong, "NPC R Toe0 [RToe]");
+		StartDamageAt(&data.giant, Damage_Kick_Strong, 1.8, Push_Kick_Strong, "NPC R Toe0 [RToe]", DamageSource::KickedRight);
 		DrainStamina(&data.giant, "StaminaDrain_StrongKick", "DestructionBasics", true, 8.0);
 	}
 	void GTS_Kick_HitBox_Power_On_L(AnimationEventData& data) {
-		StartDamageAt_L(&data.giant, Damage_Kick_Strong, 1.8, Push_Kick_Strong, "NPC L Toe0 [LToe]");
+		StartDamageAt(&data.giant, Damage_Kick_Strong, 1.8, Push_Kick_Strong, "NPC L Toe0 [LToe]", DamageSource::KickedLeft);
 		DrainStamina(&data.giant, "StaminaDrain_StrongKick", "DestructionBasics", true, 8.0);
 	}
 	void GTS_Kick_HitBox_Power_Off_R(AnimationEventData& data) {
@@ -126,96 +121,28 @@ namespace {
 		StopAllDamageAndStamina(&data.giant);
 	}
 
-
-
 	// ======================================================================================
-	//  Triggers
+	//  Animation Triggers
 	// ======================================================================================
 	void LightKickLeftEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
-		if (!CanPerformAnimation(player, 1) || IsGtsBusy(player)) {
-			return;
-		}
-		if (!player->IsSneaking() && !player->AsActorState()->IsSprinting()) {
-			float WasteStamina = 35.0 * GetWasteMult(player);
-			if (GetAV(player, ActorValue::kStamina) > WasteStamina) {
-				AnimationManager::StartAnim("SwipeLight_Left", player);
-			} else {
-				TiredSound(player, "You're too tired for a kick");
-			}
-		}
+		PerformKick("SwipeLight_Left", 35.0);
 	}
-
 	void LightKickRightEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
-		if (!CanPerformAnimation(player, 1) || IsGtsBusy(player)) {
-			return;
-		}
-		if (!player->IsSneaking() && !player->AsActorState()->IsSprinting()) {
-			float WasteStamina = 35.0 * GetWasteMult(player);
-			if (GetAV(player, ActorValue::kStamina) > WasteStamina) {
-				AnimationManager::StartAnim("SwipeLight_Right", player);
-			} else {
-				TiredSound(player, "You're too tired for a kick");
-			}
-		}
+		PerformKick("SwipeLight_Right", 35.0);
 	}
 
 	void HeavyKickLeftEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
-		if (!CanPerformAnimation(player, 1) || IsGtsBusy(player)) {
-			return;
-		}
-		if (!player->IsSneaking() && !player->AsActorState()->IsSprinting()) {
-			float WasteStamina = 80.0 * GetWasteMult(player);
-			if (GetAV(player, ActorValue::kStamina) > WasteStamina) {
-				AnimationManager::StartAnim("SwipeHeavy_Left", player);
-			} else {
-				TiredSound(player, "You're too tired for a Kick");
-			}
-		}
+		PerformKick("SwipeHeavy_Left", 80.0);
 	}
 	void HeavyKickRightEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
-		if (!CanPerformAnimation(player, 1) || IsGtsBusy(player)) {
-			return;
-		}
-		if (!player->IsSneaking() && !player->AsActorState()->IsSprinting()) {
-			float WasteStamina = 80.0 * GetWasteMult(player);
-			if (GetAV(player, ActorValue::kStamina) > WasteStamina) {
-				AnimationManager::StartAnim("SwipeHeavy_Right", player);
-			} else {
-				TiredSound(player, "You're too tired for a Kick");
-			}
-		}
+		PerformKick("SwipeHeavy_Right", 80.0);
 	}
+
 	void HeavyKickRightLowEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
-		if (!CanPerformAnimation(player, 1) || IsGtsBusy(player)) {
-			return;
-		}
-		if (!player->IsSneaking() && !player->AsActorState()->IsSprinting()) {
-			float WasteStamina = 80.0 * GetWasteMult(player);
-			if (GetAV(player, ActorValue::kStamina) > WasteStamina) {
-				AnimationManager::StartAnim("StrongKick_Low_Right", player);
-			} else {
-				TiredSound(player, "You're too tired for a Kick");
-			}
-		}
+		PerformKick("StrongKick_Low_Right", 80.0);
 	}
 	void HeavyKickLeftLowEvent(const InputEventData& data) {
-		auto player = PlayerCharacter::GetSingleton();
-		if (!CanPerformAnimation(player, 1) || IsGtsBusy(player)) {
-			return;
-		}
-		if (!player->IsSneaking() && !player->AsActorState()->IsSprinting()) {
-			float WasteStamina = 80.0 * GetWasteMult(player);
-			if (GetAV(player, ActorValue::kStamina) > WasteStamina) {
-				AnimationManager::StartAnim("StrongKick_Low_Left", player);
-			} else {
-				TiredSound(player, "You're too tired for a Kick");
-			}
-		}
+		PerformKick("StrongKick_Low_Left", 80.0);
 	}
 }
 

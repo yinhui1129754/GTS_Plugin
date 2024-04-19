@@ -58,6 +58,9 @@ namespace {
 	}
 
 	void AI_SelectActionToPlay(Actor* pred, int rng, int butt_rng, int action_rng) {
+		if (IsGtsBusy(pred)) {
+			return;
+		}
 		if (rng <= 2 && butt_rng <= 2 && Persistent::GetSingleton().Butt_Ai) {
 			AI_FastButtCrush(pred);
 			return;
