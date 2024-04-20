@@ -33,6 +33,7 @@ namespace {
 	const double MOAN_COOLDOWN = 5.0f;
 
     const double SOUND_COOLDOWN = 2.0f;
+    const double HIT_COOLDOWN = 1.0f;
 
 
     float Calculate_ButtCrushTimer(Actor* actor) {
@@ -104,9 +105,12 @@ namespace Gts {
             case CooldownSource::Emotion_Moan: 
                 data.lastMoanTime = Time::WorldTimeElapsed();
                 break;  
-             case CooldownSource::Misc_RevertSound: 
+            case CooldownSource::Misc_RevertSound: 
                 data.lastRevertTime = Time::WorldTimeElapsed();
                 break; 
+            case CooldownSource::Misc_BeingHit:
+                data.lastHitTime = Time::WorldTimeElapsed();
+                break;
             }
         }
 
@@ -148,6 +152,9 @@ namespace Gts {
             case CooldownSource::Misc_RevertSound: 
                 return time <= (data.lastRevertTime + SOUND_COOLDOWN);
                 break;  
+            case CooldownSource::Misc_BeingHit:
+                return time <= (data.lastHitTime + HIT_COOLDOWN);
+                break;    
             }
         return false; 
     }

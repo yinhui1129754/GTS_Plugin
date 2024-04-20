@@ -196,7 +196,7 @@ namespace Gts {
 		float MINIMUM_BUTTCRUSH_SCALE = Action_Booty;
 		float MINIMUM_DISTANCE = MINIMUM_BUTTCRUSH_DISTANCE;
 		if (IsCrawling(pred)) {
-			MINIMUM_BUTTCRUSH_SCALE *= 2.0;
+			MINIMUM_BUTTCRUSH_SCALE *= 1.25;
 		}
 
 		float prey_distance = (pred->GetPosition() - prey->GetPosition()).Length();

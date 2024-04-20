@@ -1,3 +1,4 @@
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/ShrinkToNothingManager.hpp"
 #include "managers/damage/SizeHitEffects.hpp"
@@ -119,8 +120,10 @@ namespace {
 
 		float Adjustment = 1.0 * GetSizeFromBoundingBox(attacker);
 
+		bool BlockParticle = IsActionOnCooldown(attacker, CooldownSource::Misc_BeingHit);
+
 		DoHitShake(receiver, GrowthValue * 10);
-		update_target_scale(receiver, GrowthValue, SizeEffectType::kShrink);
+		update_target_scale(receiver, GrowthValue, SizeEffectType::kNeutral);
 		
 		if (soundtimer.ShouldRunFrame()) {
 			Runtime::PlaySoundAtNode("growthSound", receiver, GrowthValue * 2, 1.0, "NPC Pelvis [Pelv]");
@@ -134,11 +137,15 @@ namespace {
 			update_target_scale(attacker, -GrowthValue/(4.0 * Adjustment*BalanceMode) * shrinkmult, SizeEffectType::kShrink); // Shrink Attacker
 			update_target_scale(receiver, GrowthValue/(2.0 * Adjustment*BalanceMode), SizeEffectType::kGrow); // Grow receiver
 
-			SpawnCustomParticle(attacker, ParticleType::Red, NiPoint3(), "NPC Root [Root]", particlescale);
+			if (!BlockParticle) {
+				SpawnCustomParticle(attacker, ParticleType::Red, NiPoint3(), "NPC Root [Root]", particlescale);
+				ApplyActionCooldown(attacker, CooldownSource::Misc_BeingHit);
+			}
 
 			if (get_target_scale(attacker) <= 0.12/Adjustment) {
 				set_target_scale(attacker, 0.12/Adjustment);
 			}
+			
 		}
 		
 	}

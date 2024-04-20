@@ -86,8 +86,8 @@ namespace Gts {
     const float Damage_Crawl_KneeImpact_Drop = 14.0f;
     const float Damage_Crawl_HandImpact_Drop = 12.0f;
 
-    const float Damage_Crawl_KneeImpact = 8.0f;
-    const float Damage_Crawl_HandImpact = 6.0f;
+    const float Damage_Crawl_KneeImpact = 6.0f;
+    const float Damage_Crawl_HandImpact = 4.2f;
 
 	const float Damage_Crawl_HandSwipe = 5.0f;
 	const float Damage_Crawl_HandSwipe_Strong = 10.0f;
