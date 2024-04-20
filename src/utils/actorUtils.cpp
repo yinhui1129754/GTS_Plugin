@@ -700,7 +700,8 @@ namespace Gts {
 	float Potion_GetSizeMultiplier(Actor* giant) {
 		auto transient = Transient::GetSingleton().GetData(giant);
 		if (transient) {
-			return 1.0 + transient->potion_max_size;
+			float bonus = std::clamp(transient->potion_max_size, 0.0f, 10.0f);
+			return 1.0 + bonus;
 		}
 		return 1.0;
 	}

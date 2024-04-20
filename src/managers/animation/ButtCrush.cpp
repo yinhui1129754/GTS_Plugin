@@ -130,7 +130,7 @@ namespace {
 
 		PlayMoanSound(giant, 1.0);
 		ModGrowthCount(giant, 1.0, false);
-		SetBonusSize(giant, bonus, false);
+		SetButtCrushSize(giant, bonus, false);
 		SpringGrow_Free(giant, bonus, 0.3 / GetAnimationSlowdown(giant), "ButtCrushGrowth");
 
 		float WasteStamina = 60.0 * GetButtCrushCost(giant);
@@ -171,7 +171,7 @@ namespace {
 			dust = 1.25;
 		}
 
-		SetBonusSize(giant, 0.0, true);
+		SetButtCrushSize(giant, 0.0, true);
 
 		float damage = GetButtCrushDamage(giant);
 		auto ThighL = find_node(giant, "NPC L Thigh [LThg]");

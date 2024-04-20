@@ -23,6 +23,7 @@ namespace Gts {
 		float Hug_AnimSpeed;
 		float Throw_Speed;
 		float potion_max_size;
+		float buttcrush_max_size;
 		float push_force;
 		float otherScales;
 		float WorldFov_Default;

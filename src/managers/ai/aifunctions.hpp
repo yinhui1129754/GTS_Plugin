@@ -16,7 +16,8 @@ namespace Gts {
 	float GetButtCrushDamage(Actor* actor);
 
 	void ModGrowthCount(Actor* giant, float value, bool reset);
-	void SetBonusSize(Actor* giant, float value, bool reset);
+	void SetButtCrushSize(Actor* giant, float value, bool reset);
+	float GetButtCrushSize(Actor* giant);
 	
 	void ForceFlee(Actor* giant, Actor* tiny, float duration);
 	void ScareActors(Actor* giant);

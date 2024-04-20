@@ -82,7 +82,7 @@ namespace {
 			dust = 1.25;
 		}
 
-		SetBonusSize(giant, 0.0, true);
+		SetButtCrushSize(giant, 0.0, true);
 
 		float damage = GetButtCrushDamage(giant);
 		auto ThighL = find_node(giant, "NPC L Thigh [LThg]");
@@ -124,7 +124,7 @@ namespace {
 			dust = 1.25;
 		}
 
-		SetBonusSize(giant, 0.0, true);
+		SetButtCrushSize(giant, 0.0, true);
 
 		float damage = GetButtCrushDamage(giant);
 		auto LeftKnee = find_node(giant, "NPC L Calf [LClf]");

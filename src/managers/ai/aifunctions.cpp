@@ -136,19 +136,27 @@ namespace Gts {
 		}
 	}
 
-	void SetBonusSize(Actor* giant, float value, bool reset) {
-		auto saved_data = Persistent::GetSingleton().GetData(giant);
+	void SetButtCrushSize(Actor* giant, float value, bool reset) {
+		auto saved_data = Transient::GetSingleton().GetData(giant);
 		if (saved_data) {
-			saved_data->bonus_max_size += value;
+			saved_data->buttcrush_max_size += value;
 			if (reset) {
-				SpringGrow_Free(giant, -saved_data->bonus_max_size, 0.3 / GetAnimationSlowdown(giant), "SizeReset");
-				///update_target_scale(giant, -saved_data->bonus_max_size, SizeEffectType::kNeutral);
+				SpringGrow_Free(giant, -saved_data->buttcrush_max_size, 0.3 / GetAnimationSlowdown(giant), "SizeReset");
 				if (get_target_scale(giant) < get_natural_scale(giant, true)) {
 					set_target_scale(giant, get_natural_scale(giant, true)); // Protect against going into negatives
 				}
-				saved_data->bonus_max_size = 0;
+				saved_data->buttcrush_max_size = 0;
 			}
 		}
+	}
+
+	float GetButtCrushSize(Actor* giant) {
+		auto saved_data = Transient::GetSingleton().GetData(giant);
+		if (saved_data) {
+			float butt_crush_size = std::clamp(saved_data->buttcrush_max_size, 0.0f, 1000000.0f);
+			return 1.0 + butt_crush_size;
+		}
+		return 1.0;
 	}
 
 	void ForceFlee(Actor* giant, Actor* tiny, float duration) {

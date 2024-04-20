@@ -144,27 +144,27 @@ namespace {
 
 			switch (Form) {
 				case DefaultSheathe:
-					log::info("Block DefaultSheathe");
+					//log::info("Block DefaultSheathe");
 					return true;
 				break;	
 				case JumpRoot:
-					log::info("Block JumpRoot");
+					//log::info("Block JumpRoot");
 					return true;
 				break;	
 				case NonMountedDraw:
-					log::info("Block NonMountedDraw");
+					//log::info("Block NonMountedDraw");
 					return true;
 				break;	
 				case NonMountedForceEquip:
-					log::info("Block NonMountedForceEquip");
+					//log::info("Block NonMountedForceEquip");
 					return true;
 				break;	
 				case JumpStandingStart:
-					log::info("Block JumpStandingStart");
+					//log::info("Block JumpStandingStart");
 					return true;	
 				break;	
 				case JumpDirectionalStart:
-					log::info("Block JumpDirectionalStart");
+					//log::info("Block JumpDirectionalStart");
 					return true;	
 				break;
 				return false;

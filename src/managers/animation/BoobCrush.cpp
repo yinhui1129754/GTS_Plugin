@@ -319,7 +319,7 @@ namespace {
 
 		PlayMoanSound(giant, 1.0);
 		ModGrowthCount(giant, 1.0, false);
-		SetBonusSize(giant, bonus, false);
+		SetButtCrushSize(giant, bonus, false);
 		SpringGrow_Free(giant, bonus, 0.3 / GetAnimationSlowdown(giant), "BreastCrushGrowth");
 
 		float WasteStamina = 60.0 * GetButtCrushCost(giant);
@@ -329,7 +329,6 @@ namespace {
 		
 		Runtime::PlaySoundAtNode("growthSound", giant, 1.0, 1.0, "NPC Pelvis [Pelv]");
 		
-
 		StartRumble("CleavageRumble", data.giant, 0.06, 0.60);
 	}
 	void GTS_BoobCrush_Grow_Stop(AnimationEventData& data) {
@@ -337,8 +336,7 @@ namespace {
 	}
 
 	void GTS_BoobCrush_LoseSize(AnimationEventData& data) {
-		auto giant = &data.giant;
-		SetBonusSize(giant, 0.0, true);
+		SetButtCrushSize(&data.giant, 0.0, true);
 	}
 }
 

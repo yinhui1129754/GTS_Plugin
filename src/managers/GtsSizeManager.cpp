@@ -101,7 +101,9 @@ namespace Gts {
 			float NPCLimit = Runtime::GetFloat("NPCSizeLimit"); // 0 by default
 
 			if (Persistent) {
-				Persistent_Size = ((1.0 + Persistent->bonus_max_size) * Potion_GetSizeMultiplier(actor));
+				float size_overrides = Potion_GetSizeMultiplier(actor) * GetButtCrushSize(actor);
+				// ^ Takes ButtCrush growth and Potion amplifiers into account
+				Persistent_Size = ((1.0 + Persistent->bonus_max_size) * size_overrides);
 			}
 
 			if (actor->formID == 0x14 && SelectedFormula >= 1.0) { // Apply Player Mass-Based max size
