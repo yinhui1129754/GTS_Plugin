@@ -59,7 +59,6 @@ namespace Gts {
 			if (object) {
 				auto* actor = TESForm::LookupByID<Actor>(object->formID);
 				if (actor) {
-					log::info("Firing reset event for {}", actor->GetDisplayFullName());
 					EventDispatcher::DoResetActor(actor);
 				}
 			}

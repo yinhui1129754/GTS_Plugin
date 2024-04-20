@@ -126,7 +126,7 @@ namespace {
 			}
 
 			if (PreventJumpFall(Form, performer)) {
-				log::info("Block PreventJumpFall");
+				//log::info("Block PreventJumpFall");
 				return true; // Disable fall down anim for GTS so it won't look off/annoying at large scales
 			}
 

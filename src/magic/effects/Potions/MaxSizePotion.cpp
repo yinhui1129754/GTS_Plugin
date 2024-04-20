@@ -4,15 +4,16 @@
 #include "managers/GtsManager.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
+#include "data/transient.hpp"
 #include "data/runtime.hpp"
 #include "magic/magic.hpp"
 #include "scale/scale.hpp"
 
 namespace {
 	void BonusMaxSize_Modify(Actor* giant, float value) {
-		auto saved_data = Persistent::GetSingleton().GetData(giant);
+		auto saved_data = Transient::GetSingleton().GetData(giant);
 		if (saved_data) {
-			saved_data->bonus_max_size += value;
+			saved_data->potion_max_size += value;
 		}
 	}
 }

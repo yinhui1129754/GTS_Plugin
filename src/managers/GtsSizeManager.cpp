@@ -101,7 +101,7 @@ namespace Gts {
 			float NPCLimit = Runtime::GetFloat("NPCSizeLimit"); // 0 by default
 
 			if (Persistent) {
-				Persistent_Size = (1.0 + Persistent->bonus_max_size);
+				Persistent_Size = ((1.0 + Persistent->bonus_max_size) * Potion_GetSizeMultiplier(actor));
 			}
 
 			if (actor->formID == 0x14 && SelectedFormula >= 1.0) { // Apply Player Mass-Based max size

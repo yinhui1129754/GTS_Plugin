@@ -697,6 +697,13 @@ namespace Gts {
 		return 0.0;
 	}
 
+	float Potion_GetSizeMultiplier(Actor* giant) {
+		auto transient = Transient::GetSingleton().GetData(giant);
+		if (transient) {
+			return 1.0 + transient->potion_max_size;
+		}
+		return 1.0;
+	}
 
 	void Potion_SetShrinkResistance(Actor* giant, float value) {
 		auto transient = Transient::GetSingleton().GetData(giant);
@@ -2656,7 +2663,7 @@ namespace Gts {
 
 		if (BonusSize) {
 			Notify("You feel like something is growing inside you");
-			BonusSize->value += 0.055; // +10 cm
+			BonusSize->value += 0.0659; // +12 cm
 
 			if (rng <= 1) {
 				PlayMoanSound(player, 1.0);

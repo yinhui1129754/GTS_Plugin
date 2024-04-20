@@ -134,10 +134,21 @@ namespace Gts {
         //TESContainer* container_Misc = FilterChests(Chest, ChestType::MiscChest);
 
         if (container_Boss) {
-            log::info("Boss container found!");
             for (auto item: CalculateItemProbability(ChestType::BossChest)) {
                 if (item) {
-                    container_Boss->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
+                    bool WasAdded = false;
+                    for (std::uint32_t i = 0; i < container_Boss->numContainerObjects; ++i) {
+                        if (const auto entry = container_Boss->containerObjects[i]) {
+                            if (entry->obj == item->As<RE::TESBoundObject>()) {
+                                log::info("Item already exists");
+                                WasAdded = true;
+                            }
+                        }
+                    }
+                    if (!WasAdded) {
+                        log::info("Adding items to container");
+                        container_Boss->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
+                    }
                 }
             }
         }

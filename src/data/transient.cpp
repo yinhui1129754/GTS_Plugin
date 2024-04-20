@@ -64,6 +64,8 @@ namespace Gts {
 			float Hug_AnimSpeed = 1.0;
 			float Throw_Speed = 0.0;
 
+			float potion_max_size = 0.0;
+
 			float push_force = 1.0;
 			
 			bool Throw_WasThrown = false;
@@ -133,6 +135,8 @@ namespace Gts {
 			result.FallTimer = FallTimer;
 			result.Hug_AnimSpeed = Hug_AnimSpeed;
 			result.Throw_Speed = Throw_Speed;
+			result.potion_max_size = potion_max_size;
+
 			result.push_force = push_force;
 			result.can_do_vore = can_do_vore;
 			result.Throw_WasThrown = Throw_WasThrown;
@@ -160,7 +164,6 @@ namespace Gts {
 			result.Overkilled = Overkilled;
 			result.Protection = Protection;
 			result.GrowthPotion = GrowthPotion;
-			
 
 			result.disable_collision = disable_collision;
 

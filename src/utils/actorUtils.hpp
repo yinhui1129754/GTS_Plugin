@@ -80,6 +80,8 @@ namespace Gts {
 	void Potion_SetMightBonus(Actor* giant, float value, bool add);
 	float Potion_GetMightBonus(Actor* giant);
 
+	float Potion_GetSizeMultiplier(Actor* giant);
+
 	void Potion_SetShrinkResistance(Actor* giant, float value);
 	float Potion_GetShrinkResistance(Actor* giant);
 
