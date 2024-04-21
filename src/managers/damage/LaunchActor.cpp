@@ -51,8 +51,8 @@ namespace {
 
 	float GetLaunchThreshold(Actor* giant) {
 		float threshold = 8.0;
-		if (Runtime::HasPerkTeam(giant, "LaunchPerk")) {
-			threshold = 5.2;
+		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
+			threshold *= 0.75;
 		}
 		return threshold;
 	}

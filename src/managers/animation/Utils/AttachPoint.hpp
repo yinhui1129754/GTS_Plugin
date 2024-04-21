@@ -437,7 +437,7 @@ namespace Gts {
 			tiny->data.angle.z = giant->data.angle.z;
 		}
 
-		clevagePos += globalOffset;
+		clevagePos += (globalOffset * get_visual_scale(giant));
 
 		if (IsDebugEnabled()) {
 			DebugAPI::DrawSphere(glm::vec3(clevagePos.x, clevagePos.y, clevagePos.z), 2.0, 10, {1.0, 0.0, 0.0, 1.0});

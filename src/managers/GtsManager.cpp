@@ -57,18 +57,8 @@ namespace {
 		}
 	}
 
-	void UpdateRotationSpeed(Actor* actor) {
-		float slowdown = GetAnimationSlowdown(actor);
-		auto currentProcess = actor->GetActorRuntimeData().currentProcess;
-		if (currentProcess && currentProcess->middleHigh && currentProcess->middleHigh->rotationSpeed.z != 0) {
-			currentProcess->middleHigh->rotationSpeed.z *= (slowdown * slowdown);
-			//log::info("Rotation slowdown of {} is {}", actor->GetDisplayFullName(), currentProcess->middleHigh->rotationSpeed.z);
-			//log::info("Anim slowdown: {}", slowdown);
-		}
-	}
-
 	void UpdateFalling() {
-		Actor* player = PlayerCharacter::GetSingleton();
+		Actor* player = PlayerCharacter::GetSingleton(); 
 		if (player && player->IsInMidair()) {
 			if (Runtime::HasPerkTeam(player, "MightyLegs")) {
 				auto charCont = player->GetCharController();
@@ -331,7 +321,6 @@ void GtsManager::Update() {
 			
 			ScareActors(actor);
 			FixActorFade(actor);
-			//UpdateRotationSpeed(actor);
 
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);

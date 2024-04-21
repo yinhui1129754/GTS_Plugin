@@ -85,16 +85,22 @@ namespace {
 	}
 
 	bool ApplyHighHeelBonus(Actor* giant, DamageSource cause) {
-		bool Crush = (cause == DamageSource::CrushedRight || cause == DamageSource::CrushedLeft);
-		if (Crush) {
-			return true;
+		bool HighHeel = false;
+		switch (cause) {
+			case DamageSource::CrushedRight:
+				HighHeel = true;
+			break;
+			case DamageSource::CrushedLeft:
+				HighHeel = true;
+			break;
+			case DamageSource::KickedRight:
+				HighHeel = true;
+			break;
+			case DamageSource::KickedLeft:
+				HighHeel = true;
+			break;
 		}
-		bool Kick = (cause == DamageSource::KickedLeft || cause == DamageSource::KickedRight);
-		if (Kick) {
-			return true;
-		}
-
-		return false;
+		return HighHeel;
 	}
 
 	void ModVulnerability(Actor* giant, Actor* tiny, float damage) {
@@ -108,10 +114,28 @@ namespace {
 	float HighHeels_PerkDamage(Actor* giant, DamageSource Cause) {
 		float value = 1.0;
 		bool perk = Runtime::HasPerkTeam(giant, "hhBonus");
-		bool matches = (Cause == DamageSource::CrushedLeft || Cause == DamageSource::CrushedRight);
-		bool walk = (Cause == DamageSource::WalkRight || Cause == DamageSource::WalkLeft);
-		if (perk && (matches || walk)) {
+		bool rumbling_feet = Runtime::HasPerkTeam(giant, "RumblingFeet");
+		bool matches = false;
+
+		switch (Cause) {
+			case DamageSource::CrushedRight:
+				matches = true;
+			break;
+			case DamageSource::CrushedLeft:
+				matches = true;
+			break;
+			case DamageSource::WalkRight:
+				matches = true;
+			break;
+			case DamageSource::WalkLeft:
+				matches = true;
+			break;
+		}
+		if (matches && perk) {
 			value += 0.15; // 15% bonus damage if we have High Heels perk
+		}
+		if (rumbling_feet) {
+			value *= 1.25; // 25% bonus damage if we have lvl 60 perk
 		}
 		return value;
 	}
@@ -295,7 +319,7 @@ namespace Gts {
 		if (giant == tiny) {
 			return;
 		}
-		if (!CanDoDamage(giant, tiny, true) || IsBetweenBreasts(giant)) { // disallow if 
+		if (!CanDoDamage(giant, tiny, true) || IsBetweenBreasts(tiny)) { // disallow 
 			return;
 		}
 

@@ -84,7 +84,25 @@ namespace {
 		return (tiny_chance > giant_chance);
 	}
 
-	/*void Task_RotateActorToBreastX(Actor* giant, Actor* tiny) {
+	void ApplyPitchRotation(Actor* actor, float pitch) {
+		auto charCont = actor->GetCharController();
+		if (!charCont) {
+			return;
+		}
+		charCont->pitchAngle = pitch;
+		log::info("Pitch: {}", charCont->pitchAngle);
+	}
+
+	void ApplyRollRotation(Actor* actor, float roll) {
+		auto charCont = actor->GetCharController();
+		if (!charCont) {
+			return;
+		}
+		charCont->rollAngle = roll;
+		log::info("Roll: {}", charCont->rollAngle);
+	}
+
+	void Task_RotateActorToBreastX(Actor* giant, Actor* tiny) {
 		std::string name = std::format("RotateActor_{}", giant->formID);
 		ActorHandle gianthandle = giant->CreateRefHandle();
 		ActorHandle tinyhandle = tiny->CreateRefHandle();
@@ -122,30 +140,23 @@ namespace {
 			RightBreastRotation.ToEulerAnglesXYZ(RPosX, RPosY, RPosZ);
 
 			float BreastRotation_X = (LPosX + RPosX) / 2;
-			NiPoint3 Reset = NiPoint3(0, 0, 0);
+			float BreastRotation_Y = (LPosY + RPosY) / 2;
 
-
-			auto transient = Transient::GetSingleton().GetData(tiny);
-			if (transient) {
-				transient->Rotation_X = BreastRotation_X * 70;
-				log::info("TinyX: {}", BreastRotation_X);
-				tiny->SetRotationX(BreastRotation_X);
-			}
-
+			ApplyPitchRotation(tinyref, BreastRotation_X);
+			ApplyRollRotation(tinyref, BreastRotation_Y);
 			log::info("Angle of L breast: X: {}, Y: {}, Z: {}", LPosX, LPosY, LPosZ);
 			log::info("Angle of R breast: X: {}, Y: {}, Z: {}", RPosX, RPosY, RPosZ);
 
 			// All good try another frame
-			if (!IsBetweenBreasts(giantref)) {
-				if (transient) {
-					transient->Rotation_X = 0.0;
-				}
+			if (!IsBetweenBreasts(tinyref)) {
+				ApplyPitchRotation(tinyref, 0.0);
+				ApplyRollRotation(tinyref, 0.0);
 				return false; // Abort it
 			}
 			return true;
 		});
-		TaskManager::ChangeUpdate(name, UpdateKind::Camera);
-	}*/   // Transient value no longer exists, unused
+		TaskManager::ChangeUpdate(name, UpdateKind::Havok);
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////G R A B
@@ -188,7 +199,7 @@ namespace {
 
 	void GTSGrab_Release_FreeActor(AnimationEventData& data) {
 		auto giant = &data.giant;
-		SetBetweenBreasts(giant, false);
+		
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
@@ -197,6 +208,7 @@ namespace {
 		AnimationManager::StartAnim("TinyDied", giant);
 		//BlockFirstPerson(giant, false);
 		if (grabbedActor) {
+			SetBetweenBreasts(grabbedActor, false);
 			PushActorAway(giant, grabbedActor, 1.0);
 			EnableCollisions(grabbedActor);
 			SetBeingHeld(grabbedActor, false);
@@ -210,8 +222,9 @@ namespace {
 		auto grabbedActor = Grab::GetHeldActor(giant);
 		if (grabbedActor) {
 			EnableCollisions(grabbedActor);
+			SetBetweenBreasts(grabbedActor, false);
 		}
-		SetBetweenBreasts(giant, false);
+		
 
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
@@ -230,8 +243,9 @@ namespace {
 		if (grabbedActor) {
 			EnableCollisions(grabbedActor);
 			SetBeingHeld(grabbedActor, false);
+			SetBetweenBreasts(grabbedActor, false);
 		}
-		SetBetweenBreasts(giant, false);
+		
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
@@ -254,13 +268,14 @@ namespace {
 
 	void GTSGrab_Breast_PutActor(AnimationEventData& data) { // Places actor between breasts
 		auto giant = &data.giant;
-		SetBetweenBreasts(giant, true);
+		
 		Runtime::PlaySoundAtNode("BreastImpact", giant, 1.0, 0.0, "NPC L Hand [LHnd]");
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 1);
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
 		auto otherActor = Grab::GetHeldActor(giant);
 		if (otherActor) {
-			//Task_RotateActorToBreastX(giant, otherActor);
+			SetBetweenBreasts(otherActor, true);
+			Task_RotateActorToBreastX(giant, otherActor);
 			otherActor->SetGraphVariableBool("GTSBEH_T_InStorage", true);
 			if (IsHostile(giant, otherActor)) {
 				AnimationManager::StartAnim("Breasts_Idle_Unwilling", otherActor);
@@ -272,11 +287,11 @@ namespace {
 
 	void GTSGrab_Breast_TakeActor(AnimationEventData& data) { // Removes Actor
 		auto giant = &data.giant;
-		SetBetweenBreasts(giant, false);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 1);
 		auto otherActor = Grab::GetHeldActor(giant);
 		if (otherActor) {
+			SetBetweenBreasts(otherActor, false);
 			otherActor->SetGraphVariableBool("GTSBEH_T_InStorage", false);
 			//BlockFirstPerson(giant, true);
 			AnimationManager::StartAnim("Breasts_FreeOther", otherActor);
@@ -436,7 +451,6 @@ namespace Gts {
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0); // Tell behaviors 'we have nothing in our hands'. A must.
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
-		SetBetweenBreasts(giant, false);
 		TaskManager::Cancel(name);
 	}
 
@@ -476,7 +490,7 @@ namespace Gts {
 			if (giantref->IsDead() || tinyref->IsDead() || GetAV(tinyref, ActorValue::kHealth) <= 0.0 || sizedifference < Action_Grab || GetAV(giantref, ActorValue::kStamina) < 2.0) {
 				PushActorAway(giantref, tinyref, 1.0);
 				tinyref->SetGraphVariableBool("GTSBEH_T_InStorage", false);
-				SetBetweenBreasts(giantref, false);
+				SetBetweenBreasts(tinyref, false);
 				SetBeingHeld(tinyref, false);
 				giantref->SetGraphVariableInt("GTS_GrabbedTiny", 0); // Tell behaviors 'we have nothing in our hands'. A must.
 				giantref->SetGraphVariableInt("GTS_Grab_State", 0);
@@ -494,7 +508,7 @@ namespace Gts {
 					// Unable to attach
 					return false;
 				}
-			} else if (IsBetweenBreasts(giantref)) {
+			} else if (IsBetweenBreasts(tinyref)) {
 				bool hostile = IsHostile(giantref, tinyref);
 				float restore = 0.04 * TimeScale();
 				if (!hostile) {
@@ -522,7 +536,7 @@ namespace Gts {
 			// All good try another frame
 			return true;
 		});
-		TaskManager::ChangeUpdate(name, UpdateKind::Camera);
+		TaskManager::ChangeUpdate(name, UpdateKind::Havok);
 	}
 
 

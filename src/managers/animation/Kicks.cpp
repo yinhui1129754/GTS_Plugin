@@ -132,17 +132,17 @@ namespace {
 	}
 
 	void HeavyKickLeftEvent(const InputEventData& data) {
-		PerformKick("SwipeHeavy_Left", 80.0);
+		PerformKick("SwipeHeavy_Left", 110.0);
 	}
 	void HeavyKickRightEvent(const InputEventData& data) {
-		PerformKick("SwipeHeavy_Right", 80.0);
+		PerformKick("SwipeHeavy_Right", 110.0);
 	}
 
 	void HeavyKickRightLowEvent(const InputEventData& data) {
-		PerformKick("StrongKick_Low_Right", 80.0);
+		PerformKick("StrongKick_Low_Right", 110.0);
 	}
 	void HeavyKickLeftLowEvent(const InputEventData& data) {
-		PerformKick("StrongKick_Low_Left", 80.0);
+		PerformKick("StrongKick_Low_Left", 110.0);
 	}
 }
 

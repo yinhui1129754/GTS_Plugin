@@ -76,7 +76,7 @@ namespace Gts {
 			bool dragon_was_eaten = false;
 			bool can_be_vored = true;
 			bool being_held = false;
-			bool between_breasts = false;
+			bool is_between_breasts = false;
 			bool about_to_be_eaten = false;
 			bool being_foot_grinded = false;
 			bool SMT_ReachedFullSpeed = false;
@@ -144,7 +144,7 @@ namespace Gts {
 			result.Throw_WasThrown = Throw_WasThrown;
 			result.can_be_crushed = can_be_crushed;
 			result.being_held = being_held;
-			result.between_breasts = between_breasts;
+			result.is_between_breasts = is_between_breasts;
 			result.about_to_be_eaten = about_to_be_eaten;
 			result.being_foot_grinded = being_foot_grinded;
 			result.SMT_ReachedFullSpeed = SMT_ReachedFullSpeed;

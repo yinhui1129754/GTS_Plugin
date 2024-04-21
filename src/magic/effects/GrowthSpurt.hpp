@@ -27,6 +27,6 @@ namespace Gts {
 			bool AllowStacking = true;
 			float grow_limit = 1.0;
 			Timer timer = Timer(2.33);
-			Timer timerSound = Timer(0.46);
+			Timer timerSound = Timer(0.7);
 	};
 }

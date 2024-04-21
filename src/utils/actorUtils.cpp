@@ -469,7 +469,7 @@ namespace Gts {
 	bool IsBetweenBreasts(Actor* actor) {
 		auto transient = Transient::GetSingleton().GetData(actor);
 		if (transient) {
-			return transient->between_breasts;
+			return transient->is_between_breasts;
 		}
 		return false;
 	}
@@ -1345,7 +1345,7 @@ namespace Gts {
 	void SetBetweenBreasts(Actor* actor, bool decide) {
 		auto transient = Transient::GetSingleton().GetData(actor);
 		if (transient) {
-			transient->between_breasts = decide;
+			transient->is_between_breasts = decide;
 		}
 	}
 	void SetBeingEaten(Actor* tiny, bool decide) {
@@ -2307,7 +2307,7 @@ namespace Gts {
 		update_target_scale(tiny, -(shrinkpower * gigantism), SizeEffectType::kShrink);
 		Attacked(tiny, giant);
 
-		ModSizeExperience(giant, (shrinkpower * gigantism) * 0.80);
+		ModSizeExperience(giant, (shrinkpower * gigantism) * 0.10);
 
 		float MinScale = 0.11;
 
@@ -2899,7 +2899,6 @@ namespace Gts {
 			giant->SetGraphVariableInt("GTS_GrabbedTiny", 0); // Tell behaviors 'we have nothing in our hands'. A must.
 			giant->SetGraphVariableInt("GTS_Grab_State", 0);
 			giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
-			SetBetweenBreasts(giant, false);
 		}
 	}
 

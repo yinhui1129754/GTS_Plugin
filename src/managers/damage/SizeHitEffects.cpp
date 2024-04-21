@@ -46,7 +46,7 @@ namespace {
 
 		DamageAV(grabbedActor, ActorValue::kHealth, a_damage * 0.50);
 		if (grabbedActor->IsDead() || GetAV(grabbedActor, ActorValue::kHealth) < a_damage * 0.50) {
-			if (!IsBetweenBreasts(receiver)) {
+			if (!IsBetweenBreasts(grabbedActor)) {
 				PrintDeathSource(receiver, grabbedActor, DamageSource::BlockDamage);
 			} else {
 				PrintDeathSource(receiver, grabbedActor, DamageSource::Breast);
