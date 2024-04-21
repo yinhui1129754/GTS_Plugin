@@ -1136,7 +1136,7 @@ namespace Gts {
 								StaggerActor(giant, otherActor, push);
 							}
 
-							float Volume = clamp(0.15, 1.0, difference*pushForce);
+							float Volume = std::clamp(difference*pushForce, 0.15f, 1.0f);
 
 							auto node = find_node(giant, GetDeathNodeName(Cause));
 							if (node) {

@@ -31,7 +31,7 @@ namespace {
 		// Hugging is needed to fix missing footsteps once we do friendly release
 		// Footsteps aren't seen by the dll without it (because actor is in air)
 
-		bool allow = ((!is_jumping && !in_air) || hugging);
+		bool allow = ((!is_jumping && !in_air) || hugging || in_air);
 
 		if (matches(tag, ".*Foot.*Left.*") && allow) {
 			foot_kind = FootEvent::Left;

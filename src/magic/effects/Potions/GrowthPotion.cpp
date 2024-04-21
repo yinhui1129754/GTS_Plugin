@@ -15,7 +15,7 @@ namespace {
 			float scale = get_visual_scale(giant);
 
 			float falloff = 0.16 * scale;
-			float Volume = clamp(0.20, 2.0, scale/10);
+			float Volume = std::clamp(scale/10.0f, 0.20f, 2.0f);
 
 			Rumbling::Once("GrowthPotion", giant, 2.0, 0.05);
 
@@ -74,7 +74,7 @@ namespace Gts {
 			return;
 		}
 
-		float AlchemyLevel = clamp(1.0, 2.0, caster->AsActorValueOwner()->GetActorValue(ActorValue::kAlchemy)/100 + 1.0);
+		float AlchemyLevel = std::clamp(caster->AsActorValueOwner()->GetActorValue(ActorValue::kAlchemy)/100.0f + 1.0f, 1.0f, 2.0f);
 		Rumbling::Once("GrowthPotion", caster, 0.4, 0.05);
 		
 		PlayGrowthAudio(caster, this->timer.ShouldRun());

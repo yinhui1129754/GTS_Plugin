@@ -169,7 +169,7 @@ namespace {
 				break;
 				return false;
 			}
-
+			//log::info("Blocking all anims for {}", performer->GetDisplayFullName());
 			return false;
 		}
 		return false;

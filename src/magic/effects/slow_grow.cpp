@@ -51,11 +51,11 @@ namespace Gts {
 		float power = BASE_POWER * SkillBonus;
 
 		if (this->timer.ShouldRun()) {
-			float Volume = clamp(0.20, 1.0, get_visual_scale(caster)/8);
+			float Volume = std::clamp(get_visual_scale(caster)/8.0f, 0.20f, 1.0f);
 			Runtime::PlaySoundAtNode("growthSound", caster, Volume, 1.0,  "NPC Pelvis [Pelv]");
 		}
 		if (Runtime::GetFloat("AllowMoanSounds") == 1.0 && this->MoanTimer.ShouldRun() && IsFemale(caster)) {
-			float MoanVolume = clamp(0.25, 2.0, get_visual_scale(caster)/8);
+			float MoanVolume = std::clamp(get_visual_scale(caster)/8.0f, 0.25f, 1.0f);
 			Task_FacialEmotionTask_Moan(caster, 1.4, "SlowGrow");
 			PlayMoanSound(caster, MoanVolume);
 			//log::info("Attempting to play Moan Sound for: {}", caster->GetDisplayFullName());

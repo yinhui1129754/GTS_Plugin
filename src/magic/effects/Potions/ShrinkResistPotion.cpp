@@ -11,7 +11,7 @@ namespace {
 	void PlayGrowthAudio(Actor* giant, bool checkTimer) {
 		if (checkTimer) {
 			Rumbling::Once("ShrinkResistPotion", giant, 2.0, 0.05);
-			float Volume = clamp(0.20, 2.0, get_visual_scale(giant)/10);
+			float Volume = std::clamp(get_visual_scale(giant)/10.0f, 0.20f, 2.0f);
 			Runtime::PlaySoundAtNode("growthSound", giant, Volume, 1.0, "NPC Pelvis [Pelv]");
 		}
 	}

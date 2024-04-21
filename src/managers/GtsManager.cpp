@@ -331,7 +331,7 @@ void GtsManager::Update() {
 			
 			ScareActors(actor);
 			FixActorFade(actor);
-			UpdateRotationSpeed(actor);
+			//UpdateRotationSpeed(actor);
 
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);

@@ -92,7 +92,7 @@ namespace Gts {
 			float QuestStage = Runtime::GetStage("MainQuest");
 			auto Persistent = Persistent::GetSingleton().GetData(actor);
 			
-			float GetLimit = clamp(NaturalScale, 99999999.0, NaturalScale + ((Runtime::GetFloat("sizeLimit") - 1.0) * NaturalScale)); // Default size limit
+			float GetLimit = std::clamp(NaturalScale + ((Runtime::GetFloat("sizeLimit") - 1.0f) * NaturalScale), NaturalScale, 99999999.0f); // Default size limit
 			
 			float Persistent_Size = 1.0;
 			float SelectedFormula = Runtime::GetInt("SelectedSizeFormula");
@@ -111,11 +111,11 @@ namespace Gts {
 				if (low_limit < 2) {
 					low_limit = Runtime::GetFloat("sizeLimit");
 				}
-				GetLimit = clamp(NaturalScale, low_limit, NaturalScale + (Runtime::GetFloat("GtsMassBasedSize") * NaturalScale));
+				GetLimit = std::clamp(NaturalScale + (Runtime::GetFloat("GtsMassBasedSize") * NaturalScale), NaturalScale, low_limit);
 			} else if (QuestStage > 100 && FollowerLimit > 0.0 && FollowerLimit != 1.0 && actor->formID != 0x14 && IsTeammate(actor)) { // Apply Follower Max Size
-				GetLimit = clamp(NaturalScale * FollowerLimit, 99999999.0, NaturalScale + ((Runtime::GetFloat("FollowersSizeLimit") - 1.0) * NaturalScale)); // Apply only if Quest is done.
+				GetLimit = std::clamp(NaturalScale + ((Runtime::GetFloat("FollowersSizeLimit") - 1.0f) * NaturalScale), NaturalScale * FollowerLimit, 99999999.0f); // Apply only if Quest is done.
 			} else if (QuestStage > 100 && NPCLimit > 0.0 && NPCLimit != 1.0 && actor->formID != 0x14 && !IsTeammate(actor)) { // Apply Other NPC's max size
-				GetLimit = clamp(NaturalScale * NPCLimit, 99999999.0, NaturalScale + ((Runtime::GetFloat("NPCSizeLimit") - 1.0) * NaturalScale));       // Apply only if Quest is done.
+				GetLimit = std::clamp(NaturalScale + ((Runtime::GetFloat("NPCSizeLimit") - 1.0f) * NaturalScale), NaturalScale * NPCLimit, 99999999.0f);       // Apply only if Quest is done.
 			}
 
 			float TotalLimit = (((GetLimit * Persistent_Size) * (1.0 + Gigantism))) / GameScale;
@@ -137,7 +137,7 @@ namespace Gts {
 		if (!actor) {
 			return 0.0;
 		}
-		float EB = clamp(0.0, 1000.0, this->GetData(actor).enchantmentBonus);
+		float EB = std::clamp(this->GetData(actor).enchantmentBonus, 0.0f, 1000.0f);
 		return EB;
 	}
 
@@ -161,7 +161,7 @@ namespace Gts {
 		if (!actor) {
 			return 0.0;
 		}
-		float SHB = clamp(0.0, 1000.0, this->GetData(actor).SizeHungerBonus);
+		float SHB = std::clamp(this->GetData(actor).SizeHungerBonus, 0.0f, 1000.0f);
 		return SHB;
 	}
 
@@ -294,9 +294,6 @@ namespace Gts {
 	float SizeManager::GetHitGrowth(Actor* actor) {
 		if (!actor) {
 			return 0.0;
-		}
-		if (actor->formID != 0x14) {
-			actor = PlayerCharacter::GetSingleton(); // Always read Player data
 		}
 		auto Persistent = Persistent::GetSingleton().GetData(actor);
 		if (!Persistent) {

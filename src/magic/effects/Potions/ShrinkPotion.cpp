@@ -24,7 +24,7 @@ namespace Gts {
 
 		Potion_Penalty(caster);
 
-		float Volume = clamp(0.15, 2.0, get_visual_scale(caster)/8);
+		float Volume = std::clamp(get_visual_scale(caster)/8.0f, 0.15f, 2.0f);
 		Runtime::PlaySoundAtNode("growthSound", caster, Volume, 1.0, "NPC Pelvis [Pelv]");
 		log::info("Growth Potion start actor: {}", caster->GetDisplayFullName());
 	}
@@ -37,7 +37,7 @@ namespace Gts {
 			return;
 		}
 
-		float AlchemyLevel = clamp(1.0, 2.0, caster->AsActorValueOwner()->GetActorValue(ActorValue::kAlchemy)/100 + 1.0);
+		float AlchemyLevel = std::clamp(caster->AsActorValueOwner()->GetActorValue(ActorValue::kAlchemy)/100.0f + 1.0f, 1.0f, 2.0f);
 		Rumbling::Once("ShrinkPotion", caster, 0.4, 0.05);
 
 		float Power = BASE_POWER * get_visual_scale(caster) * AlchemyLevel;

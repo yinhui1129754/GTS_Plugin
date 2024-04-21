@@ -178,10 +178,10 @@ namespace Gts {
 				SoftPotential& MS_adjustment = Persistent::GetSingleton().MS_adjustment;
 				scale = get_visual_scale(actor); // take real scale into account for MS, makes sense after all. Smaller = slower.
 				float MS_mult = soft_core(scale, MS_adjustment);
-				float MS_mult_limit = clamp(0.750, 1.0, MS_mult);
-				float Multy = clamp(0.70, 1.0, MS_mult);
+				float MS_mult_limit = std::clamp(MS_mult, 0.750f, 1.0f);
+				float Multy = std::clamp(MS_mult, 0.70f, 1.0f);
 				float speed_mult_walk = soft_core(scale, this->speed_adjustment_walk);
-				float bonusspeed = clamp(0.90, 1.0, speed_mult_walk);
+				float bonusspeed = std::clamp(speed_mult_walk, 0.90f, 1.0f);
 				
 				auto actorData = Persistent::GetSingleton().GetData(actor);
 				float Bonus = 1.0;

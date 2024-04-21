@@ -30,7 +30,7 @@ namespace {
 			bool BlockSound = IsActionOnCooldown(casterref, CooldownSource::Misc_RevertSound);
 
 			if (!BlockSound) {
-				float Volume = clamp(0.15, 1.0, get_visual_scale(casterref) * 0.1);
+				float Volume = std::clamp(get_visual_scale(casterref) * 0.1f, 0.15f, 1.0f);
 				ApplyActionCooldown(casterref, CooldownSource::Misc_RevertSound);
 				Runtime::PlaySound("shrinkSound", casterref, Volume, 1.0);
 			}
@@ -55,7 +55,7 @@ namespace Gts {
 		if (!caster) {
 			return;
 		}
-		float Volume = clamp(0.10, 1.0, get_visual_scale(caster) * 0.1);
+		float Volume = std::clamp(get_visual_scale(caster) * 0.1f, 0.10f, 1.0f);
 		Runtime::PlaySound("shrinkSound", caster, Volume, 1.0);
 
 		Task_RestoreSizeTask(caster, DualCasted());

@@ -132,9 +132,9 @@ namespace {
 			if (SizeDifference >= 4.0 && LaughChance >= 11 && laughtimer.ShouldRunFrame()) {
 				PlayLaughSound(receiver, 1.0, 1);
 				particlescale = 2.2;
-				shrinkmult = 4.0;
+				shrinkmult = 6.0;
 			}
-			update_target_scale(attacker, -GrowthValue/(4.0 * Adjustment*BalanceMode) * shrinkmult, SizeEffectType::kShrink); // Shrink Attacker
+			update_target_scale(attacker, -GrowthValue/(2.0 * Adjustment*BalanceMode) * shrinkmult, SizeEffectType::kShrink); // Shrink Attacker
 			update_target_scale(receiver, GrowthValue/(2.0 * Adjustment*BalanceMode), SizeEffectType::kGrow); // Grow receiver
 
 			if (!BlockParticle) {

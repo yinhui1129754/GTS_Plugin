@@ -117,7 +117,7 @@ namespace Gts {
 		GtsSkillRatio->value += Total * GetXpBonus();
 
 		if (GtsSkillRatio->value >= 1.0) {
-			float transfer = clamp(0.0, 1.0, Total - oldvaluecalc);
+			float transfer = std::clamp(Total - oldvaluecalc, 0.0f, 1.0f);
 			GtsSkillRatio->value = transfer;
 			GtsSkillLevel->value = skill_level + 1.0;
 			GtsSkillProgress->value = GtsSkillLevel->value;
@@ -179,14 +179,16 @@ namespace Gts {
 	}
 
 	inline float CalcEffeciency(Actor* caster, Actor* target) {
-		float casterlevel = clamp(1.0, 500.0, caster->GetLevel());
-		float targetlevel = clamp(1.0, 500.0, target->GetLevel());
+		float level_caster = caster->GetLevel();
+		float level_target = target->GetLevel();
+		float casterlevel = std::clamp(level_caster, 1.0f, 500.0f);
+		float targetlevel = std::clamp(level_target, 1.0f, 500.0f);
 
 		float SizeHunger = 1.0 + Ench_Hunger_GetPower(caster);
 
 		float Gigantism_Caster = 1.0 + (Ench_Aspect_GetPower(caster) * 0.25); // get GTS Aspect Of Giantess
 		float Gigantism_Target = 1.0 + Ench_Aspect_GetPower(target);  // get Tiny Aspect Of Giantess
-		float efficiency = clamp(0.50, 1.0, (casterlevel/targetlevel));
+		float efficiency = std::clamp(casterlevel/targetlevel, 0.50f, 1.0f);
 
 		float Scale_Resistance = std::clamp(get_visual_scale(target), 1.0f, 9999.0f); // Calf_power makes shrink effects stronger based on scale, this fixes that.
 
@@ -211,7 +213,7 @@ namespace Gts {
 		if (shrink) { // allow for more size resistance when we need it
 			size_cap = 0.02; // up to 98% shrink resistance
 		}
-		float scale = clamp(size_cap, 999999.0, get_visual_scale(actor));
+		float scale = std::clamp(get_visual_scale(actor), size_cap, 999999.0f);
 		return (scale * scale_factor + bonus) * progress_mult * MASTER_POWER * TimeScale();
 	}
 
@@ -251,7 +253,7 @@ namespace Gts {
 	}
 
 	inline void Steal(Actor* from, Actor* to, float scale_factor, float bonus, float effeciency, ShrinkSource source) {
-		effeciency = clamp(0.0, 1.0, effeciency);
+		effeciency = std::clamp(effeciency, 0.0f, 1.0f);
 		float visual_scale = get_visual_scale(from);
 
 		float amount = CalcPower(from, scale_factor, bonus, false);
@@ -295,7 +297,7 @@ namespace Gts {
 		float target_scale = get_visual_scale(target); // used for xp only
 		float caster_scale = get_visual_scale(caster); // used for xp only
 
-		transfer_effeciency = clamp(0.0, 1.0, transfer_effeciency); // Ensure we cannot grow more than they shrink
+		transfer_effeciency = std::clamp(transfer_effeciency, 0.0f, 1.0f); // Ensure we cannot grow more than they shrink
 
 		power *= BASE_POWER * CalcEffeciency(caster, target);
 

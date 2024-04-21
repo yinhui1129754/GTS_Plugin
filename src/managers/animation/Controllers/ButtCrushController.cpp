@@ -5,6 +5,7 @@
 #include "managers/animation/ThighSandwich.hpp"
 #include "managers/animation/HugShrink.hpp"
 #include "managers/GtsSizeManager.hpp"
+#include "managers/ai/aifunctions.hpp"
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/explosion.hpp"
@@ -52,14 +53,29 @@ namespace {
 				return false;
 			}
 
-			float stamina = GetAV(giantref, ActorValue::kStamina);
 			ForceRagdoll(tinyref, false);
-			DamageAV(giantref, ActorValue::kStamina, 0.06 * GetButtCrushCost(giant));
+			float stamina = GetAV(giantref, ActorValue::kStamina);
+			DamageAV(giantref, ActorValue::kStamina, 0.04 * GetButtCrushCost(giant));
 
 			ApplyActionCooldown(giantref, CooldownSource::Action_ButtCrush); // Set butt crush on the cooldown
 
-			if (stamina <= 2.0) {
+			if (stamina <= 2.0 && !IsChangingSize(giantref)) {
 				AnimationManager::StartAnim("ButtCrush_Attack", giantref); // Try to Abort it
+			}
+
+			if (GetAV(giantref, ActorValue::kHealth) <= 1.0 || giantref->IsDead()) {
+				SetButtCrushSize(giantref, 0.0, true);
+				PushActorAway(giantref, giantref, 1.0);
+				PushActorAway(tinyref, tinyref, 1.0);
+
+				SetBeingEaten(tinyref, false);
+				EnableCollisions(tiny);
+
+				SpawnCustomParticle(giantref, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 3.0);
+				SpawnParticle(giantref, 4.60, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), giantref->GetPosition(), get_visual_scale(giantref) * 4.0, 7, nullptr);
+				Runtime::PlaySoundAtNode_FallOff("TinyCalamity_Impact", giantref, 1.0, 1.0, "NPC COM [COM ]", 0.10 * get_visual_scale(giantref));
+				Rumbling::Once("ButtCrushDeath", giantref, 128.0, 0.25, "NPC Root [Root]");
+				return false;
 			}
 
 			auto coords = node->world.translate;
@@ -232,7 +248,6 @@ namespace Gts {
 
 		if (CanDoButtCrush(pred, false) && !IsBeingHeld(pred, prey)) {
 			prey->NotifyAnimationGraph("GTS_EnterFear");
-			auto camera = PlayerCamera::GetSingleton();
 			
 			if (GetSizeDifference(pred, prey, SizeType::VisualScale, false, false) < Action_Booty) {
 				ShrinkUntil(pred, prey, 3.4, 0.25, true);

@@ -1,4 +1,5 @@
 #include "managers/animation/Controllers/ButtCrushController.hpp"
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/animation/Utils/CrawlUtils.hpp"
 #include "managers/animation/AnimationManager.hpp"
@@ -119,6 +120,7 @@ namespace {
 	void GTSButtCrush_MoveBody_MixFrameToLoop(AnimationEventData& data) {
 		auto giant = &data.giant;
 		ManageCamera(giant, true, CameraTracking::Butt);
+		ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush);
 	}
 
 	void GTSButtCrush_GrowthStart(AnimationEventData& data) {
@@ -129,7 +131,6 @@ namespace {
 		float target = std::clamp(bonus/2, 0.02f, 0.80f);
 		float gigantism = 1.0 + Ench_Aspect_GetPower(giant);
 
-		PlayMoanSound(giant, 1.0);
 		ModGrowthCount(giant, 1.0, false);
 		SetButtCrushSize(giant, bonus, false);
 		SpringGrow_Free(giant, bonus, (0.3 * gigantism) / GetAnimationSlowdown(giant), "ButtCrushGrowth");
@@ -151,28 +152,45 @@ namespace {
 					NiPoint3 distance_b = tiny->GetPosition();
 					float distance = (distance_a - distance_b).Length();
 					if (distance <= 212 * get_visual_scale(giant)) {
-						ChanceToScare(giant, tiny, 2, 20, true);
+						ChanceToScare(giant, tiny, 1, 30, true);
 					}
 				}
 			}
 		}
+
+		bool Blocked = IsActionOnCooldown(giant, CooldownSource::Emotion_Moan);
+		if (!Blocked) {
+			PlayMoanSound(giant, 1.0);
+			ApplyActionCooldown(giant, CooldownSource::Emotion_Moan);
+		}
+
 		StopRumble("BCRumble", data.giant);
 	}
 
 	void GTSButtCrush_FootstepR(AnimationEventData& data) {
 		// do footsteps
 		ButtCrush_DoImpact(&data.giant, FootEvent::Right, DamageSource::CrushedRight, RNode, "FS_R");
+		data.HHspeed = 1.0;
 	}
 
 	void GTSButtCrush_FootstepL(AnimationEventData& data) {
 		// do footsteps
 		ButtCrush_DoImpact(&data.giant, FootEvent::Left, DamageSource::CrushedLeft, LNode, "FS_L");
+		data.HHspeed = 1.0;
 	}
 
 	void GTSButtCrush_HandImpactR(AnimationEventData& data) {
 		auto giant = &data.giant;
 		float scale = get_visual_scale(giant);
 		DoCrawlingFunctions(giant, scale, 1.0, Damage_ButtCrush_HandImpact, CrawlEvent::RightHand, "RightHand", 0.5, Radius_ButtCrush_HandImpact, 1.0, DamageSource::HandCrawlRight);
+		data.disableHH = false;
+		data.HHspeed = 3.0;
+	}
+
+	void GTSButtCrush_FallDownStart(AnimationEventData& data) {
+		data.stage = 1;
+		data.disableHH = true;
+		data.HHspeed = 1.0;
 	}
 
 	void GTSButtCrush_FallDownImpact(AnimationEventData& data) {
@@ -216,6 +234,7 @@ namespace {
 			}
 		}
 		ModGrowthCount(giant, 0, true); // Reset limit
+		ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush);
 		DisableButtTrackTask(giant);
 	}
 
@@ -257,8 +276,10 @@ namespace {
 			DamageAV(player, ActorValue::kStamina, WasteStamina);
 			AnimationManager::StartAnim("ButtCrush_StartFast", player);
 		} else if (!CanDoButtCrush(player, false) && !Runtime::HasPerk(player, "ButtCrush_NoEscape")) {
-			if (!IsCrawling(player)) {
+			if (!IsCrawling(player) && !player->IsSneaking()) {
 				TiredSound(player, "Butt Crush is on a cooldown");
+			} else if (player->IsSneaking()) {
+				TiredSound(player, "Knee Crush is on a cooldown");
 			} else {
 				TiredSound(player, "Breast Crush is on a cooldown");
 			}
@@ -328,6 +349,7 @@ namespace Gts
 		AnimationManager::RegisterEvent("GTSButtCrush_Exit", "ButtCrush", GTSButtCrush_Exit);
 		AnimationManager::RegisterEvent("GTSButtCrush_GrowthStart", "ButtCrush", GTSButtCrush_GrowthStart);
 		AnimationManager::RegisterEvent("GTSBEH_ButtCrush_GrowthFinish", "ButtCrush", GTSBEH_ButtCrush_GrowthFinish);
+		AnimationManager::RegisterEvent("GTSButtCrush_FallDownStart", "ButtCrush", GTSButtCrush_FallDownStart);
 		AnimationManager::RegisterEvent("GTSButtCrush_FallDownImpact", "ButtCrush", GTSButtCrush_FallDownImpact);
 		AnimationManager::RegisterEvent("GTSButtCrush_HandImpactR", "ButtCrush", GTSButtCrush_HandImpactR);
 		AnimationManager::RegisterEvent("GTSButtCrush_FootstepR", "ButtCrush", GTSButtCrush_FootstepR);

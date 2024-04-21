@@ -49,7 +49,7 @@ namespace {
 		ActorHandle gianthandle = actor->CreateRefHandle();
 		std::string name = std::format("ManualGrowth_{}", actor->formID);
 
-		float Volume = clamp(0.20, 1.0, get_visual_scale(actor)/8);
+		float Volume = std::clamp(get_visual_scale(actor)/8.0f, 0.20f, 1.0f);
 		Runtime::PlaySoundAtNode("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
 
 		SetHalfLife(actor, 0.0);
@@ -65,7 +65,7 @@ namespace {
 			//                            ^value   x1  x2  x3  x4  i     k
 
 			float caster_scale = get_visual_scale(caster);
-			float stamina = clamp(0.05, 1.0, GetStaminaPercentage(caster));
+			float stamina = std::clamp(GetStaminaPercentage(caster), 0.05f, 1.0f);
 
 			float perk = Perk_GetCostReduction(caster);  
 			

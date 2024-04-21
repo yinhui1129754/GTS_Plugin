@@ -72,8 +72,9 @@ namespace {
                 int rng = rand()% 10;
                 if (rng <= 6) {
                     AnimationManager::StartAnim("ButtCrush_Growth", giantref);
+                    log::info("Growing");
                 }
-            } else if (!CanGrow) { // Can't grow any further
+            } else if (!CanGrow && !IsChangingSize(giantref)) { // Can't grow any further
                 AnimationManager::StartAnim("ButtCrush_Attack", giantref);
             }
 

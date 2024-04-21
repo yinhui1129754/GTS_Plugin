@@ -51,7 +51,7 @@ namespace {
 		std::string name = std::format("ManualShrink_{}", actor->formID);
 
 		float scale = get_visual_scale(actor);
-		float Volume = clamp(0.10, 1.0, scale * 0.10);
+		float Volume = std::clamp(scale * 0.10f, 0.10f, 1.0f);
 			
 		Runtime::PlaySoundAtNode("shrinkSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
 
@@ -67,7 +67,7 @@ namespace {
 			//                            ^value   x1  x2  x3  x4  i     k
 
 			float caster_scale = get_visual_scale(caster);
-			float stamina = clamp(0.05, 1.0, GetStaminaPercentage(caster));
+			float stamina = std::clamp(GetStaminaPercentage(caster), 0.05f, 1.0f);
 
 			float perk = Perk_GetCostReduction(caster);
 

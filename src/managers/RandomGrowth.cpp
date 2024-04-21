@@ -87,7 +87,7 @@ namespace Gts {
 					ActorHandle gianthandle = actor->CreateRefHandle();
 					std::string name = std::format("RandomGrowth_{}", actor->formID);
 					// Sounds
-					float Volume = clamp(0.20, 2.0, scale/4);
+					float Volume = std::clamp(scale/4, 0.20f, 2.0f);
 
 					PlayMoanSound(actor, 1.0);
 					Task_FacialEmotionTask_Moan(actor, 2.0, "RandomGrow");

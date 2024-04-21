@@ -37,13 +37,13 @@ namespace {
 		auto player = PlayerCharacter::GetSingleton();
 		if (Runtime::HasPerk(player, "ColossalGrowth")) {
 			float scale = get_visual_scale(player);
-			float stamina = clamp(0.05, 1.0, GetStaminaPercentage(player));
+			float stamina = std::clamp(GetStaminaPercentage(player), 0.05f, 1.0f);
 
 			float perk = Perk_GetCostReduction(player);
 
 			DamageAV(player, ActorValue::kStamina, 0.15 * perk * (scale * 0.5 + 0.5) * stamina * TimeScale());
 			Grow(player, 0.0010 * stamina, 0.0);
-			float Volume = clamp(0.20, 2.0, get_visual_scale(player)/16);
+			float Volume = std::clamp(get_visual_scale(player)/16.0f, 0.20f, 2.0f);
 			Rumbling::Once("ColossalGrowth", player, scale/10, 0.05);
 			static Timer timergrowth = Timer(2.00);
 			if (timergrowth.ShouldRun()) {
@@ -55,7 +55,7 @@ namespace {
 		auto player = PlayerCharacter::GetSingleton();
 		if (Runtime::HasPerk(player, "ColossalGrowth")) {
 			float scale = get_visual_scale(player);
-			float stamina = clamp(0.05, 1.0, GetStaminaPercentage(player));
+			float stamina = std::clamp(GetStaminaPercentage(player), 0.05f, 1.0f);
 
 			float perk = Perk_GetCostReduction(player);
 
@@ -66,7 +66,7 @@ namespace {
 				set_target_scale(player, 0.12);
 			}
 
-			float Volume = clamp(0.10, 1.0, get_visual_scale(player) * 0.10);
+			float Volume =std::clamp(get_visual_scale(player)*0.10f, 0.10f, 1.0f);
 			Rumbling::Once("ColossalGrowth", player, scale/14, 0.05);
 			static Timer timergrowth = Timer(2.00);
 			if (timergrowth.ShouldRun()) {
@@ -86,10 +86,10 @@ namespace {
 					float perk = Perk_GetCostReduction(player);
 
 					float npcscale = get_visual_scale(actor);
-					float magicka = clamp(0.05, 1.0, GetMagikaPercentage(player));
+					float magicka = std::clamp(GetMagikaPercentage(player), 0.05f, 1.0f);
 					DamageAV(player, ActorValue::kMagicka, 0.15 * perk * (npcscale * 0.5 + 0.5) * magicka * TimeScale());
 					Grow(actor, 0.0010 * magicka, 0.0);
-					float Volume = clamp(0.20, 2.0, get_visual_scale(actor)/16);
+					float Volume = std::clamp(0.20f, 2.0f, get_visual_scale(actor)/16.0f);
 					Rumbling::Once("TotalControlOther", actor, 0.25, 0.05);
 					static Timer timergrowth = Timer(2.00);
 					if (timergrowth.ShouldRun()) {
@@ -111,10 +111,10 @@ namespace {
 					float perk = Perk_GetCostReduction(player);
 
 					float npcscale = get_visual_scale(actor);
-					float magicka = clamp(0.05, 1.0, GetMagikaPercentage(player));
+					float magicka = std::clamp(GetMagikaPercentage(player), 0.05f, 1.0f);
 					DamageAV(player, ActorValue::kMagicka, 0.07 * perk * (npcscale * 0.5 + 0.5) * magicka * TimeScale());
 					ShrinkActor(actor, 0.0010 * magicka, 0.0);
-					float Volume = clamp(0.10, 1.0, get_visual_scale(actor) * 0.10);
+					float Volume = std::clamp(get_visual_scale(actor) * 0.10f, 0.10f, 1.0f);
 					Rumbling::Once("TotalControlOther", actor, 0.20, 0.05);
 					static Timer timergrowth = Timer(2.00);
 					if (timergrowth.ShouldRun()) {
@@ -158,7 +158,7 @@ namespace {
 			if (duration >= 1.2 && Runtime::HasPerk(player, "SizeReserve") && Cache->SizeReserve > 0) {
 				float SizeCalculation = duration - 1.2;
 				float gigantism = 1.0 + Ench_Aspect_GetPower(player);
-				float Volume = clamp(0.10, 2.0, get_visual_scale(player) * Cache->SizeReserve/10);
+				float Volume = std::clamp(get_visual_scale(player) * Cache->SizeReserve/10.0f, 0.10f, 2.0f);
 				static Timer timergrowth = Timer(3.00);
 				if (timergrowth.ShouldRunFrame()) {
 					Runtime::PlaySoundAtNode("growthSound", player, Cache->SizeReserve/50 * duration, 1.0, "NPC Pelvis [Pelv]");

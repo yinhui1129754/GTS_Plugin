@@ -29,8 +29,8 @@ namespace {
 				continue;
 			}
 
-			float falloff = 0.08 * get_visual_scale(targetRef);
-			float Volume = clamp(0.20, 1.0, get_visual_scale(targetRef)/8);
+			float falloff = 0.11 * get_visual_scale(targetRef);
+			float Volume = std::clamp(get_visual_scale(targetRef)/8.0f, 0.20f, 1.0f);
 			Runtime::PlaySoundAtNode_FallOff("growthSound", targetRef, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 
 			// Thread safe handles
@@ -53,7 +53,7 @@ namespace {
 				auto caster = casterHandle.get().get();
 
 				float target_scale = get_target_scale(target);
-				float magicka = clamp(0.05, 1.0, GetMagikaPercentage(caster));
+				float magicka = std::clamp(GetMagikaPercentage(caster), 0.05f, 1.0f);
 
 				float bonus = 1.0;
 				if (Runtime::HasMagicEffect(caster, "EffectSizeAmplifyPotion")) {
@@ -79,9 +79,9 @@ namespace {
 				continue;
 			}
 			float scale = get_visual_scale(targetRef);
-			float Volume = clamp(0.10, 1.0, scale * 0.10);
+			float Volume = std::clamp(scale * 0.10f, 0.10f, 1.0f);
 			
-			float falloff = 0.08 * scale;
+			float falloff = 0.11 * scale;
 			Runtime::PlaySoundAtNode_FallOff("shrinkSound", targetRef, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 			
 
@@ -104,7 +104,7 @@ namespace {
 				auto caster = casterHandle.get().get();
 
 				float target_scale = get_target_scale(target);
-				float magicka = clamp(0.05, 1.0, GetMagikaPercentage(caster));
+				float magicka = std::clamp(GetMagikaPercentage(caster), 0.05f, 1.0f);
 
 				float bonus = 1.0;
 				if (Runtime::HasMagicEffect(caster, "EffectSizeAmplifyPotion")) {
@@ -128,9 +128,9 @@ namespace {
 		}
 
 		float scale = get_visual_scale(casterRef);
-		float Volume = clamp(0.20, 1.0, scale * 0.20);
+		float Volume = std::clamp(scale * 0.20f, 0.20f, 1.0f);
 
-		float falloff = 0.08 * scale;
+		float falloff = 0.11 * scale;
 
 		Runtime::PlaySoundAtNode_FallOff("growthSound", casterRef, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 	
@@ -155,7 +155,7 @@ namespace {
 				bonus = target_scale * 0.25 + 0.75;
 			}
 
-			float stamina = clamp(0.05, 1.0, GetStaminaPercentage(caster));
+			float stamina = std::clamp(GetStaminaPercentage(caster), 0.05f, 1.0f);
 			DamageAV(caster, ActorValue::kStamina, 0.45 * (caster_scale * 0.5 + 0.5) * stamina * TimeScale());
 
 			Grow(caster, 0.0030 * stamina, 0.0);
@@ -174,8 +174,8 @@ namespace {
 		}
 
 		float scale = get_visual_scale(casterRef);
-		float Volume = clamp(0.10, 1.0, scale * 0.10);
-		float falloff = 0.08 * scale;
+		float Volume = std::clamp(scale * 0.10f, 0.10f, 1.0f);
+		float falloff = 0.11 * scale;
 
 		Runtime::PlaySoundAtNode_FallOff("shrinkSound", casterRef, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 	
@@ -195,7 +195,7 @@ namespace {
 			float caster_scale = get_visual_scale(caster);
 			float target_scale = get_target_scale(caster);
 
-			float stamina = clamp(0.05, 1.0, GetStaminaPercentage(caster));
+			float stamina = std::clamp(GetStaminaPercentage(caster), 0.05f, 1.0f);
 
 			float bonus = 1.0;
 			if (Runtime::HasMagicEffect(caster, "EffectSizeAmplifyPotion")) {

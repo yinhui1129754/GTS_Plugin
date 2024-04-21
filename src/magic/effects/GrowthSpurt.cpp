@@ -17,7 +17,7 @@ namespace {
 			Runtime::PlaySoundAtNode_FallOff("xlRumbleL", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 		if (timer_2) {
-			float Volume = clamp(0.10, 1.0, get_visual_scale(actor) * 0.10);
+			float Volume = std::clamp(get_visual_scale(actor) * 0.10f, 0.10f, 1.0f);
 			Runtime::PlaySoundAtNode_FallOff("shrinkSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 	}
@@ -30,7 +30,7 @@ namespace {
 			Runtime::PlaySoundAtNode_FallOff("xlRumbleL", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 		if (timer_2) {
-			float Volume = clamp(0.20, 1.0, scale * 0.10);
+			float Volume = std::clamp(scale * 0.10f, 0.20f, 1.0f);
 			Runtime::PlaySoundAtNode_FallOff("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 	}

@@ -38,6 +38,7 @@ namespace {
 
 	void AI_PerformRandomVore(Actor* pred) {
 		if (IsGtsBusy(pred)) {
+			log::info("{} Is Gts Busy", pred->GetDisplayFullName());
 			return; // No Vore attempts if in GTS_Busy
 		}
 		log::info("PerformRandomVore started");

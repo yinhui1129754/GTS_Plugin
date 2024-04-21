@@ -2817,7 +2817,7 @@ namespace Gts {
 			Actor* actor = growData->actor.get().get();
 
 			if (actor) {
-				float stamina = clamp(0.05, 1.0, GetStaminaPercentage(actor));
+				float stamina = std::clamp(GetStaminaPercentage(actor), 0.05f, 1.0f);
 				DamageAV(actor, ActorValue::kStamina, 0.55 * (get_visual_scale(actor) * 0.5 + 0.5) * stamina * TimeScale());
 				auto actorData = Persistent::GetSingleton().GetData(actor);
 				if (actorData) {
@@ -2876,7 +2876,7 @@ namespace Gts {
 			Actor* actor = growData->actor.get().get();
 
 			if (actor) {
-				float stamina = clamp(0.05, 1.0, GetStaminaPercentage(actor));
+				float stamina = std::clamp(GetStaminaPercentage(actor), 0.05f, 1.0f);
 				DamageAV(actor, ActorValue::kStamina, 0.35 * (get_visual_scale(actor) * 0.5 + 0.5) * stamina * TimeScale());
 				auto actorData = Persistent::GetSingleton().GetData(actor);
 				if (actorData) {
@@ -3044,7 +3044,7 @@ namespace Gts {
 			return;
 		}
 		const char* particle_path = "None";
-		log::info("Spawning particle");
+		//log::info("Spawning particle");
 		switch (Type) {
 			case ParticleType::Red: 
 				particle_path = "GTS/Magic/Life_Drain.nif";
