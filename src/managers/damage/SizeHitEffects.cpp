@@ -191,7 +191,7 @@ namespace {
 	
 		damage *= DamageReduction;
 
-		if (receiver->formID == 0x14 && Runtime::HasPerk(receiver, "GrowthOnHitPerk") && sizemanager.GetHitGrowth(receiver) >= 1.0) { // if has perk
+		if ((receiver->formID == 0x14 || IsTeammate(receiver)) && Runtime::HasPerkTeam(receiver, "GrowthOnHitPerk") && sizemanager.GetHitGrowth(receiver) >= 1.0) { // if has perk
 		    //log::info("Applying hitgrowth for {}", damage);
 			float GrowthValue = std::clamp((-damage/2000) * SizeHunger * Gigantism, 0.0f, 0.25f * Gigantism);
 			HitGrowth(receiver, attacker, GrowthValue, SizeDifference, BalanceMode);

@@ -57,6 +57,15 @@ namespace {
 		}
 	}
 
+	void UpdateRotationSpeed(Actor* actor) {
+		float slowdown = GetAnimationSlowdown(actor);
+		auto currentProcess = actor->GetActorRuntimeData().currentProcess;
+		if (currentProcess && currentProcess->middleHigh && currentProcess->middleHigh->rotationSpeed.z != 0) {
+			currentProcess->middleHigh->rotationSpeed.z *= (slowdown * slowdown);
+			//log::info("Rotation slowdown of {} is {}", actor->GetDisplayFullName(), currentProcess->middleHigh->rotationSpeed.z);
+			//log::info("Anim slowdown: {}", slowdown);
+		}
+	}
 
 	void UpdateFalling() {
 		Actor* player = PlayerCharacter::GetSingleton();
@@ -78,22 +87,31 @@ namespace {
 
 	void FixActorFade(Actor* actor) {
 		auto profiler = Profilers::Profile("Manager: Fade Fix");
-		if (get_visual_scale(actor) < 1.5) {
+
+		static Timer ApplyTimer = Timer(2.00);
+		if (!ApplyTimer.ShouldRunFrame()) {
 			return;
 		}
-		if ((actor->formID == 0x14 || IsTeammate(actor))) {
-			auto node = find_node(actor, "skeleton_female.nif");
-			NiAVObject* skeleton = node;
 
-			if (node) {
-				BSFadeNode* fadenode = node->AsFadeNode();
-				if (fadenode) {
-					if (fadenode->GetRuntimeData().currentFade < 1.0f) {
-						fadenode->GetRuntimeData().currentFade = 1.0f;
-					}
-				}
+		NiAVObject* node = find_node(actor, "skeleton_female.nif");
+		bool reset = false;
+		
+		if (get_visual_scale(actor) < 1.5) {
+			reset = true;
+		}
+
+		if (node) {
+			if (!reset) {
+				node->GetFlags().set(RE::NiAVObject::Flag::kIgnoreFade);
+				node->GetFlags().set(RE::NiAVObject::Flag::kAlwaysDraw);
+				node->GetFlags().set(RE::NiAVObject::Flag::kHighDetail);
+			} else {
+				node->GetFlags().reset(RE::NiAVObject::Flag::kIgnoreFade);
+				node->GetFlags().reset(RE::NiAVObject::Flag::kAlwaysDraw);
+				node->GetFlags().reset(RE::NiAVObject::Flag::kHighDetail);
 			}
 		}
+		
 	}
 
 	void update_height(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data) {
@@ -306,14 +324,14 @@ void GtsManager::Update() {
 			return; 
 		}
 
-		FixActorFade(actor);
-		
 		auto& CollisionDamage = CollisionDamage::GetSingleton();
 		auto& sizemanager = SizeManager::GetSingleton();
 
 		if (actor->formID == 0x14 || IsTeammate(actor)) {
 			
 			ScareActors(actor);
+			FixActorFade(actor);
+			UpdateRotationSpeed(actor);
 
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
 			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);

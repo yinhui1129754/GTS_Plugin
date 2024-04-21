@@ -21,6 +21,7 @@ namespace Gts {
         Emotion_Moan,
         Misc_RevertSound,
         Misc_BeingHit,
+        Misc_AiGrowth,
     };
 
     struct CooldownData {
@@ -38,6 +39,7 @@ namespace Gts {
 
         double lastRevertTime = -1.0e8;
         double lastHitTime = -1.0e8;
+        double lastGrowthTime = -1.0e8;
     };
 
     void ApplyActionCooldown(Actor* giant, CooldownSource source);

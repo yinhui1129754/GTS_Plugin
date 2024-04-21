@@ -295,10 +295,14 @@ namespace Gts {
 		if (!actor) {
 			return 0.0;
 		}
+		if (actor->formID != 0x14) {
+			actor = PlayerCharacter::GetSingleton(); // Always read Player data
+		}
 		auto Persistent = Persistent::GetSingleton().GetData(actor);
 		if (!Persistent) {
 			return 0.0;
 		}
+		
 		return Persistent->AllowHitGrowth;
 	}
 

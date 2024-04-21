@@ -57,12 +57,12 @@ namespace {
 		}
 	}
 
-	void AI_SelectActionToPlay(Actor* pred, int rng, int butt_rng, int action_rng) {
+	void AI_SelectActionToPlay(Actor* pred, Actor* prey, int rng, int butt_rng, int action_rng) {
 		if (IsGtsBusy(pred)) {
 			return;
 		}
 		if (rng <= 2 && butt_rng <= 2 && Persistent::GetSingleton().Butt_Ai) {
-			AI_FastButtCrush(pred);
+			AI_ButtCrush(pred, prey);
 			return;
 		} else if (rng <= 3) {
 			AI_StrongStomp(pred, action_rng);
@@ -109,7 +109,7 @@ namespace Gts {
         std::vector<Actor*> preys = AiManager::GetSingleton().RandomStomp(pred, amount);
         for (auto prey: preys) {
             if (AiManager::GetSingleton().CanStomp(pred, prey)) {
-                AI_SelectActionToPlay(pred, rng, butt_rng, action_rng);
+                AI_SelectActionToPlay(pred, prey, rng, butt_rng, action_rng);
             }
         }
     }

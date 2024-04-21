@@ -29,9 +29,9 @@ namespace {
 				continue;
 			}
 
+			float falloff = 0.08 * get_visual_scale(targetRef);
 			float Volume = clamp(0.20, 1.0, get_visual_scale(targetRef)/8);
-			Runtime::PlaySoundAtNode("growthSound", targetRef, Volume, 1.0, "NPC Pelvis [Pelv]");
-			KnockAreaEffect(targetRef, 6, 60 * get_visual_scale(targetRef));
+			Runtime::PlaySoundAtNode_FallOff("growthSound", targetRef, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 
 			// Thread safe handles
 			ActorHandle casterHandle = casterRef->CreateRefHandle();
@@ -81,7 +81,8 @@ namespace {
 			float scale = get_visual_scale(targetRef);
 			float Volume = clamp(0.10, 1.0, scale * 0.10);
 			
-			Runtime::PlaySound("shrinkSound", targetRef, Volume, 1.0);
+			float falloff = 0.08 * scale;
+			Runtime::PlaySoundAtNode_FallOff("shrinkSound", targetRef, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 			
 
 			// Thread safe handles
@@ -129,8 +130,9 @@ namespace {
 		float scale = get_visual_scale(casterRef);
 		float Volume = clamp(0.20, 1.0, scale * 0.20);
 
-		KnockAreaEffect(casterRef, 6, 60 * scale);
-		Runtime::PlaySoundAtNode("growthSound", casterRef, Volume, 1.0, "NPC Pelvis [Pelv]");
+		float falloff = 0.08 * scale;
+
+		Runtime::PlaySoundAtNode_FallOff("growthSound", casterRef, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 	
 		// Thread safe handles
 		ActorHandle casterHandle = casterRef->CreateRefHandle();
@@ -173,8 +175,9 @@ namespace {
 
 		float scale = get_visual_scale(casterRef);
 		float Volume = clamp(0.10, 1.0, scale * 0.10);
+		float falloff = 0.08 * scale;
 
-		Runtime::PlaySound("shrinkSound", casterRef, Volume, 1.0);
+		Runtime::PlaySoundAtNode_FallOff("shrinkSound", casterRef, Volume, 1.0, "NPC Pelvis [Pelv]", falloff);
 	
 		// Thread safe handles
 		ActorHandle casterHandle = casterRef->CreateRefHandle();

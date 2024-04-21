@@ -13,5 +13,5 @@ namespace Gts {
     void AI_LightStomp(Actor* pred, int rng);
     void AI_Tramples(Actor* pred, int rng);
     void AI_Kicks(Actor* pred, int rng);
-    void AI_FastButtCrush(Actor* pred);
+    void AI_ButtCrush(Actor* pred, Actor* prey);
 }

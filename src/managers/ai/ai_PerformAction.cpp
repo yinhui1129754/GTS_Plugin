@@ -1,11 +1,15 @@
+#include "managers/animation/Controllers/ButtCrushController.hpp"
 #include "managers/animation/Controllers/HugController.hpp"
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/animation/ThighSandwich.hpp"
 #include "managers/ThighSandwichController.hpp"
 #include "managers/animation/HugShrink.hpp"
 #include "managers/ai/ai_PerformAction.hpp"
+#include "managers/ai/aifunctions.hpp"
 #include "managers/GtsSizeManager.hpp"
+#include "managers/animation/Grab.hpp"
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/explosion.hpp"
@@ -34,6 +38,53 @@ namespace {
         "StrongKick_Low_Left",              // 4, a fail-safe one in case random does funny stuff 
     };
 
+    void Task_ButtCrushLogicTask(Actor* giant) {
+
+        std::string name = std::format("ButtCrush_AI_{}", giant->formID);
+
+        auto gianthandle = giant->CreateRefHandle();
+		auto FrameA = Time::FramesElapsed();
+		TaskManager::Run(name, [=](auto& progressData) {
+            if (!gianthandle) {
+                return false;
+            }
+            auto FrameB = Time::FramesElapsed() - FrameA;
+			if (FrameB <= 10.0) {
+				return true;
+			}
+
+            auto giantref = gianthandle.get().get();
+
+            bool CanGrow = ButtCrush_IsAbleToGrow(giantref, GetGrowthLimit(giantref));
+
+            bool BlockGrowth = IsActionOnCooldown(giantref, CooldownSource::Misc_AiGrowth);
+
+            if (IsChangingSize(giantref)) { // Growing/shrinking
+                ApplyActionCooldown(giantref, CooldownSource::Misc_AiGrowth);
+            }
+
+            if (BlockGrowth) {
+                return true;
+            }
+            
+            if (CanGrow && IsButtCrushing(giantref) && !IsChangingSize(giantref) && Runtime::HasPerkTeam(giantref, "ButtCrush_GrowingDisaster")) {
+                ApplyActionCooldown(giantref, CooldownSource::Misc_AiGrowth);
+                int rng = rand()% 10;
+                if (rng <= 6) {
+                    AnimationManager::StartAnim("ButtCrush_Growth", giantref);
+                }
+            } else if (!CanGrow) { // Can't grow any further
+                AnimationManager::StartAnim("ButtCrush_Attack", giantref);
+            }
+
+            if (!IsButtCrushing(giantref)) {
+                return false; // End the task
+            }
+            return true;
+        });
+    }
+    
+
     void AI_Heavy_Kicks(Actor* pred) {
         int rng = rand() % 4;
         int limit = 3;
@@ -53,7 +104,7 @@ namespace {
         if (rng > limit) {
             rng = limit; // fail-safe thingie
         }
-        log::info("Light Kicks rng for {} is {}", pred->GetDisplayFullName(), rng);
+        //log::info("Light Kicks rng for {} is {}", pred->GetDisplayFullName(), rng);
         AnimationManager::StartAnim(light_kicks[rng], pred);
     }
 }
@@ -106,10 +157,29 @@ namespace Gts {
         }
     }
 
-    void AI_FastButtCrush(Actor* pred) { // we do not support manual butt crush because it requires additional logic
+    void AI_ButtCrush(Actor* pred, Actor* prey) {
         if (!Persistent::GetSingleton().Butt_Ai) {
             return;
         }
-        AnimationManager::StartAnim("ButtCrush_StartFast", pred);
+        if (IsActionOnCooldown(pred, CooldownSource::Action_ButtCrush)) {
+            return;
+        }
+        if (IsGtsBusy(pred) || IsChangingSize(pred)) {
+            return;
+        }
+        auto grabbedActor = Grab::GetHeldActor(pred);
+        if (grabbedActor && !IsCrawling(pred)) { // If gts has someone in hands, allow only when we crawl
+            return;
+        }
+
+        int rng = rand() % 10;
+        if (Runtime::HasPerkTeam(pred, "ButtCrush_NoEscape") && rng > 2) {
+            auto& ButtCrush = ButtCrushController::GetSingleton();
+
+            ButtCrush.StartButtCrush(pred, prey); // attaches actors to AnimObjectB
+            Task_ButtCrushLogicTask(pred);
+        } else {
+            AnimationManager::StartAnim("ButtCrush_StartFast", pred);
+        }
     }
 }

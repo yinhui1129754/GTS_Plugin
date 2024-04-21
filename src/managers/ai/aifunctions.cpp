@@ -104,13 +104,13 @@ namespace Gts {
 	float GetGrowthLimit(Actor* actor) {
 		float limit = 0;
 		if (Runtime::HasPerkTeam(actor, "ButtCrush_GrowingDisaster")) {
-			limit += 2.0;
-		}
-		if (Runtime::HasPerkTeam(actor, "ButtCrush_UnstableGrowth")) {
 			limit += 3.0;
 		}
-		if (Runtime::HasPerkTeam(actor, "ButtCrush_LoomingDoom")) {
+		if (Runtime::HasPerkTeam(actor, "ButtCrush_UnstableGrowth")) {
 			limit += 4.0;
+		}
+		if (Runtime::HasPerkTeam(actor, "ButtCrush_LoomingDoom")) {
+			limit += 5.0;
 		}
 		return limit;
 	}

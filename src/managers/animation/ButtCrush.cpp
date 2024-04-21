@@ -127,11 +127,12 @@ namespace {
 		float scale = get_visual_scale(giant);
 		float bonus = 0.24 * (GetGrowthCount(giant) + 1.0);
 		float target = std::clamp(bonus/2, 0.02f, 0.80f);
+		float gigantism = 1.0 + Ench_Aspect_GetPower(giant);
 
 		PlayMoanSound(giant, 1.0);
 		ModGrowthCount(giant, 1.0, false);
 		SetButtCrushSize(giant, bonus, false);
-		SpringGrow_Free(giant, bonus, 0.3 / GetAnimationSlowdown(giant), "ButtCrushGrowth");
+		SpringGrow_Free(giant, bonus, (0.3 * gigantism) / GetAnimationSlowdown(giant), "ButtCrushGrowth");
 
 		float WasteStamina = 60.0 * GetButtCrushCost(giant);
 		DamageAV(giant, ActorValue::kStamina, WasteStamina);
@@ -142,6 +143,19 @@ namespace {
 	}
 
 	void GTSBEH_ButtCrush_GrowthFinish(AnimationEventData& data) {
+		auto* giant = &data.giant;
+		for (auto tiny: find_actors()) {
+			if (tiny && tiny != giant) {
+				if (IsHostile(giant, tiny) || IsHostile(tiny, giant)) {
+					NiPoint3 distance_a = giant->GetPosition();
+					NiPoint3 distance_b = tiny->GetPosition();
+					float distance = (distance_a - distance_b).Length();
+					if (distance <= 212 * get_visual_scale(giant)) {
+						ChanceToScare(giant, tiny, 2, 20, true);
+					}
+				}
+			}
+		}
 		StopRumble("BCRumble", data.giant);
 	}
 

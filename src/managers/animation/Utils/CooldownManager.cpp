@@ -26,7 +26,7 @@ namespace {
 
 	const double HEALTHGATE_COOLDOWN = 60.0f;
 	const double SCARE_COOLDOWN = 6.0f;
-	const double BUTTCRUSH_COOLDOWN = 30.0f;
+	const double BUTTCRUSH_COOLDOWN = 60.0f;
 	const double HUGS_COOLDOWN = 8.0f;
 
     const double LAUGH_COOLDOWN = 5.0f;
@@ -34,18 +34,19 @@ namespace {
 
     const double SOUND_COOLDOWN = 2.0f;
     const double HIT_COOLDOWN = 1.0f;
+    const double AI_GROWTH_COOLDOWN = 2.0f;
 
 
     float Calculate_ButtCrushTimer(Actor* actor) {
 		bool lvl70 = Runtime::HasPerk(actor, "ButtCrush_UnstableGrowth");
 		bool lvl100 = Runtime::HasPerk(actor, "ButtCrush_LoomingDoom");
-		float reduction = 0.0;
+		float reduction = 1.0;
 		if (lvl100) { // 25% reduction
-			reduction += 7.5;
-		} else if (lvl70) { // 15% reduction
-			reduction += 4.5;
+			reduction -= 0.25;
+		} if (lvl70) { // 15% reduction
+			reduction -= 0.15;
 		} 
-		return reduction;
+		return BUTTCRUSH_COOLDOWN * reduction;
 	}
 }
 
@@ -111,6 +112,9 @@ namespace Gts {
             case CooldownSource::Misc_BeingHit:
                 data.lastHitTime = Time::WorldTimeElapsed();
                 break;
+            case CooldownSource::Misc_AiGrowth:
+                data.lastGrowthTime = Time::WorldTimeElapsed();
+                break;    
             }
         }
 
@@ -132,7 +136,7 @@ namespace Gts {
                 return time <= (data.lastPushTime + PUSH_COOLDOWN);
                 break;   
             case CooldownSource::Action_ButtCrush:
-                return time <= (data.lastButtCrushTime + (BUTTCRUSH_COOLDOWN - Calculate_ButtCrushTimer(giant)));
+                return time <= (data.lastButtCrushTime + Calculate_ButtCrushTimer(giant));
                 break;
             case CooldownSource::Action_HealthGate:
                 return time <= (data.lastHealthGateTime + HEALTHGATE_COOLDOWN);
@@ -154,6 +158,9 @@ namespace Gts {
                 break;  
             case CooldownSource::Misc_BeingHit:
                 return time <= (data.lastHitTime + HIT_COOLDOWN);
+                break;    
+            case CooldownSource::Misc_AiGrowth:
+                return time <= (data.lastGrowthTime + AI_GROWTH_COOLDOWN);
                 break;    
             }
         return false; 

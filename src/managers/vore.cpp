@@ -41,7 +41,6 @@ namespace {
 
 			std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, Vore_GetMaxVoreCount(pred));
 			for (auto prey: preys) {
-				log::info("Starting Vore on {}", prey->GetDisplayFullName());
 				VoreManager.StartVore(pred, prey);
 			}
 		}
