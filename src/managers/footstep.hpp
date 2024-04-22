@@ -9,6 +9,16 @@ using namespace SKSE;
 using namespace RE;
 
 namespace Gts {
+	enum class SizeClass {
+		x2,
+		x4,
+		x8,
+		x12,
+		x24,
+		x48,
+		x96,
+		mega,
+	};
 	class FootStepManager : public EventListener {
 		public:
 			[[nodiscard]] static FootStepManager& GetSingleton() noexcept;

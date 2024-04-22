@@ -1,3 +1,4 @@
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/damage/CollisionDamage.hpp"
@@ -211,17 +212,6 @@ namespace {
 		}
 	}
 
-	bool ShouldTimerRun(Actor* actor) {
-		static Timer ExplosionTimer_Normal = Timer(12);
-		static Timer ExplosionTimer_Perk = Timer(8);
-		bool DarkArts3 = Runtime::HasPerk(actor, "DarkArts_Aug3");
-		if (DarkArts3) {
-			return ExplosionTimer_Perk.ShouldRunFrame();
-		} else {
-			return ExplosionTimer_Normal.ShouldRunFrame();
-		}
-	}
-
 	void ShrinkOutburstEvent(const InputEventData& data) {
 
 		auto player = PlayerCharacter::GetSingleton();
@@ -257,14 +247,16 @@ namespace {
 		}
 
 		static Timer NotifyTimer = Timer(2.0);
-
-		if (!ShouldTimerRun(player)) {
+		bool OnCooldown = IsActionOnCooldown(player, CooldownSource::Misc_ShrinkOutburst);
+		if (OnCooldown) {
 			if (NotifyTimer.ShouldRunFrame()) {
-				Runtime::PlaySound("VoreSound_Fail", player, 1.2, 1.0);
-				Notify("Shrink Outburst is on a cooldown");
+				float cooldown = GetRemainingCooldown(player, CooldownSource::Misc_ShrinkOutburst);
+				std::string message = std::format("Shrink Outburst is on a cooldown: {:.1f} sec", cooldown);
+				TiredSound(player, message);
 			}
 			return;
 		}
+		ApplyActionCooldown(player, CooldownSource::Misc_ShrinkOutburst);
 		DamageAV(player, ActorValue::kHealth, damagehp);
 		ShrinkOutburstExplosion(player, false);
 	}

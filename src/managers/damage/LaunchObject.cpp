@@ -53,7 +53,7 @@ namespace {
 	}
 
     void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force, float scale) {
-		force *= GetLaunchPower_Object(scale, true); // Should be * 0.40
+		force *= GetLaunchPower_Object(scale, true);
 
 		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
 			force *= 1.25;
@@ -85,9 +85,9 @@ namespace Gts {
 		// https://www.desmos.com/calculator/wh0vwgljfl
 		if (Launch) {
 			SoftPotential launch {
-				.k = 1.6,
-				.n = 0.62,
-				.s = 0.6,
+				.k = 2.0,
+				.n = 0.82,
+				.s = 0.9,
 				.a = 0.0,
 			};
 			return soft_power(sizeRatio, launch);

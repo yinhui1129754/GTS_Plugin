@@ -22,6 +22,7 @@ namespace Gts {
         Misc_RevertSound,
         Misc_BeingHit,
         Misc_AiGrowth,
+        Misc_ShrinkOutburst,
     };
 
     struct CooldownData {
@@ -40,6 +41,7 @@ namespace Gts {
         double lastRevertTime = -1.0e8;
         double lastHitTime = -1.0e8;
         double lastGrowthTime = -1.0e8;
+        double lastOutburstTime = -1.0e8;
     };
 
     void ApplyActionCooldown(Actor* giant, CooldownSource source);

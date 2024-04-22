@@ -291,7 +291,7 @@ namespace Gts {
 			return 1.0;
 		}
 
-		float limit = (6.0 * get_visual_scale(giant));
+		float limit = (9.0 * get_visual_scale(giant));
 
 		if (power > limit) {
 			return limit;

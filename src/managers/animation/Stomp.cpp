@@ -203,7 +203,7 @@ namespace {
 	}
 
 	void GTSstomplandL(AnimationEventData& data) {
-		Stomp_Land_DoEverything(&data.giant, data.animSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "StompL_L");
+		Stomp_Land_DoEverything(&data.giant, data.animSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "StompL_L");
 	}
 
 	void GTSStompendR(AnimationEventData& data) {

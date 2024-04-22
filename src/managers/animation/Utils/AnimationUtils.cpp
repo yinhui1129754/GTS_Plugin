@@ -791,7 +791,6 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(actor);
 		const float BASE_CHECK_DISTANCE = 90.0;
-		const float BASE_DISTANCE = 6.0;
 		float SCALE_RATIO = 3.0;
 
 
@@ -832,7 +831,7 @@ namespace Gts {
 			leftRotMat = NiMatrix3(right, forward, up);
 		}
 
-		float maxFootDistance = BASE_DISTANCE * radius * giantScale;
+		float maxFootDistance = radius * giantScale;
 		float hh = hhOffsetbase[2];
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
@@ -922,7 +921,6 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(actor);
 		const float BASE_CHECK_DISTANCE = 90.0;
-		const float BASE_DISTANCE = 6.0;
 		float SCALE_RATIO = 3.0;
 
 
@@ -965,7 +963,7 @@ namespace Gts {
 			rightRotMat = NiMatrix3(right, forward, up);
 		}
 
-		float maxFootDistance = BASE_DISTANCE * radius * giantScale;
+		float maxFootDistance = radius * giantScale;
 		float hh = hhOffsetbase[2];
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {

@@ -16,6 +16,7 @@
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
+#include "ActionSettings.hpp"
 #include "data/transient.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
@@ -82,7 +83,7 @@ namespace Gts {
 		float DamageMult = 0.6;
 		float giantSize = get_visual_scale(giant);
 
-		float startpower = 12.0 * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
+		float startpower = Push_Actor_Upwards * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
 
 		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
 			startpower *= 1.25;
@@ -101,8 +102,6 @@ namespace Gts {
 		float Adjustment = GetSizeFromBoundingBox(tiny);
 
 		float sizeRatio = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
-
-		float knockBack = LAUNCH_KNOCKBACK * giantSize * force;
 
 		bool IsLaunching = IsActionOnCooldown(tiny, CooldownSource::Damage_Launch);
 		if (!IsLaunching) {

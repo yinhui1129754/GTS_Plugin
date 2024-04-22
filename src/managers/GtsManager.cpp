@@ -318,7 +318,7 @@ void GtsManager::Update() {
 		auto& sizemanager = SizeManager::GetSingleton();
 
 		if (actor->formID == 0x14 || IsTeammate(actor)) {
-			
+
 			ScareActors(actor);
 			FixActorFade(actor);
 

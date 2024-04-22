@@ -275,6 +275,12 @@ namespace Gts {
 
 	void FootStepManager::OnImpact(const Impact& impact) {
 		if (impact.actor) {
+			if (!impact.actor->Is3DLoaded()) {
+				return;
+			} 
+			if (!impact.actor->GetCurrent3D()) {
+				return;
+			}
 			auto profiler = Profilers::Profile("FootStepSound: OnImpact");
 			auto player = PlayerCharacter::GetSingleton();
 			auto actor = impact.actor;
@@ -323,7 +329,7 @@ namespace Gts {
 					for (NiAVObject* foot: impact.nodes) {
 						scale *= 1.0 + (Potion_GetMightBonus(actor) * 0.33);
 						FootStepManager::PlayLegacySounds(foot, foot_kind, scale, start_l, start_xl, start_xxl);
-						return; // New soundsa re disabled for now
+						return; // New sounds are disabled for now
 						if (!LegacySounds && WearingHighHeels) { // Play high heel sounds that will be done someday
 							FootStepManager::PlayHighHeelSounds(foot, foot_kind, scale, sprint_factor, sprinting);
 							return;
@@ -352,6 +358,7 @@ namespace Gts {
 		BSSoundHandle xlSprint     = get_sound(foot, scale, get_xlSprint_sounddesc(foot_kind),    VolumeParams { .a = start_xl,            .k = 0.50, .n = 0.5, .s = 1.0}, "XL Sprint", 1.0);
 
 		BSSoundHandle Footstep_12 = get_sound(foot, scale, get_footstep_highheel(foot_kind, 12),  VolumeParams { .a = 12.0,          .k = 0.40, .n = 0.55, .s = 1.0}, "x12 Footstep", 1.8);
+		BSSoundHandle Footstep_24 = get_sound(foot, scale, get_footstep_highheel(foot_kind, 24),  VolumeParams { .a = 22.0,          .k = 0.30, .n = 0.55, .s = 1.0}, "x24 Footstep", 2.6);
 
 		BSSoundHandle xxlFootstepL = get_sound(foot, scale, get_xxlFootstep_sounddesc(foot_kind), VolumeParams { .a = start_xxl,           .k = 0.5,  .n = 0.5, .s = 1.0}, "XXL Footstep", 1.0);
 		if (lFootstep.soundID != BSSoundHandle::kInvalidID && scale <= 14.0) {
@@ -372,8 +379,11 @@ namespace Gts {
 		if (xxlFootstepL.soundID != BSSoundHandle::kInvalidID && scale <= 14.0) {
 			xxlFootstepL.Play();
 		}
-		if (Footstep_12.soundID != BSSoundHandle::kInvalidID) {
+		if (Footstep_12.soundID != BSSoundHandle::kInvalidID && scale <= 24.0) {
 			Footstep_12.Play();
+		}
+		if (Footstep_24.soundID != BSSoundHandle::kInvalidID && scale >= 22.2) {
+			Footstep_24.Play();
 		}
 	}
 

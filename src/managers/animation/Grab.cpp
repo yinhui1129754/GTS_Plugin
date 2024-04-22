@@ -124,8 +124,8 @@ namespace {
 			float RPosY = 0.0f;
 			float RPosZ = 0.0f;
 
-			auto BreastL = find_node(giant, "L Breast03");
-			auto BreastR = find_node(giant, "R Breast03");
+			auto BreastL = find_node(giant, "L Breast01");
+			auto BreastR = find_node(giant, "R Breast01");
 			if (!BreastL) {
 				return false;
 			}

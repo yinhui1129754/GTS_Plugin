@@ -1,4 +1,5 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
+#include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/ShrinkToNothingManager.hpp"
 #include "managers/damage/SizeHitEffects.hpp"
@@ -116,11 +117,11 @@ namespace {
 		float shrinkmult = 1.0;
 
 		static Timer soundtimer = Timer(1.5);
-		static Timer laughtimer = Timer(4.0);
 
 		float Adjustment = 1.0 * GetSizeFromBoundingBox(attacker);
 
 		bool BlockParticle = IsActionOnCooldown(attacker, CooldownSource::Misc_BeingHit);
+		bool LaughBlocked = IsActionOnCooldown(receiver, CooldownSource::Emotion_Laugh);
 
 		DoHitShake(receiver, GrowthValue * 10);
 		update_target_scale(receiver, GrowthValue, SizeEffectType::kNeutral);
@@ -129,13 +130,15 @@ namespace {
 			Runtime::PlaySoundAtNode("growthSound", receiver, GrowthValue * 2, 1.0, "NPC Pelvis [Pelv]");
 		}
 		if (ShrinkChance >= 2) {
-			if (SizeDifference >= 4.0 && LaughChance >= 11 && laughtimer.ShouldRunFrame()) {
+			if (SizeDifference >= 4.0 && LaughChance >= 11 && !LaughBlocked) {
+				Task_FacialEmotionTask_Smile(receiver, 1.4, "HitGrowthSmile");
+				ApplyActionCooldown(receiver, CooldownSource::Emotion_Laugh);
 				PlayLaughSound(receiver, 1.0, 1);
 				particlescale = 2.2;
 				shrinkmult = 6.0;
 			}
-			update_target_scale(attacker, -GrowthValue/(2.0 * Adjustment*BalanceMode) * shrinkmult, SizeEffectType::kShrink); // Shrink Attacker
-			update_target_scale(receiver, GrowthValue/(2.0 * Adjustment*BalanceMode), SizeEffectType::kGrow); // Grow receiver
+			update_target_scale(attacker, -GrowthValue/(3.0 * Adjustment*BalanceMode) * shrinkmult, SizeEffectType::kShrink); // Shrink Attacker
+			update_target_scale(receiver, GrowthValue/(3.0 * Adjustment*BalanceMode), SizeEffectType::kGrow); // Grow receiver
 
 			if (!BlockParticle) {
 				SpawnCustomParticle(attacker, ParticleType::Red, NiPoint3(), "NPC Root [Root]", particlescale);

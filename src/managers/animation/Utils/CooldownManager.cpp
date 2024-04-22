@@ -1,7 +1,7 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
-#include "managers/Rumble.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
+#include "managers/Rumble.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
 #include "data/time.hpp"
@@ -35,6 +35,7 @@ namespace {
     const double SOUND_COOLDOWN = 2.0f;
     const double HIT_COOLDOWN = 1.0f;
     const double AI_GROWTH_COOLDOWN = 2.0f;
+    const double SHRINK_OUTBURST_COOLDOWN = 12.0f;
 
 
     float Calculate_ButtCrushTimer(Actor* actor) {
@@ -48,6 +49,15 @@ namespace {
 		} 
 		return BUTTCRUSH_COOLDOWN * reduction;
 	}
+
+    float Calculate_ShrinkOutbirstTimer(Actor* actor) {
+        bool DarkArts3 = Runtime::HasPerk(actor, "DarkArts_Aug3");
+        float reduction = 1.0;
+        if (DarkArts3) {
+            reduction = 0.7;
+        }
+        return SHRINK_OUTBURST_COOLDOWN * reduction;
+    }
 }
 
 namespace Gts {
@@ -115,6 +125,9 @@ namespace Gts {
             case CooldownSource::Misc_AiGrowth:
                 data.lastGrowthTime = Time::WorldTimeElapsed();
                 break;    
+            case CooldownSource::Misc_ShrinkOutburst:
+                data.lastOutburstTime = Time::WorldTimeElapsed();
+            break; 
         }
     }
 
@@ -162,6 +175,9 @@ namespace Gts {
             case CooldownSource::Misc_AiGrowth:
                 return time - (data.lastGrowthTime + AI_GROWTH_COOLDOWN);
                 break;    
+            case CooldownSource::Misc_ShrinkOutburst:
+                return (data.lastOutburstTime + Calculate_ShrinkOutbirstTimer(giant)) - time;
+                break;        
             }
         return 0.0;
     }
@@ -209,7 +225,10 @@ namespace Gts {
                 break;    
             case CooldownSource::Misc_AiGrowth:
                 return time <= (data.lastGrowthTime + AI_GROWTH_COOLDOWN);
-                break;    
+                break;  
+            case CooldownSource::Misc_ShrinkOutburst:
+                return time <= (data.lastOutburstTime + Calculate_ShrinkOutbirstTimer(giant));
+                break;        
             }
         return false; 
     }
