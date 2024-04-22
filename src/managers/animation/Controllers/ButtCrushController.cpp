@@ -113,6 +113,22 @@ namespace Gts {
 		return "ButtCrushController";
 	}
 
+	void ButtCrushController::ButtCrush_OnCooldownMessage(Actor* giant) {
+		float cooldown = GetRemainingCooldown(giant, CooldownSource::Action_ButtCrush);
+		if (giant->formID == 0x14) {
+			if (!IsCrawling(giant) && !giant->IsSneaking()) {
+				std::string message = std::format("Butt Crush is on a cooldown: {:.1f} sec", cooldown);
+				TiredSound(giant, message);
+			} else if (giant->IsSneaking()) {
+				std::string message = std::format("Knee Crush is on a cooldown: {:.1f} sec", cooldown);
+				TiredSound(giant, message);
+			} else {
+				std::string message = std::format("Breast Crush is on a cooldown: {:.1f} sec", cooldown);
+				TiredSound(giant, message);
+			}
+		}
+	}
+
 	std::vector<Actor*> ButtCrushController::GetButtCrushTargets(Actor* pred, std::size_t numberOfPrey) {
 		// Get vore target for actor
 		auto& sizemanager = SizeManager::GetSingleton();
@@ -264,11 +280,7 @@ namespace Gts {
 			ApplyActionCooldown(pred, CooldownSource::Action_ButtCrush); // Set butt crush on the cooldown
 			AnimationManager::StartAnim("ButtCrush_Start", pred);
 		} else {
-			if (!IsCrawling(pred)) {
-				TiredSound(pred, "Butt Crush is on a cooldown");
-			} else {
-				TiredSound(pred, "Breast Crush is on a cooldown");
-			}
+			ButtCrush_OnCooldownMessage(pred);
 		}
 	}
 }

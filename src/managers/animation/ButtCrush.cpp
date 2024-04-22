@@ -211,6 +211,10 @@ namespace {
 		auto ThighR = find_node(giant, "NPC R Thigh [RThg]");
 		auto ButtR = find_node(giant, "NPC R Butt");
 		auto ButtL = find_node(giant, "NPC L Butt");
+
+		ApplyThighDamage(giant, true, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
+		ApplyThighDamage(giant, false, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
+
 		if (ButtR && ButtL) {
 			if (ThighL && ThighR) {
 				DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighL, 4, 0.70, 0.85, DamageSource::Booty);
@@ -277,13 +281,7 @@ namespace {
 			DamageAV(player, ActorValue::kStamina, WasteStamina);
 			AnimationManager::StartAnim("ButtCrush_StartFast", player);
 		} else if (!CanDoButtCrush(player, false) && !Runtime::HasPerk(player, "ButtCrush_NoEscape")) {
-			if (!IsCrawling(player) && !player->IsSneaking()) {
-				TiredSound(player, "Butt Crush is on a cooldown");
-			} else if (player->IsSneaking()) {
-				TiredSound(player, "Knee Crush is on a cooldown");
-			} else {
-				TiredSound(player, "Breast Crush is on a cooldown");
-			}
+			ButtCrushController::ButtCrush_OnCooldownMessage(player);
 		}
 	}
 
@@ -312,11 +310,7 @@ namespace {
 		if (CanDoButtCrush(player, true)) {
 			AnimationManager::StartAnim("ButtCrush_StartFast", player);
 		} else {
-			if (!IsCrawling(player)) {
-				TiredSound(player, "Butt Crush is on a cooldown");
-			} else {
-				TiredSound(player, "Breast Crush is on a cooldown");
-			}
+			ButtCrushController::ButtCrush_OnCooldownMessage(player);
 		}
 	}
 

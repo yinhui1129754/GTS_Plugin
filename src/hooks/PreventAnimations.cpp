@@ -135,7 +135,7 @@ namespace {
 				// Needed because it's problematic to disallow specific controls through controls.hpp
 			}
 
-			if (!IsGtsBusy(performer)) {
+			if (!IsGtsBusy(performer) && !IsProning(performer)) {
                 // Do not affect non-gts-busy actors!
 				return false;
 			}

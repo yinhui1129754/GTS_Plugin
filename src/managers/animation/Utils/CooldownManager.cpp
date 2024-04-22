@@ -27,7 +27,7 @@ namespace {
 	const double HEALTHGATE_COOLDOWN = 60.0f;
 	const double SCARE_COOLDOWN = 6.0f;
 	const double BUTTCRUSH_COOLDOWN = 60.0f;
-	const double HUGS_COOLDOWN = 8.0f;
+	const double HUGS_COOLDOWN = 10.0f;
 
     const double LAUGH_COOLDOWN = 5.0f;
 	const double MOAN_COOLDOWN = 5.0f;
@@ -115,8 +115,56 @@ namespace Gts {
             case CooldownSource::Misc_AiGrowth:
                 data.lastGrowthTime = Time::WorldTimeElapsed();
                 break;    
-            }
         }
+    }
+
+    float GetRemainingCooldown(Actor* giant, CooldownSource source) {
+        float time = Time::WorldTimeElapsed();
+        auto& data = CooldownManager::GetSingleton().GetCooldownData(giant);
+
+        switch (source) {
+            case CooldownSource::Damage_Launch: 
+                return time - (data.lastLaunchTime + LAUNCH_COOLDOWN);
+                break;
+            case CooldownSource::Damage_Hand:
+                return time - (data.lastHandDamageTime + HANDDAMAGE_COOLDOWN);
+                break;    
+            case CooldownSource::Damage_Thigh:
+                return time - (data.lastThighDamageTime + THIGHDAMAGE_COOLDOWN);
+                break;
+            case CooldownSource::Push_Basic:
+                return time - (data.lastPushTime + PUSH_COOLDOWN);
+                break;   
+            case CooldownSource::Action_ButtCrush:
+                return (data.lastButtCrushTime + Calculate_ButtCrushTimer(giant)) - time;
+                break;
+            case CooldownSource::Action_HealthGate:
+                return time - (data.lastHealthGateTime + HEALTHGATE_COOLDOWN);
+                break;
+            case CooldownSource::Action_ScareOther:   
+                return time -(data.lastScareTime + SCARE_COOLDOWN);
+                break; 
+            case CooldownSource::Action_Hugs:
+                return (data.lastHugTime + HUGS_COOLDOWN) - time;
+                break;   
+            case CooldownSource::Emotion_Laugh:   
+                return time - (data.lastLaughTime + LAUGH_COOLDOWN);
+                break; 
+            case CooldownSource::Emotion_Moan: 
+                return time - (data.lastMoanTime + MOAN_COOLDOWN);
+                break;  
+            case CooldownSource::Misc_RevertSound: 
+                return time - (data.lastRevertTime + SOUND_COOLDOWN);
+                break;  
+            case CooldownSource::Misc_BeingHit:
+                return time - (data.lastHitTime + HIT_COOLDOWN);
+                break;    
+            case CooldownSource::Misc_AiGrowth:
+                return time - (data.lastGrowthTime + AI_GROWTH_COOLDOWN);
+                break;    
+            }
+        return 0.0;
+    }
 
     bool IsActionOnCooldown(Actor* giant, CooldownSource source) {
         float time = Time::WorldTimeElapsed();

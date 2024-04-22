@@ -90,7 +90,7 @@ namespace {
 			return;
 		}
 		charCont->pitchAngle = pitch;
-		log::info("Pitch: {}", charCont->pitchAngle);
+		//log::info("Pitch: {}", charCont->pitchAngle);
 	}
 
 	void ApplyRollRotation(Actor* actor, float roll) {
@@ -99,7 +99,7 @@ namespace {
 			return;
 		}
 		charCont->rollAngle = roll;
-		log::info("Roll: {}", charCont->rollAngle);
+		//log::info("Roll: {}", charCont->rollAngle);
 	}
 
 	void Task_RotateActorToBreastX(Actor* giant, Actor* tiny) {
@@ -124,8 +124,8 @@ namespace {
 			float RPosY = 0.0f;
 			float RPosZ = 0.0f;
 
-			auto BreastL = find_node(giant, "L Breast02");
-			auto BreastR = find_node(giant, "R Breast02");
+			auto BreastL = find_node(giant, "L Breast03");
+			auto BreastR = find_node(giant, "R Breast03");
 			if (!BreastL) {
 				return false;
 			}
@@ -139,18 +139,18 @@ namespace {
 			LeftBreastRotation.ToEulerAnglesXYZ(LPosX, LPosY, LPosZ); // fill empty rotation data of breast with proper one
 			RightBreastRotation.ToEulerAnglesXYZ(RPosX, RPosY, RPosZ);
 
-			float BreastRotation_X = (LPosX + RPosX) / 2;
-			float BreastRotation_Y = (LPosY + RPosY) / 2;
+			float BreastRotation_X = (LPosX + RPosX) / 2.0;
+			float BreastRotation_Y = (LPosY + RPosY) / 2.0;
 
 			ApplyPitchRotation(tinyref, BreastRotation_X);
-			ApplyRollRotation(tinyref, BreastRotation_Y);
-			log::info("Angle of L breast: X: {}, Y: {}, Z: {}", LPosX, LPosY, LPosZ);
-			log::info("Angle of R breast: X: {}, Y: {}, Z: {}", RPosX, RPosY, RPosZ);
+			//ApplyRollRotation(tinyref, BreastRotation_Y);
+			//log::info("Angle of L breast: X: {}, Y: {}, Z: {}", LPosX, LPosY, LPosZ);
+			//log::info("Angle of R breast: X: {}, Y: {}, Z: {}", RPosX, RPosY, RPosZ);
 
 			// All good try another frame
 			if (!IsBetweenBreasts(tinyref)) {
 				ApplyPitchRotation(tinyref, 0.0);
-				ApplyRollRotation(tinyref, 0.0);
+				//ApplyRollRotation(tinyref, 0.0);
 				return false; // Abort it
 			}
 			return true;

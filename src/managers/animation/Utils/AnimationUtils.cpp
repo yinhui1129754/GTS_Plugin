@@ -323,6 +323,8 @@ namespace Gts {
 		bool Friendly;
 		giant->GetGraphVariableBool("GTS_HuggingTeammate", Friendly);
 
+		SetSneaking(giant, false, 0);
+
 		AdjustFacialExpression(giant, 0, 0.0, "phenome");
 		AdjustFacialExpression(giant, 0, 0.0, "modifier");
 		AdjustFacialExpression(giant, 1, 0.0, "modifier");
@@ -1224,6 +1226,7 @@ namespace Gts {
 											if (distance < maxFootDistance) {
 												nodeCollisions += 1;
 												force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
+												return false;
 											}
 											return true;
 										});
@@ -1381,7 +1384,7 @@ namespace Gts {
 		return coordinates;
 	}
 
-	NiPoint3 GetHeartPosition(Actor* giant, Actor* tiny) { // used to spawn Heart Particles during healing hugs
+	NiPoint3 GetHeartPosition(Actor* giant, Actor* tiny) { // It is used to spawn Heart Particles during healing hugs
 
 		NiPoint3 TargetA = NiPoint3();
 		NiPoint3 TargetB = NiPoint3();

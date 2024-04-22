@@ -111,6 +111,9 @@ namespace Gts {
 	void ControlAnother(Actor* target, bool reset);
 	Actor* GetPlayerOrControlled();
 
+	void RecordSneaking(Actor* actor);
+	void SetSneaking(Actor* actor, bool override_sneak, int enable);
+
 
 
 	// Gts Bools end

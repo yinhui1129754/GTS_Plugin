@@ -420,7 +420,7 @@ namespace Gts {
 
 
 		// Manual offsets
-		float offset_Y = Runtime::GetFloatOr("Cleavage_OffsetY", 1.0);
+		float offset_Y = Runtime::GetFloatOr("Cleavage_OffsetY", 1.0) + 3.0;
 		float offset_Z = Runtime::GetFloatOr("Cleavage_OffsetZ", 1.0);
 
 		// Sermite: Offset adjustment HERE

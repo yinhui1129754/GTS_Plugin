@@ -48,6 +48,8 @@ namespace Gts {
 
 	const float Damage_ButtCrush_ButtImpact = 32.0f;
     const float Damage_ButtCrush_HandImpact = 6.0f;
+    const float Damage_ButtCrush_LegDrop = 16.0f;
+    
 
     const float Damage_ButtCrush_FootImpact = 6.0f;
 
@@ -164,7 +166,9 @@ namespace Gts {
 
     /////////Thigh Crush
     const float Radius_ThighCrush_Butt_DOT = 11.0f;
+    const float Radius_ThighCrush_ButtCrush_Drop = 8.8f;
     const float Radius_ThighCrush_Idle = 7.2f;
+    
     
     const float Radius_ThighCrush_Spread_In = 9.0f;
     const float Radius_ThighCrush_Spread_Out = 8.5f;

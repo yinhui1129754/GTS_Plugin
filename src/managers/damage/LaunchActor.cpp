@@ -84,6 +84,10 @@ namespace Gts {
 
 		float startpower = 12.0 * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
 
+		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
+			startpower *= 1.25;
+		}
+
 		float threshold = 6.0;
 		float SMT = 1.0;
 

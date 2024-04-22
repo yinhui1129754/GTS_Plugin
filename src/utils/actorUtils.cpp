@@ -385,23 +385,27 @@ namespace Gts {
 
 	bool IsProning(Actor* actor) {
 		bool prone = false;
-		auto transient = Transient::GetSingleton().GetData(actor);
-		actor->GetGraphVariableBool("GTS_IsProne", prone);
-		if (actor->formID == 0x14 && actor->IsSneaking() && IsFirstPerson() && transient) {
-			return transient->FPProning; // Because we have no FP behaviors, 
-			// ^ it is Needed to fix proning being applied to FP even when Prone is off
+		if (actor) {
+			auto transient = Transient::GetSingleton().GetData(actor);
+			actor->GetGraphVariableBool("GTS_IsProne", prone);
+			if (actor->formID == 0x14 && actor->IsSneaking() && IsFirstPerson() && transient) {
+				return transient->FPProning; // Because we have no FP behaviors, 
+				// ^ it is Needed to fix proning being applied to FP even when Prone is off
+			}
 		}
-		return actor!= nullptr && prone;
+		return prone;
 	}
 
 	bool IsCrawling(Actor* actor) {
 		bool crawl = false;
-		auto transient = Transient::GetSingleton().GetData(actor);
-		actor->GetGraphVariableBool("GTS_IsCrawling", crawl);
-		if (actor->formID == 0x14 && actor->IsSneaking() && IsFirstPerson() && transient) {
-			return transient->FPCrawling; // Needed to fix crawling being applied to FP even when Prone is off
+		if (actor) {
+			auto transient = Transient::GetSingleton().GetData(actor);
+			actor->GetGraphVariableBool("GTS_IsCrawling", crawl);
+			if (actor->formID == 0x14 && actor->IsSneaking() && IsFirstPerson() && transient) {
+				return transient->FPCrawling; // Needed to fix crawling being applied to FP even when Prone is off
+			}
 		}
-		return actor!= nullptr && actor->IsSneaking() && crawl;
+		return actor->IsSneaking() && crawl;
 	}
 
 	bool IsInBalanceMode() {
@@ -969,6 +973,25 @@ namespace Gts {
 				return;
 			} else {
 				transient->IsInControl = target;
+			}
+		}
+	}
+
+	void RecordSneaking(Actor* actor) {
+		auto transient = Transient::GetSingleton().GetData(actor);
+		bool sneaking = actor->IsSneaking();
+		if (transient) {
+			transient->was_sneaking = sneaking;
+		}
+	}
+
+	void SetSneaking(Actor* actor, bool override_sneak, int enable) {
+		if (override_sneak) {
+			actor->AsActorState()->actorState1.sneaking = enable;
+		} else {
+			auto transient = Transient::GetSingleton().GetData(actor);
+			if (transient) {
+				actor->AsActorState()->actorState1.sneaking = transient->was_sneaking;
 			}
 		}
 	}

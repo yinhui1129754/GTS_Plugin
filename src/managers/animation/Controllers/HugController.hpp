@@ -16,6 +16,7 @@ namespace Gts {
 
 			virtual std::string DebugName() override;
 
+			static void Hugs_OnCooldownMessage(Actor* giant);
 			std::vector<Actor*> GetHugTargetsInFront(Actor* pred, std::size_t numberOfPrey);
 			static void StartHug(Actor* pred, Actor* prey);
 			bool CanHug(Actor* pred, Actor* prey);

@@ -45,6 +45,16 @@ namespace Gts {
 		return "HugAnimationController";
 	}
 
+	void HugAnimationController::Hugs_OnCooldownMessage(Actor* giant) {
+		float cooldown = GetRemainingCooldown(giant, CooldownSource::Action_Hugs);
+		if (giant->formID == 0x14) {
+			std::string message = std::format("Hugs are on a cooldown: {:.1f} sec", cooldown);
+			TiredSound(giant, message);
+		}
+	}
+	
+
+
 	std::vector<Actor*> HugAnimationController::GetHugTargetsInFront(Actor* pred, std::size_t numberOfPrey) {
 		// Get vore target for actor
 		auto& sizemanager = SizeManager::GetSingleton();
@@ -202,7 +212,7 @@ namespace Gts {
 		static Timer HugTimer = Timer(12.0);
 
 		if (IsActionOnCooldown(pred, CooldownSource::Action_Hugs)) {
-			TiredSound(pred, "Hugs are on the cooldown");
+			HugAnimationController::Hugs_OnCooldownMessage(pred);
 			return;
 		}
 
@@ -213,7 +223,12 @@ namespace Gts {
 		
 		AnimationManager::StartAnim("Huggies_Try", pred);
 
+		RecordSneaking(pred); // store previous sneak value
+
 		if (pred->IsSneaking() && !IsCrawling(pred)) {
+
+			SetSneaking(pred, true, 0); // disable sneaking so HH footstep sounds will work properly
+
 			AnimationManager::StartAnim("Huggies_Try_Victim_S", prey); // GTSBEH_HugAbsorbStart_Sneak_V
 		} else {
 			AnimationManager::StartAnim("Huggies_Try_Victim", prey); //   GTSBEH_HugAbsorbStart_V

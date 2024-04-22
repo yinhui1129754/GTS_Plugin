@@ -55,6 +55,10 @@ namespace {
     void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force, float scale) {
 		force *= GetLaunchPower_Object(scale, true); // Should be * 0.40
 
+		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
+			force *= 1.25;
+		}
+
 		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
 			force *= 1.5;
 		}

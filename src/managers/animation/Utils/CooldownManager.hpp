@@ -43,6 +43,7 @@ namespace Gts {
     };
 
     void ApplyActionCooldown(Actor* giant, CooldownSource source);
+    float GetRemainingCooldown(Actor* giant, CooldownSource source);
     bool IsActionOnCooldown(Actor* giant, CooldownSource source);
 
     class CooldownManager : public Gts::EventListener {

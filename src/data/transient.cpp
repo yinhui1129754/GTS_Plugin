@@ -89,6 +89,7 @@ namespace Gts {
 			bool GrowthPotion = false;
 
 			bool disable_collision = false;
+			bool was_sneaking = false;
 
 			float IsNotImmune = 1.0;
 
@@ -168,6 +169,7 @@ namespace Gts {
 			result.GrowthPotion = GrowthPotion;
 
 			result.disable_collision = disable_collision;
+			result.was_sneaking = was_sneaking;
 
 			result.IsNotImmune = IsNotImmune;
 

@@ -60,6 +60,7 @@ namespace {
 			UpdateFriendlyHugs(giant, tiny, true); // set GTS_IsFollower (tiny) and GTS_HuggingTeammate (GTS) bools to false
 			Hugs_FixAnimationDesync(giant, tiny, true); // reset anim speed override so .dll won't use it
 		}
+		SetSneaking(giant, false, 0);
 		log::info("Calling Abort Hug_Friendly");
 		
 		std::string name_normal = std::format("Huggies_{}", giant->formID);
