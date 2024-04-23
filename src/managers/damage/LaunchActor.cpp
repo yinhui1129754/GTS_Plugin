@@ -57,6 +57,39 @@ namespace {
 		}
 		return threshold;
 	}
+
+	void LaunchAtThighs(Actor* giant, float radius, float power) {
+		auto ThighL = find_node(giant, "NPC L Thigh [LThg]");
+		auto ThighR = find_node(giant, "NPC R Thigh [RThg]");
+		if (ThighL && ThighR) {
+			LaunchActor::GetSingleton().LaunchAtNode(giant, radius, power, ThighL);
+			LaunchActor::GetSingleton().LaunchAtNode(giant, radius, power, ThighR);
+		}
+	}
+	void LaunchAtCleavage(Actor* giant, float radius, float power) {
+		auto BreastL = find_node(giant, "NPC L Breast");
+		auto BreastR = find_node(giant, "NPC R Breast");
+		auto BreastL03 = find_node(giant, "L Breast03");
+		auto BreastR03 = find_node(giant, "R Breast03");
+		if (BreastL03 && BreastR03) {
+			LaunchActor::GetSingleton().LaunchAtNode(giant, radius, power, BreastL03);
+			LaunchActor::GetSingleton().LaunchAtNode(giant, radius, power, BreastR03);
+		} else if (BreastL && BreastR) {
+			LaunchActor::GetSingleton().LaunchAtNode(giant, radius, power, BreastL);
+			LaunchActor::GetSingleton().LaunchAtNode(giant, radius, power, BreastR);
+		}
+	}
+
+	void LaunchWithDistance(Actor* giant, Actor* otherActor, float min_radius, float distance, float maxDistance, float power) {
+		// Manually used with Hand Attacks. Goal of this function is to prevent launching if actor is inside the hand
+		if (min_radius > 0.0 && distance < min_radius) {
+			return;
+		}
+		if (AllowStagger(giant, otherActor)) {
+			float force = 1.0 - distance / maxDistance;
+			LaunchActor::GetSingleton().ApplyLaunchTo(giant, otherActor, force, power);
+		}
+	}
 }
 
 
@@ -83,7 +116,9 @@ namespace Gts {
 		float DamageMult = 0.6;
 		float giantSize = get_visual_scale(giant);
 
-		float startpower = Push_Actor_Upwards * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
+		float highheel = GetHighHeelsBonusDamage(giant) * 2.5;
+		float startpower = Push_Actor_Upwards * highheel * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
+		
 
 		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
 			startpower *= 1.25;
@@ -106,78 +141,66 @@ namespace Gts {
 		bool IsLaunching = IsActionOnCooldown(tiny, CooldownSource::Damage_Launch);
 		if (!IsLaunching) {
 
-		if (force >= 0.10) {
-			float power = (1.0 * launch_power) / Adjustment;
-			if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
-				DamageMult *= 2.0;
-				OwnsPerk = true;
-				power *= 1.5;
-			}
+			if (force >= 0.10) {
+				float power = (1.0 * launch_power) / Adjustment;
+				if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
+					DamageMult *= 2.0;
+					OwnsPerk = true;
+					power *= 1.5;
+				}
 
-			ApplyActionCooldown(tiny, CooldownSource::Damage_Launch);
+				ApplyActionCooldown(tiny, CooldownSource::Damage_Launch);
 
-			if (Runtime::HasPerkTeam(giant, "LaunchDamage") && CanDoDamage(giant, tiny, true)) {
-				float damage = LAUNCH_DAMAGE * sizeRatio * force * DamageMult;
-				InflictSizeDamage(giant, tiny, damage);
-				if (OwnsPerk) { // Apply only when we have DisastrousTremor perk
-					update_target_scale(tiny, -(damage / 1500) * GetDamageSetting(), SizeEffectType::kShrink);
+				if (Runtime::HasPerkTeam(giant, "LaunchDamage") && CanDoDamage(giant, tiny, true)) {
+					float damage = LAUNCH_DAMAGE * sizeRatio * force * DamageMult * highheel;
+					InflictSizeDamage(giant, tiny, damage);
+					if (OwnsPerk) { // Apply only when we have DisastrousTremor perk
+						update_target_scale(tiny, -(damage / 1500) * GetDamageSetting(), SizeEffectType::kShrink);
 
-					if (get_target_scale(tiny) < 0.12/Adjustment) {
-						set_target_scale(tiny, 0.12/Adjustment);
+						if (get_target_scale(tiny) < 0.12/Adjustment) {
+							set_target_scale(tiny, 0.12/Adjustment);
+						}
 					}
 				}
-			}
 
-			PushActorAway(giant, tiny, 1.0);
-			NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
+				PushActorAway(giant, tiny, 1.0);
+				NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
 
-			std::string name = std::format("LaunchOther_{}", tiny->formID);
-			ActorHandle tinyHandle = tiny->CreateRefHandle();
-			double startTime = Time::WorldTimeElapsed();
+				std::string name = std::format("LaunchOther_{}_{}", giant->formID, tiny->formID);
+				ActorHandle tinyHandle = tiny->CreateRefHandle();
+				double startTime = Time::WorldTimeElapsed();
 
-			TaskManager::Run(name, [=](auto& update){
-				if (tinyHandle) {
-					double endTime = Time::WorldTimeElapsed();
-					auto tinyref = tinyHandle.get().get();
-					if ((endTime - startTime) > 0.05) {
-						ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, 1.0);
-						return false;
+				TaskManager::Run(name, [=](auto& update){
+					if (tinyHandle) {
+						double endTime = Time::WorldTimeElapsed();
+						auto tinyref = tinyHandle.get().get();
+						if ((endTime - startTime) > 0.05) {
+							ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, 1.0);
+							return false;
+						}
+						return true;
 					}
 					return true;
-				}
-				return true;
-			});
-		}
+				});
+			}
 		}
 	}
 
 	void LaunchActor::ApplyLaunch_At(Actor* giant, float radius, float power, FootEvent kind) {
 		if (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant)) {
-			if (kind == FootEvent::Left) {
-				LaunchActor::GetSingleton().LaunchLeft(giant, radius, power);
-			}
-			if (kind == FootEvent::Right) {
-				LaunchActor::GetSingleton().LaunchRight(giant, radius, power);
-			}
-			if (kind == FootEvent::Butt) {
-				auto ThighL = find_node(giant, "NPC L Thigh [LThg]");
-				auto ThighR = find_node(giant, "NPC R Thigh [RThg]");
-				if (ThighL && ThighR) {
-					LaunchActor::LaunchAtNode(giant, radius, power, ThighL);
-					LaunchActor::LaunchAtNode(giant, radius, power, ThighR);
-				}
-			} else if (kind == FootEvent::Breasts) {
-				auto BreastL = find_node(giant, "NPC L Breast");
-				auto BreastR = find_node(giant, "NPC R Breast");
-				auto BreastL03 = find_node(giant, "L Breast03");
-				auto BreastR03 = find_node(giant, "R Breast03");
-				if (BreastL03 && BreastR03) {
-					LaunchActor::LaunchAtNode(giant, radius, power, BreastL03);
-					LaunchActor::LaunchAtNode(giant, radius, power, BreastR03);
-				} else if (BreastL && BreastR) {
-					LaunchActor::LaunchAtNode(giant, radius, power, BreastL);
-					LaunchActor::LaunchAtNode(giant, radius, power, BreastR);
-				}
+			switch (kind) {
+				case FootEvent::Left: 
+					LaunchActor::GetSingleton().LaunchAtFoot(giant, radius, power, false);
+				break;
+				case FootEvent::Right:
+					LaunchActor::GetSingleton().LaunchAtFoot(giant, radius, power, true);
+				break;
+				case FootEvent::Butt: 
+					LaunchAtThighs(giant, radius, power);
+				break;
+				case FootEvent::Breasts:
+					LaunchAtCleavage(giant, radius, power);
+				break;
 			}
 		}
 	}
@@ -186,15 +209,15 @@ namespace Gts {
 	void LaunchActor::LaunchAtNode(Actor* giant, float radius, float power, std::string_view node) {
 		auto bone = find_node(giant, node);
 		if (bone) {
-			LaunchActor::FindLaunchActors(giant, radius, 0.0, power, bone);
+			LaunchActor::LaunchAtObjectNode(giant, radius, 0.0, power, bone);
 		}
 	}
 
 	void LaunchActor::LaunchAtNode(Actor* giant, float radius, float power, NiAVObject* node) {
-		LaunchActor::FindLaunchActors(giant, radius, 0.0, power, node);
+		LaunchActor::LaunchAtObjectNode(giant, radius, 0.0, power, node);
 	}
 
-	void LaunchActor::FindLaunchActors(Actor* giant, float radius, float min_radius, float power, NiAVObject* node) {
+	void LaunchActor::LaunchAtObjectNode(Actor* giant, float radius, float min_radius, float power, NiAVObject* node) {
 		auto profiler = Profilers::Profile("Other: Launch Actor Crawl");
 		if (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant)) {
 			if (!node) {
@@ -204,7 +227,6 @@ namespace Gts {
 				return;
 			}
 			float giantScale = get_visual_scale(giant);
-			float launchdamage = 1.6;
 
 			float SCALE_RATIO = GetLaunchThreshold(giant)/GetMovementModifier(giant);
 			if (HasSMT(giant)) {
@@ -236,20 +258,13 @@ namespace Gts {
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {
-					if (!AllowStagger(giant, otherActor)) {
-						return;
-					}
 					float tinyScale = get_visual_scale(otherActor);
 					if (giantScale / tinyScale > SCALE_RATIO) {
 						NiPoint3 actorLocation = otherActor->GetPosition();
 						for (auto point: CrawlPoints) {
 							float distance = (point - actorLocation).Length();
 							if (distance <= maxDistance) {
-								if (min_radius > 0.0 && distance < min_radius) {
-									return;
-								}
-								float force = 1.0 - distance / maxDistance;
-								ApplyLaunchTo(giant, otherActor, force, power);
+								LaunchWithDistance(giant, otherActor, min_radius, distance, maxDistance, power);
 							}
 						}
 					}
@@ -258,7 +273,7 @@ namespace Gts {
 		}
 	}
 
-	void LaunchActor::LaunchLeft(Actor* giant, float radius, float power) {
+	void LaunchActor::LaunchAtFoot(Actor* giant, float radius, float power, bool right_foot) {
 		auto profiler = Profilers::Profile("Other: Launch Actor Left");
 		if (!giant) {
 			return;
@@ -271,31 +286,38 @@ namespace Gts {
 		}
 
 		radius *= 1.0 + GetHighHeelsBonusDamage(giant) * 2.5;
+		float side = -1.6;
 
 		// Get world HH offset
 		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(giant);
 
-		auto leftFoot = find_node(giant, leftFootLookup);
-		auto leftCalf = find_node(giant, leftCalfLookup);
-		auto leftToe = find_node(giant, leftToeLookup);
-		auto BodyBone = find_node(giant, bodyLookup);
-		if (!leftFoot) {
+		std::string_view FootLookup = leftFootLookup;
+		std::string_view CalfLookup = leftCalfLookup;
+		std::string_view ToeLookup = leftToeLookup;
+
+		if (right_foot) {
+			FootLookup = rightFootLookup;
+			CalfLookup = rightCalfLookup;
+			ToeLookup = rightToeLookup;
+			side = 1.6;
+		}
+		auto Foot = find_node(giant, FootLookup);
+		auto Calf = find_node(giant, CalfLookup);
+		auto Toe = find_node(giant, ToeLookup);
+		if (!Foot) {
 			return;
 		}
-		if (!leftCalf) {
+		if (!Calf) {
 			return;
 		}
-		if (!leftToe) {
+		if (!Toe) {
 			return;
 		}
-		if (!BodyBone) {
-			return; // CTD protection attempts
-		}
-		NiMatrix3 leftRotMat;
+		NiMatrix3 footRotMat;
 		{
-			NiAVObject* foot = leftFoot;
-			NiAVObject* calf = leftCalf;
-			NiAVObject* toe = leftToe;
+			NiAVObject* foot = Foot;
+			NiAVObject* calf = Calf;
+			NiAVObject* toe = Toe;
 			NiTransform inverseFoot = foot->world.Invert();
 			NiPoint3 forward = inverseFoot*toe->world.translate;
 			forward = forward / forward.Length();
@@ -303,10 +325,10 @@ namespace Gts {
 			NiPoint3 up = inverseFoot*calf->world.translate;
 			up = up / up.Length();
 
-			NiPoint3 right = forward.UnitCross(up);
-			forward = up.UnitCross(right); // Reorthonalize
+			NiPoint3 side = forward.UnitCross(up);
+			forward = up.UnitCross(side); // Reorthonalize
 
-			leftRotMat = NiMatrix3(right, forward, up);
+			footRotMat = NiMatrix3(side, forward, up);
 		}
 
 		float maxFootDistance = BASE_CHECK_DISTANCE * radius * giantScale;
@@ -314,12 +336,12 @@ namespace Gts {
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
 			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
-			NiPoint3(-1.6, 7.7 + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward
+			NiPoint3(side, 7.7 + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward
 			NiPoint3(0.0, (hh/50), -0.25 + (-hh * 1.15)), // Offset for HH
 		};
-		std::tuple<NiAVObject*, NiMatrix3> left(leftFoot, leftRotMat);
+		std::tuple<NiAVObject*, NiMatrix3> coords(Foot, footRotMat);
 
-		for (const auto& [foot, rotMat]: {left}) {
+		for (const auto& [foot, rotMat]: {coords}) {
 			std::vector<NiPoint3> footPoints = {};
 			for (NiPoint3 point: points) {
 				footPoints.push_back(foot->world*(rotMat*point));
@@ -335,117 +357,16 @@ namespace Gts {
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {
-					if (!AllowStagger(giant, otherActor)) {
-						return;
-					}
 					float tinyScale = get_visual_scale(otherActor);
 					if (giantScale / tinyScale > SCALE_RATIO) {
 						NiPoint3 actorLocation = otherActor->GetPosition();
 						for (auto point: footPoints) {
 							float distance = (point - actorLocation).Length();
 							if (distance <= maxFootDistance) {
-								float force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
-								ApplyLaunchTo(giant, otherActor, force, power);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-
-
-	void LaunchActor::LaunchRight(Actor* giant, float radius, float power) {
-		auto profiler = Profilers::Profile("Other: Launch Actor Right");
-		if (!giant) {
-			return;
-		}
-		float giantScale = get_visual_scale(giant);
-		float SCALE_RATIO = GetLaunchThreshold(giant)/GetMovementModifier(giant);
-		if (HasSMT(giant)) {
-			SCALE_RATIO = 1.0 / GetMovementModifier(giant);
-			giantScale *= 1.5;
-		}
-		radius *= 1.0 + GetHighHeelsBonusDamage(giant) * 2.5;
-
-		// Get world HH offset
-		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(giant);
-
-		auto rightFoot = find_node(giant, rightFootLookup);
-		auto rightCalf = find_node(giant, rightCalfLookup);
-		auto rightToe = find_node(giant, rightToeLookup);
-		auto BodyBone = find_node(giant, bodyLookup);
-
-
-		if (!rightFoot) {
-			return;
-		}
-		if (!rightCalf) {
-			return;
-		}
-		if (!rightToe) {
-			return;
-		}
-		if (!BodyBone) {
-			return; // CTD protection attempts
-		}
-		NiMatrix3 rightRotMat;
-		{
-			NiAVObject* foot = rightFoot;
-			NiAVObject* calf = rightCalf;
-			NiAVObject* toe = rightToe;
-
-			NiTransform inverseFoot = foot->world.Invert();
-			NiPoint3 forward = inverseFoot*toe->world.translate;
-			forward = forward / forward.Length();
-
-			NiPoint3 up = inverseFoot*calf->world.translate;
-			up = up / up.Length();
-
-			NiPoint3 right = up.UnitCross(forward);
-			forward = right.UnitCross(up); // Reorthonalize
-
-			rightRotMat = NiMatrix3(right, forward, up);
-		}
-
-		float maxFootDistance = BASE_CHECK_DISTANCE * radius * giantScale;
-		float hh = hhOffsetbase[2];
-		// Make a list of points to check
-		std::vector<NiPoint3> points = {
-			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
-			NiPoint3(-1.6, 7.7 + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward
-			NiPoint3(0.0, (hh/50), -0.25 + (-hh * 1.15)), // Offset for HH
-		};
-		std::tuple<NiAVObject*, NiMatrix3> right(rightFoot, rightRotMat);
-
-		for (const auto& [foot, rotMat]: {right}) {
-			std::vector<NiPoint3> footPoints = {};
-			for (NiPoint3 point: points) {
-				footPoints.push_back(foot->world*(rotMat*point));
-			}
-			if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-				for (auto point: footPoints) {
-					DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 600, {0.0, 0.0, 1.0, 1.0});
-				}
-			}
-
-			NiPoint3 giantLocation = giant->GetPosition();
-			PushObjectsUpwards(giant, footPoints, maxFootDistance, power);
-
-			for (auto otherActor: find_actors()) {
-				if (otherActor != giant) {
-					if (!AllowStagger(giant, otherActor)) {
-						return;
-					}
-					float tinyScale = get_visual_scale(otherActor);
-					if (giantScale / tinyScale > SCALE_RATIO) {
-						NiPoint3 actorLocation = otherActor->GetPosition();
-						for (auto point: footPoints) {
-							float distance = (point - actorLocation).Length();
-							if (distance <= maxFootDistance) {
-								float force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
-								ApplyLaunchTo(giant, otherActor, force, power);
+								if (AllowStagger(giant, otherActor)) {
+									float force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
+									ApplyLaunchTo(giant, otherActor, force, power);
+								}
 							}
 						}
 					}

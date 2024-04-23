@@ -2,7 +2,7 @@
 #include "managers/GtsSizeManager.hpp"
 #include "managers/explosion.hpp"
 #include "managers/modevent.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/impact.hpp"

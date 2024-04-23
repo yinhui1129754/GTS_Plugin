@@ -10,7 +10,7 @@
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
 #include "managers/explosion.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/Rumble.hpp"
 #include "managers/tremor.hpp"
 #include "data/transient.hpp"

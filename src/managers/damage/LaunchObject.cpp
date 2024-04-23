@@ -34,6 +34,18 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
+	float Multiply_By_Perk(Actor* giant) {
+		float multiply = 1.0;
+		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
+			multiply *= 1.25;
+		}
+
+		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
+			multiply *= 1.5;
+		}
+		return multiply;
+	}
+
 	float Multiply_By_Mass(bhkRigidBody* body) {
 		float mass_total = 1.0;
 		if (body->referencedObject) {
@@ -43,7 +55,9 @@ namespace {
 				
 				if (mass > 0) {
 					//log::info("Basic Mass is {}", mass);
+					
 					mass_total /= mass;
+
 					//log::info("Mass of object is {}", mass_total);
 					mass_total *= 0.5; // Just to have old push force on objects
 				}
@@ -52,16 +66,8 @@ namespace {
 		return mass_total;
 	}
 
-    void ApplyPhysicsToObject(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force, float scale) {
-		force *= GetLaunchPower_Object(scale, true);
-
-		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
-			force *= 1.25;
-		}
-
-		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
-			force *= 1.5;
-		}
+    void ApplyPhysicsToObject_Towards(Actor* giant, TESObjectREFR* object, NiPoint3 push, float force, float scale) {
+		force *= GetLaunchPower_Object(scale, false); // Do not take perk into account here
 
 		NiAVObject* Node = object->Get3D1(false);
 		if (Node) {
@@ -85,9 +91,9 @@ namespace Gts {
 		// https://www.desmos.com/calculator/wh0vwgljfl
 		if (Launch) {
 			SoftPotential launch {
-				.k = 2.0,
-				.n = 0.82,
-				.s = 0.9,
+				.k = 1.6,//1.42,
+				.n = 0.62,//0.78
+				.s = 0.6,
 				.a = 0.0,
 			};
 			return soft_power(sizeRatio, launch);
@@ -111,15 +117,15 @@ namespace Gts {
 
 		float giantScale = get_visual_scale(giant);
 
+		power *= Multiply_By_Perk(giant);
+		power *= GetHighHeelsBonusDamage(giant) * 2.5;
+
 		if (HasSMT(giant)) {
 			power *= 8.0;
 		}
 
 		float start_power = Push_Object_Upwards * (1.0 + Potion_GetMightBonus(giant));
 
-		if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
-			power *= 1.5;
-		}
 		std::vector<ObjectRefHandle> Refs = GetNearbyObjects(giant);
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
@@ -136,7 +142,7 @@ namespace Gts {
 							float distance = (point - objectlocation).Length();
 							if (distance <= maxFootDistance) {
 								float force = 1.0 - distance / maxFootDistance;
-								float push = start_power * GetLaunchPower_Object(giantScale, false) * force * power;
+								float push = start_power * GetLaunchPower_Object(giantScale, true) * force * power;
 								auto Object1 = objectref->Get3D1(false);
 								if (Object1) {
 									auto collision = Object1->GetCollisionObject();
@@ -228,7 +234,7 @@ namespace Gts {
 
 				if (timepassed > 1e-4) {
 					NiPoint3 EndPos = Bone->world.translate;
-					ApplyPhysicsToObject(giantref, ref, EndPos - StartPos, start_power, giantScale);
+					ApplyPhysicsToObject_Towards(giantref, ref, EndPos - StartPos, start_power, giantScale);
 					return false; // end it
 				}
 				return true;

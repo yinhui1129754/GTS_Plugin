@@ -8,7 +8,7 @@
 #include "managers/CrushManager.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "managers/explosion.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
 #include "managers/Rumble.hpp"
@@ -28,8 +28,6 @@ using namespace Gts;
 namespace {
 	const std::string_view RNode = "NPC R Foot [Rft ]";
 	const std::string_view LNode = "NPC L Foot [Lft ]";
-	const std::string_view RSound = "lFootstepR";
-	const std::string_view LSound = "lFootstepL";
 
 	const std::vector<std::string_view> RHAND_RUMBLE_NODES = { // used for hand rumble
 		"NPC R UpperarmTwist1 [RUt1]",

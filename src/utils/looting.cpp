@@ -10,7 +10,7 @@
 #include "managers/explosion.hpp"
 #include "utils/DeathReport.hpp"
 #include "managers/highheel.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "utils/looting.hpp"
 #include "managers/Rumble.hpp"

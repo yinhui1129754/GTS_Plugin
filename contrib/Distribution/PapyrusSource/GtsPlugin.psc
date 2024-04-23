@@ -54,10 +54,12 @@ Bool function ModSizeVulnerability(Actor target, Float amt) global native
 ;==========================================
 
 Function SetLessGore(Bool enabled) global native 
-Function SetPlayerStagger(Bool enabled) global native ; Allows/disallows player to be staggered by friendly size sources
-Function SetNPCProtection(Bool enabled) global native ; Protect friendly NPC's from size-related damage/effects
-Function SetPCProtection(Bool enabled) global native  ; Protect Player from friendly size-related effects 
-Function SetToggleIcons(Bool enabled) global native   ; enabled/disable Guide icons
+Function SetPlayerStagger(Bool enabled) global native       ; Allows/disallows player to be staggered by friendly size sources
+Function SetActorAudioOverride(Bool enabled) global native; ; Allows/disallows NPC's voice edits based on size
+; ^ so they sound less loud and more mouse-like pitched at low scales
+Function SetNPCProtection(Bool enabled) global native       ; Protect friendly NPC's from size-related damage/effects
+Function SetPCProtection(Bool enabled) global native        ; Protect Player from friendly size-related effects 
+Function SetToggleIcons(Bool enabled) global native         ; enabled/disable Guide icons
 Function DisableCollisionLayerAndMotion(ObjectReference ref) global native
 Function EnableRaycastSize(Bool enabled) global native
     

@@ -4,7 +4,7 @@
 #include "managers/GtsSizeManager.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "managers/explosion.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "utils/actorUtils.hpp"
 #include "utils/findActor.hpp"

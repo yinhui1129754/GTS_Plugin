@@ -14,7 +14,7 @@ namespace {
 		float falloff = 0.18 * scale;
 		Rumbling::Once("GrowthSpurt", actor, 7.0, 0.05);
 		if (timer_1) {
-			Runtime::PlaySoundAtNode_FallOff("xlRumbleL", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
+			Runtime::PlaySoundAtNode_FallOff("xlRumble", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 		if (timer_2) {
 			float Volume = std::clamp(get_visual_scale(actor) * 0.10f, 0.10f, 1.0f);
@@ -27,7 +27,7 @@ namespace {
 		float falloff = 0.18 * scale;
 		Rumbling::Once("GrowthSpurt", actor, scale * 2, 0.05);
 		if (timer_1) {
-			Runtime::PlaySoundAtNode_FallOff("xlRumbleL", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
+			Runtime::PlaySoundAtNode_FallOff("xlRumble", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
 		if (timer_2) {
 			float Volume = std::clamp(scale * 0.10f, 0.20f, 1.0f);

@@ -16,7 +16,7 @@
 #include "utils/papyrusUtils.hpp"
 #include "managers/highheel.hpp"
 #include "managers/explosion.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "utils/DeathReport.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
@@ -431,7 +431,7 @@ namespace Gts {
 			smt_power *= 2.0;
 			smt_radius *= 1.25;
 		}
-		LaunchActor::GetSingleton().FindLaunchActors(giant, radius * smt_radius, 0.0, power * smt_power, node);
+		LaunchActor::GetSingleton().LaunchAtObjectNode(giant, radius * smt_radius, 0.0, power * smt_power, node);
 	}
 
 	void GrabStaminaDrain(Actor* giant, Actor* tiny, float sizedifference) {
@@ -567,12 +567,9 @@ namespace Gts {
 
 		std::string name = std::format("FootTrample_{}", tiny->formID);
 		auto FrameA = Time::FramesElapsed();
-		auto coordinates = NiPoint3();
-		if (Right) {
-			coordinates = AttachToUnderFoot_Right(giant, tiny); // get XYZ
-		} else {
-			coordinates = AttachToUnderFoot_Left(giant, tiny); // get XYZ
-		}
+
+		auto coordinates = AttachToUnderFoot(giant, tiny, Right); // get XYZ;
+		
 		SetBeingGrinded(tiny, true);
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
@@ -592,11 +589,7 @@ namespace Gts {
 
 			float zpos = coordinates.z;
 
-			if (Right) {
-				zpos = AttachToUnderFoot_Right(giant, tiny).z; // fix Z if it is wrong
-			} else {
-				zpos = AttachToUnderFoot_Left(giant, tiny).z; // fix Z if it is wrong
-			}
+			zpos = AttachToUnderFoot(giant, tiny, Right).z; // fix Z if it is wrong
 
 			NiPoint3 attach = NiPoint3(coordinates.x, coordinates.y, zpos);
 
@@ -638,13 +631,8 @@ namespace Gts {
 				return true;
 			}
 
-			auto coordinates = NiPoint3(0,0,0);
-			if (Right) {
-				coordinates = AttachToUnderFoot_Right(giant, tiny);
-			} else {
-				coordinates = AttachToUnderFoot_Left(giant, tiny);
-			}
-
+			auto coordinates = AttachToUnderFoot(giant, tiny, Right);
+				
 			if (coordinates == NiPoint3(0,0,0)) {
 				return true;
 			}
@@ -895,14 +883,16 @@ namespace Gts {
 									auto giant = giantHandle.get().get();
 									auto tiny = tinyHandle.get().get();
 
-									if (aveForce >= 0.00 && !tiny->IsDead()) {
-										SetBeingGrinded(tiny, true);
-										if (!strong) {
-											DoFootGrind(giant, tiny, false);
-											AnimationManager::StartAnim("GrindLeft", giant);
-										} else {
-											AnimationManager::StartAnim("TrampleStartL", giant);
-											DoFootTrample(giant, tiny, false);
+									if (CanDoDamage(giant, tiny, false)) {
+										if (aveForce >= 0.00 && !tiny->IsDead()) {
+											SetBeingGrinded(tiny, true);
+											if (!strong) {
+												DoFootGrind(giant, tiny, false);
+												AnimationManager::StartAnim("GrindLeft", giant);
+											} else {
+												AnimationManager::StartAnim("TrampleStartL", giant);
+												DoFootTrample(giant, tiny, false);
+											}
 										}
 									}
 								});
@@ -1027,14 +1017,16 @@ namespace Gts {
 									auto giant = giantHandle.get().get();
 									auto tiny = tinyHandle.get().get();
 
-									if (aveForce >= 0.00 && !tiny->IsDead()) {
-										SetBeingGrinded(tiny, true);
-										if (!strong) {
-											DoFootGrind(giant, tiny, true);
-											AnimationManager::StartAnim("GrindRight", giant);
-										} else {
-											AnimationManager::StartAnim("TrampleStartR", giant);
-											DoFootTrample(giant, tiny, true);
+									if (CanDoDamage(giant, tiny, false)) {
+										if (aveForce >= 0.00 && !tiny->IsDead()) {
+											SetBeingGrinded(tiny, true);
+											if (!strong) {
+												DoFootGrind(giant, tiny, true);
+												AnimationManager::StartAnim("GrindRight", giant);
+											} else {
+												AnimationManager::StartAnim("TrampleStartR", giant);
+												DoFootTrample(giant, tiny, true);
+											}
 										}
 									}
 								});

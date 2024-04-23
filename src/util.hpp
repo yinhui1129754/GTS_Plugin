@@ -7,7 +7,6 @@
 #include "utils/findActor.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "utils/smooth.hpp"
-#include "utils/sound.hpp"
 #include "utils/text.hpp"
 #include "utils/units.hpp"
 #include "utils/dinput.hpp"

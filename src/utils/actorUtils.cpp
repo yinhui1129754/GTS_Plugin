@@ -14,7 +14,7 @@
 #include "managers/explosion.hpp"
 #include "utils/DeathReport.hpp"
 #include "managers/highheel.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "colliders/actor.hpp"
 #include "managers/Rumble.hpp"
@@ -648,8 +648,15 @@ namespace Gts {
 	bool AllowStagger(Actor* giant, Actor* tiny) {
 		if (Persistent::GetSingleton().allow_stagger == true) {
 			return true; // Allow it
-		} else if (Persistent::GetSingleton().allow_stagger == false && (giant->formID == 0x14 || IsTeammate(giant)) && (tiny->formID == 0x14 || IsTeammate(tiny))) {
-			return false; // Protect
+		} else if (Persistent::GetSingleton().allow_stagger == false) {
+			bool ProtectGTS = giant->formID == 0x14 || IsTeammate(giant);
+			bool ProtectTiny = tiny->formID == 0x14 || IsTeammate(tiny);
+			log::info("GTS {}: {}", giant->GetDisplayFullName(), ProtectGTS);
+			log::info("Tiny {}: {}", tiny->GetDisplayFullName(), ProtectTiny);
+			if (ProtectGTS && ProtectTiny) {
+				return false; // Protect
+			}
+			return true;
 		}
 		return true;
 	}
@@ -994,6 +1001,12 @@ namespace Gts {
 				actor->AsActorState()->actorState1.sneaking = transient->was_sneaking;
 			}
 		}
+	}
+
+	void SetWalking(Actor* actor, int enable) {
+		actor->AsActorState()->actorState1.walking = enable;
+		actor->AsActorState()->actorState1.running = 0;
+		actor->AsActorState()->actorState1.sprinting = 0;
 	}
 
 	Actor* GetPlayerOrControlled() {

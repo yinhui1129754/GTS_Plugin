@@ -7,7 +7,7 @@
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/explosion.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
@@ -38,8 +38,8 @@ namespace {
 		}
 		float scale = get_visual_scale(giant);
 		Runtime::PlaySoundAtNode("HeavyStompSound", giant, 0.14 * bonus * scale * animspeed, 1.0, feet);
-		Runtime::PlaySoundAtNode("xlFootstepR", giant, 0.14 * bonus * scale * animspeed, 1.0, feet);
-		Runtime::PlaySoundAtNode("xlRumbleR", giant, 0.14 * bonus * scale * animspeed, 1.0, feet);
+		Runtime::PlaySoundAtNode("xlFootstep", giant, 0.14 * bonus * scale * animspeed, 1.0, feet);
+		Runtime::PlaySoundAtNode("xlRumble", giant, 0.14 * bonus * scale * animspeed, 1.0, feet);
 	}
 
 	void FootTrample_Stage1(Actor* giant, bool Right, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {

@@ -8,7 +8,7 @@
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/explosion.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"

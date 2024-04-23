@@ -135,8 +135,8 @@ namespace Gts {
 
     // Below is For launching objects
     const float Push_Object_Upwards = 0.32f;            // Used for objects only
-    const float Push_Object_Forward = 0.06f;            // Used for objects only
-    const float Push_Actor_Upwards = 13.0f;             // Used for Actors only
+    const float Push_Object_Forward = 0.0086f;          // Used for objects only
+    const float Push_Actor_Upwards = 14.0f;             // Used for Actors only
 
     
 

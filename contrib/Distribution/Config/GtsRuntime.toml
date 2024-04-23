@@ -1,15 +1,13 @@
 [sounds]
-lFootstepL = "GTS.esp|1E93AB"
-lFootstepR = "GTS.esp|1E93AD"
+
+lFootstep = "GTS.esp|1E93AB"
 lJumpLand = "GTS.esp|183F43"
-xlFootstepL = "GTS.esp|271EF4"
-xlFootstepR = "GTS.esp|271EF4"
-xlRumbleL = "GTS.esp|36A06D"
-xlRumbleR = "GTS.esp|36A06D"
-xlSprintL = "GTS.esp|319060"
-xlSprintR = "GTS.esp|319060"
-xxlFootstepL = "GTS.esp|16FB25"
-xxlFootstepR = "GTS.esp|16FB25"
+
+xlFootstep = "GTS.esp|271EF4"
+xlRumble = "GTS.esp|36A06D"
+xlSprint = "GTS.esp|319060"
+xxlFootstep = "GTS.esp|16FB25"
+
 growthSound = "GTS.esp|271EF6"
 shrinkSound = "GTS.esp|364F6A"
 GreybeardRumble = "GTS.esp|1CAD96"

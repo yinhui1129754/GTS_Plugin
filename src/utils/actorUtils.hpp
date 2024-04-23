@@ -114,6 +114,8 @@ namespace Gts {
 	void RecordSneaking(Actor* actor);
 	void SetSneaking(Actor* actor, bool override_sneak, int enable);
 
+	void SetWalking(Actor* actor, int enable);
+
 	// Gts Bools end
 
 	// GTS Actor Functions

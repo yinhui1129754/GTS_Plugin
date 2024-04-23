@@ -45,6 +45,8 @@ namespace Hooks
 					scale = GetPushMult(giant);
 				}
 				hkVector4 Push = hkVector4(a_from) * scale;
+				// Size difference is recorded only outside of TGM!
+				// In TGM effect isn't applied because of that
 				
 				return HavokPushHook(controller, Push, time); 
             }

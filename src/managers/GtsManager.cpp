@@ -1,9 +1,10 @@
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/animation/Utils/CrawlUtils.hpp"
 #include "managers/gamemode/GameModeManager.hpp"
-#include "magic/effects/TinyCalamity.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/TinyCalamity.hpp"
+#include "managers/audio/PitchShifter.hpp"
+#include "magic/effects/TinyCalamity.hpp"
 #include "managers/cameras/camutil.hpp"
 #include "managers/ai/headtracking.hpp"
 #include "managers/RipClothManager.hpp"
@@ -250,21 +251,6 @@ namespace {
 		persi_actor_data->anim_speed = speedmultcalc*perkspeed;//MS_mult;
 	}
 
-	/*void update_effective_multi(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data) {
-		auto profiler = Profilers::Profile("Manager: update_effective_multi");
-		if (!actor) {
-			return;
-		}
-		if (!persi_actor_data) {
-			return;
-		}
-		if (HasSMT(actor)) {
-			persi_actor_data->effective_multi = 2.0;
-		} else {
-			persi_actor_data->effective_multi = 1.0;
-		}
-	}*/
-
 	void update_actor(Actor* actor) {
 		auto profiler = Profilers::Profile("Manager: update_actor");
 		auto temp_data = Transient::GetSingleton().GetActorData(actor);
@@ -308,41 +294,40 @@ void GtsManager::Update() {
 
 	UpdateFalling();
 	ManageActorControl(); // Sadly have to call it non stop since im unsure how to easily fix it otherwise :(
+	ShiftAudioFrequency();
 
 	for (auto actor: find_actors()) {
-		if (!actor) {
-			return; 
-		}
+		if (actor) {
+			auto& CollisionDamage = CollisionDamage::GetSingleton();
+			auto& sizemanager = SizeManager::GetSingleton();
 
-		auto& CollisionDamage = CollisionDamage::GetSingleton();
-		auto& sizemanager = SizeManager::GetSingleton();
+			if (actor->formID == 0x14 || IsTeammate(actor)) {
 
-		if (actor->formID == 0x14 || IsTeammate(actor)) {
+				ScareActors(actor);
+				FixActorFade(actor);
 
-			ScareActors(actor);
-			FixActorFade(actor);
-
-			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
-			CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);
-			
-			ClothManager::GetSingleton().CheckRip();
-			TinyCalamity_SeekActors(actor);
-			SpawnActionIcon(actor);
-
-			if (IsCrawling(actor)) {
-				ApplyAllCrawlingDamage(actor, 1000, 0.25);
-			}
-
-			GameModeManager::GetSingleton().GameMode(actor); // Handle Game Modes
-		}
-		if (Runtime::GetBool("PreciseDamageOthers")) {
-			if (actor->formID != 0x14 && !IsTeammate(actor)) {
 				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
 				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);
+				
+				ClothManager::GetSingleton().CheckRip();
+				TinyCalamity_SeekActors(actor);
+				SpawnActionIcon(actor);
+
+				if (IsCrawling(actor)) {
+					ApplyAllCrawlingDamage(actor, 1000, 0.25);
+				}
+
+				GameModeManager::GetSingleton().GameMode(actor); // Handle Game Modes
 			}
+			if (Runtime::GetBool("PreciseDamageOthers")) {
+				if (actor->formID != 0x14 && !IsTeammate(actor)) {
+					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
+					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 4000, 0.05, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);
+				}
+			}
+			update_actor(actor);
+			apply_actor(actor);
 		}
-		update_actor(actor);
-		apply_actor(actor);
 	}
 }
 

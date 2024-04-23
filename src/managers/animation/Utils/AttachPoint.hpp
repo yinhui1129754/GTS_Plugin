@@ -20,6 +20,23 @@ namespace {
 	const std::string_view rightToeLookup = "AnimObjectB";
 	const std::string_view bodyLookup = "NPC Spine1 [Spn1]";
 
+	NiPoint3 CastRayDownwards_from(Actor* giant, std::string_view node) {
+		bool success = false;
+		auto object = find_node(giant, node);
+		if (object) {
+			NiPoint3 ray_start = object->world.translate;
+			ray_start.z += 40.0; // overrize .z with tiny .z + 40, so ray starts from above a bit
+			NiPoint3 ray_direction(0.0, 0.0, -1.0);
+
+			float ray_length = 180 * get_visual_scale(giant);
+
+			NiPoint3 endpos = CastRayStatics(giant, ray_start, ray_direction, ray_length, success);
+			if (success) {
+				return endpos;
+			}
+		}
+		return NiPoint3(0.0, 0.0, 0.0);
+	}
 
 	NiPoint3 CastRayDownwards(Actor* tiny) {
 		bool success = false;
@@ -125,77 +142,7 @@ namespace Gts {
 	}
 
 	template<typename T, typename U>
-	NiPoint3 AttachToUnderFoot_Left(T& anyGiant, U& anyTiny) {
-		Actor* giant = GetActorPtr(anyGiant);
-		if (!giant) {
-			return NiPoint3(0,0,0);
-		}
-		Actor* tiny = GetActorPtr(anyTiny);
-		if (!tiny) {
-			return NiPoint3(0,0,0);
-		}
-
-
-		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(giant);
-
-		auto leftFoot = find_node(giant, leftFootLookup);
-		auto leftCalf = find_node(giant, leftCalfLookup);
-		auto leftToe = find_node(giant, leftToeLookup);
-		if (!leftFoot) {
-			return NiPoint3(0,0,0);
-		}
-		if (!leftCalf) {
-			return NiPoint3(0,0,0);
-		}
-		if (!leftToe) {
-			return NiPoint3(0,0,0);
-		}
-		NiMatrix3 leftRotMat;
-		{
-			NiAVObject* foot = leftFoot;
-			NiAVObject* calf = leftCalf;
-			NiAVObject* toe = leftToe;
-			NiTransform inverseFoot = foot->world.Invert();
-			NiPoint3 forward = inverseFoot*toe->world.translate;
-			forward = forward / forward.Length();
-
-			NiPoint3 up = inverseFoot*calf->world.translate;
-			up = up / up.Length();
-
-			NiPoint3 right = forward.UnitCross(up);
-			forward = up.UnitCross(right); // Reorthonalize
-
-			leftRotMat = NiMatrix3(right, forward, up);
-		}
-
-		float hh = hhOffsetbase[2];
-		// Make a list of points to check
-		float Forward = 8 - (hh * 0.6); //Runtime::GetFloat("cameraAlternateX"); // 8 is ok, 5 with HH
-		float UpDown = 9; //Runtime::GetFloat("cameraAlternateY"); // 8 too
-
-
-		std::vector<NiPoint3> points = {
-			NiPoint3(0, Forward - hh/45, -(UpDown + hh * 0.65)),
-		};
-		std::tuple<NiAVObject*, NiMatrix3> left(leftFoot, leftRotMat);
-
-		for (const auto& [foot, rotMat]: {left}) {
-			std::vector<NiPoint3> footPoints = {};
-			for (NiPoint3 point: points) {
-				footPoints.push_back(foot->world*(rotMat*point));
-				NiPoint3 coords = leftFoot->world.translate;//foot->world*(rotMat*point);
-				coords.z = CastRayDownwards(tiny).z; // Cast ray down to get precise ground position
-
-				return coords;
-				//return AttachTo(anyGiant, anyTiny, coords);
-			}
-		}
-		return NiPoint3(0,0,0);
-		//return false;
-	}
-
-	template<typename T, typename U>
-	NiPoint3 AttachToUnderFoot_Right(T& anyGiant, U& anyTiny) {
+	NiPoint3 AttachToUnderFoot(T& anyGiant, U& anyTiny, bool right_leg) {
 		Actor* giant = GetActorPtr(anyGiant);
 		if (!giant) {
 			return NiPoint3(0,0,0);
@@ -207,25 +154,36 @@ namespace Gts {
 
 		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(giant);
 
-		auto rightFoot = find_node(giant, rightFootLookup);
-		auto rightCalf = find_node(giant, rightCalfLookup);
-		auto rightToe = find_node(giant, rightToeLookup);
+		std::string_view FootLookup = leftFootLookup;
+		std::string_view CalfLookup = leftCalfLookup;
+		std::string_view ToeLookup = leftToeLookup;
+
+		if (right_leg) {
+			FootLookup = rightFootLookup;
+			CalfLookup = rightCalfLookup;
+			ToeLookup = rightToeLookup;
+		} 
+
+		auto Foot = find_node(giant, FootLookup);
+		auto Calf = find_node(giant, CalfLookup);
+		auto Toe = find_node(giant, ToeLookup);
 
 
-		if (!rightFoot) {
+
+		if (!Foot) {
 			return NiPoint3(0,0,0);
 		}
-		if (!rightCalf) {
+		if (!Calf) {
 			return NiPoint3(0,0,0);
 		}
-		if (!rightToe) {
+		if (!Toe) {
 			return NiPoint3(0,0,0);
 		}
-		NiMatrix3 rightRotMat;
+		NiMatrix3 footRotMat;
 		{
-			NiAVObject* foot = rightFoot;
-			NiAVObject* calf = rightCalf;
-			NiAVObject* toe = rightToe;
+			NiAVObject* foot = Foot;
+			NiAVObject* calf = Calf;
+			NiAVObject* toe = Toe;
 
 			NiTransform inverseFoot = foot->world.Invert();
 			NiPoint3 forward = inverseFoot*toe->world.translate;
@@ -234,10 +192,10 @@ namespace Gts {
 			NiPoint3 up = inverseFoot*calf->world.translate;
 			up = up / up.Length();
 
-			NiPoint3 right = up.UnitCross(forward);
-			forward = right.UnitCross(up); // Reorthonalize
+			NiPoint3 side = up.UnitCross(forward);
+			forward = side.UnitCross(up); // Reorthonalize
 
-			rightRotMat = NiMatrix3(right, forward, up);
+			footRotMat = NiMatrix3(side, forward, up);
 		}
 
 		float hh = hhOffsetbase[2];
@@ -249,13 +207,13 @@ namespace Gts {
 		std::vector<NiPoint3> points = {
 			NiPoint3(0, Forward, -(UpDown + hh * 0.65)),
 		};
-		std::tuple<NiAVObject*, NiMatrix3> right(rightFoot, rightRotMat);
+		std::tuple<NiAVObject*, NiMatrix3> Coords(Foot, footRotMat);
 
-		for (const auto& [foot, rotMat]: {right}) {
+		for (const auto& [foot, rotMat]: {Coords}) {
 			std::vector<NiPoint3> footPoints = {};
 			for (NiPoint3 point: points) {
 				footPoints.push_back(foot->world*(rotMat*point));
-				NiPoint3 coords = rightFoot->world.translate;//foot->world*(rotMat*point);
+				NiPoint3 coords = Foot->world.translate;//foot->world*(rotMat*point);
 				coords.z = CastRayDownwards(tiny).z; // Cast ray down to get precise ground position
 				return coords;
 				//return AttachTo(anyGiant, anyTiny, coords);

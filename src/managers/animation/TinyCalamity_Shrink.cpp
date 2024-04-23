@@ -8,7 +8,7 @@
 #include "managers/ai/aifunctions.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/InputManager.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
 #include "ActionSettings.hpp"

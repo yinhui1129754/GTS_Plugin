@@ -9,7 +9,7 @@
 #include "managers/CrushManager.hpp"
 #include "magic/effects/common.hpp"
 #include "managers/explosion.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
 #include "data/persistent.hpp"

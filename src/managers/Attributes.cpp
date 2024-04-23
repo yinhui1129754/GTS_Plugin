@@ -95,14 +95,11 @@ namespace {
 		if (!actor) {
 			return;
 		}
-		static Timer timer = Timer(0.10);
+		
+		ManagePerkBonuses(actor);
 
-		if (timer.ShouldRunFrame()) { // Run once per 0.10 sec
-			ManagePerkBonuses(actor);
-
-			if (actor->formID == 0x14) {
-				TinyCalamity_BonusSpeed(actor); // Manages SMT bonuses
-			}
+		if (actor->formID == 0x14) {
+			TinyCalamity_BonusSpeed(actor); // Manages SMT bonuses
 		}
 	}
 }
@@ -119,8 +116,12 @@ namespace Gts {
 	}
 
 	void AttributeManager::Update() {
-		for (auto actor: find_actors()) {
-			UpdateActors(actor);
+		static Timer timer = Timer(0.25);
+
+		if (timer.ShouldRunFrame()) { // Run once per 0.25 sec
+			for (auto actor: find_actors()) {
+				UpdateActors(actor);
+			}
 		}
 	}
 

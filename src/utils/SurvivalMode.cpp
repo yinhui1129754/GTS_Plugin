@@ -5,7 +5,7 @@
 #include "utils/papyrusUtils.hpp"
 #include "managers/explosion.hpp"
 #include "managers/highheel.hpp"
-#include "managers/footstep.hpp"
+#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "utils/SurvivalMode.hpp"
 #include "utils/findActor.hpp"

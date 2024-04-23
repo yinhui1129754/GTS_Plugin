@@ -62,6 +62,7 @@ namespace Gts {
 
 		float scale = impact.scale;
 		float minimal_size = 2.0;
+		
 		if (actor->formID == 0x14) {
 			if (HasSMT(actor)) {
 				minimal_size = 1.0;
@@ -89,7 +90,7 @@ namespace Gts {
 				scale *= 2.25 * fallmod; // Jumping makes you sound bigger
 			}
 			if (HighHeelManager::IsWearingHH(actor)) {
-				scale *= 1.0 + GetHighHeelsBonusDamage(actor) * 2.5; // Wearing High Heels makes you bigger based on HH height
+				scale *= 1.0 + GetHighHeelsBonusDamage(actor) * 2.5; // Wearing High Heels makes explosions bigger based on HH height
 			}
 
 			for (NiAVObject* node: impact.nodes) {

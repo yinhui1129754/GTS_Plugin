@@ -131,12 +131,14 @@ namespace {
 				matches = true;
 			break;
 		}
-		if (matches && perk) {
-			value += 0.15; // 15% bonus damage if we have High Heels perk
+		if (matches) {
+			if (rumbling_feet) {
+				value *= 1.25; // 25% bonus damage if we have lvl 60 perk
+			} if (perk) {
+				value *= 1.15; // 15% bonus damage if we have High Heels perk
+			}
 		}
-		if (rumbling_feet) {
-			value *= 1.25; // 25% bonus damage if we have lvl 60 perk
-		}
+		
 		return value;
 	}
 }

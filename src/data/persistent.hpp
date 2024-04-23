@@ -87,6 +87,7 @@ namespace Gts {
 			bool allow_feetracking = true;
 			bool less_gore = false;
 			bool allow_stagger = true;
+			bool edit_voice_frequency = true;
 			bool Vore_Ai = true;
 			bool Stomp_Ai = true;
 			bool Sandwich_Ai = true;

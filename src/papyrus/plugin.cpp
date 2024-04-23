@@ -192,6 +192,11 @@ namespace {
 		Persistent::GetSingleton().allow_stagger = enabled;
 	}
 
+	void SetActorAudioOverride(StaticFunctionTag*, bool enabled) {
+		log::info("FREQUENCY OVERRIDE: {}", enabled);
+		Persistent::GetSingleton().edit_voice_frequency = enabled;
+	}
+
 	void SetNPCProtection(StaticFunctionTag*, bool enabled) {
 		Persistent::GetSingleton().NPCEffectImmunity = enabled;
 	}
@@ -498,6 +503,7 @@ namespace Gts {
 		vm->RegisterFunction("AllowCameraFOVEdits", PapyrusClass, AllowCameraFOVEdits);
 		vm->RegisterFunction("SetLessGore", PapyrusClass, SetLessGore);
 		vm->RegisterFunction("SetPlayerStagger", PapyrusClass, SetPlayerStagger);
+		vm->RegisterFunction("SetActorAudioOverride", PapyrusClass, SetActorAudioOverride);
 		vm->RegisterFunction("SetNPCProtection", PapyrusClass, SetNPCProtection);
 		vm->RegisterFunction("SetPCProtection", PapyrusClass, SetPCProtection);
 		vm->RegisterFunction("SetToggleIcons", PapyrusClass, SetToggleIcons);

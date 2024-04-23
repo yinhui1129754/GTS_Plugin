@@ -25,6 +25,7 @@ namespace {
 	inline const auto FeetTrackingRecord = _byteswap_ulong('FTRD');
 	inline const auto LessGoreRecord = _byteswap_ulong('LGRD');
 	inline const auto AllowStaggerRecord = _byteswap_ulong('ASRD');
+	inline const auto EditVoiceFrequency = _byteswap_ulong('EVFQ');
 	inline const auto VoreCombatOnlyRecord = _byteswap_ulong('VRCO');
 	inline const auto IsSpeedAdjustedRecord = _byteswap_ulong('ANAJ');
 	inline const auto TremorScales = _byteswap_ulong('TREM');
@@ -468,6 +469,10 @@ namespace Gts {
 				bool allow_stagger;
 				serde->ReadRecordData(&allow_stagger, sizeof(allow_stagger));
 				GetSingleton().allow_stagger = allow_stagger;
+			} else if (type == EditVoiceFrequency) {
+				bool edit_voice_frequency;
+				serde->ReadRecordData(&edit_voice_frequency, sizeof(edit_voice_frequency));
+				GetSingleton().edit_voice_frequency = edit_voice_frequency;
 			} else if (type == StompAiRecord) {
 				bool Stomp_Ai;
 				serde->ReadRecordData(&Stomp_Ai, sizeof(Stomp_Ai));
@@ -801,6 +806,13 @@ namespace Gts {
 		}
 		bool allow_stagger = GetSingleton().allow_stagger;
 		serde->WriteRecordData(&allow_stagger, sizeof(allow_stagger));
+
+		if (!serde->OpenRecord(EditVoiceFrequency, 1)) {
+			log::error("Unable to open Override Actor Audio record to write cosave data");
+			return;
+		}
+		bool edit_voice_frequency = GetSingleton().edit_voice_frequency;
+		serde->WriteRecordData(&edit_voice_frequency, sizeof(edit_voice_frequency));
 
 		if (!serde->OpenRecord(LessGoreRecord, 1)) {
 			log::error("Unable to open Less Gore record to write cosave data");
