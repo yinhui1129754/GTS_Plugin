@@ -116,6 +116,28 @@ namespace {
 namespace Hooks {
 
 	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is commented out inside hooks.cpp
+		/*static FunctionHook<void(TESObjectREFR* ref)>DisableHook(
+			REL::RelocationID(19374, 19800),
+			// [SE]: 0x1402986B0 : 19374
+			// [AE]: 0x1402AA770 : 19800
+			[](TESObjectREFR* ref) {
+				log::info("Disable Called");
+				if (ref) {
+					auto AsActor = skyrim_cast<Actor*>(ref);
+					ref = skyrim_cast<TESObjectREFR*>(PlayerCharacter::GetSingleton()); // Player can't be disabled so it's safe to do that
+					// This hook was an attempt to always keep actor loaded outside of cells
+					// It prevents manual disable, but actors still get disabled outside of cells :(
+					if (AsActor) {
+						if (get_visual_scale(AsActor) >= 2.0) {
+							return;
+						}
+						log::info("Disabling {}", AsActor->GetDisplayFullName());
+					}
+				}
+					
+				return DisableHook(ref);
+            }
+        );*/
 		/*static FunctionHook<void(Actor* target, float amt)>SetScaleHook(
 			REL::RelocationID(19239, 19665),
 			// [SE]: 0x1402F4710 ; 21586

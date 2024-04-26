@@ -12,6 +12,7 @@
 #include "managers/audio/footstep.hpp"
 #include "managers/Rumble.hpp"
 #include "managers/tremor.hpp"
+#include "ActionSettings.hpp"
 #include "data/transient.hpp"
 #include "managers/vore.hpp"
 #include "data/runtime.hpp"
@@ -149,7 +150,10 @@ namespace {
 			tiny->NotifyAnimationGraph("GTS_EnterFear");
 		}
 		VoreData.AllowToBeVored(false);
-		Rumbling::Once("StompLS", &data.giant, 0.95, 0.05, LNode);
+
+		float shake_power = Rumble_Vore_Stomp_Light * (1.0 + (GetHighHeelsBonusDamage(&data.giant) * 5.0));
+		Rumbling::Once("StompLS", &data.giant, shake_power, 0.05, LNode);
+		
 		DoFootstepSound(&data.giant, 0.90, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, 0.90, FootEvent::Left, LNode);
 		DoDamageEffect(&data.giant, 1.8, 1.3, 30, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft);

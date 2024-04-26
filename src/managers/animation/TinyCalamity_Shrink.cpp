@@ -124,7 +124,7 @@ namespace {
 				ShrinkUntil(&data.giant, victim, until, 0.26, false);
 				StartCombat(victim, &data.giant);
 
-				ChanceToScare(&data.giant, victim, 10, 3.2, false); // chance to force actor to flee 
+				ChanceToScare(&data.giant, victim, 6, 6.0, false); // chance to force actor to flee 
 
 				slow_down(victim, 0.60); // decrease MS by 60%
 

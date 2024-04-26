@@ -123,10 +123,13 @@ namespace {
 			dust = 1.45;
 		}
 
-		Rumbling::Once("StompR", giant, 2.20 * shake, 0.0, Node);
-
 		// TO ANDY: i commented it out for tests
 		//MoveUnderFoot(giant, Node); 
+
+		float hh = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
+		float shake_power = Rumble_Stomp_Strong * dust * hh;
+
+		Rumbling::Once("StompR", giant, Rumble_Stomp_Normal * shake, 0.0, Node);
 
 		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 10, 0.25, Event, 1.0, Source);
 		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
@@ -153,7 +156,9 @@ namespace {
 			shake = 4.0;
 		}
 		
-		Rumbling::Once(rumble, giant, 1.25 * shake, 0.05, Node);
+		float shake_power = Rumble_Stomp_Land_Strong * dust * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+
+		Rumbling::Once(rumble, giant, shake_power, 0.10, Node);
 		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 25, 0.25, Event, 1.0, DamageSource::CrushedRight);
 		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
 		DoFootstepSound(giant, 1.0 + animSpeed/14, Event, RNode);

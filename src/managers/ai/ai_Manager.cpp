@@ -54,7 +54,7 @@ namespace {
 			int trigger_threshold = 2;
 			if (random <= trigger_threshold) {
 				log::info("Random < threshold");
-				std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, Vore_GetMaxVoreCount(pred));
+				std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, 1);
 				for (auto prey: preys) {
 					VoreManager.StartVore(pred, prey);
 					log::info("StartVore called, can vore: {}", VoreManager.CanVore(pred, prey));
@@ -196,6 +196,11 @@ namespace Gts {
 			return cosTheta <= cos(STOMP_ANGLE*PI/180.0);
 		}), preys.end());
 		// Reduce vector size
+
+		if (numberOfPrey == 1) {
+			return Vore_GetMaxVoreCount(pred, preys);
+		}
+
 		if (preys.size() > numberOfPrey) {
 			preys.resize(numberOfPrey);
 		}

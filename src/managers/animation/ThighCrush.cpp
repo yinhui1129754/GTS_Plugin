@@ -73,14 +73,14 @@ namespace {
 		"NPC L RearCalf [RrClf]",
 	};
 
-	void LeRumblingOnce(std::string_view tag, Actor& actor, float power, float halflife) {
+	void LegRumblingOnce(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: LEG_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			Rumbling::Once(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Once(rumbleName, &actor, power, halflife, node_name);
 		}
 	}
 
-	void StartLeRumbling(std::string_view tag, Actor& actor, float power, float halflife) {
+	void StartLegRumbling(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: LEG_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
 			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
@@ -94,7 +94,7 @@ namespace {
 		}
 	}
 
-	void StopLeRumbling(std::string_view tag, Actor& actor) {
+	void StopLegRumbling(std::string_view tag, Actor& actor) {
 		for (auto& node_name: LEG_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
 			Rumbling::Stop(rumbleName, &actor);
@@ -149,11 +149,14 @@ namespace {
 		float volume = scale * 0.10 * speed;
 		float perk = GetPerkBonus_Thighs(giant);
 
-		DoDamageEffect(giant, Damage_ThighCrush_Stand_Up * mult * perk, Radius_ThighCrush_Stand_Up, 25, 0.20, FootEvent::Right, 1.0, DamageSource::CrushedRight);
-		DoLaunch(giant, 0.65 * mult * perk, 1.55 * animSpeed, FootEvent::Right);
-		Rumbling::Once(rumble, giant, volume * 4, 0.10, RNode);
-		DoFootstepSound(giant, 1.05, FootEvent::Right, RNode);
-		DoDustExplosion(giant, 1.1, FootEvent::Right, RNode);
+		float hh = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
+		float shake_power = Rumble_ThighCrush_StandUp * hh * mult;
+		
+		DoDamageEffect(giant, Damage_ThighCrush_Stand_Up * mult * perk, Radius_ThighCrush_Stand_Up, 25, 0.20, Event, 1.0, Source);
+		DoLaunch(giant, 0.65 * mult * perk, 1.55 * animSpeed, Event);
+		Rumbling::Once(rumble, giant, shake_power, 0.10, Node);
+		DoFootstepSound(giant, 1.0, Event, Node);
+		DoDustExplosion(giant, 1.0, Event, Node);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -162,7 +165,7 @@ namespace {
 
 	void GTStosit(AnimationEventData& data) {
 		float speed = data.animSpeed;
-		StartLeRumbling("ThighCrush", data.giant, 0.10, 0.10);
+		StartLegRumbling("ThighCrush", data.giant, 0.10, 0.10);
 		ManageCamera(&data.giant, true, CameraTracking::Thigh_Crush); // Track feet
 
 		RunThighCollisionTask(&data.giant, true, false, Radius_ThighCrush_Idle, Damage_ThighCrush_Legs_Idle, 0.02, 2.0, 600, "ThighIdle_R");
@@ -174,14 +177,14 @@ namespace {
 
 	void GTSsitloopenter(AnimationEventData& data) {
 		float speed = data.animSpeed;
-		StartLeRumbling("ThighCrush", data.giant, 0.12 * speed, 0.10);
+		StartLegRumbling("ThighCrush", data.giant, 0.12 * speed, 0.10);
 		data.disableHH = true;
 		data.HHspeed = 4.0;
 		data.stage = 2;
 	}
 
 	void GTSsitloopstart(AnimationEventData& data) {
-		StopLeRumbling("ThighCrush", data.giant);
+		StopLegRumbling("ThighCrush", data.giant);
 		data.currentTrigger = 1;
 		data.stage = 3;
 	}
@@ -192,7 +195,7 @@ namespace {
 
 	void GTSsitcrushlight_start(AnimationEventData& data) {
 		auto giant = &data.giant;
-		StartLeRumbling("ThighCrush", data.giant, 0.18, 0.12);
+		StartLegRumbling("ThighCrush", data.giant, Rumble_ThighCrush_LegSpread_Light_Loop, 0.12);
 		DrainStamina(&data.giant, "StaminaDrain_Thighs", "KillerThighs", true, 1.0); // < Start Light Stamina Drain
 
 
@@ -211,8 +214,8 @@ namespace {
 		auto giant = &data.giant;
 		data.currentTrigger = 2;
 		data.canEditAnimSpeed = true;
-		LeRumblingOnce("ThighCrush_End", data.giant, 0.22, 0.20);
-		StopLeRumbling("ThighCrush", data.giant);
+		LegRumblingOnce("ThighCrush_End", data.giant, Rumble_ThighCrush_LegSpread_Light_End, 0.10);
+		StopLegRumbling("ThighCrush", data.giant);
 		DrainStamina(&data.giant, "StaminaDrain_Thighs", "KillerThighs", false, 1.0); // < Stop Light Stamina Drain
 
 		std::string name_l = std::format("ThighCrush_{}_ThighLight_R", giant->formID);
@@ -235,7 +238,7 @@ namespace {
 		RunThighCollisionTask(&data.giant, true, true, Radius_ThighCrush_Spread_In, Damage_ThighCrush_CrossLegs_In, 0.25, 1.4, 25, "ThighHeavy_R");
 		RunThighCollisionTask(&data.giant, false, true, Radius_ThighCrush_Spread_In, Damage_ThighCrush_CrossLegs_In, 0.25, 1.4, 25, "ThighHeavy_L");
 
-		StartLeRumbling("ThighCrushHeavy", data.giant, 0.35, 0.10);
+		StartLegRumbling("ThighCrushHeavy", data.giant, Rumble_ThighCrush_LegSpread_Heavy_Loop, 0.10);
 		data.stage = 5;
 	}
 
@@ -243,8 +246,8 @@ namespace {
 		auto giant = &data.giant;
 		data.currentTrigger = 2;
 		DrainStamina(&data.giant, "StaminaDrain_Thighs", "KillerThighs", false, 2.5); // < Stop Heavy Stamina Drain
-		LeRumblingOnce("ThighCrushHeavy_End", data.giant, 0.50, 0.15);
-		StopLeRumbling("ThighCrushHeavy", data.giant);
+		LegRumblingOnce("ThighCrushHeavy_End", data.giant, Rumble_ThighCrush_LegCross_Heavy_End, 0.10);
+		StopLegRumbling("ThighCrushHeavy", data.giant);
 
 		std::string name_l = std::format("ThighCrush_{}_ThighHeavy_R", giant->formID);
 		std::string name_r = std::format("ThighCrush_{}_ThighHeavy_L", giant->formID);
@@ -293,7 +296,7 @@ namespace {
 	}
 	void GTStoexit(AnimationEventData& data) {
 		// Going to exit
-		StopLeRumbling("BodyRumble", data.giant);
+		StopLegRumbling("BodyRumble", data.giant);
 		ManageCamera(&data.giant, false, CameraTracking::Thigh_Crush); // Un-track feet
 	}
 	void GTSBEH_Exit(AnimationEventData& data) {

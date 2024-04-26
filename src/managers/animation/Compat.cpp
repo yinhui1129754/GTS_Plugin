@@ -148,8 +148,6 @@ namespace {
 		DoLaunch(&data.giant, 0.90, 1.35, FootEvent::Right);
 		DoLaunch(&data.giant, 0.90, 1.35, FootEvent::Left);
 	}
-
-	
 }
 
 namespace Gts

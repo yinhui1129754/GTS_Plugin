@@ -291,7 +291,7 @@ namespace Gts {
 			return 1.0;
 		}
 
-		float limit = (9.0 * get_visual_scale(giant));
+		float limit = (14.0 * get_visual_scale(giant));
 
 		if (power > limit) {
 			return limit;
@@ -651,8 +651,8 @@ namespace Gts {
 		} else if (Persistent::GetSingleton().allow_stagger == false) {
 			bool ProtectGTS = giant->formID == 0x14 || IsTeammate(giant);
 			bool ProtectTiny = tiny->formID == 0x14 || IsTeammate(tiny);
-			log::info("GTS {}: {}", giant->GetDisplayFullName(), ProtectGTS);
-			log::info("Tiny {}: {}", tiny->GetDisplayFullName(), ProtectTiny);
+			//log::info("GTS {}: {}", giant->GetDisplayFullName(), ProtectGTS);
+			//log::info("Tiny {}: {}", tiny->GetDisplayFullName(), ProtectTiny);
 			if (ProtectGTS && ProtectTiny) {
 				return false; // Protect
 			}
@@ -845,18 +845,6 @@ namespace Gts {
 		return flying;
 	}
 
-	bool IsHeadtracking(Actor* giant) { // Used to report True when we lock onto something, should be Player Exclusive.
-		//Currently used to fix TDM mesh issues when we lock on someone.
-		//auto profiler = Profilers::Profile("ActorUtils: HeadTracking");
-		bool tracking;
-		if (giant->formID == 0x14) {
-			giant->GetGraphVariableBool("TDM_TargetLock", tracking); // get HT value, requires newest versions of TDM to work properly
-		} else {
-			tracking = false;
-		}
-		return tracking;
-	}
-
 	bool IsHostile(Actor* giant, Actor* tiny) {
 		return tiny->IsHostileToActor(giant);
 	}
@@ -1039,16 +1027,28 @@ namespace Gts {
 		return fallmod;
 	}
 
-	std::size_t Vore_GetMaxVoreCount(Actor* giant) {
-		float numberOfPrey = 1;
+	std::vector<Actor*> Vore_GetMaxVoreCount(Actor* giant, std::vector<Actor*> actors) {
+		float capacity = 1.0;
+		std::vector<Actor*> vories = {};
 		if (Runtime::HasPerk(giant, "MassVorePerk")) {
-			numberOfPrey = 1 + (get_visual_scale(giant)/3);
+			capacity = 2.0 * get_visual_scale(giant);
 			if (HasSMT(giant)) {
-				numberOfPrey += 4.0;
+				capacity *= 3.0;
 			}
-		}
-		//log::info("Max Vore for {} is {}", giant->GetDisplayFullName(), numberOfPrey);
-		return numberOfPrey;
+		} 
+		for (auto target: actors) {
+			if (capacity <= 1.0) {
+				capacity = 1.0;
+				vories.push_back(target);
+				log::info("(Return) Max Vore for {} is {}", giant->GetDisplayFullName(), vories.size());
+				return vories;
+			}
+			float decrease = get_target_scale(target) * 10.0;
+			capacity -= decrease;
+			vories.push_back(target);
+		}  
+		log::info("Max Vore for {} is {}", giant->GetDisplayFullName(), vories.size());
+		return vories;
 	}
 
 	float GetHPThreshold(Actor* actor) {
@@ -1639,50 +1639,52 @@ namespace Gts {
 	void ApplyShake(Actor* caster, float modifier, float radius) {
 		if (caster) {
 			auto position = caster->GetPosition();
-			ApplyShakeAtPoint(caster, modifier, position, radius);
+			ApplyShakeAtPoint(caster, modifier, position, radius, 0.0, 1.0);
 		}
 	}
 
 	void ApplyShakeAtNode(Actor* caster, float modifier, std::string_view nodesv) {
 		auto node = find_node(caster, nodesv);
 		if (node) {
-			ApplyShakeAtPoint(caster, modifier, node->world.translate, 1.0);
+			ApplyShakeAtPoint(caster, modifier, node->world.translate, 1.0, 0.0, 1.0);
 		}
 	}
 
 	void ApplyShakeAtNode(Actor* caster, float modifier, std::string_view nodesv, float radius) {
 		auto node = find_node(caster, nodesv);
 		if (node) {
-			ApplyShakeAtPoint(caster, modifier, node->world.translate, radius);
+			ApplyShakeAtPoint(caster, modifier, node->world.translate, radius, 0.0, 1.0);
 		}
 	}
 
-	void ApplyShakeAtPoint(Actor* caster, float modifier, const NiPoint3& coords, float radius) {
+	void ApplyShakeAtPoint(Actor* caster, float modifier, const NiPoint3& coords, float radius, float duration_override, float calamity) {
 		if (!caster) {
 			return;
 		}
-		// Reciever is always PC if it is not PC we do nothing anyways
+		// Reciever is always PC, if it is not PC - we do nothing anyways
 		Actor* receiver = PlayerCharacter::GetSingleton();
 		if (!receiver) {
 			return;
 		}
-		float might = Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
+		float might = 1.0 + Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
 
 		modifier *= might;
 		radius *= might;
 
-		float distance = get_distance_to_camera(coords);
+		float distance = (coords - receiver->GetPosition()).Length(); // In that case we apply shake based on actor distance
+
 		float sourcesize = get_visual_scale(caster);
 		float receiversize = get_visual_scale(receiver);
 		float sizedifference = (sourcesize/receiversize);
 		if (caster->formID == 0x14) {
-			sizedifference = sourcesize;
+			distance = get_distance_to_camera(coords); // else we use player camera distance (for player only)
+			sizedifference = sourcesize * calamity;
 		}
 
 
 		// To Sermit: You wrote a cutoff not a falloff
 		//            was this intentional?
-		//
+		// 2024 Answer: im dumb to write falloff :(
 		// FYI: This is the difference
 		// Falloff:
 		//   |
@@ -1701,9 +1703,11 @@ namespace Gts {
 			// To Sermit: Same value as before just with the math reduced to minimal steps
 			float intensity = (sizedifference * 18.8) / distance;
 			float duration = 0.25 * intensity * (1 + (sizedifference * 0.25));
+			if (duration_override > 0) {
+				duration *= duration_override;
+			}
 			intensity = std::clamp(intensity, 0.0f, 1e8f);
-			duration = std::clamp(duration, 0.0f, 1.2f);
-
+			duration = std::clamp(duration, 0.0f, 1.8f);
 
 			shake_controller(intensity*modifier, intensity*modifier, duration);
 			shake_camera_at_node(coords, intensity*modifier, duration);
@@ -2004,7 +2008,7 @@ namespace Gts {
 	}
 
 	void DoFootstepSound(Actor* giant, float modifier, FootEvent kind, std::string_view node) {
-		auto& footstep = FootStepManager::GetSingleton();
+		auto& footstepSound = FootStepManager::GetSingleton();
 
 		std::vector<NiAVObject*> points = {find_node(giant, node)};
 
@@ -2014,7 +2018,7 @@ namespace Gts {
 			.scale = get_visual_scale(giant) * modifier,
 			.nodes = points,
 		};
-		footstep.OnImpact(impact_data); // Play sound
+		footstepSound.OnImpact(impact_data); // Play sound
 	}
 
 	void DoDustExplosion(Actor* giant, float modifier, FootEvent kind, std::string_view node) {

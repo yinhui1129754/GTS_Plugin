@@ -31,7 +31,7 @@ namespace {
 		// Hugging is needed to fix missing footsteps once we do friendly release
 		// Footsteps aren't seen by the dll without it (because actor is in air)
 
-		bool allow = ((!is_jumping && !in_air) || hugging || in_air);
+		bool allow = (!is_jumping || hugging);
 
 		if (matches(tag, ".*Foot.*Left.*") && allow) {
 			foot_kind = FootEvent::Left;
@@ -41,7 +41,7 @@ namespace {
 			foot_kind = FootEvent::Front;
 		} else if (matches(tag, ".*Foot.*Back.*") && allow) {
 			foot_kind = FootEvent::Back;
-		} else if (matches(tag, ".*Jump.*(Down|Land).*")) {
+		} else if (matches(tag, ".*Jump.*(Down|Land).*") && !in_air) {
 			foot_kind = FootEvent::JumpLand;
 		}
 		return foot_kind;
@@ -130,10 +130,10 @@ namespace Gts {
 
 			float bonus = 1.0;
 			if (actor->AsActorState()->IsWalking()) {
-				bonus = 0.75;
+				bonus = 0.8;
 			}
 			if (actor->IsSneaking()) {
-				bonus *= 0.5;
+				bonus *= 0.7;
 			}
 			if (actor->AsActorState()->IsSprinting()) {
 				bonus *= 1.15;

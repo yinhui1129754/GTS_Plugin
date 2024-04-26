@@ -44,7 +44,7 @@ namespace {
 	const std::string_view LNode = "NPC L Foot [Lft ]";
 
 
-	void StartLeRumbling(std::string_view tag, Actor& actor, float power, float halflife, std::string_view type) {
+	void StartLegRumbling(std::string_view tag, Actor& actor, float power, float halflife, std::string_view type) {
 		if (type == "Left") {
 			for (auto& node_name: L_LEG_RUMBLE_NODES) {
 				std::string rumbleName = std::format("{}{}", tag, node_name);
@@ -58,7 +58,7 @@ namespace {
 		}
 	}
 
-	void StopLeRumbling(std::string_view tag, Actor& actor, std::string_view type) {
+	void StopLegRumbling(std::string_view tag, Actor& actor, std::string_view type) {
 		if (type == "Left") {
 			for (auto& node_name: L_LEG_RUMBLE_NODES) {
 				std::string rumbleName = std::format("{}{}", tag, node_name);
@@ -98,8 +98,12 @@ namespace {
 			SMT = 1.85; // Larger Dust
 			damage = 1.25;
 		}
+
+		float hh = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
+		float shake_power = Rumble_Stomp_Strong * SMT * hh;
+
 		DoDamageEffect(giant, Damage_Stomp_Strong * damage * perk, Radius_Stomp_Strong, 5, 0.35, Event, 1.0, Source);
-		DoImpactRumble(giant, SMT * animSpeed - (0.55 * 2), Node, rumble);
+		DoImpactRumble(giant, shake_power, Node, rumble);
 		DoDustExplosion(giant, 0.25 + SMT + (animSpeed * 0.05), Event, Node);
 
 		DrainStamina(giant, "StaminaDrain_StrongStomp", "DestructionBasics", false, 3.4);
@@ -127,7 +131,7 @@ namespace {
 			data.animSpeed += GetRandomBoost()/3;
 		}
 		ManageCamera(giant, true, CameraTracking::R_Foot);
-		StartLeRumbling("StrongStompR", data.giant, 0.35 *data.animSpeed - 0.35, 0.10, "Right");
+		StartLegRumbling("StrongStompR", data.giant, 0.35 *data.animSpeed - 0.35, 0.10, "Right");
 		DrainStamina(&data.giant, "StaminaDrain_StrongStomp", "DestructionBasics", true, 3.4);
 	}
 
@@ -139,7 +143,7 @@ namespace {
 			data.animSpeed += GetRandomBoost()/3;
 		}
 		ManageCamera(giant, true, CameraTracking::L_Foot);
-		StartLeRumbling("StrongStompL", data.giant, 0.35 *data.animSpeed - 0.35, 0.10, "Left");
+		StartLegRumbling("StrongStompL", data.giant, 0.35 *data.animSpeed - 0.35, 0.10, "Left");
 		DrainStamina(&data.giant, "StaminaDrain_StrongStomp", "DestructionBasics", true, 3.4);
 	}
 
@@ -156,41 +160,45 @@ namespace {
 		}
 	}
 	void GTS_StrongStomp_LR_End(AnimationEventData& data) {
-		StopLeRumbling("StrongStompR", data.giant, "Right");
+		StopLegRumbling("StrongStompR", data.giant, "Right");
 	}
 	void GTS_StrongStomp_LL_End(AnimationEventData& data) {
-		StopLeRumbling("StrongStompL", data.giant, "Left");
+		StopLegRumbling("StrongStompL", data.giant, "Left");
 	}
 
 	void GTS_StrongStomp_ImpactR(AnimationEventData& data) {
+		float SavedSpeed = data.animSpeed;
+
 		data.stage = 0;
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
 
-		StrongStomp_DoEverything(&data.giant, data.animSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "HeavyStompR");
+		StrongStomp_DoEverything(&data.giant, SavedSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "HeavyStompR");
 	}
 	void GTS_StrongStomp_ImpactL(AnimationEventData& data) {
+		float SavedSpeed = data.animSpeed;
+
 		data.stage = 0;
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
 
-		StrongStomp_DoEverything(&data.giant, data.animSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "HeavyStompL");
+		StrongStomp_DoEverything(&data.giant, SavedSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "HeavyStompL");
 	}
 
-	void GTS_StrongStomp_ReturnRL_Start(AnimationEventData& data) {StartLeRumbling("StrongStompR", data.giant, 0.25, 0.10, "Right");}
-	void GTS_StrongStomp_ReturnLL_Start(AnimationEventData& data) {StartLeRumbling("StrongStompL", data.giant, 0.25, 0.10, "Left");}
+	void GTS_StrongStomp_ReturnRL_Start(AnimationEventData& data) {StartLegRumbling("StrongStompR", data.giant, 0.25, 0.10, "Right");}
+	void GTS_StrongStomp_ReturnLL_Start(AnimationEventData& data) {StartLegRumbling("StrongStompL", data.giant, 0.25, 0.10, "Left");}
 
 	void GTS_StrongStomp_ReturnRL_End(AnimationEventData& data) {
-		StopLeRumbling("StrongStompR", data.giant, "Right");
+		StopLegRumbling("StrongStompR", data.giant, "Right");
 		ManageCamera(&data.giant, false, CameraTracking::R_Foot);
 	}
 	void GTS_StrongStomp_ReturnLL_End(AnimationEventData& data) {
-		StopLeRumbling("StrongStompL", data.giant, "Left");
+		StopLegRumbling("StrongStompL", data.giant, "Left");
 		ManageCamera(&data.giant, false, CameraTracking::L_Foot);
 	}
 	void GTS_StrongStomp_End(AnimationEventData& data) {
-		StopLeRumbling("StrongStompR", data.giant, "Right");
-		StopLeRumbling("StrongStompL", data.giant, "Left");
+		StopLegRumbling("StrongStompR", data.giant, "Right");
+		StopLegRumbling("StrongStompL", data.giant, "Left");
 	}
 
 

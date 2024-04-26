@@ -25,10 +25,12 @@ using namespace Gts;
 namespace {
 
     void GTS_Sneak_SlamStrong_Raise_Arm_R(AnimationEventData& data) {
+        Utils_UpdateHighHeelBlend(&data.giant, false);
         TrackMatchingHand(&data.giant, CrawlEvent::RightHand, true); // OFF is handled inside Sneak_Slam.cpp
 		DrainStamina(&data.giant, "StaminaDrain_StrongSneakSlam", "DestructionBasics", true, 2.2);
 	} 
 	void GTS_Sneak_SlamStrong_Raise_Arm_L(AnimationEventData& data) {
+        Utils_UpdateHighHeelBlend(&data.giant, false);
         TrackMatchingHand(&data.giant, CrawlEvent::LeftHand, true); // OFF is handled inside Sneak_Slam.cpp
 		DrainStamina(&data.giant, "StaminaDrain_StrongSneakSlam", "DestructionBasics", true, 2.2);
 	}

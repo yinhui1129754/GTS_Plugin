@@ -119,7 +119,7 @@ namespace Gts {
 			if (!IsCrawling(giant) && !giant->IsSneaking()) {
 				std::string message = std::format("Butt Crush is on a cooldown: {:.1f} sec", cooldown);
 				TiredSound(giant, message);
-			} else if (giant->IsSneaking()) {
+			} else if (giant->IsSneaking() && !IsCrawling(giant)) {
 				std::string message = std::format("Knee Crush is on a cooldown: {:.1f} sec", cooldown);
 				TiredSound(giant, message);
 			} else {
@@ -202,6 +202,10 @@ namespace Gts {
 			return cosTheta <= cos(BUTTCRUSH_ANGLE*PI/180.0);
 		}), preys.end());
 
+		if (numberOfPrey == 1) {
+			return Vore_GetMaxVoreCount(pred, preys);
+		}
+
 		// Reduce vector size
 		if (preys.size() > numberOfPrey) {
 			preys.resize(numberOfPrey);
@@ -233,10 +237,13 @@ namespace Gts {
 
 		float prey_distance = (pred->GetPosition() - prey->GetPosition()).Length();
 		if (pred->formID == 0x14 && prey_distance <= MINIMUM_DISTANCE * pred_scale && sizedifference < MINIMUM_BUTTCRUSH_SCALE) {
-			std::string_view message = std::format("{} is too big for Butt Crush", prey->GetDisplayFullName());
-			if (IsCrawling(pred)) {
-				message = std::format("{} is too big for Breast Crush", prey->GetDisplayFullName());
-			}
+			std::string_view message = std::format("{} is too big for Butt Crush: x{:.2f}/{:.2f}", prey->GetDisplayFullName(), sizedifference, MINIMUM_BUTTCRUSH_SCALE);
+			if (!IsCrawling(pred) && pred->IsSneaking()) {
+				message = std::format("{} is too big for Knee Crush: x{:.2f}/{:.2f}", prey->GetDisplayFullName(), sizedifference, MINIMUM_BUTTCRUSH_SCALE);
+			} else if (IsCrawling(pred)) {
+				message = std::format("{} is too big for Breast Crush: x{:.2f}/{:.2f}", prey->GetDisplayFullName(), sizedifference, MINIMUM_BUTTCRUSH_SCALE);
+			} 
+			shake_camera(pred, 0.45, 0.30);
 			TiredSound(pred, message);
 			return false;
 		}

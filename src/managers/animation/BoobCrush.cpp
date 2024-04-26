@@ -152,24 +152,26 @@ namespace {
 				return false;
 			}
 
+			float shake_power = Rumble_Cleavage_HoverLoop;
+
 			for (auto Nodes: BODY_NODES) {
 				auto Node = find_node(giantref, Nodes);
 				if (Node) {
 					std::string rumbleName = std::format("Node: {}", Nodes);
 					DoDamageAtPoint(giant, Radius_BreastCrush_BodyDOT, Damage_BreastCrush_BodyDOT * damage, Node, 400, 0.10, 1.33, DamageSource::BodyCrush);
-					Rumbling::Once(rumbleName, giant, 0.06, 0.02, Nodes);
+					Rumbling::Once(rumbleName, giant, shake_power, 0.02, Nodes);
 				}
 			}
 
 			if (BreastL03 && BreastR03) {
-				Rumbling::Once("BreastDot_L", giantref, 0.06, 0.025, "L Breast03");
-				Rumbling::Once("BreastDot_R", giantref, 0.06, 0.025, "R Breast03");
+				Rumbling::Once("BreastDot_L", giantref, shake_power, 0.025, "L Breast03");
+				Rumbling::Once("BreastDot_R", giantref, shake_power, 0.025, "R Breast03");
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastL03, 400, 0.10, 1.33, DamageSource::BreastImpact);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastR03, 400, 0.10, 1.33, DamageSource::BreastImpact);
 				return true;
 			} else if (BreastL && BreastR) {
-				Rumbling::Once("BreastDot_L", giantref, 0.06, 0.025, "NPC L Breast");
-				Rumbling::Once("BreastDot_R", giantref, 0.06, 0.025, "NPC R Breast");
+				Rumbling::Once("BreastDot_L", giantref, shake_power, 0.025, "NPC L Breast");
+				Rumbling::Once("BreastDot_R", giantref, shake_power, 0.025, "NPC R Breast");
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastL, 400, 0.10, 1.33, DamageSource::BreastImpact);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastR, 400, 0.10, 1.33, DamageSource::BreastImpact);
 				return true;
@@ -238,6 +240,8 @@ namespace {
 		auto BreastL03 = find_node(giant, "L Breast03");
 		auto BreastR03 = find_node(giant, "R Breast03");
 
+		float shake_power = Rumble_Cleavage_Impact * dust * damage;
+
 		if (BreastL03 && BreastR03) {
 			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastL03, 4, 0.70, 0.85, DamageSource::BreastImpact);
 			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastR03, 4, 0.70, 0.85, DamageSource::Breast);
@@ -246,8 +250,8 @@ namespace {
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "R Breast03");
 			DoFootstepSound(giant, 1.25, FootEvent::Left, "L Breast03");
 			DoLaunch(giant, 1.20 * perk, 4.20, FootEvent::Breasts);
-			Rumbling::Once("Breast_L", giant, 1.20 * damage, 0.02, "L Breast03");
-			Rumbling::Once("Breast_R", giant, 1.20 * damage, 0.02, "R Breast03");
+			Rumbling::Once("Breast_L", giant, shake_power, 0.05, "L Breast03");
+			Rumbling::Once("Breast_R", giant, shake_power, 0.05, "R Breast03");
 			ModGrowthCount(giant, 0, true); // Reset limit
 			return;
 		} else if (BreastL && BreastR) {
@@ -258,8 +262,8 @@ namespace {
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC R Breast");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC L Breast");
 			DoLaunch(giant, 1.20 * perk, 4.20, FootEvent::Breasts);
-			Rumbling::Once("Breast_L", giant, 1.20 * damage, 0.02, "NPC L Breast");
-			Rumbling::Once("Breast_R", giant, 1.20 * damage, 0.02, "NPC R Breast");
+			Rumbling::Once("Breast_L", giant, shake_power, 0.05, "NPC L Breast");
+			Rumbling::Once("Breast_R", giant, shake_power, 0.05, "NPC R Breast");
 			ModGrowthCount(giant, 0, true); // Reset limit
 			return;
 		} else {

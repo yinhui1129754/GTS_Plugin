@@ -266,6 +266,10 @@ namespace Gts {
 			return cosTheta <= cos(SANDWICH_ANGLE*PI/180.0);
 		}), preys.end());
 
+		if (numberOfPrey == 1) {
+			return Vore_GetMaxVoreCount(pred, preys);
+		}
+		
 		// Reduce vector size
 		if (preys.size() > numberOfPrey) {
 			preys.resize(numberOfPrey);
@@ -305,7 +309,9 @@ namespace Gts {
 
 		float prey_distance = (pred->GetPosition() - prey->GetPosition()).Length();
 		if (pred->formID == 0x14 && prey_distance <= (MINIMUM_DISTANCE * pred_scale) && sizedifference < MINIMUM_SANDWICH_SCALE) {
-			Notify("{} is too big to be smothered between thighs.", prey->GetDisplayFullName());
+			std::string_view message = std::format("{} is too big to be smothered between thighs: x{:.2f}/{:.2f}", prey->GetDisplayFullName(), sizedifference, MINIMUM_SANDWICH_SCALE);
+			shake_camera(pred, 0.45, 0.30);
+			TiredSound(pred, message);
 			return false;
 		}
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale) && sizedifference > MINIMUM_SANDWICH_SCALE) {

@@ -80,17 +80,18 @@ namespace {
 		auto profiler = Profilers::Profile("Manager: Fade Fix");
 
 		static Timer ApplyTimer = Timer(2.00);
+
 		if (!ApplyTimer.ShouldRunFrame()) {
 			return;
 		}
 
-		NiAVObject* node = find_node(actor, "skeleton_female.nif");
 		bool reset = false;
+		NiAVObject* node = find_node(actor, "skeleton_female.nif");
 		
 		if (get_visual_scale(actor) < 1.5) {
 			reset = true;
 		}
-
+		
 		if (node) {
 			if (!reset) {
 				node->GetFlags().set(RE::NiAVObject::Flag::kIgnoreFade);
@@ -102,7 +103,6 @@ namespace {
 				node->GetFlags().reset(RE::NiAVObject::Flag::kHighDetail);
 			}
 		}
-		
 	}
 
 	void update_height(Actor* actor, ActorData* persi_actor_data, TempActorData* trans_actor_data) {
@@ -111,9 +111,11 @@ namespace {
 			return;
 		}
 		if (!trans_actor_data) {
+			log::info("!Upate_height: Trans Data not found for {}", actor->GetDisplayFullName());
 			return;
 		}
 		if (!persi_actor_data) {
+			log::info("!Upate_height: Pers Data not found for {}", actor->GetDisplayFullName());
 			return;
 		}
 		float currentOtherScale = Get_Other_Scale(actor);
@@ -189,9 +191,11 @@ namespace {
 			return;
 		}
 		if (!trans_actor_data) {
+			log::info("!Height: Trans Data not found for {}", actor->GetDisplayFullName());
 			return;
 		}
 		if (!persi_actor_data) {
+			log::info("!Height: Pers Data not found for {}", actor->GetDisplayFullName());
 			return;
 		}
 		float scale = get_scale(actor);
@@ -246,16 +250,15 @@ namespace {
 		if (scale < 1e-5) {
 			return;
 		}
-		float speedmultcalc = GetAnimationSlowdown(actor); // For all other movement types
 		float perkspeed = 1.0;
-		persi_actor_data->anim_speed = speedmultcalc*perkspeed;//MS_mult;
+		float speedmultcalc = GetAnimationSlowdown(actor); // For all other movement types
+		persi_actor_data->anim_speed = speedmultcalc*perkspeed;
 	}
 
 	void update_actor(Actor* actor) {
 		auto profiler = Profilers::Profile("Manager: update_actor");
 		auto temp_data = Transient::GetSingleton().GetActorData(actor);
 		auto saved_data = Persistent::GetSingleton().GetActorData(actor);
-		//update_effective_multi(actor, saved_data, temp_data);
 		update_height(actor, saved_data, temp_data);
 	}
 
@@ -355,25 +358,20 @@ void GtsManager::DragonSoulAbsorption() {
 void GtsManager::reapply(bool force) {
 	// Get everyone in loaded AI data and reapply
 	auto profiler = Profilers::Profile("Manager: reapply");
-	auto actors = find_actors();
-	for (auto actor: actors) {
-		if (!actor) {
-			continue;
+	for (auto actor: find_actors()) {
+		if (actor) {
+		   	if (actor->Is3DLoaded()) {
+				reapply_actor(actor, force);
+			}
 		}
-		if (!actor->Is3DLoaded()) {
-			continue;
-		}
-		reapply_actor(actor, force);
 	}
 }
 void GtsManager::reapply_actor(Actor* actor, bool force) {
 	auto profiler = Profilers::Profile("Manager: reapply_actor");
 	// Reapply just this actor
-	if (!actor) {
-		return;
+	if (actor) {
+		if (actor->Is3DLoaded()) {
+			apply_actor(actor, force);
+		}
 	}
-	if (!actor->Is3DLoaded()) {
-		return;
-	}
-	apply_actor(actor, force);
 }

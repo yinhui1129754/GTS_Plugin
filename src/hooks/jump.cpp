@@ -41,7 +41,7 @@ namespace {
 				log::info("Jump Power: {}", power);
 				log::info("Jump Radius: {}", stagger_radius);
 
-				Rumbling::Once("MassiveJump", actor, 28.0 * power * Might, 0.15 * power);
+				Rumbling::Once("MassiveJump", actor, 4.0 * power * Might, 0.025 * power);
 			}
 		}
 	}

@@ -14,6 +14,9 @@ using namespace SKSE;
 using namespace Gts;
 
 namespace {
+	const float tree_ignore_threshold = 16.0f;
+	const float actor_ignore_limit = 3.0f;
+
 	COL_LAYER GetCollisionLayer(const std::uint32_t& collisionFilterInfo) {
 		return static_cast<COL_LAYER>(collisionFilterInfo & 0x7F);
 	}
@@ -106,15 +109,42 @@ namespace {
 				sizedifference_gts = Scale_B/Scale_A; // Rough fix for Tiny being the Gts sometimes
 			}
 
-			float limit = 3.0;
-
-			bool ignore = (sizedifference_gts >= limit);
+			bool ignore = (sizedifference_gts >= actor_ignore_limit);
 			if (ignore) {
 				return true;
 			}
 		}
 
+		return false;
+	}
 
+	bool IsTreeCollisionDisabled(const hkpCollidable* a_collidableA, const hkpCollidable* a_collidableB) {
+
+		auto colLayerA = GetCollisionLayer(a_collidableA);
+		auto colLayerB = GetCollisionLayer(a_collidableB);
+
+		bool Check_Tree = (colLayerA == COL_LAYER::kTrees || colLayerB == COL_LAYER::kTrees);
+
+		if (Check_Tree) {
+			auto obj_A = GetTESObjectREFR(a_collidableA);
+			auto obj_B = GetTESObjectREFR(a_collidableB);
+			
+			if (obj_A && obj_B) {
+				Actor* actor = skyrim_cast<Actor*>(obj_A);
+				if (actor) {
+					//log::info("A is actor");
+					float tree_scale = static_cast<float>(obj_A->GetReferenceRuntimeData().refScale) / 100.0F;
+					float actor_scale = get_visual_scale(actor);
+					if (actor_scale/tree_scale >= tree_ignore_threshold) {
+						//log::info("A: {}", obj_A->GetDisplayFullName());
+						//log::info("B: {}", obj_B->GetDisplayFullName());
+						//log::info("Ignoring collision");
+						return true;
+					}
+				}
+			}
+		}
+			
 		return false;
 	}
 
@@ -236,6 +266,10 @@ namespace Hooks
 
 			//CollisionPrints(a_collidableA, a_collidableB);
 
+			if (IsTreeCollisionDisabled(a_collidableA, a_collidableB)) {
+				*a_result = false;
+			}
+			
 			bool Check_A = (colLayerA == COL_LAYER::kBiped || colLayerA == COL_LAYER::kCharController || colLayerA == COL_LAYER::kDeadBip || colLayerA == COL_LAYER::kBipedNoCC);
 			bool Check_B = (colLayerB == COL_LAYER::kBiped || colLayerB == COL_LAYER::kCharController || colLayerB == COL_LAYER::kDeadBip || colLayerB == COL_LAYER::kBipedNoCC);
 

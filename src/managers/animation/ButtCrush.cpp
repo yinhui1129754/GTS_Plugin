@@ -95,16 +95,18 @@ namespace {
 		});
 	}
 
-	void ButtCrush_DoImpact(Actor* giant, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
+	void ButtCrush_DoFootImpact(Actor* giant, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
 		float shake = 1.0;
 		float dust = 1.0;
 		if (HasSMT(giant)) {
-			shake = 4.0;
+			shake = 2.0;
 			dust = 1.25;
 		}
 
-		Rumbling::Once(rumble, giant, 2.20 * shake, 0.0, Node);
+		float shake_power = Rumble_ButtCrush_FeetImpact * shake * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node);
 		DoDamageEffect(giant, Damage_ButtCrush_FootImpact, Radius_ButtCrush_FootImpact, 10, 0.25, Event, 1.0, Source);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);
@@ -170,13 +172,13 @@ namespace {
 
 	void GTSButtCrush_FootstepR(AnimationEventData& data) {
 		// do footsteps
-		ButtCrush_DoImpact(&data.giant, FootEvent::Right, DamageSource::CrushedRight, RNode, "FS_R");
+		ButtCrush_DoFootImpact(&data.giant, FootEvent::Right, DamageSource::CrushedRight, RNode, "FS_R");
 		data.HHspeed = 1.0;
 	}
 
 	void GTSButtCrush_FootstepL(AnimationEventData& data) {
 		// do footsteps
-		ButtCrush_DoImpact(&data.giant, FootEvent::Left, DamageSource::CrushedLeft, LNode, "FS_L");
+		ButtCrush_DoFootImpact(&data.giant, FootEvent::Left, DamageSource::CrushedLeft, LNode, "FS_L");
 		data.HHspeed = 1.0;
 	}
 
@@ -185,7 +187,7 @@ namespace {
 		float scale = get_visual_scale(giant);
 		DoCrawlingFunctions(giant, scale, 1.0, Damage_ButtCrush_HandImpact, CrawlEvent::RightHand, "RightHand", 0.5, Radius_ButtCrush_HandImpact, 1.0, DamageSource::HandCrawlRight);
 		data.disableHH = false;
-		data.HHspeed = 3.0;
+		data.HHspeed = 4.0;
 	}
 
 	void GTSButtCrush_FallDownStart(AnimationEventData& data) {
@@ -215,16 +217,20 @@ namespace {
 		ApplyThighDamage(giant, true, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
 		ApplyThighDamage(giant, false, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
 
+		float shake_power = Rumble_ButtCrush_ButtImpact * dust * damage;
+
 		if (ButtR && ButtL) {
 			if (ThighL && ThighR) {
 				DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighL, 4, 0.70, 0.85, DamageSource::Booty);
 				DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighR, 4, 0.70, 0.85, DamageSource::Booty);
-				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Right, "NPC R Butt");
-				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Left, "NPC L Butt");
-				DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
+				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC R Butt");
+				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC L Butt");
 				DoLaunch(&data.giant, 1.30 * perk, 4.20, FootEvent::Butt);
-				Rumbling::Once("Butt_L", &data.giant, 3.60 * damage, 0.02, "NPC R Butt");
-				Rumbling::Once("Butt_R", &data.giant, 3.60 * damage, 0.02, "NPC L Butt");
+				DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
+				
+				
+				Rumbling::Once("Butt_L", &data.giant, shake_power, 0.05, "NPC R Butt");
+				Rumbling::Once("Butt_R", &data.giant, shake_power, 0.05, "NPC L Butt");
 			}
 		} else {
 			if (!ButtR) {
@@ -271,7 +277,7 @@ namespace {
 		if (Runtime::HasPerk(player, "ButtCrush_NoEscape")) {
 			auto& ButtCrush = ButtCrushController::GetSingleton();
 
-			std::vector<Actor*> preys = ButtCrush.GetButtCrushTargets(player, Vore_GetMaxVoreCount(player));
+			std::vector<Actor*> preys = ButtCrush.GetButtCrushTargets(player, 1);
 			for (auto prey: preys) {
 				ButtCrush.StartButtCrush(player, prey); // attaches actors to AnimObjectB
 			}

@@ -92,7 +92,7 @@ namespace Gts {
 		if (Launch) {
 			SoftPotential launch {
 				.k = 1.6,//1.42,
-				.n = 0.62,//0.78
+				.n = 0.70,//0.78
 				.s = 0.6,
 				.a = 0.0,
 			};
@@ -118,7 +118,7 @@ namespace Gts {
 		float giantScale = get_visual_scale(giant);
 
 		power *= Multiply_By_Perk(giant);
-		power *= GetHighHeelsBonusDamage(giant) * 2.5;
+		power *= 1.0 + (GetHighHeelsBonusDamage(giant) * 2.5);
 
 		if (HasSMT(giant)) {
 			power *= 8.0;
@@ -196,7 +196,7 @@ namespace Gts {
 		}
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 200, {0.5, 0.0, 0.5, 1.0});
+			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 20, {0.5, 0.0, 0.5, 1.0});
 		}
 
 		int nodeCollisions = 0;

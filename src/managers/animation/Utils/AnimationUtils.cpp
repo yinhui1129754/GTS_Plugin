@@ -1135,9 +1135,8 @@ namespace Gts {
 								Runtime::PlaySoundAtNode("SwingImpact", giant, Volume, 1.0, node); // play swing impact sound
 							}
 
-							
-							ApplyShakeAtPoint(giant, 3.0 * pushpower * audio, node->world.translate, 1.5);
 							ApplyActionCooldown(otherActor, CooldownSource::Damage_Hand);
+							ApplyShakeAtPoint(giant, 3.0 * pushpower * audio, node->world.translate, 1.5, 0.0, 1.0);
 							CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 						}
 					}

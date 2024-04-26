@@ -37,8 +37,13 @@ namespace {
 			case FootEvent::Front:
 			case FootEvent::Back:
 				CreateParticle(actor, position, scale);
+			break;
 			case FootEvent::JumpLand:
 				CreateParticle(actor, position, scale);
+			break;
+			case FootEvent::Butt:
+				CreateParticle(actor, position, scale);	
+			break;
 		}
 	}
 }
@@ -95,20 +100,25 @@ namespace Gts {
 
 			for (NiAVObject* node: impact.nodes) {
 				// First try casting a ray
+				bool success = false;
 				NiPoint3 foot_location = node->world.translate;
 
-				float hh_offset = HighHeelManager::GetHHOffset(actor).Length();
-				NiPoint3 ray_start = foot_location - NiPoint3(0.0, 0.0, meter_to_unit(0.06*scale + hh_offset)); // Shift up a little then subtract the hh offset
+				float hh_offset = HighHeelManager::GetBaseHHOffset(actor).Length();
+				NiPoint3 ray_start = foot_location + NiPoint3(0.0, 0.0, (20.0 * scale)); // Start a bit higher
 				NiPoint3 ray_direction(0.0, 0.0, -1.0);
-				bool success = false;
-				float ray_length = meter_to_unit(std::max(1.50*scale, 1.50));
-				NiPoint3 explosion_pos = CastRay(actor, ray_start, ray_direction, ray_length, success);
+				float ray_length = (hh_offset + 60.0) * scale;
+				NiPoint3 explosion_pos = CastRayStatics(actor, ray_start, ray_direction, ray_length, success);
 
 				scale *= 1.0 + (Potion_GetMightBonus(actor) * 0.5);
+
+				//log::info("Explosion success: {}", success);
 
 				if (!success) {
 					explosion_pos = foot_location;
 					explosion_pos.z = actor->GetPosition().z;
+					if (foot_kind == FootEvent::Butt) {
+						explosion_pos.z -= 3.0 * scale;
+					}
 				}
 				if (actor->formID == 0x14 && Runtime::GetBool("PCAdditionalEffects")) {
 					make_explosion_at(impact.kind, actor, explosion_pos, scale);

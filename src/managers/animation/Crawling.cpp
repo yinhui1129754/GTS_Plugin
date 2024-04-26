@@ -55,11 +55,13 @@ namespace {
 		auto giant = &data.giant;
 		float scale = get_visual_scale(giant);
 		DoCrawlingFunctions(giant, scale, 1.25, Damage_Crawl_KneeImpact, CrawlEvent::LeftKnee, "LeftKnee", 0.60, Radius_Crawl_KneeImpact, 1.25, DamageSource::KneeLeft);
+		ApplyThighDamage(giant, false, false, Radius_ThighCrush_ButtCrush_Drop, Damage_Crawl_KneeImpact * 0.75, 0.35, 1.0, 14, DamageSource::ThighCrushed);
 	}
 	void GTSCrawl_KneeImpact_R(AnimationEventData& data) {
 		auto giant = &data.giant;
 		float scale = get_visual_scale(giant);
 		DoCrawlingFunctions(giant, scale, 1.25, Damage_Crawl_KneeImpact, CrawlEvent::RightKnee, "RightKnee", 0.6, Radius_Crawl_KneeImpact, 1.25, DamageSource::KneeRight);
+		ApplyThighDamage(giant, true, false, Radius_ThighCrush_ButtCrush_Drop, Damage_Crawl_KneeImpact * 0.75, 0.35, 1.0, 14, DamageSource::ThighCrushed);
 	}
 	void GTSCrawl_HandImpact_L(AnimationEventData& data) {
 		auto giant = &data.giant;

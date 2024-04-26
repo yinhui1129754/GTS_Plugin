@@ -168,8 +168,9 @@ namespace Gts {
 				}
 			}
 			//log::info("Anim speed for {} is {}", actor->GetDisplayFullName(), animspeed);
+			//log::info("Running rumble for {}", actor->GetDisplayFullName());
 			averagePos = averagePos * (1.0 / totalWeight);
-			ApplyShakeAtPoint(actor, 0.4 * totalWeight * animspeed, averagePos, 1.0);
+			ApplyShakeAtPoint(actor, 0.4 * totalWeight * animspeed, averagePos, 1.0, 0.0, 1.0);
 		}
 	}
 	//}

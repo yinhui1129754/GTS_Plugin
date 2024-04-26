@@ -121,7 +121,7 @@ namespace Gts {
 		}
 		auto& Sandwiching = ThighSandwichController::GetSingleton();
 
-		std::vector<Actor*> preys = Sandwiching.GetSandwichTargetsInFront(pred, Vore_GetMaxVoreCount(pred));
+		std::vector<Actor*> preys = Sandwiching.GetSandwichTargetsInFront(pred, 1);
 		for (auto prey: preys) {
 			if (CanPerformAnimationOn(pred, prey)) { // player check is done inside CanSandwich()
 				Sandwiching.StartSandwiching(pred, prey);

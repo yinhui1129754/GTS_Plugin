@@ -57,17 +57,19 @@ namespace {
         if (HasSMT(giant)) {
 			dust = 1.25;
 		} 
+
+		float shake_power = Rumble_KneeCrush_FootImpact * dust * power * (1.0 * (GetHighHeelsBonusDamage(giant) * 5.0));
         
         if (right) {
-            Rumbling::Once("FST_R", giant, 2.20 * power, 0.0, RNode);
+            Rumbling::Once("FST_R", giant, shake_power, 0.05, RNode);
             DoDamageEffect(giant, Damage_Walk_Defaut * power, Radius_Walk_Default, 10, 0.25, FootEvent::Right, 1.0, DamageSource::CrushedRight);
-            DoFootstepSound(giant, 1.0 * power, FootEvent::Right, RNode);
+            DoFootstepSound(giant, 1.10 * power, FootEvent::Right, RNode);
             DoDustExplosion(giant, dust * power, FootEvent::Right, RNode);
             DoLaunch(giant, 0.65 * perk * power, 1.3 * power, FootEvent::Right);
         } else {
-            Rumbling::Once("FST_L", giant, 2.20 * power, 0.0, LNode);
+            Rumbling::Once("FST_L", giant, shake_power, 0.05, LNode);
             DoDamageEffect(giant, Damage_Walk_Defaut * power, Radius_Walk_Default, 10, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
-            DoFootstepSound(giant, 1.0 * power, FootEvent::Left, LNode);
+            DoFootstepSound(giant, 1.10 * power, FootEvent::Left, LNode);
             DoDustExplosion(giant, dust * power, FootEvent::Left, LNode);
             DoLaunch(giant, 0.65 * perk * power, 1.3 * power, FootEvent::Left);
         }
@@ -93,8 +95,8 @@ namespace {
 			if (ThighL && ThighR) {
 				DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighL, 4, 0.70, 0.85, DamageSource::Booty);
 				DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighR, 4, 0.70, 0.85, DamageSource::Booty);
-				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Right, "NPC R Butt");
-				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Left, "NPC L Butt");
+				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC R Butt");
+				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC L Butt");
 				DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
 				DoLaunch(giant, 1.30 * perk, 4.20, FootEvent::Butt);
 				Rumbling::Once("Butt_L", giant, 3.60 * damage, 0.02, "NPC R Butt");
@@ -169,14 +171,14 @@ namespace {
     void GTS_SneakCrush_Butt_FallDownImpact(AnimationEventData& data) {DoButtDamage(&data.giant);}
 
     // footsteps 
-    void GTS_SneakCrush_FootStepL(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, false);}
+    void GTS_SneakCrush_FootStepL(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, false); data.HHspeed = 4.0; data.disableHH = false;}
     void GTS_SneakCrush_FootStepR(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, true);}
 
-    void GTS_SneakCrush_FootStep_SilentL(AnimationEventData& data) {DoFootsteps(&data.giant, 0.8, false);}
-    void GTS_SneakCrush_FootStep_SilentR(AnimationEventData& data) {DoFootsteps(&data.giant, 0.8, true);}
+    void GTS_SneakCrush_FootStep_SilentL(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, false);}
+    void GTS_SneakCrush_FootStep_SilentR(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, true);}
 
-	void GTS_DisableHH(AnimationEventData& data) {data.stage = 2; data.disableHH = true;}
-	void GTS_EnableHH(AnimationEventData& data) {data.disableHH = false;}
+	void GTS_DisableHH(AnimationEventData& data) {data.stage = 2; data.HHspeed = 2.25; data.disableHH = true;}
+	void GTS_EnableHH(AnimationEventData& data) {data.HHspeed = 1.0; data.disableHH = false;}
 }
 
 namespace Gts

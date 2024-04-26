@@ -97,7 +97,6 @@ namespace Gts {
 	bool IsUndead(Actor* actor, bool PerformCheck);
 	bool WasReanimated(Actor* actor);
 	bool IsFlying(Actor* actor);
-	bool IsHeadtracking(Actor* giant);
 	bool IsHostile(Actor* giant, Actor* tiny);
 	bool CanPerformAnimationOn(Actor* giant, Actor* tiny);
 	bool IsEssential(Actor* giant, Actor* actor);
@@ -122,7 +121,7 @@ namespace Gts {
 	float GetDamageSetting();
 	float GetFallModifier(Actor* giant);
 
-	std::size_t Vore_GetMaxVoreCount(Actor* giant);
+	std::vector<Actor*> Vore_GetMaxVoreCount(Actor* giant, std::vector<Actor*> actors);
 
 	float GetHPThreshold(Actor* actor);
 
@@ -184,7 +183,7 @@ namespace Gts {
 	void ApplyShake(Actor* caster, float modifier);
 	void ApplyShakeAtNode(Actor* caster, float modifier, std::string_view node);
 	void ApplyShakeAtNode(Actor* caster, float modifier, std::string_view node, float radius);
-	void ApplyShakeAtPoint(Actor* caster, float modifier, const NiPoint3& coords, float radius);
+	void ApplyShakeAtPoint(Actor* caster, float modifier, const NiPoint3& coords, float radius, float duration_override, float calamity);
 	void EnableFreeCamera();
 
 	bool DisallowSizeDamage(Actor* giant, Actor* tiny);

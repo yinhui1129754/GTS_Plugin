@@ -116,7 +116,7 @@ namespace Gts {
 		float DamageMult = 0.6;
 		float giantSize = get_visual_scale(giant);
 
-		float highheel = GetHighHeelsBonusDamage(giant) * 2.5;
+		float highheel = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
 		float startpower = Push_Actor_Upwards * highheel * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
 		
 

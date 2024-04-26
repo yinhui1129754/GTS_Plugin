@@ -34,11 +34,11 @@
 #include "managers/cameras/camutil.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/ai/aifunctions.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "magic/effects/common.hpp"
 #include "managers/explosion.hpp"
-#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/tremor.hpp"
 #include "managers/Rumble.hpp"
@@ -145,14 +145,14 @@ namespace {
 		}
 	}
 
-	void StartLeftLeRumbling(std::string_view tag, Actor& actor, float power, float halflife) {
+	void StartLeftLegRumbling(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: L_LEG_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
 			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 		}
 	}
 
-	void StopLeftLeRumbling(std::string_view tag, Actor& actor) {
+	void StopLeftLegRumbling(std::string_view tag, Actor& actor) {
 		for (auto& node_name: L_LEG_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
 			Rumbling::Stop(rumbleName, &actor);
@@ -194,7 +194,7 @@ namespace {
 		}
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		sandwichdata.EnableSuffocate(false);
-		StartLeftLeRumbling("LLSandwich", data.giant, 0.10, 0.12);
+		StartLeftLegRumbling("LLSandwich", data.giant, 0.10, 0.12);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", true, 1.0);
 	}
 
@@ -207,7 +207,7 @@ namespace {
 		}
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		sandwichdata.EnableSuffocate(false);
-		StartLeftLeRumbling("LLSandwichHeavy", data.giant, 0.15, 0.15);
+		StartLeftLegRumbling("LLSandwichHeavy", data.giant, 0.15, 0.15);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", true, 2.5);
 	}
 
@@ -215,14 +215,15 @@ namespace {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		Runtime::PlaySoundAtNode("ThighSandwichImpact", &data.giant, 1.0, 1.0, "AnimObjectB");
 		sandwichdata.EnableSuffocate(true);
-		Rumbling::Once("ThighImpact", &data.giant, 0.4, 0.15, "AnimObjectA");
+
+		
 		for (auto tiny: sandwichdata.GetActors()) {
 			DoThighDamage(&data.giant, tiny, data.animSpeed, 1.0, 1.0);
 			tiny->NotifyAnimationGraph("ragdoll");
 			AllowToBeCrushed(tiny, true);
 		}
-		//std::string message = std::format("You're able to attack targets with her thighs during thigh sandwich. Press LMB for Normal attack, press both RMB + LMB for strong attack. Additionally, you can hold LMB or LMB + RMB to increase attack speed, or RMB to decrease it. Attack speed directly affects attack damage.");
-		//TutorialMessage(message, "SandwichControls");
+		
+		Rumbling::Once("ThighImpact", &data.giant, Rumble_ThighSandwich_ThighImpact, 0.15, "AnimObjectA");
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 1.0);
 	}
 
@@ -230,26 +231,28 @@ namespace {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		Runtime::PlaySoundAtNode("ThighSandwichImpact", &data.giant, 1.2, 1.0, "AnimObjectA");
 		sandwichdata.EnableSuffocate(true);
-		Rumbling::Once("ThighImpact", &data.giant, 0.75, 0.15, "AnimObjectA");
+		
 		for (auto tiny: sandwichdata.GetActors()) {
 			DoThighDamage(&data.giant, tiny, data.animSpeed, 2.2, 0.75);
 			Attacked(tiny, &data.giant);
 			tiny->NotifyAnimationGraph("ragdoll");
 			AllowToBeCrushed(tiny, true);
 		}
+		
+		Rumbling::Once("ThighImpact", &data.giant, Rumble_ThighSandwich_ThighImpact_Heavy, 0.15, "AnimObjectA");
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 	}
 
 	void GTSSandwich_MoveLL_end(AnimationEventData& data) {
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
-		StopLeftLeRumbling("LLSandwich", data.giant);
+		StopLeftLegRumbling("LLSandwich", data.giant);
 	}
 
 	void GTSSandwich_MoveLL_end_H(AnimationEventData& data) {
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
-		StopLeftLeRumbling("LLSandwichHeavy", data.giant);
+		StopLeftLegRumbling("LLSandwichHeavy", data.giant);
 	}
 
 	void GTSSandwich_ThighLoop_Enter(AnimationEventData& data) {
@@ -260,9 +263,7 @@ namespace {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(&data.giant);
 		ManageCamera(&data.giant, false, CameraTracking::Thigh_Sandwich);
 		sandwichdata.EnableSuffocate(false);
-		//sandwichdata.DisableRuneTask(&data.giant, false); // Disable Rune Growing
 		sandwichdata.EnableRuneTask(&data.giant, true); // Launch Rune Shrinking
-		//sandwichdata.OverideShrinkRune(0.0);
 		for (auto tiny: sandwichdata.GetActors()) {
 			SetBeingHeld(tiny, false);
 			PushActorAway(&data.giant, tiny, 1.0);
@@ -300,8 +301,6 @@ namespace {
 			EnableCollisions(tiny);
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
-		//sandwichdata.DisableRuneTask(&data.giant, false); // Disable Rune Growth
-		//sandwichdata.DisableRuneTask(&data.giant, true); // Disable Rune Shrink
 		ManageCamera(&data.giant, false, CameraTracking::Thigh_Sandwich); // Allow sandwich repeat
 	}
 
@@ -315,6 +314,12 @@ namespace {
 		DoDamageEffect(&data.giant, 6.0 * perk, 1.6, 10, 0.20, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
 		DoLaunch(&data.giant, 0.85 * perk, 2.2, FootEvent::Right);
 		DoLaunch(&data.giant, 0.85 * perk, 2.2, FootEvent::Left);
+
+		float hh = 1.0 + (GetHighHeelsBonusDamage(&data.giant) * 5.0);
+		float shake_power = Rumble_ThighSandwich_DropDown * hh;
+
+		Rumbling::Once("ThighDropDown_R", &data.giant, shake_power, 0.10, RNode);
+		Rumbling::Once("ThighDropDown_L", &data.giant, shake_power, 0.10, LNode);
 	}
 
 	void GTSBEH_Exit(AnimationEventData& data) {
@@ -334,7 +339,7 @@ namespace {
 			return;
 		}
 
-		std::vector<Actor*> preys = Sandwiching.GetSandwichTargetsInFront(pred, Vore_GetMaxVoreCount(pred));
+		std::vector<Actor*> preys = Sandwiching.GetSandwichTargetsInFront(pred, 1);
 		for (auto prey: preys) {
 			Sandwiching.StartSandwiching(pred, prey);
 			auto node = find_node(pred, "GiantessRune", false);

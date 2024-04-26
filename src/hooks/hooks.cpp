@@ -52,6 +52,7 @@ namespace Hooks
 
 		Hook_MainUpdate::Hook(trampoline);
 		Hook_BGSImpactManager::Hook();
+		Hook_BGSImpactManager::Hook(trampoline);
 		Hook_VM::Hook();
 		Hook_Havok::Hook(trampoline);
 

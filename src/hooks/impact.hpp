@@ -9,6 +9,7 @@ namespace Hooks
 	class Hook_BGSImpactManager
 	{
 		public:
+			static void Hook(Trampoline& trampoline);
 			static void Hook();
 		private:
 

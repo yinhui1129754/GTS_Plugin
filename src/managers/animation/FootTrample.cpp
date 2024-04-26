@@ -48,14 +48,16 @@ namespace {
 		float dust = 1.0;
 		
 		if (HasSMT(giant)) {
-			shake = 4.0;
+			shake = 2.0;
 			dust = 1.25;
 		}
 
 		DoDamageEffect(giant, Damage_Trample * perk, Radius_Trample, 100, 0.10, Event, 1.10, Source);
 		DrainStamina(giant, "StaminaDrain_Trample", "DestructionBasics", true, 0.6); // start stamina drain
 
-		Rumbling::Once(rumble, giant, 1.60 * shake, 0.0, Node);
+		float shake_power = Rumble_Trample_Stage1 * shake * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node);
 		DoLaunch(giant, 0.65 * perk, 0.75 * perk, Event);
 		DoDustExplosion(giant, dust, Event, Node);
 		DoFootstepSound(giant, 1.0, Event, Node);
@@ -73,10 +75,13 @@ namespace {
 		float dust = 1.0;
 		
 		if (HasSMT(giant)) {
-			shake = 4.0;
+			shake = 2.0;
 			dust = 1.25;
 		}
-		Rumbling::Once(rumble, giant, 2.20 * shake, 0.0, Node);
+
+		float shake_power = Rumble_Trample_Stage2 * shake * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node);
 		DoDamageEffect(giant, Damage_Trample_Repeat * perk, Radius_Trample_Repeat, 1, 0.12, Event, 1.10, Source);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);
@@ -90,11 +95,14 @@ namespace {
 		float dust = 1.25;
 		
 		if (HasSMT(giant)) {
-			shake = 4.0;
+			shake = 2.0;
 			dust = 1.50;
 		}
 		DoDamageEffect(giant, Damage_Trample_Finisher * perk, Radius_Trample_Finisher, 1, 0.25, Event, 0.85, Source);
-		Rumbling::Once(rumble, giant, 3.20 * shake, 0.0, Node);
+
+		float shake_power = Rumble_Trample_Stage3 * shake * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node);
 		DoLaunch(giant, 1.25 * perk, 3.20 * perk, Event);
 		DoFootstepSound(giant, 1.15, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);

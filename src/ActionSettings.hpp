@@ -134,7 +134,7 @@ namespace Gts {
     // ----------------------For launching/pushing actors ^-----------------------------------------------
 
     // Below is For launching objects
-    const float Push_Object_Upwards = 0.32f;            // Used for objects only
+    const float Push_Object_Upwards = 0.24f;            // Used for objects only
     const float Push_Object_Forward = 0.0086f;          // Used for objects only
     const float Push_Actor_Upwards = 14.0f;             // Used for Actors only
 
@@ -219,4 +219,62 @@ namespace Gts {
     const float Radius_Kick = 18.0f;
     /////////////////////////////////////////////////////
 
+
+    //-----------------------------------------Camera Rumble power settings
+    const float Rumble_Default_FootWalk = 2.0f; // Used for vanilla anims such as walking, running, sprinting
+    const float Rumble_Default_JumpLand = 4.0f; // Used for vanilla anims such as walking, running, sprinting
+
+    ////////////////////////////////////////////////////
+
+    const float Rumble_Stomp_Normal = 2.6f;
+    const float Rumble_Stomp_Strong = 4.0f;
+    const float Rumble_Stomp_Land_Normal = 2.75f;
+    const float Rumble_Stomp_Land_Strong = 3.2f;
+
+
+    // Tramples
+    const float Rumble_Trample_Stage1 = 2.4f;
+    const float Rumble_Trample_Stage2 = 3.2f;
+    const float Rumble_Trample_Stage3 = 4.4f;
+
+    // Foot Grind
+    const float Rumble_FootGrind_DOT = 0.25f;
+    const float Rumble_FootGrind_Rotate = 0.85f;
+    const float Rumble_FootGrind_Impact = 2.4f;
+
+
+    // Grab
+    const float Rumble_Grab_Throw_Footstep = 3.0f;
+
+    // Thigh Sandwich
+    const float Rumble_ThighSandwich_ThighImpact_Heavy = 1.8f;
+    const float Rumble_ThighSandwich_ThighImpact = 1.0f;
+    const float Rumble_ThighSandwich_DropDown = 3.2f;
+
+    /// Thigh Crush
+    const float Rumble_ThighCrush_StandUp = 2.4f;
+    const float Rumble_ThighCrush_LegSpread_Light_End = 0.15f;
+    const float Rumble_ThighCrush_LegCross_Heavy_End = 0.25f;
+
+    const float Rumble_ThighCrush_LegSpread_Light_Loop = 0.12f;
+    const float Rumble_ThighCrush_LegSpread_Heavy_Loop = 0.18f;
+
+
+    // Butt crush
+    const float Rumble_ButtCrush_FeetImpact = 2.5f;
+    const float Rumble_ButtCrush_ButtImpact = 5.8f;  // Butt Crush
+
+    // Knee Crush
+    const float Rumble_KneeCrush_FootImpact = 2.35f;
+
+    // Breast crush
+    const float Rumble_Cleavage_HoverLoop = 0.06f;
+    const float Rumble_Cleavage_Impact = 4.8f;      // Breast Crush
+
+    // Crawling
+    const float Rumble_Crawl_KneeDrop = 4.8f;       // Knee Crush
+    const float Rumble_Crawl_KneeHand_Impact = 2.2f;// A bit higher value since it gets cut off by sneak modifier
+
+    // Vore
+    const float Rumble_Vore_Stomp_Light = 2.0f;
 }

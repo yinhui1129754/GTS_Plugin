@@ -112,6 +112,10 @@ namespace {
 		auto ButtL = find_node(giant, "NPC L Butt");
 		if (ButtR && ButtL) {
 			if (ThighL && ThighR) {
+				
+				ApplyThighDamage(giant, true, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * perk, 0.35, 1.0, 14, DamageSource::ThighCrushed);
+				ApplyThighDamage(giant, false, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * perk, 0.35, 1.0, 14, DamageSource::ThighCrushed);
+
 				DoDamageAtPoint(giant, Radius_Crawl_Vore_ButtImpact, Damage_Crawl_Vore_Butt_Impact * perk, ThighL, 10, 0.70, 0.95, DamageSource::Booty);
 				DoDamageAtPoint(giant, Radius_Crawl_Vore_ButtImpact, Damage_Crawl_Vore_Butt_Impact * perk, ThighR, 10, 0.70, 0.95, DamageSource::Booty);
 				DoDustExplosion(giant, 1.8 * dust, FootEvent::Right, "NPC R Butt");
@@ -119,8 +123,11 @@ namespace {
 				DoFootstepSound(giant, 1.2, FootEvent::Right, RNode);
 				DoFootstepSound(giant, 1.2, FootEvent::Left, LNode);
 				DoLaunch(&data.giant, 0.95, 4.2, FootEvent::Butt);
-				Rumbling::Once("Butt_L", &data.giant, 3.80, 0.02, "NPC R Butt");
-				Rumbling::Once("Butt_R", &data.giant, 3.80, 0.02, "NPC L Butt");
+
+				float shake_power = Rumble_Crawl_KneeDrop * dust;
+
+				Rumbling::Once("Butt_L", &data.giant, shake_power, 0.10, "NPC R Butt");
+				Rumbling::Once("Butt_R", &data.giant, shake_power, 0.10, "NPC L Butt");
 			}
 		}
 	}

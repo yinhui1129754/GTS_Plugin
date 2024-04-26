@@ -39,7 +39,7 @@ namespace {
 		if (voreTimer.ShouldRunFrame()) {
 			auto& VoreManager = Vore::GetSingleton();
 
-			std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, Vore_GetMaxVoreCount(pred));
+			std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, 1);
 			for (auto prey: preys) {
 				VoreManager.StartVore(pred, prey);
 			}
@@ -126,7 +126,7 @@ namespace {
 		
 		if (!AllowDevourment()) {
 			if (giant) {
-				ModSizeExperience(giant, 0.28 + (tinySize * 0.02));
+				ModSizeExperience(giant, 0.20 + (tinySize * 0.02));
 				VoreMessage_Absorbed(giant, tiny_name);
 				CallGainWeight(giant, 3.0 * tinySize);
 				BuffAttributes(giant, tinySize);
@@ -247,6 +247,7 @@ namespace Gts {
 				bool Living = IsLiving(tiny);
 				bool Dragon = IsDragon(tiny);
 				float DefaultScale = get_natural_scale(tiny);
+				ModSizeExperience(giant, 0.08 + (DefaultScale*0.025));
 
 				SurvivalMode_AdjustHunger(this->giant.get().get(), get_visual_scale(tiny), DefaultScale, Dragon, Living, 0);
 			}
@@ -431,6 +432,10 @@ namespace Gts {
 			return cosTheta <= cos(VORE_ANGLE*PI/180.0);
 		}), preys.end());
 
+		if (numberOfPrey == 1) {
+			return Vore_GetMaxVoreCount(pred, preys);
+		}
+
 		// Reduce vector size
 		if (preys.size() > numberOfPrey) {
 			preys.resize(numberOfPrey);
@@ -516,6 +521,10 @@ namespace Gts {
 			return cosTheta <= cos(VORE_ANGLE*PI/180.0);
 		}), preys.end());
 
+		if (numberOfPrey == 1) {
+			return Vore_GetMaxVoreCount(pred, preys);
+		}
+
 		// Reduce vector size
 		if (preys.size() > numberOfPrey) {
 			preys.resize(numberOfPrey);
@@ -557,6 +566,10 @@ namespace Gts {
 		{
 			return !this->CanVore(pred, prey);
 		}), preys.end());
+
+		if (numberOfPrey == 1) {
+			return Vore_GetMaxVoreCount(pred, preys);
+		}
 
 		// Reduce vector size
 		if (preys.size() > numberOfPrey) {
@@ -614,7 +627,9 @@ namespace Gts {
 
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale) && sizedifference < MINIMUM_VORE_SCALE) {
 			if (pred->formID == 0x14) {
-				Notify("{} is too big to be eaten.", prey->GetDisplayFullName());
+				std::string_view message = std::format("{} is too big to be eaten: x{:.2f}/{:.2f}", prey->GetDisplayFullName(), sizedifference, MINIMUM_VORE_SCALE);
+				shake_camera(pred, 0.45, 0.30);
+				TiredSound(pred, message);
 			}
 			return false;
 		}

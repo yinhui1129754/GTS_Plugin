@@ -122,6 +122,7 @@ namespace Gts {
 			pos = CastRayStatics(giant, ray_start_second, ray_direction, ray_length, success_second);
 			if (!success_second) {
 				pos = giant->GetPosition();
+				log::info("Ray cast failed");
 				return pos;
 			}
 			return pos;

@@ -215,11 +215,14 @@ namespace {
 		float dust = 0.9;
 		float perk = GetPerkBonus_Basics(&data.giant);
 		if (HasSMT(&data.giant)) {
-			shake = 4.0;
+			shake = 2.0;
 			launch = 1.5;
 			dust = 1.25;
 		}
-		Rumbling::Once("StompR", &data.giant, 1.50 * shake, 0.0, RNode);
+
+		float shake_power = Rumble_Grab_Throw_Footstep * shake * (1.0 + (GetHighHeelsBonusDamage(&data.giant) * 5.0));
+
+		Rumbling::Once("StompR", &data.giant, shake_power, 0.05, RNode);
 		DoDamageEffect(&data.giant, 1.1 * launch * data.animSpeed * perk, 1.0 * launch * data.animSpeed, 10, 0.20, FootEvent::Right, 1.0, DamageSource::CrushedRight);
 		DoFootstepSound(&data.giant, 1.0, FootEvent::Right, RNode);
 		DoDustExplosion(&data.giant, dust, FootEvent::Right, RNode);
@@ -235,11 +238,14 @@ namespace {
 		float dust = 0.9;
 		float perk = GetPerkBonus_Basics(&data.giant);
 		if (HasSMT(&data.giant)) {
-			shake = 4.0;
+			shake = 2.0;
 			launch = 1.5;
 			dust = 1.25;
 		}
-		Rumbling::Once("StompL", &data.giant, 1.50 * shake, 0.0, LNode);
+
+		float shake_power = Rumble_Grab_Throw_Footstep * shake * (1.0 + (GetHighHeelsBonusDamage(&data.giant) * 5.0));
+
+		Rumbling::Once("StompL", &data.giant, shake_power, 0.05, LNode);
 		DoDamageEffect(&data.giant, 1.1 * launch * data.animSpeed * perk, 1.0 * launch * data.animSpeed, 10, 0.20, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
 		DoFootstepSound(&data.giant, 1.0, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, dust, FootEvent::Left, LNode);

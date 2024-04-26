@@ -46,10 +46,12 @@ namespace Gts {
 			TempActorData result;
 			auto bound = get_bound(actor);
 			if (!bound) {
+				log::info("Bound not found for {}", actor->GetDisplayFullName());
 				return nullptr;
 			}
 			auto scale = get_scale(actor);
 			if (scale < 0.0) {
+				log::info("Scale of {} is < 0", actor->GetDisplayFullName());
 				return nullptr;
 			}
 			float base_height_unit = bound->extents[2] * scale;

@@ -47,7 +47,7 @@ namespace Gts {
 		EventDispatcher::AddListener(&ShrinkToNothingManager::GetSingleton()); // Shrink to nothing manager
 
 		EventDispatcher::AddListener(&FootStepManager::GetSingleton()); // Manages footstep sounds
-		EventDispatcher::AddListener(&TremorManager::GetSingleton()); // Manages tremors on footstop
+		EventDispatcher::AddListener(&TremorManager::GetSingleton()); // Manages tremors on footsteps
 		EventDispatcher::AddListener(&ExplosionManager::GetSingleton()); // Manages clouds/exposions on footstep
 		EventDispatcher::AddListener(&Rumbling::GetSingleton()); // Manages rumbling of contoller/camera for multiple frames
 

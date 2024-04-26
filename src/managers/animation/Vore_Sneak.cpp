@@ -3,16 +3,17 @@
 #include "managers/animation/Utils/CrawlUtils.hpp"
 #include "managers/emotions/EmotionManager.hpp"
 #include "managers/animation/Vore_Sneak.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/ai/aifunctions.hpp"
 #include "managers/CrushManager.hpp"
+#include "managers/explosion.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
-#include "managers/explosion.hpp"
-#include "managers/audio/footstep.hpp"
 #include "managers/Rumble.hpp"
 #include "managers/tremor.hpp"
+#include "ActionSettings.hpp"
 #include "data/transient.hpp"
 #include "managers/vore.hpp"
 #include "data/runtime.hpp"
@@ -89,7 +90,6 @@ namespace {
 		AdjustFacialExpression(&data.giant, 1, 0.5, 0.32, 0.72, "phenome"); // Open it wider
 		AdjustFacialExpression(&data.giant, 0, 0.8, 0.32, 0.72, "modifier"); // blink L
 		AdjustFacialExpression(&data.giant, 1, 0.8, 0.32, 0.72, "modifier"); // blink R
-		Cprint("OpenMouth fired");
     }
     void GTS_Sneak_Vore_Swallow(AnimationEventData& data) {
         Actor* giant = &data.giant;
@@ -139,14 +139,10 @@ namespace {
     void GTS_Sneak_Vore_SmileOn(AnimationEventData& data) {
         AdjustFacialExpression(&data.giant, 2, 1.0, 0.32, 0.72, "expression");
 		AdjustFacialExpression(&data.giant, 3, 0.8, 0.32, 0.72, "phenome");
-
-		Cprint("SmileON fired");
     }
     void GTS_Sneak_Vore_SmileOff(AnimationEventData& data) {
         AdjustFacialExpression(&data.giant, 2, 0.0, 0.32, 0.72, "expression");
 		AdjustFacialExpression(&data.giant, 3, 0.0, 0.32, 0.72, "phenome");
-
-		Cprint("SmileOFF fired");
     }
 }
 

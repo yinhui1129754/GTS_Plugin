@@ -340,7 +340,7 @@ namespace Gts {
 
 		float highheelsdamage = 1.0;
 		if (ApplyHighHeelBonus(giant, Cause)) {
-			highheelsdamage = 1.0 + (GetHighHeelsBonusDamage(giant) * 5);
+			highheelsdamage = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
 		}
 
 		float sprintdamage = 1.0; // default Sprint damage of 1.0

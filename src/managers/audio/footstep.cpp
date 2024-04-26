@@ -5,6 +5,7 @@
 #include "managers/impact.hpp"
 #include "managers/tremor.hpp"
 #include "data/persistent.hpp"
+#include "ActionSettings.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
 #include "profiler.hpp"
@@ -104,10 +105,10 @@ namespace Gts {
 					sprinting = true;
 				}
 				if (actor->AsActorState()->IsWalking()) {
-					scale *= 0.75; // Walking makes you sound quieter
+					scale *= 0.80; // Walking makes you sound quieter
 				}
 				if (actor->IsSneaking()) {
-					scale *= 0.60; // Sneaking makes you sound quieter
+					scale *= 0.70; // Sneaking makes you sound quieter
 				}
 				if (actor->formID == 0x14 && IsFirstPerson()) { // Footsteps are quieter when in first person
 					scale *= 0.70;
@@ -162,7 +163,7 @@ namespace Gts {
         //  ^ Same normal sounds but a tiny bit louder: 319060: Sound\fx\GTS\Effects\Footsteps\Original\Movement
 		BSSoundHandle Footstep_12 = get_sound(foot, scale, limit_x24, get_footstep_highheel(foot_kind, 12),  VolumeParams { .a = 12.0,          .k = 0.40, .n = 0.55, .s = 1.0}, "x12 Footstep", 1.8);
 		// Stops at x24
-		BSSoundHandle Footstep_24 = get_sound(foot, scale, limitless, get_footstep_highheel(foot_kind, 24),  VolumeParams { .a = 22.0,          .k = 0.30, .n = 0.55, .s = 1.0}, "x24 Footstep", 2.6);
+		BSSoundHandle Footstep_24 = get_sound(foot, scale, limitless, get_footstep_highheel(foot_kind, 24),  VolumeParams { .a = 20.0,          .k = 0.30, .n = 0.55, .s = 1.0}, "x24 Footstep", 2.6);
 		// Always plays past x22.0
 
 		if (lFootstep.soundID != BSSoundHandle::kInvalidID) { // x1.2: 
