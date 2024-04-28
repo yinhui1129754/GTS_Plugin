@@ -118,7 +118,7 @@ namespace Gts {
 		float giantScale = get_visual_scale(giant);
 
 		power *= Multiply_By_Perk(giant);
-		power *= 1.0 + (GetHighHeelsBonusDamage(giant) * 2.5);
+		power *= GetHighHeelsBonusDamage(giant, true);;
 
 		if (HasSMT(giant)) {
 			power *= 8.0;
@@ -267,7 +267,7 @@ namespace Gts {
 
 		bool PreciseScan = Runtime::GetBoolOr("AccurateCellScan", false);
 
-		if (!PreciseScan || !REL::Module::IsSE()) { // Scan single cell only
+		if (!PreciseScan) { // Scan single cell only
 			TESObjectCELL* cell = giant->GetParentCell();
 			if (cell) {
 				auto data = cell->GetRuntimeData();
@@ -288,27 +288,26 @@ namespace Gts {
 					}
 				}
 			}
-		} else if (PreciseScan && REL::Module::IsSE()) { // Else scan Entire world, SE only for now: TES->ForEachReferenceInRange crashes on AE!
-			const auto TES = TES::GetSingleton(); // Crashes on AE, ty Todd (Also seems to be FPS expensive)
-			if (TES) {
-				TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
-				if (GiantRef) {
-					TES->ForEachReferenceInRange(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
-						bool IsActor = a_ref.Is(FormType::ActorCharacter);
-						if (!IsActor) { // we don't want to apply it to actors
-							NiPoint3 objectlocation = a_ref.GetPosition();
-							float distance = (point - objectlocation).Length();
-							if (distance <= maxDistance) {
-								ObjectRefHandle handle = a_ref.CreateRefHandle();
+		} else if (PreciseScan) { // Else scan Entire world
+			TESObjectREFR* GiantRef = skyrim_cast<TESObjectREFR*>(giant);
+			if (GiantRef) {
+				ForEachReferenceInRange_Custom(GiantRef, maxDistance, [&](RE::TESObjectREFR& a_ref) {
+					bool IsActor = a_ref.Is(FormType::ActorCharacter);
+					if (!IsActor) { // we don't want to apply it to actors
+						NiPoint3 objectlocation = a_ref.GetPosition();
+						float distance = (point - objectlocation).Length();
+						if (distance <= maxDistance) {
+							ObjectRefHandle handle = a_ref.CreateRefHandle();
+							if (handle) {
 								Objects.push_back(handle);
 							}
 						}
-						return RE::BSContainer::ForEachResult::kContinue;    
-					});
-				}
+					}
+					return RE::BSContainer::ForEachResult::kContinue;    
+				});
 			}
 		}
-
+		
 		return Objects;
 	}
 }

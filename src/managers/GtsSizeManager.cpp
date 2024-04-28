@@ -100,8 +100,10 @@ namespace Gts {
 			float FollowerLimit = Runtime::GetFloat("FollowersSizeLimit"); // 0 by default
 			float NPCLimit = Runtime::GetFloat("NPCSizeLimit"); // 0 by default
 
+			float buttcrush = GetButtCrushSize(actor);
+
 			if (Persistent) {
-				float size_overrides = Potion_GetSizeMultiplier(actor) * GetButtCrushSize(actor);
+				float size_overrides = Potion_GetSizeMultiplier(actor);
 				// ^ Takes ButtCrush growth and Potion amplifiers into account
 				Persistent_Size = ((1.0 + Persistent->bonus_max_size) * size_overrides);
 			}
@@ -118,7 +120,7 @@ namespace Gts {
 				GetLimit = std::clamp(NaturalScale + ((Runtime::GetFloat("NPCSizeLimit") - 1.0f) * NaturalScale), NaturalScale * NPCLimit, 99999999.0f);       // Apply only if Quest is done.
 			}
 
-			float TotalLimit = (((GetLimit * Persistent_Size) * (1.0 + Gigantism))) / GameScale;
+			float TotalLimit = (buttcrush + ((GetLimit * Persistent_Size) * (1.0 + Gigantism))) / GameScale;
 
 			if (get_max_scale(actor) < TotalLimit + Endless || get_max_scale(actor) > TotalLimit + Endless) {
 				set_max_scale(actor, TotalLimit);
@@ -241,7 +243,7 @@ namespace Gts {
 					return Fall;
 				break;
 				case SizeAttribute::HighHeel:
-					return GetHighHeelsBonusDamage(actor);
+					return GetHighHeelsBonusDamage(actor, false);
 				break;
 				}
 			}

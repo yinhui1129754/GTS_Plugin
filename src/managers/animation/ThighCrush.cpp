@@ -76,7 +76,7 @@ namespace {
 	void LegRumblingOnce(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: LEG_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			Rumbling::Once(rumbleName, &actor, power, halflife, node_name);
+			Rumbling::Once(rumbleName, &actor, power, halflife, node_name, 0.0);
 		}
 	}
 
@@ -143,18 +143,22 @@ namespace {
 		});
 	}
 
-	void ThighCrush_GetUpDamage(Actor* giant, float animSpeed, float mult, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
-		float scale = get_visual_scale(giant);
+	void ThighCrush_GetUpFootstepDamage(Actor* giant, float animSpeed, float mult, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
+		float getup = 1.0;
 		float speed = animSpeed;
+		float scale = get_visual_scale(giant);
 		float volume = scale * 0.10 * speed;
 		float perk = GetPerkBonus_Thighs(giant);
 
-		float hh = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
-		float shake_power = Rumble_ThighCrush_StandUp * hh * mult;
+		float shake_power = Rumble_ThighCrush_StandUp * mult * GetHighHeelsBonusDamage(giant, true);
+
+		if (HasSMT(giant)) {
+			shake_power = 2.0;
+		}
 		
 		DoDamageEffect(giant, Damage_ThighCrush_Stand_Up * mult * perk, Radius_ThighCrush_Stand_Up, 25, 0.20, Event, 1.0, Source);
 		DoLaunch(giant, 0.65 * mult * perk, 1.55 * animSpeed, Event);
-		Rumbling::Once(rumble, giant, shake_power, 0.10, Node);
+		Rumbling::Once(rumble, giant, shake_power, 0.10, Node, 0.0);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, 1.0, Event, Node);
 	}
@@ -275,19 +279,19 @@ namespace {
 
 	void GTSstandR(AnimationEventData& data) {
 		// do stand up damage
-		ThighCrush_GetUpDamage(&data.giant, data.animSpeed, 1.0, FootEvent::Right, DamageSource::CrushedRight, RNode, "ThighCrushStompR");
+		ThighCrush_GetUpFootstepDamage(&data.giant, data.animSpeed, 1.0, FootEvent::Right, DamageSource::CrushedRight, RNode, "ThighCrushStompR");
 		data.stage = 9;
 	}
 
 	void GTSstandL(AnimationEventData& data) {
 		// do stand up damage
-		ThighCrush_GetUpDamage(&data.giant, data.animSpeed, 1.0, FootEvent::Left, DamageSource::CrushedLeft, LNode, "ThighCrushStompL");
+		ThighCrush_GetUpFootstepDamage(&data.giant, data.animSpeed, 1.0, FootEvent::Left, DamageSource::CrushedLeft, LNode, "ThighCrushStompL");
 		data.stage = 9;
 	}
 
 	void GTSstandRS(AnimationEventData& data) {
 		// do weaker stand up damage
-		ThighCrush_GetUpDamage(&data.giant, data.animSpeed, 0.8, FootEvent::Right, DamageSource::CrushedRight, RNode, "ThighCrushStompR_S");
+		ThighCrush_GetUpFootstepDamage(&data.giant, data.animSpeed, 0.8, FootEvent::Right, DamageSource::CrushedRight, RNode, "ThighCrushStompR_S");
 		data.stage = 9;
 	}
 	void GTSBEH_Next(AnimationEventData& data) {

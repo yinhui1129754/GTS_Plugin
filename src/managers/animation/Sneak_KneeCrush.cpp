@@ -51,23 +51,26 @@ namespace {
 	}
 
     void DoFootsteps(Actor* giant, float power, bool right) {
-        float dust = 1.0;
         float perk = GetPerkBonus_Basics(giant);
+		float dust = 1.0;
+		float smt = 1.0;
 
         if (HasSMT(giant)) {
 			dust = 1.25;
+			smt = 2.0;
 		} 
 
-		float shake_power = Rumble_KneeCrush_FootImpact * dust * power * (1.0 * (GetHighHeelsBonusDamage(giant) * 5.0));
+		float shake_power = Rumble_KneeCrush_FootImpact * power;
+		smt *= GetHighHeelsBonusDamage(giant, true);
         
         if (right) {
-            Rumbling::Once("FST_R", giant, shake_power, 0.05, RNode);
+            Rumbling::Once("FST_R", giant, shake_power * smt, 0.05, RNode, 0.0);
             DoDamageEffect(giant, Damage_Walk_Defaut * power, Radius_Walk_Default, 10, 0.25, FootEvent::Right, 1.0, DamageSource::CrushedRight);
             DoFootstepSound(giant, 1.10 * power, FootEvent::Right, RNode);
             DoDustExplosion(giant, dust * power, FootEvent::Right, RNode);
             DoLaunch(giant, 0.65 * perk * power, 1.3 * power, FootEvent::Right);
         } else {
-            Rumbling::Once("FST_L", giant, shake_power, 0.05, LNode);
+            Rumbling::Once("FST_L", giant, shake_power * smt, 0.05, LNode, 0.0);
             DoDamageEffect(giant, Damage_Walk_Defaut * power, Radius_Walk_Default, 10, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
             DoFootstepSound(giant, 1.10 * power, FootEvent::Left, LNode);
             DoDustExplosion(giant, dust * power, FootEvent::Left, LNode);
@@ -99,8 +102,8 @@ namespace {
 				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC L Butt");
 				DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
 				DoLaunch(giant, 1.30 * perk, 4.20, FootEvent::Butt);
-				Rumbling::Once("Butt_L", giant, 3.60 * damage, 0.02, "NPC R Butt");
-				Rumbling::Once("Butt_R", giant, 3.60 * damage, 0.02, "NPC L Butt");
+				Rumbling::Once("Butt_L", giant, 3.60 * damage, 0.02, "NPC R Butt", 0.0);
+				Rumbling::Once("Butt_R", giant, 3.60 * damage, 0.02, "NPC L Butt", 0.0);
 			}
 		} else {
 			if (!ButtR) {
@@ -144,8 +147,8 @@ namespace {
             LaunchActor::GetSingleton().LaunchAtNode(giant, 1.30 * perk, 4.20, "NPC L Calf [LClf]");
             LaunchActor::GetSingleton().LaunchAtNode(giant, 1.30 * perk, 4.20, "NPC R Calf [RClf]");
 
-            Rumbling::Once("Knee_L", giant, 3.60 * damage, 0.02, "NPC L Calf [LClf]");
-            Rumbling::Once("Knee_R", giant, 3.60 * damage, 0.02, "NPC R Calf [RClf]");
+            Rumbling::Once("Knee_L", giant, 3.60 * damage, 0.02, "NPC L Calf [LClf]", 0.0);
+            Rumbling::Once("Knee_R", giant, 3.60 * damage, 0.02, "NPC R Calf [RClf]", 0.0);
 		} else {
 			if (!LeftKnee) {
 				Notify("Error: Missing Knee Nodes"); // Will help people to troubleshoot it. Not everyone has 3BB/XP32 body.

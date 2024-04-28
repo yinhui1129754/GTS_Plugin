@@ -14,6 +14,7 @@ using namespace RE;
 // Module for accurate size-related damage
 
 namespace Gts {
+
 	class CollisionDamage : public EventListener  {
 		public:
 			[[nodiscard]] static CollisionDamage& GetSingleton() noexcept;

@@ -223,7 +223,7 @@ namespace {
 			AllowToBeCrushed(tiny, true);
 		}
 		
-		Rumbling::Once("ThighImpact", &data.giant, Rumble_ThighSandwich_ThighImpact, 0.15, "AnimObjectA");
+		Rumbling::Once("ThighImpact", &data.giant, Rumble_ThighSandwich_ThighImpact, 0.15, "AnimObjectA", 0.0);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 1.0);
 	}
 
@@ -239,7 +239,7 @@ namespace {
 			AllowToBeCrushed(tiny, true);
 		}
 		
-		Rumbling::Once("ThighImpact", &data.giant, Rumble_ThighSandwich_ThighImpact_Heavy, 0.15, "AnimObjectA");
+		Rumbling::Once("ThighImpact", &data.giant, Rumble_ThighSandwich_ThighImpact_Heavy, 0.15, "AnimObjectA", 0.0);
 		DrainStamina(&data.giant, "StaminaDrain_Sandwich", "KillerThighs", false, 2.5);
 	}
 
@@ -315,11 +315,15 @@ namespace {
 		DoLaunch(&data.giant, 0.85 * perk, 2.2, FootEvent::Right);
 		DoLaunch(&data.giant, 0.85 * perk, 2.2, FootEvent::Left);
 
-		float hh = 1.0 + (GetHighHeelsBonusDamage(&data.giant) * 5.0);
-		float shake_power = Rumble_ThighSandwich_DropDown * hh;
+		
+		float shake_power = Rumble_ThighSandwich_DropDown * GetHighHeelsBonusDamage(&data.giant, true);
 
-		Rumbling::Once("ThighDropDown_R", &data.giant, shake_power, 0.10, RNode);
-		Rumbling::Once("ThighDropDown_L", &data.giant, shake_power, 0.10, LNode);
+		if (HasSMT(&data.giant)) {
+			shake_power *= 2.0;
+		}
+
+		Rumbling::Once("ThighDropDown_R", &data.giant, shake_power, 0.10, RNode, 0.0);
+		Rumbling::Once("ThighDropDown_L", &data.giant, shake_power, 0.10, LNode, 0.0);
 	}
 
 	void GTSBEH_Exit(AnimationEventData& data) {

@@ -3,6 +3,7 @@
 #include "data/persistent.hpp"
 #include "managers/tremor.hpp"
 #include "managers/impact.hpp"
+#include "managers/Rumble.hpp"
 #include "ActionSettings.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
@@ -29,6 +30,14 @@ namespace {
 		float n_falloff = 2.0;
 		return 1/(1+pow(pow(1/0.5-1,n_falloff)*(x)/half_power,half_power));
 	}
+
+	void DoJumpingRumble(Actor* actor, float tremor, float halflife, std::string_view node_name, float duration) { 
+		// This function is needed since normally jumping doesn't stack with footsteps
+		// And we want to use separate footstep logic for normal walk since footsteps happen too fast and rumble manager behaves a bit incorrectly
+		std::string_view tag = std::format("Tremor_{}_{}_{}", actor->formID, node_name, Time::WorldTimeElapsed());
+		float fallmod = 1.0 + (GetFallModifier(actor) - 1.0);
+		Rumbling::Once(tag, actor, tremor * fallmod, halflife, node_name, duration);
+	}
 }
 
 namespace Gts {
@@ -41,70 +50,69 @@ namespace Gts {
 		return "TremorManager";
 	}
 
-	void TremorManager::OnImpact(const Impact& impact) { // This Tremor is used for regular footsteps, not feet attacks
+	void TremorManager::OnImpact(const Impact& impact) { // This Tremor is used for regular footsteps, not custom GTS attacks
 		if (!impact.actor) {
 			return;
 		}
 
 		auto profiler = Profilers::Profile("Tremor: OnImpact");
-		auto& persist = Persistent::GetSingleton();
 
 		auto actor = impact.actor;
 		if (actor) {
 			
-			float scale;
-			float duration = 2.0;
+			float tremor = Rumble_Default_FootWalk * 0.4;
+			float duration = 1.0;
 			float calamity = 1.0;
 
-			float gain = 1.75; // Normal tremor happens past this scale
 			float threshold = 1.25; // tremor starts to appear past this scale
 			float size = impact.scale;
 
 			if (actor->formID == 0x14) {
-				scale = persist.tremor_scale * Rumble_Default_FootWalk * 1.5;
+				tremor *= 1.15; // slightly stronger footstep tremor for player
 				if (HasSMT(actor)) {
 					threshold = 0.55;
-					calamity = 2.0;
-					gain = 0.55;
+					calamity = 1.5;
 				}
-			} else {
-				scale = persist.npc_tremor_scale * Rumble_Default_FootWalk;
-			}
+			} 
 
-			if (scale < 1e-5) {
+			if (tremor < 1e-5) {
 				return;
 			}
 
 			if (!actor->AsActorState()->IsSwimming()) {
 				if (actor->AsActorState()->IsSprinting()) {
-					scale *= 1.35; // Sprinting makes tremor stronger
+					tremor *= 1.35; // Sprinting makes tremor stronger
 				}
 				if (actor->AsActorState()->IsWalking()) {
-					scale *= 0.80; // Walking makes tremor weaker
+					tremor *= 0.80; // Walking makes tremor weaker
 				}
 				if (actor->IsSneaking()) {
-					scale *= 0.75; // Sneaking makes tremor weaker
+					tremor *= 0.80; // Sneaking makes tremor weaker
 				}
 				if (impact.kind == FootEvent::JumpLand) {
-					scale *= Rumble_Default_JumpLand; // Jumping makes tremor stronger
-					duration *= 1.6;
+					tremor *= Rumble_Default_JumpLand; // Jumping makes tremor stronger
 				}
 
-				scale *= 1.0 + (GetHighHeelsBonusDamage(actor) * 5.0);
+				tremor *= GetHighHeelsBonusDamage(actor, true);
 
 				for (NiAVObject* node: impact.nodes) {
 					if (node) {
 						if (size > threshold) {
-							if (size < gain) {
-								log::info("Altering power");
-								scale /= (gain/size); // slowly gain power of shakes
-							}
-							bool pcEffects = Runtime::GetBoolOr("PCAdditionalEffects", true);
 							bool npcEffects = Runtime::GetBoolOr("NPCSizeEffects", true);
+							bool pcEffects = Runtime::GetBoolOr("PCAdditionalEffects", true);
+
 							if (actor->formID == 0x14 && pcEffects) {
-								ApplyShakeAtPoint(actor, scale, node->world.translate, 1.0, duration, calamity);
+								if (impact.kind == FootEvent::JumpLand) { // let Rumble Manager handle it.
+									DoJumpingRumble(actor, tremor * calamity, 0.025, node->name, duration);
+								} else {
+									ApplyShakeAtPoint(actor, tremor * calamity, node->world.translate, duration);
+								}
 							} else if (actor->formID != 0x14 && npcEffects) {
-								ApplyShakeAtPoint(actor, scale, node->world.translate, 1.0, duration * 1.25, 1.0);
+								if (impact.kind == FootEvent::JumpLand) { // let Rumble Manager handle it.
+									DoJumpingRumble(actor, tremor * calamity, 0.025, node->name, duration);
+								} else {
+									ApplyShakeAtPoint(actor, tremor * calamity, node->world.translate, duration);
+								}
 							}
 						}
 					}

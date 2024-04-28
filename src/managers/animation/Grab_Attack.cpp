@@ -60,7 +60,7 @@ namespace {
                 CrushManager::Crush(giantess, tiny);
                 
                 SetBeingHeld(tiny, false);
-                Rumbling::Once("GrabAttackKill", giantess, 14.0 * bonus, 0.15, "NPC L Hand [LHnd]");
+                Rumbling::Once("GrabAttackKill", giantess, 14.0 * bonus, 0.15, "NPC L Hand [LHnd]", 0.0);
                 if (!LessGore()) {
                     Runtime::PlaySoundAtNode("CrunchImpactSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
                     Runtime::PlaySoundAtNode("CrunchImpactSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
@@ -126,7 +126,7 @@ namespace {
 			    SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // do it twice
             }
 			
-			Rumbling::Once("GrabAttack", giant, 5.0 * bonus, 0.05, "NPC L Hand [LHnd]");
+			Rumbling::Once("GrabAttack", giant, 5.0 * bonus, 0.05, "NPC L Hand [LHnd]", 0.0);
 
 			
 

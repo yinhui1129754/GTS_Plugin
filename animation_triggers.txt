@@ -1,0 +1,72 @@
+This is a list of triggers that you can use with console command in-game on someone
+* means it won't work properly if called manually, since logic is inside the dll
+-> means it's a sequence, anim 1 must be triggered first, then second anim called on top
+
+usage example
+player.sae GTSBEH_HeavyKickLow_R
+
+----STOMPS:
+
+GtsModStompAnimRight -> GTSBEH_StartFootGrindR
+GtsModStompAnimLeft -> GTSBEH_StartFootGrindL
+
+GTSBeh_StrongStomp_StartRight
+GTSBeh_StrongStomp_StartLeft
+
+----KICKS/CRAWL/SNEAK ATTACKS:
+GTSBEH_HeavyKickLow_L  (medium leg kick)
+GTSBEH_HeavyKickLow_R  (for leg kicks)
+
+GTSBeh_SwipeLight_L    (Universal crawl/sneak/standing attack, it is a Light Kick when standing)
+GTSBeh_SwipeLight_R    (Universal crawl/sneak/standing attack, it is a Light Kick when standing)
+GTSBeh_SwipeHeavy_R    (Universal crawl/sneak/standing attack, it is a Strong Kick when standing)
+GTSBeh_SwipeHeavy_R    (Universal crawl/sneak/standing attack, it is a Strong Kick when standing)
+
+----TRAMPLE:
+GTSBeh_Trample_L -> GTSBEH_Trample_Start_L
+GTSBeh_Trample_R -> GTSBEH_Trample_Start_R
+
+
+----BUTT/BREAST/KNEE CRUSH: (Universal Crawl/Sneak/Standing triggers)
+GTSBEH_ButtCrush_Start -> GTSBEH_ButtCrush_Attack / GTSBEH_ButtCrush_Grow
+GTSBEH_ButtCrush_StartFast
+
+
+----THIGH CRUSH:
+GTSBeh_TriggerSitdown
+GTSBeh_StartThighCrush
+GTSBeh_LeaveSitdown
+GTSBeh_ThighAnimationFull
+
+----HUGS: X (*, you don't need them since they wont work at all)
+
+----THIGH SANDWICH (*):
+GTSBEH_ThighSandwich_Start
+GTSBEH_ThighSandwich_Attack
+GTSBEH_ThighSandwich_Attack_H
+GTSBEH_ThighSandwich_ExitLoop
+
+----GRAB: (*)
+GTSBEH_GrabStart
+GTSBEH_GrabVore
+GTSBEH_GrabAttack
+GTSBEH_GrabThrow
+GTSBEH_GrabRelease
+GTSBEH_BreastsAdd
+GTSBEH_BreastsRemove
+GTSBEH_T_Remove
+
+----PRONE:
+GTSBeh_ProneStart
+GTSBeh_ProneStop
+GTSBeh_ProneStart_Dive
+
+----TINY CALAMITY: (*)
+GTSBEH_TC_Shrink
+
+----VORE: (*)
+GTSBEH_StartVore
+
+---GROWTH/SHRINK:
+GTSBeh_Shrink_Trigger
+GTSBeh_Grow_Trigger

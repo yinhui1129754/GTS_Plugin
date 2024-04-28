@@ -9,14 +9,14 @@
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/animation/HugShrink.hpp"
 #include "managers/damage/LaunchActor.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "magic/effects/common.hpp"
 #include "utils/MovementForce.hpp"
 #include "utils/papyrusUtils.hpp"
-#include "managers/highheel.hpp"
 #include "managers/explosion.hpp"
-#include "managers/audio/footstep.hpp"
+#include "managers/highheel.hpp"
 #include "utils/DeathReport.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
@@ -38,6 +38,7 @@ using namespace Gts;
 
 
 namespace {
+
 	std::string_view GetImpactNode(CrawlEvent kind) {
 		if (kind == CrawlEvent::RightKnee) {
 			return "NPC R Calf [RClf]";
@@ -65,11 +66,18 @@ namespace Gts {
 
 	const std::string_view leftFootLookup = "NPC L Foot [Lft ]";
 	const std::string_view rightFootLookup = "NPC R Foot [Rft ]";
+
 	const std::string_view leftCalfLookup = "NPC L Calf [LClf]";
 	const std::string_view rightCalfLookup = "NPC R Calf [RClf]";
-	const std::string_view leftToeLookup = "NPC L Toe0 [LToe]";
-	const std::string_view rightToeLookup = "NPC R Toe0 [RToe]";
-	const std::string_view bodyLookup = "NPC Spine1 [Spn1]";
+
+	const std::string_view leftCalfLookup_failed = "NPC L Calf [LClf]";
+	const std::string_view rightCalfLookup_failed = "NPC R Calf [RClf]";
+
+	const std::string_view leftToeLookup_failed = "NPC L Toe0 [LToe]";
+	const std::string_view rightToeLookup_failed = "NPC R Toe0 [RToe]";
+
+	const std::string_view leftToeLookup = "NPC L Joint 3 [Lft ]";
+	const std::string_view rightToeLookup = "NPC R Joint 3 [Rft ]";
 
 	void BlockFirstPerson(Actor* actor, bool block) { // Credits to ArranzCNL for this function. Forces Third Person because we don't have FP working yet.
 		auto playerControls = RE::PlayerControls::GetSingleton();
@@ -285,7 +293,7 @@ namespace Gts {
 
 		AddSMTDuration(giant, 5.0);
 
-		ApplyShakeAtNode(tiny, 20, "NPC Root [Root]", 20.0);
+		ApplyShakeAtNode(tiny, 4, "NPC Root [Root]");
 
 		ActorHandle giantHandle = giant->CreateRefHandle();
 		ActorHandle tinyHandle = tiny->CreateRefHandle();
@@ -772,7 +780,7 @@ namespace Gts {
 		}
 	}
 
-	void FootGrindCheck_Left(Actor* actor, float radius, bool strong) {  // Check if we hit someone with stomp. Yes = Start foot grind. Left Foot.
+	void FootGrindCheck(Actor* actor, float radius, bool strong, bool Right) {  // Check if we hit someone with stomp. Yes = Start foot grind. Left Foot.
 		if (!actor) {
 			return;
 		}
@@ -781,62 +789,17 @@ namespace Gts {
 		const float BASE_CHECK_DISTANCE = 90.0;
 		float SCALE_RATIO = 3.0;
 
+		float maxFootDistance = radius * giantScale;
+
 
 		if (HasSMT(actor)) {
 			SCALE_RATIO = 0.8;
 		}
-
-		// Get world HH offset
-		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(actor);
-
-		auto leftFoot = find_node(actor, leftFootLookup);
-		auto leftCalf = find_node(actor, leftCalfLookup);
-		auto leftToe = find_node(actor, leftToeLookup);
-		if (!leftFoot) {
-			return;
-		}
-		if (!leftCalf) {
-			return;
-		}
-		if (!leftToe) {
-			return;
-		}
-		NiMatrix3 leftRotMat;
-		{
-			NiAVObject* foot = leftFoot;
-			NiAVObject* calf = leftCalf;
-			NiAVObject* toe = leftToe;
-			NiTransform inverseFoot = foot->world.Invert();
-			NiPoint3 forward = inverseFoot*toe->world.translate;
-			forward = forward / forward.Length();
-
-			NiPoint3 up = inverseFoot*calf->world.translate;
-			up = up / up.Length();
-
-			NiPoint3 right = forward.UnitCross(up);
-			forward = up.UnitCross(right); // Reorthonalize
-
-			leftRotMat = NiMatrix3(right, forward, up);
-		}
-
-		float maxFootDistance = radius * giantScale;
-		float hh = hhOffsetbase[2];
-		// Make a list of points to check
-		std::vector<NiPoint3> points = {
-			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
-			NiPoint3(-1.6, 7.7 + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward
-			NiPoint3(0.0, (hh/50), -0.25 + (-hh * 1.15)), // Offset for HH
-		};
-		std::tuple<NiAVObject*, NiMatrix3> left(leftFoot, leftRotMat);
-
-		for (const auto& [foot, rotMat]: {left}) {
-			std::vector<NiPoint3> footPoints = {};
-			for (NiPoint3 point: points) {
-				footPoints.push_back(foot->world*(rotMat*point));
-			}
+		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(actor, Right);
+		if (!CoordsToCheck.empty()) {
 			if (IsDebugEnabled() && (actor->formID == 0x14 || IsTeammate(actor))) {
-				for (auto point: footPoints) {
-					DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 800, {0.0, 1.0, 0.0, 1.0});
+				for (const auto& footPoints: CoordsToCheck) {
+					DebugAPI::DrawSphere(glm::vec3(footPoints.x, footPoints.y, footPoints.z), maxFootDistance, 800, {0.0, 1.0, 0.0, 1.0});
 				}
 			}
 
@@ -855,7 +818,7 @@ namespace Gts {
 							auto model = otherActor->GetCurrent3D();
 
 							if (model) {
-								for (auto point: footPoints) {
+								for (auto point: CoordsToCheck) {
 									VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
 										if (distance < maxFootDistance) {
@@ -887,11 +850,19 @@ namespace Gts {
 										if (aveForce >= 0.00 && !tiny->IsDead()) {
 											SetBeingGrinded(tiny, true);
 											if (!strong) {
-												DoFootGrind(giant, tiny, false);
-												AnimationManager::StartAnim("GrindLeft", giant);
+												DoFootGrind(giant, tiny, Right);
+												if (!Right) {
+													AnimationManager::StartAnim("GrindLeft", giant);
+												} else {
+													AnimationManager::StartAnim("GrindRIght", giant);
+												}
 											} else {
-												AnimationManager::StartAnim("TrampleStartL", giant);
-												DoFootTrample(giant, tiny, false);
+												if (!Right) {
+													AnimationManager::StartAnim("TrampleStartL", giant);
+												} else {
+													AnimationManager::StartAnim("TrampleStartR", giant);
+												}
+												DoFootTrample(giant, tiny, Right);
 											}
 										}
 									}
@@ -903,140 +874,7 @@ namespace Gts {
 			}
 		}
 	}
-
-	void FootGrindCheck_Right(Actor* actor, float radius, bool strong) {  // Check if we hit someone with stomp. Yes = Start foot grind. Right Foot.
-		if (!actor) {
-			return;
-		}
-
-		float giantScale = get_visual_scale(actor);
-		const float BASE_CHECK_DISTANCE = 90.0;
-		float SCALE_RATIO = 3.0;
-
-
-		if (HasSMT(actor)) {
-			SCALE_RATIO = 0.8;
-		}
-		
-		// Get world HH offset
-		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(actor);
-
-		auto rightFoot = find_node(actor, rightFootLookup);
-		auto rightCalf = find_node(actor, rightCalfLookup);
-		auto rightToe = find_node(actor, rightToeLookup);
-
-		if (!rightFoot) {
-			return;
-		}
-		if (!rightCalf) {
-			return;
-		}
-		if (!rightToe) {
-			return;
-		}
-		NiMatrix3 rightRotMat;
-		{
-			NiAVObject* foot = rightFoot;
-			NiAVObject* calf = rightCalf;
-			NiAVObject* toe = rightToe;
-
-			NiTransform inverseFoot = foot->world.Invert();
-			NiPoint3 forward = inverseFoot*toe->world.translate;
-			forward = forward / forward.Length();
-
-			NiPoint3 up = inverseFoot*calf->world.translate;
-			up = up / up.Length();
-
-			NiPoint3 right = up.UnitCross(forward);
-			forward = right.UnitCross(up); // Reorthonalize
-
-			rightRotMat = NiMatrix3(right, forward, up);
-		}
-
-		float maxFootDistance = radius * giantScale;
-		float hh = hhOffsetbase[2];
-		// Make a list of points to check
-		std::vector<NiPoint3> points = {
-			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
-			NiPoint3(-1.6, 7.7 + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward
-			NiPoint3(0.0, (hh/50), -0.25 + (-hh * 1.15)), // Offset for HH
-		};
-		std::tuple<NiAVObject*, NiMatrix3> right(rightFoot, rightRotMat);
-
-		for (const auto& [foot, rotMat]: {right}) {
-			std::vector<NiPoint3> footPoints = {};
-			for (NiPoint3 point: points) {
-				footPoints.push_back(foot->world*(rotMat*point));
-			}
-			if (IsDebugEnabled() && (actor->formID == 0x14 || IsTeammate(actor) || EffectsForEveryone(actor))) {
-				for (auto point: footPoints) {
-					DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 800, {0.0, 1.0, 0.0, 1.0});
-				}
-			}
-
-			NiPoint3 giantLocation = actor->GetPosition();
-			for (auto otherActor: find_actors()) {
-				if (otherActor != actor) {
-					float tinyScale = get_visual_scale(otherActor) * GetSizeFromBoundingBox(otherActor);
-					if (giantScale / tinyScale > SCALE_RATIO) {
-						NiPoint3 actorLocation = otherActor->GetPosition();
-
-						if ((actorLocation-giantLocation).Length() < BASE_CHECK_DISTANCE*giantScale) {
-							// Check the tiny's nodes against the giant's foot points
-							int nodeCollisions = 0;
-							float force = 0.0;
-
-							auto model = otherActor->GetCurrent3D();
-
-							if (model) {
-								for (auto point: footPoints) {
-									VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
-										float distance = (point - a_obj.world.translate).Length();
-										if (distance < maxFootDistance) {
-											nodeCollisions += 1;
-											force = 1.0 - distance / maxFootDistance;
-											return false;
-										}
-										return true;
-									});
-								}
-							}
-							if (nodeCollisions > 0) {
-								float aveForce = std::clamp(force, 0.00f, 0.70f);
-								ActorHandle giantHandle = actor->CreateRefHandle();
-								ActorHandle tinyHandle = otherActor->CreateRefHandle();
-								std::string taskname = std::format("GrindCheckR_{}_{}", actor->formID, otherActor->formID);
-								TaskManager::RunOnce(taskname, [=](auto& update){
-									if (!tinyHandle) {
-										return;
-									}
-									if (!giantHandle) {
-										return;
-									}
-									
-									auto giant = giantHandle.get().get();
-									auto tiny = tinyHandle.get().get();
-
-									if (CanDoDamage(giant, tiny, false)) {
-										if (aveForce >= 0.00 && !tiny->IsDead()) {
-											SetBeingGrinded(tiny, true);
-											if (!strong) {
-												DoFootGrind(giant, tiny, true);
-												AnimationManager::StartAnim("GrindRight", giant);
-											} else {
-												AnimationManager::StartAnim("TrampleStartR", giant);
-												DoFootTrample(giant, tiny, true);
-											}
-										}
-									}
-								});
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	
 
 	void DoDamageAtPoint_Cooldown(Actor* giant, float radius, float damage, NiAVObject* node, float random, float bbmult, float crushmult, float pushpower, DamageSource Cause) { // Apply crawl damage to each bone individually
 		auto profiler = Profilers::Profile("Other: CrawlDamage");
@@ -1136,7 +974,7 @@ namespace Gts {
 							}
 
 							ApplyActionCooldown(otherActor, CooldownSource::Damage_Hand);
-							ApplyShakeAtPoint(giant, 3.0 * pushpower * audio, node->world.translate, 1.5, 0.0, 1.0);
+							ApplyShakeAtPoint(giant, 3.0 * pushpower * audio, node->world.translate, 0.0);
 							CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 						}
 					}
@@ -1373,6 +1211,92 @@ namespace Gts {
 		return coordinates;
 	}
 
+	std::vector<NiPoint3> GetFootCoordinates(Actor* actor, bool Right) {
+		// Get world HH offset
+		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(actor);
+		std::vector<NiPoint3> footPoints = {};
+		std::string_view FootLookup = leftFootLookup;
+		std::string_view CalfLookup = leftCalfLookup;
+		std::string_view ToeLookup = leftToeLookup;
+
+		std::string_view CalfLookup_Failed = leftCalfLookup_failed; // Used if DLL fails to find what it needs
+		std::string_view ToeLookup_Failed = leftToeLookup_failed;
+
+		if (Right) {
+			FootLookup = rightFootLookup;
+			CalfLookup = rightCalfLookup;
+			ToeLookup = rightToeLookup;
+
+			CalfLookup_Failed = rightCalfLookup_failed;
+			ToeLookup_Failed = rightToeLookup_failed;
+		}
+
+		auto Foot = find_node(actor, FootLookup);
+		auto Calf = find_node(actor, CalfLookup);
+		auto Toe = find_node(actor, ToeLookup);
+		if (!Foot) {
+			log::info("Missing Foot node");
+			return footPoints;
+		}
+		if (!Calf) {
+			Calf = find_node(actor, CalfLookup_Failed); // Not all skeletons have them
+			log::info("Calf1 not found");
+			if (!Calf) {
+				log::info("Calf2 not found");
+				return footPoints;
+			}
+		}
+		if (!Toe) {
+			Toe = find_node(actor, ToeLookup_Failed); // Not all skeletons have them
+			if (!Toe) {
+				log::info("Missing Toe node");
+				return footPoints;
+			}
+		}
+		NiMatrix3 RotMat;
+		{
+			NiAVObject* foot = Foot;
+			NiAVObject* calf = Calf;
+			NiAVObject* toe = Toe;
+			NiTransform inverseFoot = foot->world.Invert();
+			NiPoint3 forward = inverseFoot*toe->world.translate;
+			forward = forward / forward.Length();
+
+			NiPoint3 up = inverseFoot*((calf->world.translate + foot->world.translate) / 2);
+
+			up = up / up.Length();
+
+			NiPoint3 side = forward.UnitCross(up);
+			forward = up.UnitCross(side); // Reorthonalize
+
+			RotMat = NiMatrix3(NiPoint3(0,0,0), forward, up);
+		}
+
+		float hh = hhOffsetbase[2] / get_npcparentnode_scale(actor);
+		// Make a list of points to check
+		std::vector<NiPoint3> points = {
+			// x = side, y = forward, z = up/down      
+			NiPoint3(0.0, hh/10, -(0.25 + hh * 0.25)), 	// basic foot pos
+			// ^ Point 1: ---()  
+			NiPoint3(0.0, 8.0 + hh/10, -hh * 1.10), // Toe point		
+			// ^ Point 2: ()---   
+			NiPoint3(0.0, hh/70, -hh * 1.10), // Underheel point 
+			//            -----
+			// ^ Point 3: ---()  
+		};
+		std::tuple<NiAVObject*, NiMatrix3> CoordResult(Foot, RotMat);
+
+		for (const auto& [foot, rotMat]: {CoordResult}) {
+			if (!foot) {
+				return footPoints;
+			}
+			for (NiPoint3 point: points) {
+				footPoints.push_back(foot->world*(rotMat*point));
+			}
+		}
+		return footPoints;
+	}
+
 	NiPoint3 GetHeartPosition(Actor* giant, Actor* tiny) { // It is used to spawn Heart Particles during healing hugs
 
 		NiPoint3 TargetA = NiPoint3();
@@ -1413,7 +1337,7 @@ namespace Gts {
 		auto random = rand() % 8;
 		if (random <= 4) {
 			if (MoanTimer.ShouldRunFrame()) {
-				ApplyShakeAtNode(giantref, 6.0, "NPC COM [COM ]", 124.0);
+				ApplyShakeAtNode(giantref, 6.0, "NPC COM [COM ]");
 				ModSizeExperience(giantref, 0.14);
 				PlayMoanSound(giantref, 1.0);
 

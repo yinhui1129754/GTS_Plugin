@@ -1,9 +1,10 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
-#include "magic/effects/TinyCalamity.hpp"
+#include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/SizeHitEffects.hpp"
 #include "managers/damage/LaunchObject.hpp"
 #include "managers/damage/LaunchActor.hpp"
+#include "magic/effects/TinyCalamity.hpp"
 #include "managers/RipClothManager.hpp"
 #include "managers/ai/aifunctions.hpp"
 #include "managers/GtsSizeManager.hpp"
@@ -36,19 +37,9 @@ using namespace std;
 
 namespace {
 
-	const std::string_view leftFootLookup = "NPC L Foot [Lft ]";
-	const std::string_view rightFootLookup = "NPC R Foot [Rft ]";
-	const std::string_view leftCalfLookup = "NPC L Calf [LClf]";
-	const std::string_view rightCalfLookup = "NPC R Calf [RClf]";
-	const std::string_view leftToeLookup = "NPC L Toe0 [LToe]";
-	const std::string_view rightToeLookup = "NPC R Toe0 [RToe]";
-	const std::string_view bodyLookup = "NPC Spine1 [Spn1]";
-
 	const float LAUNCH_DAMAGE = 2.4f;
 	const float LAUNCH_KNOCKBACK = 0.02f;
 	const float BASE_CHECK_DISTANCE = 20.0f;
-
-	
 
 	float GetLaunchThreshold(Actor* giant) {
 		float threshold = 8.0;
@@ -116,7 +107,7 @@ namespace Gts {
 		float DamageMult = 0.6;
 		float giantSize = get_visual_scale(giant);
 
-		float highheel = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
+		float highheel = GetHighHeelsBonusDamage(giant, true);
 		float startpower = Push_Actor_Upwards * highheel * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
 		
 
@@ -285,82 +276,28 @@ namespace Gts {
 			giantScale *= 1.5;
 		}
 
-		radius *= 1.0 + GetHighHeelsBonusDamage(giant) * 2.5;
-		float side = -1.6;
-
-		// Get world HH offset
-		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(giant);
-
-		std::string_view FootLookup = leftFootLookup;
-		std::string_view CalfLookup = leftCalfLookup;
-		std::string_view ToeLookup = leftToeLookup;
-
-		if (right_foot) {
-			FootLookup = rightFootLookup;
-			CalfLookup = rightCalfLookup;
-			ToeLookup = rightToeLookup;
-			side = 1.6;
-		}
-		auto Foot = find_node(giant, FootLookup);
-		auto Calf = find_node(giant, CalfLookup);
-		auto Toe = find_node(giant, ToeLookup);
-		if (!Foot) {
-			return;
-		}
-		if (!Calf) {
-			return;
-		}
-		if (!Toe) {
-			return;
-		}
-		NiMatrix3 footRotMat;
-		{
-			NiAVObject* foot = Foot;
-			NiAVObject* calf = Calf;
-			NiAVObject* toe = Toe;
-			NiTransform inverseFoot = foot->world.Invert();
-			NiPoint3 forward = inverseFoot*toe->world.translate;
-			forward = forward / forward.Length();
-
-			NiPoint3 up = inverseFoot*calf->world.translate;
-			up = up / up.Length();
-
-			NiPoint3 side = forward.UnitCross(up);
-			forward = up.UnitCross(side); // Reorthonalize
-
-			footRotMat = NiMatrix3(side, forward, up);
-		}
+		radius *= GetHighHeelsBonusDamage(giant, true);
 
 		float maxFootDistance = BASE_CHECK_DISTANCE * radius * giantScale;
-		float hh = hhOffsetbase[2];
-		// Make a list of points to check
-		std::vector<NiPoint3> points = {
-			NiPoint3(0.0, hh*0.08, -0.25 +(-hh * 0.25)), // The standard at the foot position
-			NiPoint3(side, 7.7 + (hh/70), -0.75 + (-hh * 1.15)), // Offset it forward
-			NiPoint3(0.0, (hh/50), -0.25 + (-hh * 1.15)), // Offset for HH
-		};
-		std::tuple<NiAVObject*, NiMatrix3> coords(Foot, footRotMat);
 
-		for (const auto& [foot, rotMat]: {coords}) {
-			std::vector<NiPoint3> footPoints = {};
-			for (NiPoint3 point: points) {
-				footPoints.push_back(foot->world*(rotMat*point));
-			}
+		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(giant, right_foot);
+
+		if (!CoordsToCheck.empty()) {
 			if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-				for (auto point: footPoints) {
-					DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 600, {0.0, 0.0, 1.0, 1.0});
+				for (auto footPoints: CoordsToCheck) {
+					DebugAPI::DrawSphere(glm::vec3(footPoints.x, footPoints.y, footPoints.z), maxFootDistance, 600, {0.0, 0.0, 1.0, 1.0});
 				}
 			}
 
 			NiPoint3 giantLocation = giant->GetPosition();
-			PushObjectsUpwards(giant, footPoints, maxFootDistance, power);
+			PushObjectsUpwards(giant, CoordsToCheck, maxFootDistance, power);
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {
 					float tinyScale = get_visual_scale(otherActor);
 					if (giantScale / tinyScale > SCALE_RATIO) {
 						NiPoint3 actorLocation = otherActor->GetPosition();
-						for (auto point: footPoints) {
+						for (auto point: CoordsToCheck) {
 							float distance = (point - actorLocation).Length();
 							if (distance <= maxFootDistance) {
 								if (AllowStagger(giant, otherActor)) {

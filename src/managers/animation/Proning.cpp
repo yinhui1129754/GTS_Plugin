@@ -92,7 +92,7 @@ namespace {
 				if (Node) {
 					std::string rumbleName = std::format("Node: {}", Nodes);
 					DoDamageAtPoint(giant, Radius_BreastCrush_BodyDOT, Damage_BreastCrush_BodyDOT * damage, Node, 200, 0.10, 1.0, DamageSource::BodyCrush);
-					Rumbling::Once(rumbleName, giant, 0.25, 0.02, Nodes);
+					Rumbling::Once(rumbleName, giant, 0.25, 0.02, Nodes, 0.0);
 				}
 			}
 
@@ -100,14 +100,14 @@ namespace {
 			ApplyThighDamage(giant, false, false, Radius_ThighCrush_Idle, Damage_BreastCrush_BodyDOT * damage * 0.6, 0.10, 1.0, 200, DamageSource::ThighCrushed);
 
 			if (BreastL03 && BreastR03) {
-				Rumbling::Once("BreastDot_L", giantref, 0.25, 0.025, "L Breast03");
-				Rumbling::Once("BreastDot_R", giantref, 0.25, 0.025, "R Breast03");
+				Rumbling::Once("BreastDot_L", giantref, 0.25, 0.025, "L Breast03", 0.0);
+				Rumbling::Once("BreastDot_R", giantref, 0.25, 0.025, "R Breast03", 0.0);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastL03, 200, 0.10, 1.0, DamageSource::BreastImpact);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastR03, 200, 0.10, 1.0, DamageSource::BreastImpact);
 				return true;
 			} else if (BreastL && BreastR) {
-				Rumbling::Once("BreastDot_L", giantref, 0.25, 0.025, "NPC L Breast");
-				Rumbling::Once("BreastDot_R", giantref, 0.25, 0.025, "NPC R Breast");
+				Rumbling::Once("BreastDot_L", giantref, 0.25, 0.025, "NPC L Breast", 0.0);
+				Rumbling::Once("BreastDot_R", giantref, 0.25, 0.025, "NPC R Breast", 0.0);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastL, 200, 0.10, 1.0, DamageSource::BreastImpact);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastR, 200, 0.10, 1.0, DamageSource::BreastImpact);
 				return true;

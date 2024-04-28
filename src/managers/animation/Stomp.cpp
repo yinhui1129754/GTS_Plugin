@@ -79,6 +79,11 @@ namespace {
 		return result;
 	}
 
+	void StopLoopRumble(Actor* giant) {
+		Rumbling::Stop("StompR_Loop", giant);
+		Rumbling::Stop("StompL_Loop", giant);
+	}
+
 	void MoveUnderFoot(Actor* giant, std::string_view node) {
 		auto footNode = find_node(giant, RNode);
 		if (footNode) {
@@ -114,22 +119,22 @@ namespace {
 		}
 	}
 
-	void Stomp_DoEverything(Actor* giant, bool right, float animSpeed, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
+	void Stomp_Footsteps_DoEverything(Actor* giant, bool right, float animSpeed, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
-		float shake = 1.0;
+		float smt = 1.0;
 		float dust = 1.25;
 		if (HasSMT(giant)) {
-			shake = 4.0;
+			smt = 1.5;
 			dust = 1.45;
 		}
 
 		// TO ANDY: i commented it out for tests
 		//MoveUnderFoot(giant, Node); 
 
-		float hh = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
-		float shake_power = Rumble_Stomp_Strong * dust * hh;
+		float hh = GetHighHeelsBonusDamage(giant, true);
+		float shake_power = Rumble_Stomp_Normal * smt * hh;
 
-		Rumbling::Once("StompR", giant, Rumble_Stomp_Normal * shake, 0.0, Node);
+		Rumbling::Once(rumble, giant, shake_power, 0.05, Node, 0.0);
 
 		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 10, 0.25, Event, 1.0, Source);
 		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
@@ -139,33 +144,30 @@ namespace {
 
 		DoLaunch(giant, 0.80 * perk, 1.35 * animSpeed, Event);
 
-		if (right) {
-			FootGrindCheck_Right(giant, Radius_Stomp, false);
-		} else {
-			FootGrindCheck_Left(giant, Radius_Stomp, false);
-		}
+		FootGrindCheck(giant, Radius_Stomp, false, right);
 	}
 
 	void Stomp_Land_DoEverything(Actor* giant, float animSpeed, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
-		float shake = 1.0;
+		float smt = 1.0;
 		float dust = 0.85;
 		
 		if (HasSMT(giant)) {
 			dust = 1.35;
-			shake = 4.0;
+			smt = 1.5;
 		}
-		
-		float shake_power = Rumble_Stomp_Land_Strong * dust * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+		float hh = GetHighHeelsBonusDamage(giant, true);
+		float shake_power = Rumble_Stomp_Land_Normal * smt * hh;
 
-		Rumbling::Once(rumble, giant, shake_power, 0.10, Node);
+		//log::info("Doing Shake with power: {}", shake_power);
+
+		Rumbling::Once(rumble, giant, shake_power, 0.02, Node, 0.0);
 		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 25, 0.25, Event, 1.0, DamageSource::CrushedRight);
 		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
 		DoFootstepSound(giant, 1.0 + animSpeed/14, Event, RNode);
 		
 		DoLaunch(giant, 0.75 * perk, 1.5 + animSpeed/4, Event);
 		KeepInPlace(giant);
-		
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////// Events
@@ -178,7 +180,7 @@ namespace {
 			data.animSpeed = 1.33 + GetRandomBoost()/2;
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", true, 1.8);
-		Rumbling::Start("StompR", &data.giant, 0.35, 0.15, RNode);
+		Rumbling::Start("StompR_Loop", &data.giant, 0.25, 0.15, RNode);
 		ManageCamera(&data.giant, true, CameraTracking::R_Foot);
 
 	}
@@ -191,54 +193,54 @@ namespace {
 			data.animSpeed = 1.33 + GetRandomBoost()/2;
 		}
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", true, 1.8);
-		Rumbling::Start("StompL", &data.giant, 0.45, 0.15, LNode);
+		Rumbling::Start("StompL_Loop", &data.giant, 0.25, 0.15, LNode);
 		ManageCamera(&data.giant, true, CameraTracking::L_Foot);
 	}
 
 	void GTSstompimpactR(AnimationEventData& data) {
-		Stomp_DoEverything(&data.giant, true, data.animSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "StompR");
+		Stomp_Footsteps_DoEverything(&data.giant, true, data.animSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "StompR");
+		StopLoopRumble(&data.giant);
 	}
 
 	void GTSstompimpactL(AnimationEventData& data) {
-		Stomp_DoEverything(&data.giant, false, data.animSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "StompL");
+		Stomp_Footsteps_DoEverything(&data.giant, false, data.animSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "StompL");
+		StopLoopRumble(&data.giant);
 	}
 
 	void GTSstomplandR(AnimationEventData& data) {
-		Stomp_Land_DoEverything(&data.giant, data.animSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "StompR_L");
+		//Rumbling::Stop("StompLandL", &data.giant);
+		Stomp_Land_DoEverything(&data.giant, data.animSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "StompLand");
+		StopLoopRumble(&data.giant);
 	}
 
 	void GTSstomplandL(AnimationEventData& data) {
-		Stomp_Land_DoEverything(&data.giant, data.animSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "StompL_L");
+		//Rumbling::Stop("StompLandR", &data.giant);
+		Stomp_Land_DoEverything(&data.giant, data.animSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "StompLand");
+		StopLoopRumble(&data.giant);
 	}
 
 	void GTSStompendR(AnimationEventData& data) {
 		data.stage = 0;
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
-		//BlockFirstPerson(&data.giant, false);
 	}
 
 	void GTSStompendL(AnimationEventData& data) {
 		data.stage = 0;
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
-		//BlockFirstPerson(&data.giant, false);
 	}
 
 	void GTS_Next(AnimationEventData& data) {
-		Rumbling::Stop("StompR", &data.giant);
-		Rumbling::Stop("StompL", &data.giant);
-		Rumbling::Stop("StompRL", &data.giant);
-		Rumbling::Stop("StompLL", &data.giant);
+		StopLoopRumble(&data.giant);
 	}
 
 	void GTSBEH_Exit(AnimationEventData& data) {
-		Rumbling::Stop("StompR", &data.giant);
-		Rumbling::Stop("StompL", &data.giant);
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", false, 1.8);
 		DrainStamina(&data.giant, "StaminaDrain_StrongStomp", "DestructionBasics", false, 2.8);
 		ManageCamera(&data.giant, false, CameraTracking::L_Foot);
 		ManageCamera(&data.giant, false, CameraTracking::R_Foot);
+		StopLoopRumble(&data.giant);
 	}
 
 	void RightStompEvent(const InputEventData& data) {

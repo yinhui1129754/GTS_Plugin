@@ -101,9 +101,11 @@ namespace {
 
 		float perk = GetPerkBonus_Basics(&data.giant);
 		float dust = 1.0;
+		float smt = 1.0;
 
 		if (HasSMT(giant)) {
 			dust = 1.25;
+			smt = 2.0;
 		}
 
 		auto ThighL = find_node(giant, "NPC L Thigh [LThg]");
@@ -124,10 +126,10 @@ namespace {
 				DoFootstepSound(giant, 1.2, FootEvent::Left, LNode);
 				DoLaunch(&data.giant, 0.95, 4.2, FootEvent::Butt);
 
-				float shake_power = Rumble_Crawl_KneeDrop * dust;
+				float shake_power = Rumble_Crawl_KneeDrop * smt;
 
-				Rumbling::Once("Butt_L", &data.giant, shake_power, 0.10, "NPC R Butt");
-				Rumbling::Once("Butt_R", &data.giant, shake_power, 0.10, "NPC L Butt");
+				Rumbling::Once("Butt_L", &data.giant, shake_power, 0.10, "NPC R Butt", 0.0);
+				Rumbling::Once("Butt_R", &data.giant, shake_power, 0.10, "NPC L Butt",  0.0);
 			}
 		}
 	}

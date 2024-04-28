@@ -210,19 +210,19 @@ namespace {
 		if (IsUsingThighAnimations(&data.giant) || IsCrawling(&data.giant)) {
 			return; // Needed to not apply it during animation blending for thigh/crawling animations
 		}
-		float shake = 1.0;
+		float smt = 1.0;
 		float launch = 1.0;
 		float dust = 0.9;
 		float perk = GetPerkBonus_Basics(&data.giant);
 		if (HasSMT(&data.giant)) {
-			shake = 2.0;
+			smt = 1.5;
 			launch = 1.5;
 			dust = 1.25;
 		}
 
-		float shake_power = Rumble_Grab_Throw_Footstep * shake * (1.0 + (GetHighHeelsBonusDamage(&data.giant) * 5.0));
+		float shake_power = Rumble_Grab_Throw_Footstep * smt * GetHighHeelsBonusDamage(&data.giant, true);
 
-		Rumbling::Once("StompR", &data.giant, shake_power, 0.05, RNode);
+		Rumbling::Once("StompR", &data.giant, shake_power, 0.05, RNode, 0.0);
 		DoDamageEffect(&data.giant, 1.1 * launch * data.animSpeed * perk, 1.0 * launch * data.animSpeed, 10, 0.20, FootEvent::Right, 1.0, DamageSource::CrushedRight);
 		DoFootstepSound(&data.giant, 1.0, FootEvent::Right, RNode);
 		DoDustExplosion(&data.giant, dust, FootEvent::Right, RNode);
@@ -233,19 +233,19 @@ namespace {
 		if (IsUsingThighAnimations(&data.giant) || IsCrawling(&data.giant)) {
 			return; // Needed to not apply it during animation blending for thigh/crawling animations
 		}
-		float shake = 1.0;
+		float smt = 1.0;
 		float launch = 1.0;
 		float dust = 0.9;
 		float perk = GetPerkBonus_Basics(&data.giant);
 		if (HasSMT(&data.giant)) {
-			shake = 2.0;
+			smt = 1.5;
 			launch = 1.5;
 			dust = 1.25;
 		}
 
-		float shake_power = Rumble_Grab_Throw_Footstep * shake * (1.0 + (GetHighHeelsBonusDamage(&data.giant) * 5.0));
+		float shake_power = Rumble_Grab_Throw_Footstep * smt * GetHighHeelsBonusDamage(&data.giant, true);
 
-		Rumbling::Once("StompL", &data.giant, shake_power, 0.05, LNode);
+		Rumbling::Once("StompL", &data.giant, shake_power, 0.05, LNode, 0.0);
 		DoDamageEffect(&data.giant, 1.1 * launch * data.animSpeed * perk, 1.0 * launch * data.animSpeed, 10, 0.20, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
 		DoFootstepSound(&data.giant, 1.0, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, dust, FootEvent::Left, LNode);
@@ -330,7 +330,7 @@ namespace {
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
 		ManageCamera(giant, false, CameraTracking::Grab_Left);
-		Rumbling::Once("ThrowFoe", &data.giant, 2.50, 0.10, "NPC L Hand [LHnd]");
+		Rumbling::Once("ThrowFoe", &data.giant, 2.50, 0.10, "NPC L Hand [LHnd]", 0.0);
 		AnimationManager::StartAnim("TinyDied", giant);
 
 		Grab::DetachActorTask(giant);

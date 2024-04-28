@@ -94,7 +94,7 @@ namespace {
 			if (!once) {
 				Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
 			} else {
-				Rumbling::Once(rumbleName, &actor, power, halflife, node_name);
+				Rumbling::Once(rumbleName, &actor, power, halflife, node_name, 0.0);
 			}
 		}
 	}
@@ -151,8 +151,12 @@ namespace {
 		}
 		VoreData.AllowToBeVored(false);
 
-		float shake_power = Rumble_Vore_Stomp_Light * (1.0 + (GetHighHeelsBonusDamage(&data.giant) * 5.0));
-		Rumbling::Once("StompLS", &data.giant, shake_power, 0.05, LNode);
+		
+		float shake_power = Rumble_Vore_Stomp_Light * GetHighHeelsBonusDamage(&data.giant, true);
+		if (HasSMT(&data.giant)) {
+			shake_power *= 2.0;
+		}
+		Rumbling::Once("StompLS", &data.giant, shake_power, 0.05, LNode,  0.0);
 		
 		DoFootstepSound(&data.giant, 0.90, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, 0.90, FootEvent::Left, LNode);
@@ -295,7 +299,7 @@ namespace {
 	}
 
 	void GTSvore_impactRS(AnimationEventData& data) {
-		Rumbling::Once("StompRS", &data.giant, 0.95, 0.05, RNode);
+		Rumbling::Once("StompRS", &data.giant, 0.95, 0.05, RNode, 0.0);
 		float perk = GetPerkBonus_Basics(&data.giant);
 		DoFootstepSound(&data.giant, 0.90, FootEvent::Right, RNode);
 		DoDustExplosion(&data.giant, 0.90, FootEvent::Right, RNode);

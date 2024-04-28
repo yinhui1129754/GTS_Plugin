@@ -157,7 +157,7 @@ namespace {
 						if ((target <= natural) || (target - 0.35 * scale <= natural)) {
 							set_target_scale(receiver, natural); // to prevent becoming < natural scale
 						}
-						Rumbling::For("CheatDeath", receiver, 240.0, 0.10, "NPC COM [COM ]", 1.50);
+						Rumbling::For("CheatDeath", receiver, 4.0, 0.10, "NPC COM [COM ]", 1.50, 2.0);
 						Runtime::PlaySound("TriggerHG", receiver, 2.0, 0.5);
 						
 						auto node = find_node(receiver, "NPC Root [Root]");

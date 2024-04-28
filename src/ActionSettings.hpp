@@ -221,21 +221,20 @@ namespace Gts {
 
 
     //-----------------------------------------Camera Rumble power settings
-    const float Rumble_Default_FootWalk = 2.0f; // Used for vanilla anims such as walking, running, sprinting
-    const float Rumble_Default_JumpLand = 4.0f; // Used for vanilla anims such as walking, running, sprinting
+    const float Rumble_Default_FootWalk = 2.6f; // Used for vanilla anims such as walking, running, sprinting
+    const float Rumble_Default_JumpLand = 1.6f; // Multiplies footwalk, used for vanilla anims such as walking, running, sprinting
 
     ////////////////////////////////////////////////////
 
     const float Rumble_Stomp_Normal = 2.6f;
     const float Rumble_Stomp_Strong = 4.0f;
     const float Rumble_Stomp_Land_Normal = 2.75f;
-    const float Rumble_Stomp_Land_Strong = 3.2f;
 
 
     // Tramples
     const float Rumble_Trample_Stage1 = 2.4f;
-    const float Rumble_Trample_Stage2 = 3.2f;
-    const float Rumble_Trample_Stage3 = 4.4f;
+    const float Rumble_Trample_Stage2 = 3.4f;
+    const float Rumble_Trample_Stage3 = 4.8f;
 
     // Foot Grind
     const float Rumble_FootGrind_DOT = 0.25f;
@@ -273,7 +272,7 @@ namespace Gts {
 
     // Crawling
     const float Rumble_Crawl_KneeDrop = 4.8f;       // Knee Crush
-    const float Rumble_Crawl_KneeHand_Impact = 2.2f;// A bit higher value since it gets cut off by sneak modifier
+    const float Rumble_Crawl_KneeHand_Impact = 1.4f;// A bit higher value since it gets cut off by sneak modifier
 
     // Vore
     const float Rumble_Vore_Stomp_Light = 2.0f;

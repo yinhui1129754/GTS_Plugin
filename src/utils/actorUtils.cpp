@@ -44,6 +44,13 @@
 using namespace RE;
 using namespace Gts;
 
+namespace RE {
+	constexpr REL::Version RUNTIME_SSE_1_6_659(1, 6, 659, 0);
+	constexpr REL::Version RUNTIME_SSE_1_6_678(1, 6, 678, 0);
+	constexpr REL::Version RUNTIME_SSE_1_6_1130(1, 6, 1130, 0);
+	constexpr REL::Version RUNTIME_SSE_1_6_1170(1, 6, 1170, 0);
+}
+
 namespace {
 	const float EPS = 1e-4;
 
@@ -98,8 +105,8 @@ namespace {
 				std::string name_com = std::format("BreakProtect_{}", giantref->formID);
 				std::string name_root = std::format("BreakProtect_Root_{}", giantref->formID);
 
-				Rumbling::Once(name_com, giantref, 8.6, 0.20, "NPC COM [COM ]");
-				Rumbling::Once(name_root, giantref, 8.6, 0.20, "NPC Root [Root]");
+				Rumbling::Once(name_com, giantref, 8.6, 0.20, "NPC COM [COM ]", 0.0);
+				Rumbling::Once(name_root, giantref, 8.6, 0.20, "NPC Root [Root]", 0.0);
 
 				SpawnParticle(giantref, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), position, scale * 3.4, 7, nullptr); // Spawn it
 			}
@@ -183,6 +190,7 @@ namespace {
 	struct SpringGrowData {
 		Spring amount = Spring(0.0, 1.0);
 		float addedSoFar = 0.0;
+		bool drain = false;
 		ActorHandle actor;
 
 		SpringGrowData(Actor* actor, float amountToAdd, float halfLife) : actor(actor->CreateRefHandle()) {
@@ -1031,7 +1039,7 @@ namespace Gts {
 		float capacity = 1.0;
 		std::vector<Actor*> vories = {};
 		if (Runtime::HasPerk(giant, "MassVorePerk")) {
-			capacity = 2.0 * get_visual_scale(giant);
+			capacity = 3.0 * get_visual_scale(giant);
 			if (HasSMT(giant)) {
 				capacity *= 3.0;
 			}
@@ -1040,14 +1048,14 @@ namespace Gts {
 			if (capacity <= 1.0) {
 				capacity = 1.0;
 				vories.push_back(target);
-				log::info("(Return) Max Vore for {} is {}", giant->GetDisplayFullName(), vories.size());
+				//log::info("(Return) Max Vore for {} is {}", giant->GetDisplayFullName(), vories.size());
 				return vories;
 			}
-			float decrease = get_target_scale(target) * 10.0;
+			float decrease = get_target_scale(target) * 12.0;
 			capacity -= decrease;
 			vories.push_back(target);
 		}  
-		log::info("Max Vore for {} is {}", giant->GetDisplayFullName(), vories.size());
+		//log::info("Max Vore for {} is {}", giant->GetDisplayFullName(), vories.size());
 		return vories;
 	}
 
@@ -1315,7 +1323,40 @@ namespace Gts {
 			}
 		}
 	}
-	
+	void override_actor_scale(Actor* giant, float amt, SizeEffectType type) { // This function overrides gts manager values. 
+	    // It ignores half-life, allowing more than 1 growth/shrink sources to stack nicely
+		auto Persistent = Persistent::GetSingleton().GetData(giant);
+		if (Persistent) {
+			float OnTheEdge = 1.0;
+			float scale = get_visual_scale(giant);
+
+			if (amt > 0 && (giant->formID == 0x14 || IsTeammate(giant))) {
+				if (scale >= 1.0) {
+					amt /= GetGrowthReduction(scale); // Enabled if BalanceMode is True. Decreases Grow Efficiency.
+				}
+			} else if (giant->formID == 0x14 && amt - EPS < 0.0) {
+				// If negative change: add stolen attributes
+				DistributeStolenAttributes(giant, -amt * GetGrowthReduction(scale)); // Adjust max attributes
+			}
+
+			if (giant->formID == 0x14 && type == SizeEffectType::kShrink) {
+				OnTheEdge = GetPerkBonus_OnTheEdge(giant, amt); // Play Exclusive
+			}
+
+			float target = get_target_scale(giant);
+			float max_scale = get_max_scale(giant) * get_natural_scale(giant);
+			log::info("Scale: {}, max_scale: {}", target, max_scale);
+			if (target < max_scale) {
+				Persistent->target_scale += amt;
+				Persistent->visual_scale += amt;
+
+				float initialScale = GetInitialScale(giant);// Do the same thing GtsManager does
+				float GameScale = game_getactorscale(giant); 
+				
+				update_model_visuals(giant, scale * initialScale * GameScale); 
+			}
+		}
+	}
 
 	void update_target_scale(Actor* giant, float amt, SizeEffectType type) { // used to mod scale with perk bonuses taken into account
 		float OnTheEdge = 1.0;
@@ -1613,16 +1654,25 @@ namespace Gts {
 			}
 		}
 	}
-
-	float GetHighHeelsBonusDamage(Actor* actor) {
-		if (!actor) {
-			return false;
-		}
+	float GetHighHeelsBonusDamage(Actor* actor, bool multiply) {
+		return GetHighHeelsBonusDamage(actor, multiply, 1.0);
+	}
+	float GetHighHeelsBonusDamage(Actor* actor, bool multiply, float adjust) {
 		auto profiler = Profilers::Profile("ActorUtils: GetHHBonusDamage");
-		if (Runtime::HasPerkTeam(actor, "hhBonus")) {
-			return HighHeelManager::GetBaseHHOffset(actor).Length()/100;
+		float value = 0.0;
+		float hh = 0.0;
+
+		if (actor) {
+			if (Runtime::HasPerkTeam(actor, "hhBonus")) {
+				hh = HighHeelManager::GetBaseHHOffset(actor).Length()/100;
+			}
+		} if (multiply) {
+			value = 1.0 + (hh * 5.0 * adjust);
+		} else {
+			value = hh;
 		}
-		return 0.0;
+		//log::info("For Actor: {}: {}", actor->GetDisplayFullName(), value);
+		return value;
 	}
 
 	float get_distance_to_actor(Actor* receiver, Actor* target) {
@@ -1639,25 +1689,18 @@ namespace Gts {
 	void ApplyShake(Actor* caster, float modifier, float radius) {
 		if (caster) {
 			auto position = caster->GetPosition();
-			ApplyShakeAtPoint(caster, modifier, position, radius, 0.0, 1.0);
+			ApplyShakeAtPoint(caster, modifier, position, 0.0);
 		}
 	}
 
 	void ApplyShakeAtNode(Actor* caster, float modifier, std::string_view nodesv) {
 		auto node = find_node(caster, nodesv);
 		if (node) {
-			ApplyShakeAtPoint(caster, modifier, node->world.translate, 1.0, 0.0, 1.0);
+			ApplyShakeAtPoint(caster, modifier, node->world.translate, 0.0);
 		}
 	}
 
-	void ApplyShakeAtNode(Actor* caster, float modifier, std::string_view nodesv, float radius) {
-		auto node = find_node(caster, nodesv);
-		if (node) {
-			ApplyShakeAtPoint(caster, modifier, node->world.translate, radius, 0.0, 1.0);
-		}
-	}
-
-	void ApplyShakeAtPoint(Actor* caster, float modifier, const NiPoint3& coords, float radius, float duration_override, float calamity) {
+	void ApplyShakeAtPoint(Actor* caster, float modifier, const NiPoint3& coords, float duration_override) {
 		if (!caster) {
 			return;
 		}
@@ -1666,51 +1709,50 @@ namespace Gts {
 		if (!receiver) {
 			return;
 		}
+		auto& persist = Persistent::GetSingleton();
+		
 		float might = 1.0 + Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
-
-		modifier *= might;
-		radius *= might;
-
+		float tremor_scale = persist.npc_tremor_scale * 0.65; // slightly weaker tremor for npc's
+		
 		float distance = (coords - receiver->GetPosition()).Length(); // In that case we apply shake based on actor distance
 
 		float sourcesize = get_visual_scale(caster);
 		float receiversize = get_visual_scale(receiver);
 		float sizedifference = (sourcesize/receiversize);
+
 		if (caster->formID == 0x14) {
+			tremor_scale = persist.tremor_scale;
+			if (IsFirstPerson()) {
+				tremor_scale *= 0.25; // Less annoying FP screen shake
+			}
 			distance = get_distance_to_camera(coords); // else we use player camera distance (for player only)
-			sizedifference = sourcesize * calamity;
+			sizedifference = sourcesize;
+		} 
+
+		if (sourcesize < 2.0) {  // slowly gain power of shakes
+			float reduction = (sourcesize - 1.0);
+			if (reduction < 0.0) {
+				reduction = 0.0;
+			}
+			modifier *= reduction;
 		}
 
+		float multiplier = 1.0 + (sourcesize * 0.03) - 0.03;
 
-		// To Sermit: You wrote a cutoff not a falloff
-		//            was this intentional?
-		// 2024 Answer: im dumb to write falloff :(
-		// FYI: This is the difference
-		// Falloff:
-		//   |
-		// I |----\
-		//   |     \
-		//   |______\___
-		//        distance
-		// Cuttoff:
-		//   |
-		// I |----|
-		//   |    |
-		//   |____|_____
-		//        distance
-		float cuttoff = 450 * sizedifference * radius;
-		if (distance < cuttoff) {
-			// To Sermit: Same value as before just with the math reduced to minimal steps
-			float intensity = (sizedifference * 18.8) / distance;
-			float duration = 0.25 * intensity * (1 + (sizedifference * 0.25));
-			if (duration_override > 0) {
-				duration *= duration_override;
-			}
-			intensity = std::clamp(intensity, 0.0f, 1e8f);
-			duration = std::clamp(duration, 0.0f, 1.8f);
+		sizedifference *= modifier * tremor_scale * might * multiplier;
 
-			shake_controller(intensity*modifier, intensity*modifier, duration);
-			shake_camera_at_node(coords, intensity*modifier, duration);
+		// To Sermit: Same value as before just with the math reduced to minimal steps
+		float intensity = sizedifference * 18.8 / distance;
+		float duration = 0.25 * (1 + (intensity));
+
+		if (duration_override > 0) {
+			duration *= duration_override;
+		}
+		intensity = std::clamp(intensity, 0.0f, 1e8f);
+		duration = std::clamp(duration, 0.0f, 1.8f);
+		if (intensity > 0.0) {
+			shake_controller(intensity * modifier, intensity * modifier, duration);
+			shake_camera_at_node(coords, intensity * modifier, duration);
 		}
 	}
 
@@ -2123,7 +2165,6 @@ namespace Gts {
 	}
 
 	void DoDamageEffect(Actor* giant, float damage, float radius, int random, float bonedamage, FootEvent kind, float crushmult, DamageSource Cause) {
-		//radius = 1.0;// + (GetHighHeelsBonusDamage(giant) * 2.5);
 		if (kind == FootEvent::Left) {
 			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, false, false);
 		}
@@ -2393,7 +2434,7 @@ namespace Gts {
 		float CheckDistance = BASE_DISTANCE*giantScale*gigantism*radius;
 
 		Runtime::PlaySoundAtNode("ShrinkOutburstSound", giant, explosion, 1.0, "NPC Pelvis [Pelv]");
-		Rumbling::For("ShrinkOutburst", giant, 20.0, 0.15, "NPC COM [COM ]", 0.60);
+		Rumbling::For("ShrinkOutburst", giant, 20.0, 0.15, "NPC COM [COM ]", 0.60, 0.0);
 
 		SpawnParticle(giant, 6.00, "GTS/Shouts/ShrinkOutburst.nif", NiMatrix3(), NodePosition, giantScale*explosion*3.0, 7, nullptr); // Spawn effect
 
@@ -2446,8 +2487,8 @@ namespace Gts {
 				std::string name_com = std::format("Protect_{}", actor->formID);
 				std::string name_root = std::format("Protect_Root_{}", actor->formID);
 
-				Rumbling::Once(name_com, actor, 8.6, 0.20, "NPC COM [COM ]");
-				Rumbling::Once(name_root, actor, 8.6, 0.20, "NPC Root [Root]");
+				Rumbling::Once(name_com, actor, 8.6, 0.20, "NPC COM [COM ]", 0.0);
+				Rumbling::Once(name_root, actor, 8.6, 0.20, "NPC Root [Root]", 0.0);
 				
 				LaunchImmunityTask(actor, Balance);
 			}
@@ -2727,7 +2768,7 @@ namespace Gts {
 					return false;
 				}
 				auto giantref = gianthandle.get().get();
-				ApplyShakeAtNode(giantref, 2.0, "NPC COM [COM ]", 36);
+				ApplyShakeAtNode(giantref, 2.0, "NPC COM [COM ]");
 				update_target_scale(giantref, 0.0026 * Gigantism * TimeScale(), SizeEffectType::kGrow);
 				giantref->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HpRegen * TimeScale());
 				return true;
@@ -2840,64 +2881,50 @@ namespace Gts {
 		}
 	}
 
-	void SpringGrow(Actor* actor, float amt, float halfLife, std::string_view naming) {
+	void SpringGrow(Actor* actor, float amt, float halfLife, std::string_view naming, bool drain) {
 		if (!actor) {
 			return;
 		}
 
 		auto growData = std::make_shared<SpringGrowData>(actor, amt, halfLife);
-		std::string name = std::format("SpringGrow {}: {}", naming, actor->formID);
+		std::string name = std::format("SpringGrow_{}_{}", naming, actor->formID);
 		const float DURATION = halfLife * 3.2;
+		growData->drain = drain;
 
 		TaskManager::RunFor(DURATION,
 		                    [ growData ](const auto& progressData) {
 			float totalScaleToAdd = growData->amount.value;
 			float prevScaleAdded = growData->addedSoFar;
 			float deltaScale = totalScaleToAdd - prevScaleAdded;
+			bool drain_stamina = growData->drain;
 			Actor* actor = growData->actor.get().get();
 
 			if (actor) {
-				float stamina = std::clamp(GetStaminaPercentage(actor), 0.05f, 1.0f);
-				DamageAV(actor, ActorValue::kStamina, 0.55 * (get_visual_scale(actor) * 0.5 + 0.5) * stamina * TimeScale());
+				if (drain_stamina) {
+					float stamina = std::clamp(GetStaminaPercentage(actor), 0.05f, 1.0f);
+					DamageAV(actor, ActorValue::kStamina, 0.55 * (get_visual_scale(actor) * 0.5 + 0.5) * stamina * TimeScale());
+				}
 				auto actorData = Persistent::GetSingleton().GetData(actor);
 				if (actorData) {
-					actorData->target_scale += deltaScale;
-					actorData->visual_scale += deltaScale;
-					growData->addedSoFar = totalScaleToAdd;
+					float scale = get_target_scale(actor);
+					float max_scale = get_max_scale(actor) * get_natural_scale(actor);
+					if (scale < max_scale) {
+						actorData->visual_scale += deltaScale;
+						actorData->target_scale += deltaScale;
+						growData->addedSoFar = totalScaleToAdd;
+					}
+
+					log::info("target: {}, visual: {}", actorData->target_scale, actorData->visual_scale);
+					log::info("Scale: {}, max_scale: {}", scale, max_scale);
+
+					float initialScale = GetInitialScale(actor);// Do the same thing GtsManager does
+					float GameScale = game_getactorscale(actor); 
+					
+					update_model_visuals(actor, get_visual_scale(actor) * initialScale * GameScale); 
 				}
 			}
 			return fabs(growData->amount.value - growData->amount.target) > 1e-4;
-		}
-		                    );
-	}
-
-	void SpringGrow_Free(Actor* actor, float amt, float halfLife, std::string_view naming) {
-		if (!actor) {
-			return;
-		}
-
-		auto growData = std::make_shared<SpringGrowData>(actor, amt, halfLife);
-		std::string name = std::format("SpringGrow_Free {}: {}", naming, actor->formID);
-		const float DURATION = halfLife * 3.2;
-
-		TaskManager::RunFor(name, DURATION,
-		                    [ growData ](const auto& progressData) {
-			float totalScaleToAdd = growData->amount.value;
-			float prevScaleAdded = growData->addedSoFar;
-			float deltaScale = totalScaleToAdd - prevScaleAdded;
-			Actor* actor = growData->actor.get().get();
-
-			if (actor) {
-				auto actorData = Persistent::GetSingleton().GetData(actor);
-				if (actorData) {
-					actorData->target_scale += deltaScale;
-					actorData->visual_scale += deltaScale;
-					growData->addedSoFar = totalScaleToAdd;
-				}
-			}
-			return fabs(growData->amount.value - growData->amount.target) > 1e-4;
-		}
-		                    );
+		});
 	}
 
 	void SpringShrink(Actor* actor, float amt, float halfLife, std::string_view naming) {
@@ -2906,7 +2933,7 @@ namespace Gts {
 		}
 
 		auto growData = std::make_shared<SpringShrinkData>(actor, amt, halfLife);
-		std::string name = std::format("SpringShrink {}: {}", naming, actor->formID);
+		std::string name = std::format("SpringShrink_{}_{}", naming, actor->formID);
 		const float DURATION = halfLife * 3.2;
 		TaskManager::RunFor(DURATION,
 		                    [ growData ](const auto& progressData) {
@@ -2923,12 +2950,16 @@ namespace Gts {
 					actorData->target_scale += deltaScale;
 					actorData->visual_scale += deltaScale;
 					growData->addedSoFar = totalScaleToAdd;
+
+					float initialScale = GetInitialScale(actor);// Do the same thing GtsManager does
+					float GameScale = game_getactorscale(actor); 
+					
+					update_model_visuals(actor, get_visual_scale(actor) * initialScale * GameScale); 
 				}
 			}
 
 			return fabs(growData->amount.value - growData->amount.target) > 1e-4;
-		}
-	);
+		});
 	}
 
 	void ResetGrab(Actor* giant) {
@@ -3241,5 +3272,48 @@ namespace Gts {
 		using func_t = decltype(&IsMoving);
 		REL::Relocation<func_t> func{ RELOCATION_ID(36928, 37953) };
 		return func(giant);
+	}
+
+	void ForEachReferenceInRange_Custom(RE::TESObjectREFR* origin, float radius, std::function<RE::BSContainer::ForEachResult(RE::TESObjectREFR& ref)> callback) {
+		if (REL::Module::IsAE()) { // Since commonlib didn't fix this function crashing on AE, we have to create fixed function ourselves
+			if (origin && radius > 0.0f) {
+				const auto originPos = origin->GetPosition();
+				auto* tesSingleton = RE::TES::GetSingleton();
+				auto* interiorCell = tesSingleton->interiorCell;
+				if (interiorCell) {
+					interiorCell->ForEachReferenceInRange(originPos, radius,[&](RE::TESObjectREFR& a_ref) { return callback(a_ref); });
+				} else {
+					if (const auto gridLength = tesSingleton->gridCells ? tesSingleton->gridCells->length : 0;
+						gridLength > 0) {
+						const float yPlus = originPos.y + radius;
+						const float yMinus = originPos.y - radius;
+						const float xPlus = originPos.x + radius;
+						const float xMinus = originPos.x - radius;
+
+						std::uint32_t x = 0;
+						do {
+							std::uint32_t y = 0;
+							do {
+								if (const auto cell = tesSingleton->gridCells->GetCell(x, y); cell && cell->IsAttached()) {
+									if (const auto cellCoords = cell->GetCoordinates(); cellCoords) {
+										const RE::NiPoint2 worldPos{cellCoords->worldX, cellCoords->worldY};
+										if (worldPos.x < xPlus && (worldPos.x + 4096.0f) > xMinus && worldPos.y < yPlus &&
+											(worldPos.y + 4096.0f) > yMinus) {
+											cell->ForEachReferenceInRange(originPos, radius, [&](RE::TESObjectREFR& a_ref) {
+												return callback(a_ref);
+											});
+										}
+									}
+								}
+								++y;
+							} while (y < gridLength);
+							++x;
+						} while (x < gridLength);
+					}
+				}
+			} 
+		} else { // If on SE, just use old function
+			TES::GetSingleton()->ForEachReference([&](RE::TESObjectREFR& a_ref) { return callback(a_ref); });
+		}
 	}
 }

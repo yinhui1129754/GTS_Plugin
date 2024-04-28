@@ -41,7 +41,7 @@ namespace {
 				log::info("Jump Power: {}", power);
 				log::info("Jump Radius: {}", stagger_radius);
 
-				Rumbling::Once("MassiveJump", actor, 4.0 * power * Might, 0.025 * power);
+				Rumbling::Once("MassiveJump", actor, 4.0 * power * Might, 0.05 * power);
 			}
 		}
 	}
@@ -59,7 +59,7 @@ namespace Hooks {
 			auto actor = GetCharContActor(a_this);
 			if (actor) {
 				if (actor->formID == 0x14) {// Apply to Player only
-					float scale = get_giantess_scale(actor);
+					float scale = std::clamp(get_giantess_scale(actor), 1.0f, 99999.0f);
 					if (scale > 1e-4) {
 						result /= scale;
 					}

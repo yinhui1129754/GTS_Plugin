@@ -13,6 +13,7 @@ namespace Hooks
 	class Hook_Experiments
 	{
 		public:
+			static void PatchShaking();
 			static void Hook(Trampoline& trampoline);
 	};
 }

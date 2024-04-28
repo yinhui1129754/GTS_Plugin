@@ -73,10 +73,12 @@ namespace {
 	}
 
 	void DoImpactRumble(Actor* giant, float force, std::string_view node, std::string_view name) {
+		float smt = 1.0;
 		if (HasSMT(giant)) {
-			force *= 12.0;
+			smt *= 2.0;
 		}
-		Rumbling::Once(name, giant, force, 0.05, node);
+		smt *= GetHighHeelsBonusDamage(giant, true);
+		Rumbling::Once(name, giant, force * smt, 0.10, node, 0.0);
 	}
 
 	void DoSounds(Actor* giant, float animspeed, std::string_view feet) {
@@ -99,12 +101,11 @@ namespace {
 			damage = 1.25;
 		}
 
-		float hh = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
-		float shake_power = Rumble_Stomp_Strong * SMT * hh;
+		float shake_power = Rumble_Stomp_Strong;
 
 		DoDamageEffect(giant, Damage_Stomp_Strong * damage * perk, Radius_Stomp_Strong, 5, 0.35, Event, 1.0, Source);
 		DoImpactRumble(giant, shake_power, Node, rumble);
-		DoDustExplosion(giant, 0.25 + SMT + (animSpeed * 0.05), Event, Node);
+		DoDustExplosion(giant, 1.33 * (SMT + (animSpeed * 0.05)), Event, Node);
 
 		DrainStamina(giant, "StaminaDrain_StrongStomp", "DestructionBasics", false, 3.4);
 

@@ -52,7 +52,9 @@ namespace {
 		float Volume = std::clamp(get_visual_scale(actor)/8.0f, 0.20f, 1.0f);
 		Runtime::PlaySoundAtNode("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
 
-		SetHalfLife(actor, 0.0);
+		
+
+		//SetHalfLife(actor, 0.0);
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
 				return false;
@@ -70,12 +72,15 @@ namespace {
 			float perk = Perk_GetCostReduction(caster);  
 			
 			DamageAV(caster, ActorValue::kStamina, 0.60 * perk * caster_scale * stamina * TimeScale() * multiply);
-			Grow(caster, 0.0080 * stamina * multiply * animspeed, 0.0); // Is automatically *'d by scale through CalcPower()
+
+			float modify = CalcPower(actor, 0.0080 * stamina * multiply * animspeed, 0.0, false);
+
+			override_actor_scale(caster, modify, SizeEffectType::kGrow);
 			// value*scale ^  ; ^ static value, not affected by scale
 			
-			Rumbling::Once("GrowButton", caster, 6.0 * stamina, 0.05, "NPC Pelvis [Pelv]");
+			Rumbling::Once("GrowButton", caster, 2.0 * stamina, 0.05, "NPC Pelvis [Pelv]", 0.0);
 			if (elapsed >= 0.99) {
-				SetHalfLife(caster, 1.0);
+				//SetHalfLife(caster, 1.0);
 				return false;
 			}
 			return true;

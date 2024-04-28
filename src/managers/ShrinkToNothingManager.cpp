@@ -96,7 +96,7 @@ namespace Gts {
 
 				AddSMTDuration(giant, 5.0);
 
-				ApplyShakeAtNode(tiny, 20, "NPC Root [Root]", 20.0);
+				ApplyShakeAtNode(tiny, 4.0, "NPC Root [Root]");
 
 				ActorHandle giantHandle = giant->CreateRefHandle();
 				ActorHandle tinyHandle = tiny->CreateRefHandle();

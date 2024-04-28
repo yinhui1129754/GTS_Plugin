@@ -1,8 +1,9 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
-#include "magic/effects/TinyCalamity.hpp"
+#include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/SizeHitEffects.hpp"
 #include "managers/damage/TinyCalamity.hpp"
+#include "magic/effects/TinyCalamity.hpp"
 #include "managers/RipClothManager.hpp"
 #include "managers/ai/aifunctions.hpp"
 #include "managers/GtsSizeManager.hpp"
@@ -38,13 +39,6 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
-	const std::string_view leftFootLookup = "NPC L Foot [Lft ]";
-	const std::string_view rightFootLookup = "NPC R Foot [Rft ]";
-	const std::string_view leftCalfLookup = "NPC L Calf [LClf]";
-	const std::string_view rightCalfLookup = "NPC R Calf [RClf]";
-	const std::string_view leftToeLookup = "NPC L Toe0 [LToe]";
-	const std::string_view rightToeLookup = "NPC R Toe0 [RToe]";
-	const std::string_view bodyLookup = "NPC Spine1 [Spn1]";
 
 	bool Allow_Damage(Actor* giant, Actor* tiny, DamageSource cause, float difference) {
 		float threshold = 3.0;
@@ -174,83 +168,14 @@ namespace Gts {
 			Calamity = 3.0 * Get_Bone_Movement_Speed(actor, Cause); // larger range for shrinking radius with Tiny Calamity
 		}
 
-		// Get world HH offset
-		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(actor);
-
-		float offset_side = 0.0;//-0.8;
-
-		std::string_view FootLookup = leftFootLookup;
-		std::string_view CalfLookup = leftCalfLookup;
-		std::string_view ToeLookup = leftToeLookup;
-
-		if (Right) {
-			FootLookup = rightFootLookup;
-			CalfLookup = rightCalfLookup;
-			ToeLookup = rightToeLookup;
-			offset_side = 0.0;//0.8;
-		}
-
-		auto Foot = find_node(actor, FootLookup);
-		auto Calf = find_node(actor, CalfLookup);
-		auto Toe = find_node(actor, ToeLookup);
-		if (!Foot) {
-			return;
-		}
-		if (!Calf) {
-			return;
-		}
-		if (!Toe) {
-			return;
-		}
-		NiMatrix3 RotMat;
-		{
-			NiAVObject* foot = Foot;
-			NiAVObject* calf = Calf;
-			NiAVObject* toe = Toe;
-			NiTransform inverseFoot = foot->world.Invert();
-			NiPoint3 forward = inverseFoot*toe->world.translate;
-			forward = forward / forward.Length();
-
-			NiPoint3 point_mid = (calf->world.translate + foot->world.translate) / 2; 		// Middle between knee and foot 			|---|---|
-			NiPoint3 point_low = (point_mid + foot->world.translate) / 2; 					// Middle of middle between knee and foot 	|---|-|-|
-			NiPoint3 point_low_2 = (point_low + foot->world.translate) / 2;  // Lowest point in general 					|---|--||
-			NiPoint3 point_lowest = inverseFoot*((point_low_2 + foot->world.translate) / 2);
-
-			NiPoint3 up = point_lowest;//inverseFoot*calf->world.translate;
-
-			up = up / up.Length();
-
-			NiPoint3 side = forward.UnitCross(up);
-			forward = up.UnitCross(side); // Reorthonalize
-
-			RotMat = NiMatrix3(side, forward, up);
-		}
-
 		float damage_zones_applied = 0.0;
-
 		float maxFootDistance = radius * giantScale;
-		float hh = hhOffsetbase[2] / get_npcparentnode_scale(actor);
-		// Make a list of points to check
-		std::vector<NiPoint3> points = {
-			// x = side, y = forward, z = up/down      
-			NiPoint3(0.0, hh/10, -(0.25 + hh * 0.25)), 	// basic foot pos
-			// ^ Point 1: ---()  
-			NiPoint3(offset_side, 8.0 + hh/10, -hh * 1.10), // Toe point		
-			// ^ Point 2: ()---   
-			NiPoint3(0.0, hh/70, -hh * 1.10), // Underheel point 
-			//            -----
-			// ^ Point 3: ---()  
-		};
-		std::tuple<NiAVObject*, NiMatrix3> adjust(Foot, RotMat);
+		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(actor, Right);
 
-		for (const auto& [foot, rotMat]: {adjust}) {
-			std::vector<NiPoint3> footPoints = {};
-			for (NiPoint3 point: points) {
-				footPoints.push_back(foot->world*(rotMat*point));
-			}
+		if (!CoordsToCheck.empty()) {
 			if (IsDebugEnabled() && (actor->formID == 0x14 || IsTeammate(actor) || EffectsForEveryone(actor))) {
-				for (auto point: footPoints) {
-					DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance);
+				for (auto footPoints: CoordsToCheck) {
+					DebugAPI::DrawSphere(glm::vec3(footPoints.x, footPoints.y, footPoints.z), maxFootDistance);
 				}
 			}
 
@@ -267,9 +192,9 @@ namespace Gts {
 							bool DoDamage = true;
 
 							auto model = otherActor->GetCurrent3D();
-
+							
 							if (model) {
-								for (auto point: footPoints) {
+								for (auto point: CoordsToCheck) {
 									VisitNodes(model, [&nodeCollisions, &Calamity, &DoDamage, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
 										if (distance < maxFootDistance) {
@@ -340,7 +265,7 @@ namespace Gts {
 
 		float highheelsdamage = 1.0;
 		if (ApplyHighHeelBonus(giant, Cause)) {
-			highheelsdamage = 1.0 + (GetHighHeelsBonusDamage(giant) * 5.0);
+			highheelsdamage = GetHighHeelsBonusDamage(giant, true);
 		}
 
 		float sprintdamage = 1.0; // default Sprint damage of 1.0

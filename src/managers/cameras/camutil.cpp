@@ -14,6 +14,46 @@ namespace {
 
 	const CameraDataMode currentMode = CameraDataMode::State;
 
+	void CAMERA_ASM_TEST(float value) { // Crashes / doesn't work. 
+		//FactorCameraOffset = 49866 ; 50799
+
+		// sE: 14084B430 - 14084b448 = 0x18
+		// ASM Attempt, doesn't work properly.
+
+		constexpr REL::Offset FloatA_GetOffset_SE(0x84b430); // 14084b430 - 1404f54b5: 0x18
+		constexpr REL::Offset FloatA_GetOffset_AE(50799); // 14084b430 - 14050e5f5: 0x95
+
+		// 0x14084b430 - 0x14084b440 : 0x10  (value 1)
+		// 0x14084b430 - 0x14084b454 : 0x1c  (value 2)
+		// 0x14084b430 - 0x14084b459 : 0x29  (value 3)
+		// 0x14084b430 - 0x14084f9f1 : 0x45C1  (in_RDX[2] (1))
+		// 0x14084b430 - 0x14084f977 : 0x4547  (in_RDX[2] (2))
+		// 0x14084b430 - 0x14084f9fb : 0x45CB  (in_RDX[1])
+		// 0x1404f5420 - 0x14084f97e : 0x35A55E
+		//REL::Relocation<std::uintptr_t> FloatA_SE_Hook(FloatA_GetOffset_SE, 0x18);
+		//REL::Relocation<std::uintptr_t> FloatA_AE_Hook(FloatA_GetOffset_AE, 0x18);
+
+		//REL::safe_write(ShakeCamera_GetOffset_SE_Hook.address(), targets);
+		if (REL::Module::IsSE()) {
+			log::info("SE Patched!");
+			log::info("Value: {}", value);
+			const float& pass = value;
+
+			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x10, &pass, sizeof(float));
+			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x1C, &pass, sizeof(float));
+			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x29, &pass, sizeof(float));
+			// ^ Do not work
+			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x4547, &value, sizeof(float));
+			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x45CB, &value, sizeof(float));
+			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x35A55E, &value, sizeof(float));
+			// ^ Crash the game
+			
+		} else if (REL::Module::IsAE()) {
+			log::info("AE Patched!");
+			//REL::safe_write(FloatA_AE_Hook.address(), &targets, sizeof(float));
+		}
+	}
+
 }
 
 namespace Gts {
@@ -343,6 +383,8 @@ namespace Gts {
 		auto cameraRoot = camera->cameraRoot;
 		auto player = GetCameraActor();
 		auto currentState = camera->currentState;
+
+		float value = Runtime::GetFloatOr("cameraAlternateX", 1.0);
 
 		if (cameraRoot) {
 			if (currentState) {

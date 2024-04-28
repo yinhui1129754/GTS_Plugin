@@ -73,7 +73,7 @@ namespace {
 			} else {
 				Runtime::PlaySoundAtNode("SoftHandAttack", receiver, 1.0, 1.0, "NPC L Hand [LHnd]");
 			}
-			Rumbling::Once("GrabAttackKill", receiver, 8.0, 0.15, "NPC L Hand [LHnd]");
+			Rumbling::Once("GrabAttackKill", receiver, 8.0, 0.15, "NPC L Hand [LHnd]", 0.0);
 			AnimationManager::StartAnim("GrabAbort", receiver); // Abort Grab animation
 			Grab::Release(receiver);
 		}

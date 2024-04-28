@@ -92,10 +92,10 @@ namespace Gts {
 			
 			if (foot_kind == FootEvent::JumpLand) {
 				float fallmod = 1.0 + (GetFallModifier(actor) - 1.0);
-				scale *= 2.25 * fallmod; // Jumping makes you sound bigger
+				scale *= 1.5 * fallmod; // Jumping makes you sound bigger
 			}
 			if (HighHeelManager::IsWearingHH(actor)) {
-				scale *= 1.0 + GetHighHeelsBonusDamage(actor) * 2.5; // Wearing High Heels makes explosions bigger based on HH height
+				scale *= GetHighHeelsBonusDamage(actor, true, 0.5); // Wearing High Heels makes explosions bigger based on HH height
 			}
 
 			for (NiAVObject* node: impact.nodes) {

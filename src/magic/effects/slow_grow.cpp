@@ -31,7 +31,7 @@ namespace Gts {
 			float scale = get_visual_scale(caster);
 			float mult = 0.40;
 			if (this->IsDual) {
-				Rumbling::For("SlowGrow", caster, 6.0, 0.10, "NPC COM [COM ]", 0.35);
+				Rumbling::For("SlowGrow", caster, 6.0, 0.10, "NPC COM [COM ]", 0.35, 0.0);
 				mult = 0.85;
 			}
 			SpawnCustomParticle(caster, ParticleType::Green, NiPoint3(), "NPC Root [Root]", scale * mult);

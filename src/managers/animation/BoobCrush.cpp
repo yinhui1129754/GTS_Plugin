@@ -159,19 +159,19 @@ namespace {
 				if (Node) {
 					std::string rumbleName = std::format("Node: {}", Nodes);
 					DoDamageAtPoint(giant, Radius_BreastCrush_BodyDOT, Damage_BreastCrush_BodyDOT * damage, Node, 400, 0.10, 1.33, DamageSource::BodyCrush);
-					Rumbling::Once(rumbleName, giant, shake_power, 0.02, Nodes);
+					Rumbling::Once(rumbleName, giant, shake_power, 0.02, Nodes, 0.0);
 				}
 			}
 
 			if (BreastL03 && BreastR03) {
-				Rumbling::Once("BreastDot_L", giantref, shake_power, 0.025, "L Breast03");
-				Rumbling::Once("BreastDot_R", giantref, shake_power, 0.025, "R Breast03");
+				Rumbling::Once("BreastDot_L", giantref, shake_power, 0.025, "L Breast03", 0.0);
+				Rumbling::Once("BreastDot_R", giantref, shake_power, 0.025, "R Breast03", 0.0);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastL03, 400, 0.10, 1.33, DamageSource::BreastImpact);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastR03, 400, 0.10, 1.33, DamageSource::BreastImpact);
 				return true;
 			} else if (BreastL && BreastR) {
-				Rumbling::Once("BreastDot_L", giantref, shake_power, 0.025, "NPC L Breast");
-				Rumbling::Once("BreastDot_R", giantref, shake_power, 0.025, "NPC R Breast");
+				Rumbling::Once("BreastDot_L", giantref, shake_power, 0.025, "NPC L Breast", 0.0);
+				Rumbling::Once("BreastDot_R", giantref, shake_power, 0.025, "NPC R Breast", 0.0);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastL, 400, 0.10, 1.33, DamageSource::BreastImpact);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BreastDOT, Damage_BreastCrush_BreastDOT * damage, BreastR, 400, 0.10, 1.33, DamageSource::BreastImpact);
 				return true;
@@ -218,7 +218,7 @@ namespace {
 				std::string rumbleName = std::format("Node: {}", Nodes);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BodyImpact, Damage_BreastCrush_Body * damage, Node, 400, 0.10, 0.85, DamageSource::BodyCrush);
 				DoLaunch(giant, 1.20 * perk, 4.20, Node);
-				Rumbling::Once(rumbleName, giant, 1.00 * damage, 0.02, Nodes);
+				Rumbling::Once(rumbleName, giant, 1.00 * damage, 0.02, Nodes, 0.0);
 			}
 		}
 	}
@@ -228,11 +228,13 @@ namespace {
 
 		float perk = GetPerkBonus_Basics(giant);
 		float dust = 1.0;
+		float smt = 1.0;
 
 		InflictBodyDamage(giant);
 
 		if (HasSMT(giant)) {
 			dust = 1.25;
+			smt = 1.5;
 		}
 
 		auto BreastL = find_node(giant, "NPC L Breast");
@@ -250,8 +252,8 @@ namespace {
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "R Breast03");
 			DoFootstepSound(giant, 1.25, FootEvent::Left, "L Breast03");
 			DoLaunch(giant, 1.20 * perk, 4.20, FootEvent::Breasts);
-			Rumbling::Once("Breast_L", giant, shake_power, 0.05, "L Breast03");
-			Rumbling::Once("Breast_R", giant, shake_power, 0.05, "R Breast03");
+			Rumbling::Once("Breast_L", giant, shake_power * smt, 0.05, "L Breast03", 0.0);
+			Rumbling::Once("Breast_R", giant, shake_power * smt, 0.05, "R Breast03", 0.0);
 			ModGrowthCount(giant, 0, true); // Reset limit
 			return;
 		} else if (BreastL && BreastR) {
@@ -262,8 +264,8 @@ namespace {
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC R Breast");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC L Breast");
 			DoLaunch(giant, 1.20 * perk, 4.20, FootEvent::Breasts);
-			Rumbling::Once("Breast_L", giant, shake_power, 0.05, "NPC L Breast");
-			Rumbling::Once("Breast_R", giant, shake_power, 0.05, "NPC R Breast");
+			Rumbling::Once("Breast_L", giant, shake_power * smt, 0.05, "NPC L Breast", 0.0);
+			Rumbling::Once("Breast_R", giant, shake_power * smt, 0.05, "NPC R Breast", 0.0);
 			ModGrowthCount(giant, 0, true); // Reset limit
 			return;
 		} else {
@@ -319,17 +321,17 @@ namespace {
 	}
 	void GTS_BoobCrush_Grow_Start(AnimationEventData& data) {
 		auto giant = &data.giant;
-		float bonus = 0.24 * (GetGrowthCount(giant) + 1.0);
+
+		float gigantism = 1.0 + (Ench_Aspect_GetPower(giant) / 5);
+		float bonus = 0.24 * gigantism * (GetGrowthCount(giant) + 1.0);
 
 		PlayMoanSound(giant, 1.0);
 		ModGrowthCount(giant, 1.0, false);
 		SetButtCrushSize(giant, bonus, false);
-		SpringGrow_Free(giant, bonus, 0.3 / GetAnimationSlowdown(giant), "BreastCrushGrowth");
+		SpringGrow(giant, bonus, 0.3 / GetAnimationSlowdown(giant), "BreastCrushGrowth", false);
 
-		float WasteStamina = 60.0 * GetButtCrushCost(giant);
+		float WasteStamina = 80.0 * GetButtCrushCost(giant);
 		DamageAV(giant, ActorValue::kStamina, WasteStamina);
-
-		//CameraFOVTask(giant, 1.0, 0.003);
 		
 		Runtime::PlaySoundAtNode("growthSound", giant, 1.0, 1.0, "NPC Pelvis [Pelv]");
 		

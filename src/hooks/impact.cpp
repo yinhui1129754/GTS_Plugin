@@ -20,10 +20,16 @@ namespace Hooks
 					if (Data) { // GetUserData seems to be player exclusive for some reason
 						Actor* actor = skyrim_cast<Actor*>(Data);
 						if (actor) {
-							if (actor->formID == 0x14 && get_visual_scale(actor) >= 1.75) {
-								//log::info("Disabling sounds for {}", actor->GetDisplayFullName());
-								data.playSound1 = false;
-								data.playSound2 = false;
+							if (actor->formID == 0x14) {
+								float scale = get_visual_scale(actor);
+								if (HasSMT(actor)) {
+									scale *= 2.0;
+								}
+								if (scale > 1.75) {
+									//log::info("Disabling sounds for {}", actor->GetDisplayFullName());
+									data.playSound1 = false;
+									data.playSound2 = false;
+								}
 							}
 						}
 					}

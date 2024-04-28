@@ -53,7 +53,7 @@ namespace {
 			}
 			Laugh_Chance(giantref, 2.2, "FootGrind");
 
-			Rumbling::Once(r_name, giantref, Rumble_FootGrind_DOT, 0.025, RNode);
+			Rumbling::Once(r_name, giantref, Rumble_FootGrind_DOT, 0.025, RNode, 0.0);
 			float speed = AnimationManager::GetBonusAnimationSpeed(giant);
 			DoDamageEffect(giantref, Damage_Foot_Grind_DOT * speed, Radius_Foot_Grind_DOT, 10000, 0.025, FootEvent::Right, 2.5, DamageSource::FootGrindedRight);
 			return true;
@@ -66,7 +66,7 @@ namespace {
 
 		std::string r_name = std::format("FootGrindRot_{}", giant->formID);
 
-		Rumbling::Once(r_name, giant, Rumble_FootGrind_Rotate * speed, 0.025, node);
+		Rumbling::Once(r_name, giant, Rumble_FootGrind_Rotate * speed, 0.025, node, 0.0);
 		DoDamageEffect(giant, Damage_Foot_Grind_Rotate, Radius_Foot_Grind_DOT, 10, 0.15, kind, 1.6, source);
 
 		ApplyDustRing(giant, kind, node, 0.9);
@@ -81,9 +81,13 @@ namespace {
 
 		DamageAV(giant, ActorValue::kStamina, 30 * GetWasteMult(giant));
 
-		float shake_power = Rumble_FootGrind_Impact * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+		float shake_power = Rumble_FootGrind_Impact * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.05, Node);
+		if (HasSMT(giant)) {
+			shake_power *= 1.5;
+		}
+
+		Rumbling::Once(rumble, giant, shake_power, 0.05, Node, 0.0);
 	}
 
 	void CancelGrindTasks(Actor* giant) {

@@ -139,6 +139,7 @@ namespace Gts {
 	float GetRoomStateScale(Actor* giant);
 	float GetProneAdjustment();
 
+	void override_actor_scale(Actor* giant, float amt, SizeEffectType type);
 	void update_target_scale(Actor* giant, float amt, SizeEffectType type);
 	float get_update_target_scale(Actor* giant, float amt, SizeEffectType type);
 
@@ -178,12 +179,12 @@ namespace Gts {
 	void CompleteDragonQuest(Actor* tiny, ParticleType Type, bool dead);
 
 	float get_distance_to_actor(Actor* receiver, Actor* target);
-	float GetHighHeelsBonusDamage(Actor* actor);
+	float GetHighHeelsBonusDamage(Actor* actor, bool multiply);
+	float GetHighHeelsBonusDamage(Actor* actor, bool multiply, float adjust);
 
 	void ApplyShake(Actor* caster, float modifier);
 	void ApplyShakeAtNode(Actor* caster, float modifier, std::string_view node);
-	void ApplyShakeAtNode(Actor* caster, float modifier, std::string_view node, float radius);
-	void ApplyShakeAtPoint(Actor* caster, float modifier, const NiPoint3& coords, float radius, float duration_override, float calamity);
+	void ApplyShakeAtPoint(Actor* caster, float modifier, const NiPoint3& coords, float duration_override);
 	void EnableFreeCamera();
 
 	bool DisallowSizeDamage(Actor* giant, Actor* tiny);
@@ -265,8 +266,7 @@ namespace Gts {
 	void DisableCollisions(Actor* actor, TESObjectREFR* otherActor);
 	void EnableCollisions(Actor* actor);
 
-	void SpringGrow(Actor* actor, float amt, float halfLife, std::string_view naming);
-	void SpringGrow_Free(Actor* actor, float amt, float halfLife, std::string_view naming);
+	void SpringGrow(Actor* actor, float amt, float halfLife, std::string_view naming, bool drain);
 	void SpringShrink(Actor* actor, float amt, float halfLife, std::string_view naming);
 
 	void ResetGrab(Actor* giant);
@@ -296,4 +296,6 @@ namespace Gts {
 	std::int16_t GetItemCount(InventoryChanges* changes, RE::TESBoundObject* a_obj);
 	int GetCombatState(Actor* actor);
 	bool IsMoving(Actor* giant);
+
+	void ForEachReferenceInRange_Custom(RE::TESObjectREFR* origin, float radius, std::function<RE::BSContainer::ForEachResult(RE::TESObjectREFR& ref)> callback);
 }

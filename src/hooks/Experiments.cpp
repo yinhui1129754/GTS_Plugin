@@ -113,9 +113,34 @@ namespace {
 }
 
 
+
 namespace Hooks {
+	void Hook_Experiments::PatchShaking() { 
+		log::info("Attempting the patch");
+		constexpr REL::ID ShakeCamera_GetOffset_SE(32275); // 1404f5420 - 1404f54b5: 0x95
+		constexpr REL::ID ShakeCamera_GetOffset_AE(33012); // 14050E560 - 14050e5f5: 0x95
+
+		REL::Relocation<std::uintptr_t> ShakeCamera_GetOffset_SE_Hook(ShakeCamera_GetOffset_SE, 0x95);
+		REL::Relocation<std::uintptr_t> ShakeCamera_GetOffset_AE_Hook(ShakeCamera_GetOffset_AE, 0x95);
+
+		float value = 0.0;
+		const std::array targets = { 0x0F, 0x28, 0xD8, 0x90, 0x90, 0x90, 0x90, 0x90 };
+
+		//REL::safe_write(ShakeCamera_GetOffset_SE_Hook.address(), targets);
+		if (REL::Module::IsSE()) {
+			log::info("SE Patched!");
+			REL::safe_write(ShakeCamera_GetOffset_SE_Hook.address(), &targets, sizeof(value));
+		} else if (REL::Module::IsAE()) {
+			log::info("AE Patched!");
+			REL::safe_write(ShakeCamera_GetOffset_AE_Hook.address(), &targets, sizeof(value));
+		}
+		// Atempt to do ASM stuff. targets copied from https://github.com/jarari/ImmersiveImpactSE/blob/b1e0be03f4308718e49072b28010c38c455c394f/HitStopManager.cpp#L67
+		// It seems to patch it, but crashes the game on shaking the screen, after ~0.2sec.
+		// Seems to poin to ni-node stuff so i guess altering it is a bad idea
+	}
 
 	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is commented out inside hooks.cpp
+		
 		/*static FunctionHook<void(TESObjectREFR* ref)>DisableHook(
 			REL::RelocationID(19374, 19800),
 			// [SE]: 0x1402986B0 : 19374

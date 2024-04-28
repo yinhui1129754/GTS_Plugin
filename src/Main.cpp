@@ -17,6 +17,8 @@
 #include <thread>
 #include "git.h"
 
+#include "hooks/Experiments.hpp"
+
 using namespace RE::BSScript;
 using namespace Gts;
 using namespace SKSE;

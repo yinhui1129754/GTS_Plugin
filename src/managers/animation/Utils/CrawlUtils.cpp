@@ -85,7 +85,7 @@ namespace Gts {
 			return; // Make sure to return if node doesn't exist, no CTD in that case
 		}
 
-		float SMT = 1.0;
+		float smt = 1.0;
 		float minimal_scale = 1.5;
 
 		LaunchActor::GetSingleton().LaunchAtObjectNode(actor, launch_dist, damage_dist, multiplier, node); // Launch actors
@@ -93,7 +93,7 @@ namespace Gts {
 		
 		if (actor->formID == 0x14) {
 			if (HasSMT(actor)) {
-				SMT = 2.5; // Stronger Camera Shake
+				smt = 2.0; // Stronger Camera Shake
 				multiplier *= 1.8;
 				minimal_scale = 1.0;
 				scale += 0.75;
@@ -102,7 +102,7 @@ namespace Gts {
 		}
 
 		std::string rumbleName = std::format("{}{}", tag, actor->formID);
-		Rumbling::Once(rumbleName, actor, Rumble_Crawl_KneeHand_Impact * multiplier * SMT, 0.02, name); // Do Rumble
+		Rumbling::Once(rumbleName, actor, Rumble_Crawl_KneeHand_Impact * multiplier * smt, 0.02, name, 0.0); // Do Rumble
 
 		DoDamageAtPoint(actor, damage_dist, damage, node, 20, 0.05, crushmult, Cause); // Do size-related damage
 		DoCrawlingSounds(actor, scale, node, FootEvent::Left);                      // Do impact sounds

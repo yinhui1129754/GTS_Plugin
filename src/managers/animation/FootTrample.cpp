@@ -44,44 +44,40 @@ namespace {
 
 	void FootTrample_Stage1(Actor* giant, bool Right, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
-		float shake = 1.0;
+		float smt = 1.0;
 		float dust = 1.0;
 		
 		if (HasSMT(giant)) {
-			shake = 2.0;
 			dust = 1.25;
+			smt = 1.5;
 		}
 
 		DoDamageEffect(giant, Damage_Trample * perk, Radius_Trample, 100, 0.10, Event, 1.10, Source);
 		DrainStamina(giant, "StaminaDrain_Trample", "DestructionBasics", true, 0.6); // start stamina drain
 
-		float shake_power = Rumble_Trample_Stage1 * shake * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+		float shake_power = Rumble_Trample_Stage1 * smt * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.0, Node);
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
 		DoLaunch(giant, 0.65 * perk, 0.75 * perk, Event);
 		DoDustExplosion(giant, dust, Event, Node);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		
-		if (Right) {
-			FootGrindCheck_Right(giant, Radius_Trample, true);
-		} else {
-			FootGrindCheck_Left(giant, Radius_Trample, true);
-		}
+		FootGrindCheck(giant, Radius_Trample, true, Right);
 	}
 
 	void FootTrample_Stage2(Actor* giant, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
-		float shake = 1.0;
 		float dust = 1.0;
+		float smt = 1.0;
 		
 		if (HasSMT(giant)) {
-			shake = 2.0;
+			smt = 1.5;
 			dust = 1.25;
 		}
 
-		float shake_power = Rumble_Trample_Stage2 * shake * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
+		float shake_power = Rumble_Trample_Stage2 * smt * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.0, Node);
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
 		DoDamageEffect(giant, Damage_Trample_Repeat * perk, Radius_Trample_Repeat, 1, 0.12, Event, 1.10, Source);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);
@@ -91,18 +87,20 @@ namespace {
 
 	void FootTrample_Stage3(Actor* giant, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
-		float shake = 1.0;
-		float dust = 1.25;
+		float dust = 1.0;
+		float smt = 1.0;
 		
 		if (HasSMT(giant)) {
-			shake = 2.0;
-			dust = 1.50;
+			smt = 1.5;
+			dust = 1.25;
 		}
+
+		
+
+		float shake_power = Rumble_Trample_Stage3 * smt * GetHighHeelsBonusDamage(giant, true);
+
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
 		DoDamageEffect(giant, Damage_Trample_Finisher * perk, Radius_Trample_Finisher, 1, 0.25, Event, 0.85, Source);
-
-		float shake_power = Rumble_Trample_Stage3 * shake * (1.0 + (GetHighHeelsBonusDamage(giant) * 5.0));
-
-		Rumbling::Once(rumble, giant, shake_power, 0.0, Node);
 		DoLaunch(giant, 1.25 * perk, 3.20 * perk, Event);
 		DoFootstepSound(giant, 1.15, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);

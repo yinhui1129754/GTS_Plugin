@@ -148,8 +148,13 @@ namespace Gts {
 			case ActorValue::kHealth: {
 				float might = 1.0 + Potion_GetMightBonus(actor);
 
-				if (actor->formID == 0x14 && HasSMT(actor)) {
-					scale += 1.0;
+				if (actor->formID == 0x14) {
+					if (HasSMT(actor)) {
+						scale += 1.0;
+					}
+					if (actor->AsActorState()->IsSprinting() && Runtime::HasPerk(actor, "SprintDamageMult1")) {
+						scale *= 1.30;
+					}
 				}
 
 				scale *= might;
