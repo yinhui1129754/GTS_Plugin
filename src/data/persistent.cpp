@@ -36,6 +36,7 @@ namespace {
 	inline const auto SandwichAiRecord = _byteswap_ulong('SWAI');
 	inline const auto KickAiRecord = _byteswap_ulong('KKAI');
 	inline const auto HugsAiRecord = _byteswap_ulong('HSAI');
+	inline const auto ThighAiRecord = _byteswap_ulong('THAI');
 	inline const auto ButtAiRecord = _byteswap_ulong('BTAI');
 	inline const auto VoreAiRecord = _byteswap_ulong('VRAI');
 	inline const auto ProgressionMult = _byteswap_ulong('PRMT');
@@ -565,6 +566,10 @@ namespace Gts {
 				bool Hugs_Ai;
 				serde->ReadRecordData(&Hugs_Ai, sizeof(Hugs_Ai));
 				GetSingleton().Hugs_Ai = Hugs_Ai;
+			} else if (type == ThighAiRecord) {
+				bool Thigh_Ai;
+				serde->ReadRecordData(&Thigh_Ai, sizeof(Thigh_Ai));
+				GetSingleton().Thigh_Ai = Thigh_Ai;
 			} else if (type == VoreAiRecord) {
 				bool Vore_Ai;
 				serde->ReadRecordData(&Vore_Ai, sizeof(Vore_Ai));
@@ -987,6 +992,13 @@ namespace Gts {
 		}
 		bool Hugs_Ai = GetSingleton().Hugs_Ai;
 		serde->WriteRecordData(&Hugs_Ai, sizeof(Hugs_Ai));
+
+		if (!serde->OpenRecord(ThighAiRecord, 1)) {
+			log::error("Unable to open Thigh Ai record to write cosavedata");
+			return;
+		}
+		bool Thigh_Ai = GetSingleton().Thigh_Ai;
+		serde->WriteRecordData(&Thigh_Ai, sizeof(Thigh_Ai));
 
 		if (!serde->OpenRecord(SandwichAiRecord, 1)) {
 			log::error("Unable to open Sandwich Ai record to write cosave data.");

@@ -169,8 +169,8 @@ namespace Gts {
 					}
 				}
 			}
-			averagePos = averagePos * (1.0 / totalWeight);
 
+			averagePos = averagePos * (1.0 / totalWeight);
 			ApplyShakeAtPoint(actor, 0.4 * totalWeight, averagePos, duration_override);
 
 			// There is a way to patch camera not shaking more than once so we won't need totalWeight hacks, but it requires ASM hacks

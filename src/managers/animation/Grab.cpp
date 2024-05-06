@@ -452,6 +452,7 @@ namespace Gts {
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		TaskManager::Cancel(name);
+		Grab::Release(giant);
 	}
 
 	void Grab::AttachActorTask(Actor* giant, Actor* tiny) {
@@ -487,20 +488,25 @@ namespace Gts {
 
 			ShutUp(tinyref);
 
-			if (giantref->IsDead() || tinyref->IsDead() || GetAV(tinyref, ActorValue::kHealth) <= 0.0 || sizedifference < Action_Grab || GetAV(giantref, ActorValue::kStamina) < 2.0) {
-				PushActorAway(giantref, tinyref, 1.0);
-				tinyref->SetGraphVariableBool("GTSBEH_T_InStorage", false);
-				SetBetweenBreasts(tinyref, false);
-				SetBeingHeld(tinyref, false);
-				giantref->SetGraphVariableInt("GTS_GrabbedTiny", 0); // Tell behaviors 'we have nothing in our hands'. A must.
-				giantref->SetGraphVariableInt("GTS_Grab_State", 0);
-				giantref->SetGraphVariableInt("GTS_Storing_Tiny", 0);
-				DrainStamina(giant, "GrabAttack", "DestructionBasics", false, 0.75);
-				AnimationManager::StartAnim("GrabAbort", giantref); // Abort Grab animation
-				AnimationManager::StartAnim("TinyDied", giantref);
-				ManageCamera(giantref, false, CameraTracking::Grab_Left); // Disable any camera edits
-				Grab::Release(giantref);
-				return false;
+			bool Attacking = false;
+			giantref->GetGraphVariableBool("GTS_IsGrabAttacking", Attacking);
+			if (!Attacking || IsBeingEaten(tinyref)) {
+				if (giantref->IsDead() || tinyref->IsDead() || GetAV(tinyref, ActorValue::kHealth) <= 0.0 || sizedifference < Action_Grab || GetAV(giantref, ActorValue::kStamina) < 2.0) {
+					PushActorAway(giantref, tinyref, 1.0);
+					tinyref->SetGraphVariableBool("GTSBEH_T_InStorage", false);
+					SetBetweenBreasts(tinyref, false);
+					SetBeingHeld(tinyref, false);
+					giantref->SetGraphVariableInt("GTS_GrabbedTiny", 0); // Tell behaviors 'we have nothing in our hands'. A must.
+					giantref->SetGraphVariableInt("GTS_Grab_State", 0);
+					giantref->SetGraphVariableInt("GTS_Storing_Tiny", 0);
+					DrainStamina(giant, "GrabAttack", "DestructionBasics", false, 0.75);
+					AnimationManager::StartAnim("GrabAbort", giantref); // Abort Grab animation
+					AnimationManager::StartAnim("TinyDied", giantref);
+					ManageCamera(giantref, false, CameraTracking::Grab_Left); // Disable any camera edits
+					Grab::DetachActorTask(giantref);
+					Grab::Release(giantref);
+					return false;
+				}
 			}
 
 			if (IsBeingEaten(tinyref)) {

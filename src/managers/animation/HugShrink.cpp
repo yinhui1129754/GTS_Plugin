@@ -39,10 +39,10 @@ namespace {
 
 	void Hugs_ShakeCamera(Actor* giant) {
 		if (giant->formID == 0x14) {
-			shake_camera(giant, 0.40, 0.35);
+			shake_camera(giant, 0.75, 0.35);
 		} else {
-			Rumbling::Once("HugGrab_L", giant, 4.25, 0.15, "NPC L Hand [LHnd]", 0.0);
-			Rumbling::Once("HugGrab_R", giant, 4.25, 0.15, "NPC R Hand [RHnd]", 0.0);
+			Rumbling::Once("HugGrab_L", giant, Rumble_Hugs_Catch, 0.15, "NPC L Hand [LHnd]", 0.0);
+			Rumbling::Once("HugGrab_R", giant, Rumble_Hugs_Catch, 0.15, "NPC R Hand [RHnd]", 0.0);
 		}
 	}
 
@@ -148,7 +148,7 @@ namespace {
 		Attacked(huggedActor, giant);
 		set_target_scale(huggedActor, scale*0.60);
 		ModSizeExperience(giant, scale/6);
-		Rumbling::For("ShrinkPulse", giant, 18.0 * sizedifference, 0.10, "NPC COM [COM ]", 0.35, 0.0);
+		Rumbling::For("ShrinkPulse", giant, Rumble_Hugs_Shrink, 0.10, "NPC COM [COM ]", 0.50 / GetAnimationSlowdown(giant), 0.0);
 	}
 
 	void GTS_Hug_RunShrinkTask(AnimationEventData& data) {}
@@ -163,7 +163,7 @@ namespace {
 		}
 		HugCrushOther(giant, huggedActor);
 		PrintDeathSource(giant, huggedActor, DamageSource::Hugs);
-		Rumbling::For("HugCrush", giant, 76.0, 0.10, "NPC COM [COM ]", 0.15, 0.0);
+		Rumbling::For("HugCrush", giant, Rumble_Hugs_HugCrush, 0.10, "NPC COM [COM ]", 0.15, 0.0);
 		HugShrink::DetachActorTask(giant);
 
 		AdjustFacialExpression(giant, 0, 0.0, "phenome");
@@ -236,7 +236,7 @@ namespace {
 			AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
 			return;
 		} else {
-			Notify("{} is too healthy to be hug crushed", huggedActor->GetDisplayFullName());
+			Notify("{} is too healthy to be hug crushed: {:.2f}/{:.2f}", huggedActor->GetDisplayFullName(), health, HpThreshold);
 		}
 	}
 
@@ -388,11 +388,7 @@ namespace Gts {
 			TransferSize(giantref, tinyref, false, shrink, steal, false, ShrinkSource::hugs); // Shrink foe, enlarge gts
 			ModSizeExperience(giantref, 0.00020);
 			Attacked(tinyref, giantref); // make it look like we attack the tiny
-			if (giantref->formID == 0x14) {
-				shake_camera(giantref, 0.40 * sizedifference, 0.05);
-			} else {
-				Rumbling::Once("HugSteal", giantref, get_visual_scale(giantref) * 6, 0.10);
-			}
+			Rumbling::Once("HugSteal", giantref, Rumble_Hugs_Shrink, 0.12, "NPC COM [COM ]", 0.0);
 			
 			return true;
 		});
@@ -535,7 +531,7 @@ namespace Gts {
 		if (giant->formID == 0x14) {
 			shake_camera(giant, 0.25 * sizedifference, 0.35);
 		} else {
-			Rumbling::Once("HugGrab", giant, sizedifference * 12, 0.15);
+			Rumbling::Once("HugRelease", giant, Rumble_Hugs_Release, 0.10);
 		}
 		Notify(message);
 		AbortHugAnimation(giant, huggedActor);

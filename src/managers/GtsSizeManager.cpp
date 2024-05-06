@@ -54,14 +54,6 @@ namespace {
 			return 0.05;
 		}
 	}
-
-	float get_endless_height(Actor* giant) {
-		float endless = 0.0;
-		if (Runtime::HasPerk(giant, "ColossalGrowth")) {
-			endless = 99999999.0;
-		}
-		return endless;
-	}
 }
 
 namespace Gts {
@@ -72,60 +64,6 @@ namespace Gts {
 
 	std::string SizeManager::DebugName() {
 		return "SizeManager";
-	}
-
-	void SizeManager::Update() {
-		auto profiler = Profilers::Profile("SizeManager: Update");
-		for (auto actor: find_actors()) {
-			// 2023 + 2024: TODO: move away from polling
-			float Endless = 0.0;
-			if (actor->formID == 0x14) {
-				Endless = get_endless_height(actor);
-			}
-
-			float GameScale = game_get_scale_overrides(actor);
-
-			float NaturalScale = 1.0; //get_neutral_scale(actor);
-			// ^ If we won't alter it - .dll will reset the scale to max scale
-			float Gigantism = Ench_Aspect_GetPower(actor);
-
-			float QuestStage = Runtime::GetStage("MainQuest");
-			auto Persistent = Persistent::GetSingleton().GetData(actor);
-			
-			float GetLimit = std::clamp(NaturalScale + ((Runtime::GetFloat("sizeLimit") - 1.0f) * NaturalScale), NaturalScale, 99999999.0f); // Default size limit
-			
-			float Persistent_Size = 1.0;
-			float SelectedFormula = Runtime::GetInt("SelectedSizeFormula");
-
-			float FollowerLimit = Runtime::GetFloat("FollowersSizeLimit"); // 0 by default
-			float NPCLimit = Runtime::GetFloat("NPCSizeLimit"); // 0 by default
-
-			float buttcrush = GetButtCrushSize(actor);
-
-			if (Persistent) {
-				float size_overrides = Potion_GetSizeMultiplier(actor);
-				// ^ Takes ButtCrush growth and Potion amplifiers into account
-				Persistent_Size = ((1.0 + Persistent->bonus_max_size) * size_overrides);
-			}
-
-			if (actor->formID == 0x14 && SelectedFormula >= 1.0) { // Apply Player Mass-Based max size
-				float low_limit = get_endless_height(actor);
-				if (low_limit < 2) {
-					low_limit = Runtime::GetFloat("sizeLimit");
-				}
-				GetLimit = std::clamp(NaturalScale + (Runtime::GetFloat("GtsMassBasedSize") * NaturalScale), NaturalScale, low_limit);
-			} else if (QuestStage > 100 && FollowerLimit > 0.0 && FollowerLimit != 1.0 && actor->formID != 0x14 && IsTeammate(actor)) { // Apply Follower Max Size
-				GetLimit = std::clamp(NaturalScale + ((Runtime::GetFloat("FollowersSizeLimit") - 1.0f) * NaturalScale), NaturalScale * FollowerLimit, 99999999.0f); // Apply only if Quest is done.
-			} else if (QuestStage > 100 && NPCLimit > 0.0 && NPCLimit != 1.0 && actor->formID != 0x14 && !IsTeammate(actor)) { // Apply Other NPC's max size
-				GetLimit = std::clamp(NaturalScale + ((Runtime::GetFloat("NPCSizeLimit") - 1.0f) * NaturalScale), NaturalScale * NPCLimit, 99999999.0f);       // Apply only if Quest is done.
-			}
-
-			float TotalLimit = (buttcrush + ((GetLimit * Persistent_Size) * (1.0 + Gigantism))) / GameScale;
-
-			if (get_max_scale(actor) < TotalLimit + Endless || get_max_scale(actor) > TotalLimit + Endless) {
-				set_max_scale(actor, TotalLimit);
-			}
-		}
 	}
 
 	void SizeManager::SetEnchantmentBonus(Actor* actor, float amt) {
@@ -359,13 +297,13 @@ namespace Gts {
 	}
 
 	void SizeManager::Reset() {
-		auto caster = PlayerCharacter::GetSingleton();
-		if (caster) {
-			SetEnchantmentBonus(caster, 0.0);
-			SetGrowthSpurt(caster, 0.0);
-		}
-		
 		TaskManager::CancelAllTasks(); // just in case, to avoid CTD
+		this->sizeData.clear();
 	}
 
+	void SizeManager::ResetActor(Actor* actor) {
+		if (actor) {
+			this->sizeData.erase(actor);
+		}
+	}
 }

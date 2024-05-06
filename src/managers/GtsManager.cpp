@@ -8,6 +8,7 @@
 #include "managers/cameras/camutil.hpp"
 #include "managers/ai/headtracking.hpp"
 #include "managers/RipClothManager.hpp"
+#include "managers/MaxSizeManager.hpp"
 #include "managers/animation/Grab.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/InputManager.hpp"
@@ -296,6 +297,7 @@ void GtsManager::Update() {
 	auto profiler = Profilers::Profile("Manager: Update()");
 
 	UpdateFalling();
+	UpdateMaxScale(); // Update max scale of each actor in the scene
 	ManageActorControl(); // Sadly have to call it non stop since im unsure how to easily fix it otherwise :(
 	ShiftAudioFrequency();
 
@@ -305,7 +307,7 @@ void GtsManager::Update() {
 			auto& sizemanager = SizeManager::GetSingleton();
 
 			if (actor->formID == 0x14 || IsTeammate(actor)) {
-
+				
 				ScareActors(actor);
 				FixActorFade(actor);
 

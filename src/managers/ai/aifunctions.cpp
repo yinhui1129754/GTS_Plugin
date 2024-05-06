@@ -1,10 +1,10 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/damage/CollisionDamage.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/ai/aifunctions.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "managers/explosion.hpp"
-#include "managers/audio/footstep.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "utils/actorUtils.hpp"
 #include "utils/findActor.hpp"
@@ -18,7 +18,8 @@
 using namespace RE;
 using namespace Gts;
 
-namespace {
+namespace Gts {
+
 	float GetScareThreshold(Actor* giant) {
 		float threshold = 2.5;
 		if (giant->IsSneaking()) { // If we sneak/prone/crawl = make threshold bigger so it's harder to scare actors
@@ -33,14 +34,12 @@ namespace {
 		if (giant->AsActorState()->IsWalking()) { // harder to scare if we're approaching slowly
 			threshold *= 1.35;
 		}
-		if (giant->IsRunning()) { // easier to scare
+		if (giant->AsActorState()->IsSprinting()) { // easier to scare
 			threshold *= 0.75;
 		}
 		return threshold;
 	}
-}
 
-namespace Gts {
 	void Task_InitHavokTask(Actor* tiny) {
 
 		float startTime = Time::WorldTimeElapsed();
@@ -79,6 +78,7 @@ namespace Gts {
 			tiny->KillImpl(giant, 1, true, true);
 			tiny->SetAlpha(0.0);
 		}
+
 		auto* eventsource = ScriptEventSourceHolder::GetSingleton();
 		if (eventsource) {
 			auto event = TESDeathEvent();
@@ -225,6 +225,7 @@ namespace Gts {
 
 				float distancecheck = 128.0 * GetMovementModifier(giant);
 				float threshold = GetScareThreshold(giant);
+
 				if (sizedifference >= threshold) {
 					NiPoint3 GiantDist = giant->GetPosition();
 					NiPoint3 ObserverDist = tiny->GetPosition();

@@ -108,8 +108,22 @@ namespace {
 				VoreData.Swallow();
 				tiny->SetAlpha(0.0);
 				Runtime::PlaySoundAtNode("VoreSwallow", giant, 1.0, 1.0, "NPC Head [Head]"); // Play sound
+
+				auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
+				for (auto& tiny: VoreData.GetVories()) {
+					if (tiny) {
+						AllowToBeCrushed(tiny, true);
+						EnableCollisions(tiny);
+					}
+				}
+				VoreData.AllowToBeVored(true);
+				VoreData.KillAll();
+				VoreData.ReleaseAll();
 			}
 		}
+
+		ManageCamera(giant, false, CameraTracking::ObjectA);
+		ManageCamera(giant, false, CameraTracking::Hand_Right);
     }
 
     void GTS_Sneak_Vore_CloseMouth(AnimationEventData& data) {
@@ -120,20 +134,6 @@ namespace {
     }
 
     void GTS_Sneak_Vore_KillAll(AnimationEventData& data) {
-        auto giant = &data.giant;
-		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
-		for (auto& tiny: VoreData.GetVories()) {
-			if (tiny) {
-				AllowToBeCrushed(tiny, true);
-				EnableCollisions(tiny);
-			}
-		}
-		VoreData.AllowToBeVored(true);
-		VoreData.KillAll();
-		VoreData.ReleaseAll();
-
-		ManageCamera(giant, false, CameraTracking::ObjectA);
-		ManageCamera(giant, false, CameraTracking::Hand_Right);
     }
 
     void GTS_Sneak_Vore_SmileOn(AnimationEventData& data) {

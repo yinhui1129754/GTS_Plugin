@@ -11,13 +11,6 @@ using namespace RE;
 using namespace SKSE;
 using namespace Gts;
 
-namespace {
-	void PopulateHook(HitData* a_this, Actor* a_aggressor, Actor* a_target, InventoryEntryData* a_weapon) {
-		
-	}
-
-}
-
 namespace Hooks
 {
 
@@ -102,25 +95,5 @@ namespace Hooks
 				Profilers::Report();
 			}
 		}
-	}
-
-	void Hook_MainUpdate::PopulateHook1(HitData* a_this, Actor* a_aggressor, Actor* a_target, InventoryEntryData* a_weapon) {
-		_PopulateHook1(a_this, a_aggressor, a_target, a_weapon);
-		PopulateHook(a_this, a_aggressor, a_target, a_weapon);
-	}
-
-	void Hook_MainUpdate::PopulateHook2(HitData* a_this, Actor* a_aggressor, Actor* a_target, InventoryEntryData* a_weapon) {
-		_PopulateHook2(a_this, a_aggressor, a_target, a_weapon);
-		PopulateHook(a_this, a_aggressor, a_target, a_weapon);
-	}
-
-	void Hook_MainUpdate::PopulateHook3(HitData* a_this, Actor* a_aggressor, Actor* a_target, InventoryEntryData* a_weapon) {
-		_PopulateHook3(a_this, a_aggressor, a_target, a_weapon);
-		PopulateHook(a_this, a_aggressor, a_target, a_weapon);
-	}
-
-	void Hook_MainUpdate::PopulateHook4(HitData* a_this, Actor* a_aggressor, Actor* a_target, InventoryEntryData* a_weapon) {
-		_PopulateHook4(a_this, a_aggressor, a_target, a_weapon);
-		PopulateHook(a_this, a_aggressor, a_target, a_weapon);
 	}
 }

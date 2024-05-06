@@ -48,7 +48,7 @@ namespace {
 			if (!actor->Is3DLoaded() || actor->IsDead()) {
 				return;
 			}
-			int Requirement = 8 * SizeManager::GetSingleton().BalancedMode();
+			int Requirement = 20 * SizeManager::GetSingleton().BalancedMode();
 
 			int random = rand() % Requirement;
 			int trigger_threshold = 2;
@@ -111,11 +111,9 @@ namespace Gts {
 			auto& persist = Persistent::GetSingleton();
 			for (auto actor: find_actors()) {
 				std::vector<Actor*> AbleToAct = {};
-				for (auto actor: find_actors()) {
-					if (IsTeammate(actor) && actor->formID != 0x14 && IsFemale(actor) || (EffectsForEveryone(actor) && IsFemale(actor))) {
-						if (actor->IsInCombat() || !persist.vore_combatonly) {
-							AbleToAct.push_back(actor);
-						}
+				if (IsTeammate(actor) && actor->formID != 0x14 && IsFemale(actor) || (EffectsForEveryone(actor) && IsFemale(actor))) {
+					if (actor->IsInCombat() || !persist.vore_combatonly) {
+						AbleToAct.push_back(actor);
 					}
 				}
 				if (!AbleToAct.empty()) {
@@ -123,6 +121,7 @@ namespace Gts {
 					Actor* Performer = AbleToAct[idx];
 					if (Performer) {
 						AI_TryAction(Performer);
+						log::info("Performing action on {}, AbleToAct size: {}", Performer->GetDisplayFullName(), AbleToAct.size());
 					}
 				}
 			}

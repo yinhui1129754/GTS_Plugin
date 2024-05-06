@@ -54,12 +54,12 @@ namespace Gts {
 
 				TESGlobal* BonusSize = Runtime::GetGlobal("ExtraPotionSize"); 
 				// Bonus size is added on top of all size calculations through this global
+				// Applied inside GtsManager.cpp (script)
 				if (BonusSize) {
 					BonusSize->value += this->power/1.82; // convert to m
 				}
 
 				SpawnCustomParticle(caster, ParticleType::Red, NiPoint3(), "NPC COM [COM ]", scale * (this->power * 25)); // Just some nice visuals
-
 				shake_screen_do_moan(caster, this->power);
 			}
 			Potion_Penalty(caster);

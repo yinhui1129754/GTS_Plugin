@@ -5,6 +5,7 @@
 #include "magic/effects/common.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
+#include "ActionSettings.hpp"
 #include "data/transient.hpp"
 #include "utils/looting.hpp"
 #include "data/runtime.hpp"
@@ -162,7 +163,6 @@ namespace Gts {
 				MoanOrLaugh(giant, tiny);
 				GrowAfterTheKill(giant, tiny);
 
-				Rumbling::Once("CrushRumble", tiny, 1.4, 0.15);
 				if (giant->formID == 0x14) {
 					if (IsLiving(tiny)) {
 						TriggerScreenBlood(50);

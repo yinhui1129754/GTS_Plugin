@@ -187,6 +187,7 @@ namespace Gts {
 					if (pred->formID == 0x14) {
 						std::string_view message = std::format("You have no desire to hug {}", prey->GetDisplayFullName());
 						TiredSound(pred, message); // Just no. We don't have Creature Anims.
+						shake_camera(pred, 0.45, 0.30);
 					}
 					return false;
 				}

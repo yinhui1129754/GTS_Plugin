@@ -181,7 +181,7 @@ namespace {
     void GTS_SneakCrush_FootStep_SilentR(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, true);}
 
 	void GTS_DisableHH(AnimationEventData& data) {data.stage = 2; data.HHspeed = 2.25; data.disableHH = true;}
-	void GTS_EnableHH(AnimationEventData& data) {data.HHspeed = 1.0; data.disableHH = false;}
+	void GTS_EnableHH(AnimationEventData& data) {data.stage = 2; data.HHspeed = 1.0; data.disableHH = false;}
 }
 
 namespace Gts

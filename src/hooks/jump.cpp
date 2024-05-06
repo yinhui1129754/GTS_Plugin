@@ -2,6 +2,7 @@
 #include "managers/Attributes.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
+#include "ActionSettings.hpp"
 #include "scale/modscale.hpp"
 #include "hooks/callhook.hpp"
 #include "scale/scale.hpp"
@@ -41,7 +42,7 @@ namespace {
 				log::info("Jump Power: {}", power);
 				log::info("Jump Radius: {}", stagger_radius);
 
-				Rumbling::Once("MassiveJump", actor, 4.0 * power * Might, 0.05 * power);
+				Rumbling::Once("MassiveJump", actor, Rumble_Default_MassiveJump * power * Might, 0.035 * power);
 			}
 		}
 	}
@@ -111,12 +112,12 @@ namespace Hooks {
 					if (actor->formID == 0x14) {
 						float size = get_giantess_scale(actor);
 						float might = 1.0 + Potion_GetMightBonus(actor);
-						float modifier = (size / game_getactorscale(actor)) * might; // Compensate it, since SetScale() already boosts jump height by default
+						float modifier = size * might; // Compensate it, since SetScale() already boosts jump height by default
 						float scaled = std::clamp(modifier, 1.0f, 99999.0f); // Can't have smaller jump heigh than x1.0
 
 						Jump_ApplyExtraJumpEffects(actor, size, might); // Push items and actors, spawn dust ring and shake the ground
 
-						result *= scaled;
+						result *= scaled / game_getactorscale(actor);
 					}
 				}
 				return result;

@@ -105,8 +105,8 @@ namespace {
 				std::string name_com = std::format("BreakProtect_{}", giantref->formID);
 				std::string name_root = std::format("BreakProtect_Root_{}", giantref->formID);
 
-				Rumbling::Once(name_com, giantref, 8.6, 0.20, "NPC COM [COM ]", 0.0);
-				Rumbling::Once(name_root, giantref, 8.6, 0.20, "NPC Root [Root]", 0.0);
+				Rumbling::Once(name_com, giantref, Rumble_Misc_FailTinyProtection, 0.20, "NPC COM [COM ]", 0.0);
+				Rumbling::Once(name_root, giantref, Rumble_Misc_FailTinyProtection, 0.20, "NPC Root [Root]", 0.0);
 
 				SpawnParticle(giantref, 6.00, "GTS/Effects/TinyCalamity.nif", NiMatrix3(), position, scale * 3.4, 7, nullptr); // Spawn it
 			}
@@ -1038,7 +1038,7 @@ namespace Gts {
 	std::vector<Actor*> Vore_GetMaxVoreCount(Actor* giant, std::vector<Actor*> actors) {
 		float capacity = 1.0;
 		std::vector<Actor*> vories = {};
-		if (Runtime::HasPerk(giant, "MassVorePerk")) {
+		if (Runtime::HasPerkTeam(giant, "MassVorePerk")) {
 			capacity = 3.0 * get_visual_scale(giant);
 			if (HasSMT(giant)) {
 				capacity *= 3.0;
@@ -1151,13 +1151,14 @@ namespace Gts {
 
 	float GetActorHeight(Actor* giant, bool metric) {
 		float hh = HighHeelManager::GetBaseHHOffset(giant)[2]/100;
+		float bb = GetSizeFromBoundingBox(giant);
 		float scale = get_visual_scale(giant);
 		float smt = 1.0;
 		float height;
 		if (metric) { // 1.82 m as a base
-			height = 1.82 * scale + (hh * scale); // meters
+			height = 1.82 * bb * scale + (hh * scale); // meters
 		} else {
-			height = (1.82 * scale + (hh * scale)) * 3.28; // ft
+			height = (1.82 * bb * scale + (hh * scale)) * 3.28; // ft
 		}
 		return height;
 	}
@@ -1267,7 +1268,7 @@ namespace Gts {
 										NiPoint3 Position = node->world.translate;
 										float bounding_z = get_bounding_box_z(otherActor);
 										if (bounding_z > 0.0) {
-											Position.z += (bounding_z * 2.5 * tinyScale); // 2.5 to be slightly above the head
+											Position.z += (bounding_z * get_visual_scale(otherActor) * 2.35); // 2.25 to be slightly above the head
 											//log::info("For Actor: {}", otherActor->GetDisplayFullName());
 											//log::info("---	Position: {}", Vector2Str(Position));
 											//log::info("---	Actor Position: {}", Vector2Str(otherActor->GetPosition()));
@@ -1276,7 +1277,6 @@ namespace Gts {
 											Position.z -= correction;
 										}
 										
-
 										if (grabbedActor && grabbedActor == otherActor) {
 											//do nothing
 										} else if (huggedActor && huggedActor == otherActor && Ally && HasLovingEmbrace && !Healing) {
@@ -1345,7 +1345,6 @@ namespace Gts {
 
 			float target = get_target_scale(giant);
 			float max_scale = get_max_scale(giant) * get_natural_scale(giant);
-			log::info("Scale: {}, max_scale: {}", target, max_scale);
 			if (target < max_scale) {
 				Persistent->target_scale += amt;
 				Persistent->visual_scale += amt;
@@ -1712,7 +1711,7 @@ namespace Gts {
 		auto& persist = Persistent::GetSingleton();
 		
 		float might = 1.0 + Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
-		float tremor_scale = persist.npc_tremor_scale * 0.65; // slightly weaker tremor for npc's
+		float tremor_scale = persist.npc_tremor_scale; // slightly weaker tremor for npc's
 		
 		float distance = (coords - receiver->GetPosition()).Length(); // In that case we apply shake based on actor distance
 
@@ -1723,7 +1722,7 @@ namespace Gts {
 		if (caster->formID == 0x14) {
 			tremor_scale = persist.tremor_scale;
 			if (IsFirstPerson()) {
-				tremor_scale *= 0.25; // Less annoying FP screen shake
+				tremor_scale *= 0.33; // Less annoying FP screen shake
 			}
 			distance = get_distance_to_camera(coords); // else we use player camera distance (for player only)
 			sizedifference = sourcesize;
@@ -1737,7 +1736,7 @@ namespace Gts {
 			modifier *= reduction;
 		}
 
-		float multiplier = 1.0 + (sourcesize * 0.03) - 0.03;
+		float multiplier = 1.0 + (sourcesize * 0.10) - 0.10;
 
 		sizedifference *= modifier * tremor_scale * might * multiplier;
 
@@ -2006,9 +2005,6 @@ namespace Gts {
 			cost -= 0.25;
 		}
 		cost *= Perk_GetCostReduction(actor);
-		if (IsCrawling(actor)) {
-			cost *= 1.35;
-		}
 		return cost;
 	}
 
@@ -2388,7 +2384,7 @@ namespace Gts {
 		update_target_scale(tiny, -(shrinkpower * gigantism), SizeEffectType::kShrink);
 		Attacked(tiny, giant);
 
-		ModSizeExperience(giant, (shrinkpower * gigantism) * 0.10);
+		ModSizeExperience(giant, (shrinkpower * gigantism) * 0.60);
 
 		float MinScale = 0.11;
 
@@ -2434,7 +2430,7 @@ namespace Gts {
 		float CheckDistance = BASE_DISTANCE*giantScale*gigantism*radius;
 
 		Runtime::PlaySoundAtNode("ShrinkOutburstSound", giant, explosion, 1.0, "NPC Pelvis [Pelv]");
-		Rumbling::For("ShrinkOutburst", giant, 20.0, 0.15, "NPC COM [COM ]", 0.60, 0.0);
+		Rumbling::For("ShrinkOutburst", giant, Rumble_Misc_ShrinkOutburst, 0.15, "NPC COM [COM ]", 0.60, 0.0);
 
 		SpawnParticle(giant, 6.00, "GTS/Shouts/ShrinkOutburst.nif", NiMatrix3(), NodePosition, giantScale*explosion*3.0, 7, nullptr); // Spawn effect
 
@@ -2474,9 +2470,6 @@ namespace Gts {
 	void Utils_ProtectTinies(bool Balance) { // This is used to avoid damaging friendly actors in towns and in general
 		auto player = PlayerCharacter::GetSingleton();
 
-		//to-do: make it consume health over time in balance mode
-		// And make it self-dispel if health is < threshold + play audio effect and push actors away, as well as stagger gts
-
 		for (auto actor: find_actors()) {
 			if (actor == player || IsTeammate(actor)) {
 				float scale = get_visual_scale(actor);
@@ -2487,8 +2480,8 @@ namespace Gts {
 				std::string name_com = std::format("Protect_{}", actor->formID);
 				std::string name_root = std::format("Protect_Root_{}", actor->formID);
 
-				Rumbling::Once(name_com, actor, 8.6, 0.20, "NPC COM [COM ]", 0.0);
-				Rumbling::Once(name_root, actor, 8.6, 0.20, "NPC Root [Root]", 0.0);
+				Rumbling::Once(name_com, actor, 4.0, 0.20, "NPC COM [COM ]", 0.0);
+				Rumbling::Once(name_root, actor, 4.0, 0.20, "NPC Root [Root]", 0.0);
 				
 				LaunchImmunityTask(actor, Balance);
 			}
@@ -2502,6 +2495,12 @@ namespace Gts {
 		}
 
 		std::string name = std::format("Protect_{}", giant->formID);
+		std::string name_1 = std::format("Protect_1_{}", giant->formID);
+
+		TaskManager::Cancel(name); // Stop old task if it's been running
+
+		Rumbling::Once(name, giant, Rumble_Misc_EnableTinyProtection, 0.20, "NPC COM [COM ]", 0.0);
+		Rumbling::Once(name_1, giant, Rumble_Misc_EnableTinyProtection, 0.20, "NPC Root [Root]", 0.0);
 
 		float Start = Time::WorldTimeElapsed();
 		ActorHandle gianthandle = giant->CreateRefHandle();
@@ -2744,7 +2743,7 @@ namespace Gts {
 		ModSizeExperience(player, 0.45);
 
 		if (BonusSize) {
-			Notify("You feel like something is growing inside you");
+			Notify("You feel like something is filling you");
 			BonusSize->value += 0.0659; // +12 cm
 
 			if (rng <= 1) {
@@ -2768,7 +2767,7 @@ namespace Gts {
 					return false;
 				}
 				auto giantref = gianthandle.get().get();
-				ApplyShakeAtNode(giantref, 2.0, "NPC COM [COM ]");
+				ApplyShakeAtNode(giantref, Rumble_Misc_MightOfDragons, "NPC COM [COM ]");
 				update_target_scale(giantref, 0.0026 * Gigantism * TimeScale(), SizeEffectType::kGrow);
 				giantref->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HpRegen * TimeScale());
 				return true;
@@ -2841,10 +2840,10 @@ namespace Gts {
 				}
 
 				Task_AdjustHalfLifeTask(tiny, halflife); // to make them shrink faster
-
+				AddSMTPenalty(giant, 5.0 * Adjustment_Tiny);
 				set_target_scale(tiny, targetScale);
 				StartCombat(tiny, giant);
-				AddSMTPenalty(giant, 5.0 * Adjustment_Tiny);
+				
 			}
 		}
 	}
@@ -2909,18 +2908,21 @@ namespace Gts {
 					float scale = get_target_scale(actor);
 					float max_scale = get_max_scale(actor) * get_natural_scale(actor);
 					if (scale < max_scale) {
-						actorData->visual_scale += deltaScale;
+						if (!drain_stamina) { // Apply only to growth with animation
+							actorData->visual_scale += deltaScale;
+						}
 						actorData->target_scale += deltaScale;
 						growData->addedSoFar = totalScaleToAdd;
 					}
 
 					log::info("target: {}, visual: {}", actorData->target_scale, actorData->visual_scale);
 					log::info("Scale: {}, max_scale: {}", scale, max_scale);
-
-					float initialScale = GetInitialScale(actor);// Do the same thing GtsManager does
-					float GameScale = game_getactorscale(actor); 
-					
-					update_model_visuals(actor, get_visual_scale(actor) * initialScale * GameScale); 
+					if (!drain_stamina) { // Apply only to growth with animation
+						float initialScale = GetInitialScale(actor);// Do the same thing GtsManager does
+						float GameScale = game_getactorscale(actor); 
+						
+						update_model_visuals(actor, get_visual_scale(actor) * initialScale * GameScale); 
+					}
 				}
 			}
 			return fabs(growData->amount.value - growData->amount.target) > 1e-4;

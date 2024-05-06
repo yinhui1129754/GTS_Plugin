@@ -1,4 +1,6 @@
+#include "managers/animation/Controllers/ThighCrushController.hpp"
 #include "managers/animation/Controllers/HugController.hpp"
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/animation/ThighSandwich.hpp"
@@ -11,7 +13,6 @@
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/explosion.hpp"
-#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
 #include "managers/tremor.hpp"
@@ -94,9 +95,13 @@ namespace Gts {
 			} else if (rng > 2 && rng < 7) {
 				AI_DoSandwich(actor);
 				return;
-			} else if (rng <= 1) {
-				AI_DoHugs(actor);
-				return;
+			} else if (rng <= 2) {
+				int HugsOrThigh = rand()% 10;
+				if (HugsOrThigh > 4) {
+					AI_DoHugs(actor);
+				} else {
+					AI_DoThighCrush(actor);
+				}
 			}
 		}
 		// Random Vore is managed inside Vore.cpp, RandomVoreAttempt(Actor* pred) function
@@ -226,6 +231,74 @@ namespace Gts {
 			}
 			if (IsDead) {
 				return false;
+			}
+			return true;
+		});
+	}
+
+	void AI_DoThighCrush(Actor* giant) {
+		if (Persistent::GetSingleton().Thigh_Ai == false) {
+			return;
+		}
+		std::vector<Actor*> tinies = ThighCrushController::GetSingleton().GetThighTargetsInFront(giant, 1);
+		log::info("Starting Thigh Crush");
+		if (!tinies.empty()) {
+			Actor* tiny = tinies[0];
+			if (tiny) {
+				ThighCrushController::GetSingleton().StartThighCrush(giant, tiny);
+			}
+		}
+	}
+
+	void AI_StartThighCrushTask(Actor* giant) {
+		std::string name = std::format("ThighCrush_{}", giant->formID);
+		ActorHandle gianthandle = giant->CreateRefHandle();
+		float Start = Time::WorldTimeElapsed();
+		static Timer ActionTimer = Timer(6.0);
+
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			Actor* giantref = gianthandle.get().get();
+			float Finish = Time::WorldTimeElapsed();
+
+			if (Finish - Start > 0.10) {
+				if (!IsThighCrushing(giantref)) {
+					log::info("!ThighCrushing");
+					return false;
+				}
+
+				if (ActionTimer.ShouldRunFrame()) {
+					log::info("!CanThighCrush");
+
+					bool ForceAbort = GetAV(giantref, ActorValue::kStamina) <= 2.0;
+					DamageAV(giantref, ActorValue::kStamina, 0.025);
+
+					if (ForceAbort) {
+						log::info("Force Abort");
+						AnimationManager::StartAnim("ThighLoopExit", giantref);
+						return true;
+					}
+
+					std::vector<Actor*> targets = ThighCrushController::GetSingleton().GetThighTargetsInFront(giantref, 1);
+					log::info("Seeking Targets");
+					if (targets.empty()) {
+						log::info("Is Empty");
+						AnimationManager::StartAnim("ThighLoopExit", giantref);
+						return true;
+					} else if (!targets.empty() && !ThighCrushController::GetSingleton().CanThighCrush(giantref, targets[0])) {
+						log::info("Can't Thigh Crush {}", targets[0]->GetDisplayFullName());
+						AnimationManager::StartAnim("ThighLoopExit", giantref);
+						return true;
+					} else {
+						log::info("Doing Thigh Attack");
+						AnimationManager::StartAnim("ThighLoopAttack", giantref);
+						return true;
+					}
+					return true;
+				}
+				return true;
 			}
 			return true;
 		});

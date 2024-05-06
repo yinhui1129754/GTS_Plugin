@@ -125,6 +125,7 @@ namespace Gts {
 			return false;
 		}
 		if (prey->formID == 0x14 && !Persistent::GetSingleton().vore_allowplayervore) {
+			Notify("You're protected from grabbing");
 			return false;
 		}
 	

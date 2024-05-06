@@ -17,7 +17,7 @@ namespace Gts {
 	template< typename ... Args >
 	void PrintMessageBox(std::string_view rt_fmt_str, Args&&... args) {
 		try {
-			PrintMessageBox(std::vformat(rt_fmt_str, std::make_format_args(args ...)).c_str());
+			DebugMessageBox(std::vformat(rt_fmt_str, std::make_format_args(args ...)).c_str());
 		} catch (const std::format_error &e) {
 			log::info("Could not format notification, check valid format string: {}", e.what());
 		}

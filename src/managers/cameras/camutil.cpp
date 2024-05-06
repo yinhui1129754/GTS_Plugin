@@ -39,11 +39,11 @@ namespace {
 			log::info("Value: {}", value);
 			const float& pass = value;
 
-			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x10, &pass, sizeof(float));
-			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x1C, &pass, sizeof(float));
-			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x29, &pass, sizeof(float));
+			REL::safe_write(FloatA_GetOffset_SE.address() + 0x10, &pass, 8);
+			REL::safe_write(FloatA_GetOffset_SE.address() + 0x1C, &pass, 8);
+			REL::safe_write(FloatA_GetOffset_SE.address() + 0x29, &pass, 8);
 			// ^ Do not work
-			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x4547, &value, sizeof(float));
+			REL::safe_write(FloatA_GetOffset_SE.address() + 0x45C1, &value, 8);
 			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x45CB, &value, sizeof(float));
 			//REL::safe_write(FloatA_GetOffset_SE.address() + 0x35A55E, &value, sizeof(float));
 			// ^ Crash the game
@@ -385,6 +385,8 @@ namespace Gts {
 		auto currentState = camera->currentState;
 
 		float value = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+
+		//CAMERA_ASM_TEST(value);
 
 		if (cameraRoot) {
 			if (currentState) {

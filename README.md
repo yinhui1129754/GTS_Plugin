@@ -4,8 +4,8 @@
 
 This is the source for the Gianttess mod Size matters SKSE plugin.
 
-Monke coding with new features/expansions by Sermit
-Very complex parts (98% of DLL code) done by Andy
+Monke coding with new features/expansions by Sermit.
+Very complex parts (98% of DLL code) done by Andy.
 
 Still WIP
 

@@ -1,6 +1,7 @@
 #include "managers/RipClothManager.hpp"
 
 #include "managers/GtsSizeManager.hpp"
+#include "ActionSettings.hpp"
 #include "managers/GtsManager.hpp"
 #include "magic/effects/common.hpp"
 #include "scale/scale.hpp"
@@ -111,7 +112,7 @@ namespace Gts {
 		// log::info("Rip");
 		manager->UnequipObject(Act, Slot);
 		Runtime::PlaySound("ClothTearSound", Act, 1.0, 1.0);
-		Rumbling::Once("ClothManager", Act, (32 * get_visual_scale(Act)), 0.05);
+		Rumbling::Once("ClothManager", Act, Rumble_Misc_TearClothes, 0.075);
 	}
 
 	void ClothManager::CheckRip() {

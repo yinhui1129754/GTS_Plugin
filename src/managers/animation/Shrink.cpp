@@ -5,11 +5,11 @@
 #include "managers/damage/LaunchActor.hpp"
 #include "managers/animation/Shrink.hpp"
 #include "managers/GtsSizeManager.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "magic/effects/common.hpp"
 #include "managers/explosion.hpp"
-#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
 #include "data/persistent.hpp"
@@ -76,7 +76,7 @@ namespace {
 			float shrink = CalcPower(caster, 0.0080 * stamina * multiply, 0.0, false); // Is automatically *'d by scale through CalcPower()
 
 			if (caster_scale > Minimum_Actor_Scale) {
-				override_actor_scale(caster, shrink, SizeEffectType::kNeutral);
+				override_actor_scale(caster, -shrink, SizeEffectType::kNeutral);
 			} else {
 				override_actor_scale(caster, Minimum_Actor_Scale, SizeEffectType::kNeutral);
 				set_target_scale(caster, Minimum_Actor_Scale);

@@ -57,7 +57,7 @@ namespace {
 
 		float shake_power = Rumble_Trample_Stage1 * smt * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
+		Rumbling::Once(rumble, giant, shake_power, 0.025, Node, 0.0);
 		DoLaunch(giant, 0.65 * perk, 0.75 * perk, Event);
 		DoDustExplosion(giant, dust, Event, Node);
 		DoFootstepSound(giant, 1.0, Event, Node);
@@ -77,7 +77,7 @@ namespace {
 
 		float shake_power = Rumble_Trample_Stage2 * smt * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
+		Rumbling::Once(rumble, giant, shake_power, 0.035, Node, 0.0);
 		DoDamageEffect(giant, Damage_Trample_Repeat * perk, Radius_Trample_Repeat, 1, 0.12, Event, 1.10, Source);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);
@@ -95,11 +95,9 @@ namespace {
 			dust = 1.25;
 		}
 
-		
-
 		float shake_power = Rumble_Trample_Stage3 * smt * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
+		Rumbling::Once(rumble, giant, shake_power, 0.08, Node, 0.0);
 		DoDamageEffect(giant, Damage_Trample_Finisher * perk, Radius_Trample_Finisher, 1, 0.25, Event, 0.85, Source);
 		DoLaunch(giant, 1.25 * perk, 3.20 * perk, Event);
 		DoFootstepSound(giant, 1.15, Event, Node);
@@ -191,10 +189,12 @@ namespace {
 	}
 
 	void GTS_Trample_Finisher_L(AnimationEventData& data) { // last hit that deals huge chunk of damage
-		FootTrample_Stage3(&data.giant, FootEvent::Left, DamageSource::CrushedLeft, LNode, "Trample3_L");
+		//Rumbling::Stop("Trample2_L", &data.giant);
+		FootTrample_Stage3(&data.giant, FootEvent::Left, DamageSource::CrushedLeft, LNode, "Trample2_L");
 	}
 	void GTS_Trample_Finisher_R(AnimationEventData& data) { // last hit that deals huge chunk of damage
-		FootTrample_Stage3(&data.giant, FootEvent::Right, DamageSource::CrushedRight, RNode, "Trample3_R");
+		//Rumbling::Stop("Trample2_R", &data.giant);
+		FootTrample_Stage3(&data.giant, FootEvent::Right, DamageSource::CrushedRight, RNode, "Trample2_R");
 	}
 
 	/////////////////////////////////////////////////////////// Triggers

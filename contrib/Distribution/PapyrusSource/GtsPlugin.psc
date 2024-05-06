@@ -181,6 +181,7 @@ Function SetVoreAi(bool enabled) global native
 Function SetStompAi(bool enabled) global native
 Function SetSandwichAi(bool enabled) global native   
 Function SetHugsAi(bool enabled) global native
+Function SetThighAi(bool enabled) global native
 Function SetKickAi(bool enabled) global native
 Function SetButtCrushAi(bool enabled) global native
    

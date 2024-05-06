@@ -69,17 +69,13 @@ namespace {
 
 		auto receiverRef = attacker->GetActorRuntimeData().currentCombatTarget;
 		if (!receiverRef) {
-			log::info("Receiver false");
 			return true;
 		}
 		auto receiver = receiverRef.get().get();
 		log::info("Found Receiver: {}", receiver->GetDisplayFullName());
 
-		float size_difference = get_giantess_scale(receiver)/get_giantess_scale(attacker);
-		if (size_difference >= 1.15) {
-			log::info("Size Difference > 1.15. Disallow");
-			attacker->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kIsInKillMove);
-			receiver->GetActorRuntimeData().boolFlags.reset(Actor::BOOL_FLAGS::kIsInKillMove);
+		if (IsBeingHugged(receiver)) {
+			log::info("{} is currently hugged", receiver->GetDisplayFullName());
 			return false;
 		}
 
@@ -102,13 +98,33 @@ namespace {
 				float natural_scale = get_natural_scale(target);
 				float target_scale = get_target_scale(target);
 				if (target_scale < natural_scale) {
-					set_target_scale(target, natural_scale);
+					override_actor_scale(target, natural_scale, SizeEffectType::kNeutral);
 					log::info("Reverting {} to natural scale", target->GetDisplayFullName());
 				}
 				return false;
 			}
 			return true;
 		});
+	}
+
+	void CameraTest() {
+		auto player = PlayerCharacter::GetSingleton();
+		auto playerCamera = RE::PlayerCamera::GetSingleton();
+		auto thirdPersonState = reinterpret_cast<RE::ThirdPersonState*>(playerCamera->cameraStates[RE::CameraState::kThirdPerson].get());
+		auto isInThirdPerson = playerCamera->currentState->id == RE::CameraState::kThirdPerson;
+		if (isInThirdPerson) {
+			float GlobalX = Runtime::GetFloatOr("cameraAlternateX", 1.0);
+			float GlobalY = Runtime::GetFloatOr("cameraAlternateY", 1.0);
+			NiPoint3& offset_actual = thirdPersonState->posOffsetActual; // Directly offsets the camera, so it respects collisions. 
+			NiPoint3& offset_expected = thirdPersonState->posOffsetExpected; 
+
+			offset_actual = NiPoint3(GlobalX, GlobalY, offset_actual.z);
+			offset_expected = NiPoint3(GlobalX, GlobalY, offset_expected.z);
+			
+			// Sadly it fights smooth cam and logic for foot/bone tracking would be difficult
+			log::info("Actual offset: {}", Vector2Str(offset_actual));
+			log::info("Expected offset: {}", Vector2Str(offset_expected));
+		}
 	}
 }
 
@@ -123,24 +139,60 @@ namespace Hooks {
 		REL::Relocation<std::uintptr_t> ShakeCamera_GetOffset_SE_Hook(ShakeCamera_GetOffset_SE, 0x95);
 		REL::Relocation<std::uintptr_t> ShakeCamera_GetOffset_AE_Hook(ShakeCamera_GetOffset_AE, 0x95);
 
+		const std::array targets_1 = { 0x0F, 0x28, 0xD8, 0x90, 0x90, 0x90, 0x90, 0x90 };
+		const std::array targets_2 = { 0x0F, 0x28, 0xD3, 0x90, 0x90, 0x90, 0x90, 0x90 };
+
 		float value = 0.0;
-		const std::array targets = { 0x0F, 0x28, 0xD8, 0x90, 0x90, 0x90, 0x90, 0x90 };
+
+		for (int i = 0; i < targets_1.size(); i++) {
+			REL::safe_write(ShakeCamera_GetOffset_SE_Hook.address() + 0x12 + i, &targets_1[i], sizeof(value));
+		}
+
+		for (int i = 0; i < targets_2.size(); i++) {
+			REL::safe_write(ShakeCamera_GetOffset_SE_Hook.address() + i, &targets_2[i], sizeof(value));
+		}
 
 		//REL::safe_write(ShakeCamera_GetOffset_SE_Hook.address(), targets);
 		if (REL::Module::IsSE()) {
 			log::info("SE Patched!");
-			REL::safe_write(ShakeCamera_GetOffset_SE_Hook.address(), &targets, sizeof(value));
+			//REL::safe_write(ShakeCamera_GetOffset_SE_Hook.address(), &targets, 8);
 		} else if (REL::Module::IsAE()) {
 			log::info("AE Patched!");
-			REL::safe_write(ShakeCamera_GetOffset_AE_Hook.address(), &targets, sizeof(value));
+			//REL::safe_write(ShakeCamera_GetOffset_AE_Hook.address(), &targets, 8);
 		}
 		// Atempt to do ASM stuff. targets copied from https://github.com/jarari/ImmersiveImpactSE/blob/b1e0be03f4308718e49072b28010c38c455c394f/HitStopManager.cpp#L67
 		// It seems to patch it, but crashes the game on shaking the screen, after ~0.2sec.
-		// Seems to poin to ni-node stuff so i guess altering it is a bad idea
+		// Seems to point to ni-node stuff so i guess altering it is a bad idea
 	}
 
-	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is commented out inside hooks.cpp
-		
+	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is usually commented out inside hooks.cpp
+		/*static FunctionHook<void(Actor* target, float amt)>SetScaleHook(
+			REL::RelocationID(19239, 19665),
+			[](Actor* target, float amt) {
+				log::info("SetScale hooked!");
+				if (target) {
+					log::info("Param 1: {}", target->GetDisplayFullName());
+					FixScaleTask(target);
+				}
+				log::info("Param 2: {}", amt);
+					
+				return SetScaleHook(target, amt);
+            }
+        );/*
+		/*static CallHook<bool(TESActionData* param_1)>ActionDataHook (  // Credits to Kaputt source code (by Pentalimbed)
+			REL::RelocationID(48139, 49170), REL::Relocate(0x4d7, 0x435),         
+			// Allows/disallows NPC's to perform attack Animation (Only Physical attacks!)
+			// Doesn't affect KillMoves
+			[](auto* param_1) {
+				// sub_14060EEF0 : 37013
+				// 0x14060ef0a - 0x14060EEF0 = 0x1A
+				bool result = AllowAttack(param_1);
+				if (result) {
+					result = ActionDataHook(param_1);
+				}
+				return result;
+            }
+        );*/
 		/*static FunctionHook<void(TESObjectREFR* ref)>DisableHook(
 			REL::RelocationID(19374, 19800),
 			// [SE]: 0x1402986B0 : 19374

@@ -6,6 +6,7 @@
 #include "hooks/controls.hpp"
 #include "hooks/Stealth.hpp"
 #include "hooks/impact.hpp"
+#include "hooks/Projectiles.hpp"
 #include "hooks/Pushback.hpp"
 #include "hooks/vm.hpp"
 #include "hooks/havok.hpp"
@@ -51,6 +52,7 @@ namespace Hooks
 		trampoline.create(512);
 
 		Hook_MainUpdate::Hook(trampoline);
+		//Hook_Projectiles::Hook(); // Experimental stuff with scaling arrows and other projectiles. It works but mostly visually.
 		Hook_BGSImpactManager::Hook();
 		Hook_BGSImpactManager::Hook(trampoline);
 		Hook_VM::Hook();

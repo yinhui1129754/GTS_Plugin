@@ -126,7 +126,7 @@ namespace {
 				DoFootstepSound(giant, 1.2, FootEvent::Left, LNode);
 				DoLaunch(&data.giant, 0.95, 4.2, FootEvent::Butt);
 
-				float shake_power = Rumble_Crawl_KneeDrop * smt;
+				float shake_power = Rumble_Crawl_KneeDrop/2 * smt;
 
 				Rumbling::Once("Butt_L", &data.giant, shake_power, 0.10, "NPC R Butt", 0.0);
 				Rumbling::Once("Butt_R", &data.giant, shake_power, 0.10, "NPC L Butt",  0.0);

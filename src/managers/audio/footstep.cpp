@@ -110,9 +110,9 @@ namespace Gts {
 				if (actor->IsSneaking()) {
 					scale *= 0.70; // Sneaking makes you sound quieter
 				}
-				if (actor->formID == 0x14 && IsFirstPerson()) { // Footsteps are quieter when in first person
-					scale *= 0.70;
-				}
+				/*if (actor->formID == 0x14 && IsFirstPerson()) { // Footsteps are quieter when in first person
+					scale *= 0.80;
+				}*/
 
 				if (foot_kind == FootEvent::JumpLand) {
 					scale *= 1.2; // Jumping makes you sound bigger

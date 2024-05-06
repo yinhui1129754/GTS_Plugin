@@ -44,17 +44,13 @@ namespace Gts {
 				return nullptr;
 			}
 			TempActorData result;
-			auto bound = get_bound(actor);
-			if (!bound) {
-				log::info("Bound not found for {}", actor->GetDisplayFullName());
-				return nullptr;
-			}
+			auto bound_values = get_bound_values(actor);
 			auto scale = get_scale(actor);
 			if (scale < 0.0) {
 				log::info("Scale of {} is < 0", actor->GetDisplayFullName());
 				return nullptr;
 			}
-			float base_height_unit = bound->extents[2] * scale;
+			float base_height_unit = bound_values[2] * scale;
 			float base_height_meters = unit_to_meter(base_height_unit);
 			float fall_start = actor->GetPosition()[2];
 			float last_set_fall_start = fall_start;
@@ -117,7 +113,7 @@ namespace Gts {
 			float MightValue = 0.0;
 
 			// Volume scales cubically
-			float base_volume = bound->extents[0] * bound->extents[1] * bound->extents[2] * scale * scale * scale;
+			float base_volume = bound_values[0] * bound_values[1] * bound_values[2] * scale * scale * scale;
 			float base_volume_meters = unit_to_meter(base_volume);
 
 			result.base_height = base_height_meters;

@@ -136,7 +136,7 @@ namespace {
 		SetButtCrushSize(giant, bonus, false);
 		SpringGrow(giant, bonus, 0.3 / GetAnimationSlowdown(giant), "ButtCrushGrowth", false);
 
-		float WasteStamina = 80.0 * GetButtCrushCost(giant);
+		float WasteStamina = 100.0 * GetButtCrushCost(giant);
 		DamageAV(giant, ActorValue::kStamina, WasteStamina);
 
 		Runtime::PlaySoundAtNode("growthSound", giant, 1.0, 1.0, "NPC Pelvis [Pelv]");
@@ -206,7 +206,7 @@ namespace {
 
 		if (HasSMT(giant)) {
 			dust = 1.25;
-			smt = 2.0;
+			smt = 1.5;
 		}
 
 		SetButtCrushSize(giant, 0.0, true);
@@ -220,7 +220,7 @@ namespace {
 		ApplyThighDamage(giant, true, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
 		ApplyThighDamage(giant, false, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
 
-		float shake_power = Rumble_ButtCrush_ButtImpact * dust * damage;
+		float shake_power = Rumble_ButtCrush_ButtImpact/2 * dust * damage;
 
 		if (ButtR && ButtL) {
 			if (ThighL && ThighR) {

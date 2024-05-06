@@ -222,7 +222,7 @@ namespace {
 
 		float shake_power = Rumble_Grab_Throw_Footstep * smt * GetHighHeelsBonusDamage(&data.giant, true);
 
-		Rumbling::Once("StompR", &data.giant, shake_power, 0.05, RNode, 0.0);
+		Rumbling::Once("Stomp", &data.giant, shake_power, 0.05, RNode, 0.0);
 		DoDamageEffect(&data.giant, 1.1 * launch * data.animSpeed * perk, 1.0 * launch * data.animSpeed, 10, 0.20, FootEvent::Right, 1.0, DamageSource::CrushedRight);
 		DoFootstepSound(&data.giant, 1.0, FootEvent::Right, RNode);
 		DoDustExplosion(&data.giant, dust, FootEvent::Right, RNode);
@@ -245,7 +245,7 @@ namespace {
 
 		float shake_power = Rumble_Grab_Throw_Footstep * smt * GetHighHeelsBonusDamage(&data.giant, true);
 
-		Rumbling::Once("StompL", &data.giant, shake_power, 0.05, LNode, 0.0);
+		Rumbling::Once("Stomp", &data.giant, shake_power, 0.05, LNode, 0.0);
 		DoDamageEffect(&data.giant, 1.1 * launch * data.animSpeed * perk, 1.0 * launch * data.animSpeed, 10, 0.20, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
 		DoFootstepSound(&data.giant, 1.0, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, dust, FootEvent::Left, LNode);

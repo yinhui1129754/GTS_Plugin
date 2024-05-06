@@ -67,11 +67,9 @@ namespace Gts {
 				}
 				// Do shrink
 				float currentSize = get_visual_scale(tiny);
-
 				// Fully shrunk
 				
 				KillActor(giant, tiny);
-				log::info("Killed Actor");
 
 				if (!IsLiving(tiny)) {
 					SpawnDustParticle(tiny, tiny, "NPC Root [Root]", 3.6);
@@ -95,8 +93,6 @@ namespace Gts {
 				}
 
 				AddSMTDuration(giant, 5.0);
-
-				ApplyShakeAtNode(tiny, 4.0, "NPC Root [Root]");
 
 				ActorHandle giantHandle = giant->CreateRefHandle();
 				ActorHandle tinyHandle = tiny->CreateRefHandle();

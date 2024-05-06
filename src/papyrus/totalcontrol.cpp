@@ -215,13 +215,26 @@ namespace {
 	}
 
 	void CallRapidGrowth(StaticFunctionTag*, float amt, float halflife) {
-		auto PC = PlayerCharacter::GetSingleton();
-		SpringGrow(PC, amt, halflife, "Input", true);
+		auto player = PlayerCharacter::GetSingleton();
+		float target = get_target_scale(player);
+		float max_scale = get_max_scale(player) * get_natural_scale(player);
+		if (target >= max_scale) {
+			TiredSound(player, "You can't grow any further");
+			shake_camera(player, 0.45, 0.30);
+			return;
+		}
+		SpringGrow(player, amt, halflife, "Input", true);
 	}
 
 	void CallRapidShrink(StaticFunctionTag*, float amt, float halflife) {
-		auto PC = PlayerCharacter::GetSingleton();
-		SpringShrink(PC, amt, halflife, "Input");
+		auto player = PlayerCharacter::GetSingleton();
+		float target = get_target_scale(player);
+		if (target <= Minimum_Actor_Scale) {
+			TiredSound(player, "You can't shrink any further");
+			shake_camera(player, 0.45, 0.30);
+			return;
+		}
+		SpringShrink(player, amt, halflife, "Input");
 	}
 
 }

@@ -140,7 +140,7 @@ namespace {
 		if (!Runtime::GetBool("FreeLookOnVore") && giant->formID == 0x14) {
 			ManageCamera(giant, true, CameraTracking::Hand_Right);
 		}
-		StartBodyRumble("BodyRumble", data.giant, 0.35, 0.10, false);
+		StartBodyRumble("BodyRumble", data.giant, 0.15, 0.10, false);
 
 	}
 
@@ -169,7 +169,7 @@ namespace {
 	}
 
 	void GTSvore_hand_extend(AnimationEventData& data) {
-		StartRHandRumble("HandR", data.giant, 0.75, 0.15);
+		StartRHandRumble("HandR", data.giant, 0.25, 0.15);
 		auto& VoreData = Vore::GetSingleton().GetVoreData(&data.giant);
 		for (auto& tiny: VoreData.GetVories()) {
 			tiny->NotifyAnimationGraph("GTS_ExitFear");
@@ -197,7 +197,7 @@ namespace {
 
 	void GTSvore_bringactor_start(AnimationEventData& data) {
 		AdjustFacialExpression(&data.giant, 3, 0.8, "phenome"); // Smile a bit (Mouth)
-		StartRHandRumble("HandR", data.giant, 0.6, 0.175);
+		StartRHandRumble("HandR", data.giant, 0.2, 0.175);
 	}
 
 	void GTSvore_open_mouth(AnimationEventData& data) {
@@ -265,11 +265,11 @@ namespace {
 		if (!AllowDevourment()) {
 			Runtime::PlaySoundAtNode("VoreSwallow", giant, 1.0, 1.0, "NPC Head [Head]"); // Play sound
 		}
-		StartRHandRumble("HandR", data.giant, 0.75, 0.15);
+		StartRHandRumble("HandR", data.giant, 0.20, 0.15);
 	}
 
 	void GTSvore_handL_reposition_S(AnimationEventData& data) {
-		StartLHandRumble("HandL", data.giant, 0.75, 0.15);
+		StartLHandRumble("HandL", data.giant, 0.20, 0.15);
 	}
 
 	void GTSvore_handR_reposition_E(AnimationEventData& data) {
@@ -291,7 +291,7 @@ namespace {
 
 	void GTSvore_standup_start(AnimationEventData& data) {
 		auto giant = &data.giant;
-		StartBodyRumble("BodyRumble", data.giant, 0.35, 0.10, false);
+		StartBodyRumble("BodyRumble", data.giant, 0.15, 0.10, false);
 		if (!Runtime::GetBool("FreeLookOnVore") && giant->formID == 0x14) {
 			ManageCamera(giant, false, CameraTracking::Hand_Right);
 			ManageCamera(giant, false, CameraTracking::VoreHand_Right);

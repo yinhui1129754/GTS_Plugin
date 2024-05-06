@@ -104,7 +104,7 @@ namespace Gts {
 						update_target_scale(giantref, base_power * delta_time * Gigantism, SizeEffectType::kGrow);
 
 						// Play sound
-						Rumbling::Once("RandomGrowth", giantref, 6.0, 0.05);
+						Rumbling::Once("RandomGrowth", giantref, base_power, 0.10);
 						RestoreStats(giantref); // Regens Attributes if PC has perk
 						return true;
 					});

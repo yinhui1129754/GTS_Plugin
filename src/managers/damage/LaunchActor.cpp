@@ -15,6 +15,7 @@
 #include "managers/Attributes.hpp"
 #include "managers/hitmanager.hpp"
 #include "managers/highheel.hpp"
+#include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
 #include "ActionSettings.hpp"
@@ -200,15 +201,15 @@ namespace Gts {
 	void LaunchActor::LaunchAtNode(Actor* giant, float radius, float power, std::string_view node) {
 		auto bone = find_node(giant, node);
 		if (bone) {
-			LaunchActor::LaunchAtObjectNode(giant, radius, 0.0, power, bone);
+			LaunchActor::LaunchAtCustomNode(giant, radius, 0.0, power, bone);
 		}
 	}
 
 	void LaunchActor::LaunchAtNode(Actor* giant, float radius, float power, NiAVObject* node) {
-		LaunchActor::LaunchAtObjectNode(giant, radius, 0.0, power, node);
+		LaunchActor::LaunchAtCustomNode(giant, radius, 0.0, power, node);
 	}
 
-	void LaunchActor::LaunchAtObjectNode(Actor* giant, float radius, float min_radius, float power, NiAVObject* node) {
+	void LaunchActor::LaunchAtCustomNode(Actor* giant, float radius, float min_radius, float power, NiAVObject* node) {
 		auto profiler = Profilers::Profile("Other: Launch Actor Crawl");
 		if (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant)) {
 			if (!node) {
@@ -225,38 +226,27 @@ namespace Gts {
 				giantScale *= 1.5;
 			}
 
-			NiPoint3 NodePosition = node->world.translate;
+			NiPoint3 point = node->world.translate;
 
 			float maxDistance = BASE_CHECK_DISTANCE * radius * giantScale;
-			// Make a list of points to check
-			std::vector<NiPoint3> points = {
-				NiPoint3(0.0, 0.0, 0.0), // The standard position
-			};
-			std::vector<NiPoint3> CrawlPoints = {};
-
-			for (NiPoint3 point: points) {
-				CrawlPoints.push_back(NodePosition);
+			
+			if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
+				DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 600, {0.0, 0.0, 1.0, 1.0});
 			}
-
-			for (auto point: CrawlPoints) {
-				if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-					DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance, 600, {0.0, 0.0, 1.0, 1.0});
-				}
-			}
+			
+			std::vector<NiPoint3> LaunchObjectPoints = {point};
 
 			NiPoint3 giantLocation = giant->GetPosition();
-			PushObjectsUpwards(giant, CrawlPoints, maxDistance, power);
+			PushObjectsUpwards(giant, LaunchObjectPoints, maxDistance, power);
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {
 					float tinyScale = get_visual_scale(otherActor);
 					if (giantScale / tinyScale > SCALE_RATIO) {
 						NiPoint3 actorLocation = otherActor->GetPosition();
-						for (auto point: CrawlPoints) {
-							float distance = (point - actorLocation).Length();
-							if (distance <= maxDistance) {
-								LaunchWithDistance(giant, otherActor, min_radius, distance, maxDistance, power);
-							}
+						float distance = (point - actorLocation).Length();
+						if (distance <= maxDistance) {
+							LaunchWithDistance(giant, otherActor, min_radius, distance, maxDistance, power);
 						}
 					}
 				}
@@ -281,16 +271,18 @@ namespace Gts {
 		float maxFootDistance = BASE_CHECK_DISTANCE * radius * giantScale;
 
 		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(giant, right_foot);
+		float HH = HighHeelManager::GetHHOffset(giant).Length();
 
 		if (!CoordsToCheck.empty()) {
 			if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
 				for (auto footPoints: CoordsToCheck) {
+					footPoints.z -= HH;
 					DebugAPI::DrawSphere(glm::vec3(footPoints.x, footPoints.y, footPoints.z), maxFootDistance, 600, {0.0, 0.0, 1.0, 1.0});
 				}
 			}
 
 			NiPoint3 giantLocation = giant->GetPosition();
-			PushObjectsUpwards(giant, CoordsToCheck, maxFootDistance, power);
+			PushObjectsUpwards(giant, CoordsToCheck, maxFootDistance * GetHighHeelsBonusDamage(giant, true), power);
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {
@@ -298,6 +290,7 @@ namespace Gts {
 					if (giantScale / tinyScale > SCALE_RATIO) {
 						NiPoint3 actorLocation = otherActor->GetPosition();
 						for (auto point: CoordsToCheck) {
+							point.z -= HH;
 							float distance = (point - actorLocation).Length();
 							if (distance <= maxFootDistance) {
 								if (AllowStagger(giant, otherActor)) {

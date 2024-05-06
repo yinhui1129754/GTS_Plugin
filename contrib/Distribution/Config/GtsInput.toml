@@ -664,14 +664,23 @@ name = "PartyReport"
 keys = ["LCONTROL"]
 duration = 1.2
 
-# Reports Follower's size info into the console
+# Reports Follower's size info into the console 
+
+[[InputEvent]]
+name = "DebugReport"
+keys = ["RCONTROL"]
+duration = 1.2
+
+# Reports Non Follower size info into the console 
+
 
 [[InputEvent]]
 name = "ProtectSmallOnes"
 keys = ["C"]
 duration = 1.0
 
-# Protect tinies against size-related damage for 30 seconds. 
+# Protect tinies against size-related damage for 180 seconds. 
+# Wastes stamina in balance mode an runs out if out of stamina
 # Works only when the quest is completed
 # Protects from yourself and followers.
 # Works on non-hostile actors only. 

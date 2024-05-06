@@ -12,7 +12,7 @@
 namespace {
 	void Task_RestoreSizeTask(Actor* caster, bool dual_casted) {
 
-		float Power = 0.00065;
+		float Power = 0.00120;
 
 		if (dual_casted) {
 			Power *= 2.0;

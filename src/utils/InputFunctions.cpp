@@ -12,6 +12,7 @@
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
 #include "managers/Rumble.hpp"
+#include "ActionSettings.hpp"
 #include "data/transient.hpp"
 #include "data/runtime.hpp"
 #include "data/plugin.hpp"
@@ -25,6 +26,44 @@ using namespace Gts;
 
 
 namespace {
+	void ReportScaleIntoConsole(Actor* actor, bool enemy) {
+		float hh = HighHeelManager::GetBaseHHOffset(actor)[2]/100;
+		float gigantism = Ench_Aspect_GetPower(actor) * 100;
+		float naturalscale = get_natural_scale(actor, true);
+		float scale = get_visual_scale(actor);
+		float maxscale = get_max_scale(actor) * naturalscale;
+
+		Actor* player = PlayerCharacter::GetSingleton();
+
+		float BB = GetSizeFromBoundingBox(actor);
+		if (enemy) {
+			Cprint("{} Bounding Box To Size: {:.2f}, GameScale: {:.2f}", actor->GetDisplayFullName(), BB, game_getactorscale(actor));
+			Cprint("{} Size Difference With the Player: {:.2f}", actor->GetDisplayFullName(), GetSizeDifference(player, actor, SizeType::VisualScale, false, true));
+		} else {
+			Cprint("{} Height: {:.2f} m / {:.2f} ft; Weight: {:.2f} kg / {:.2f} lb;", actor->GetDisplayFullName(), GetActorHeight(actor, true), GetActorHeight(actor, false), GetActorWeight(actor, true), GetActorWeight(actor, false));
+		}
+
+		if (maxscale > 250.0 * naturalscale) {
+			Cprint("{} Scale: {:.2f}  (Natural Scale: {:.2f}; Size Limit: Infinite; Aspect Of Giantess: {:.1f}%)", actor->GetDisplayFullName(), scale, naturalscale, gigantism);
+		} else {
+			Cprint("{} Scale: {:.2f}  (Natural Scale: {:.2f}; Size Limit: {:.2f}; Aspect Of Giantess: {:.1f}%)", actor->GetDisplayFullName(), scale, naturalscale, maxscale, gigantism);
+		}
+		if (hh > 0.0) { // if HH is > 0, print HH info
+			Cprint("{} High Heels: {:.2f} (+{:.2f} cm / +{:.2f} ft)", actor->GetDisplayFullName(), hh, hh, hh*3.28);
+		}
+	}
+	void ReportScale(bool enemy) {
+		for (auto actor: find_actors()) {
+			if (actor->formID != 0x14) {
+				if (enemy && !IsTeammate(actor)) {
+					ReportScaleIntoConsole(actor, enemy);
+				} else if (IsTeammate(actor)) {
+					ReportScaleIntoConsole(actor, false);
+				}
+			}
+		}
+	}
+
 	void regenerate_health(Actor* giant, float value) {
 		if (Runtime::HasPerk(giant, "SizeReserveAug2")) {
 			float maxhp = GetMaxAV(giant, ActorValue::kHealth);
@@ -132,6 +171,13 @@ namespace {
 			return;
 		}
 		if (!IsGtsBusy(player) && !IsChangingSize(player)) {
+			float target = get_target_scale(player);
+			float max_scale = get_max_scale(player) * get_natural_scale(player);
+			if (target >= max_scale) {
+				TiredSound(player, "You can't grow any further");
+				shake_camera(player, 0.45, 0.30);
+				return;
+			}
 			AnimationManager::StartAnim("TriggerGrowth", player);
 		}
 		
@@ -142,6 +188,12 @@ namespace {
 			return;
 		}
 		if (!IsGtsBusy(player) && !IsChangingSize(player)) {
+			float target = get_target_scale(player);
+			if (target <= Minimum_Actor_Scale) {
+				TiredSound(player, "You can't shrink any further");
+				shake_camera(player, 0.45, 0.30);
+				return;
+			}
 			AnimationManager::StartAnim("TriggerShrink", player);
 		}
 	}
@@ -154,7 +206,8 @@ namespace {
 		}
 		if (Cache->SizeReserve > 0.0) {
 			float duration = data.Duration();
-			Rumbling::Once("SizeReserve", player, Cache->SizeReserve/15 * duration, 0.05);
+			float shake_power = std::clamp(Cache->SizeReserve/15 * duration, 0.0f, 2.0f);
+			Rumbling::Once("SizeReserve", player, shake_power, 0.05);
 
 			if (duration >= 1.2 && Runtime::HasPerk(player, "SizeReserve") && Cache->SizeReserve > 0) {
 				float SizeCalculation = duration - 1.2;
@@ -190,26 +243,12 @@ namespace {
 		}
 	}
 
-	void PartyReportEvent(const InputEventData& data) {
-		for (auto actor: find_actors()) {
-			if (actor->formID != 0x14 && IsTeammate(actor)) {
-				float hh = HighHeelManager::GetBaseHHOffset(actor)[2]/100;
-				float gigantism = Ench_Aspect_GetPower(actor) * 100;
-				float naturalscale = get_natural_scale(actor, true);
-				float scale = get_visual_scale(actor);
-				float maxscale = get_max_scale(actor) * naturalscale;
-				
-				Cprint("{} Height: {:.2f} m / {:.2f} ft; Weight: {:.2f} kg / {:.2f} lb;", actor->GetDisplayFullName(), GetActorHeight(actor, true), GetActorHeight(actor, false), GetActorWeight(actor, true), GetActorWeight(actor, false));
-				if (maxscale > 250.0 * naturalscale) {
-					Cprint("{} Scale: {:.2f}  (Natural Scale: {:.2f}; Size Limit: Infinite; Aspect Of Giantess: {:.1f}%)", actor->GetDisplayFullName(), scale, naturalscale, gigantism);
-				} else {
-					Cprint("{} Scale: {:.2f}  (Natural Scale: {:.2f}; Size Limit: {:.2f}; Aspect Of Giantess: {:.1f}%)", actor->GetDisplayFullName(), scale, naturalscale, maxscale, gigantism);
-				}
-				if (hh > 0.0) { // if HH is > 0, print HH info
-					Cprint("{} High Heels: {:.2f} (+{:.2f} cm / +{:.2f} ft)", actor->GetDisplayFullName(), hh, hh, hh*3.28);
-				}
-			}
-		}
+	void PartyReportEvent(const InputEventData& data) { // Report follower scale into console
+		ReportScale(false);
+	}
+
+	void DebugReportEvent(const InputEventData& data) { // Report enemy scale into console
+		ReportScale(true);
 	}
 
 	void ShrinkOutburstEvent(const InputEventData& data) {
@@ -286,6 +325,7 @@ namespace Gts
 		InputManager::RegisterInputEvent("SizeReserve", SizeReserveEvent);
 		InputManager::RegisterInputEvent("DisplaySizeReserve", DisplaySizeReserveEvent);
 		InputManager::RegisterInputEvent("PartyReport", PartyReportEvent);
+		InputManager::RegisterInputEvent("DebugReport", DebugReportEvent);
 		InputManager::RegisterInputEvent("AnimSpeedUp", AnimSpeedUpEvent);
 		InputManager::RegisterInputEvent("AnimSpeedDown", AnimSpeedDownEvent);
 		InputManager::RegisterInputEvent("AnimMaxSpeed", AnimMaxSpeedEvent);

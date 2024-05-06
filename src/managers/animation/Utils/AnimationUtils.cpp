@@ -293,7 +293,7 @@ namespace Gts {
 
 		AddSMTDuration(giant, 5.0);
 
-		ApplyShakeAtNode(tiny, 4, "NPC Root [Root]");
+		ApplyShakeAtNode(tiny, 3, "NPC Root [Root]");
 
 		ActorHandle giantHandle = giant->CreateRefHandle();
 		ActorHandle tinyHandle = tiny->CreateRefHandle();
@@ -439,7 +439,7 @@ namespace Gts {
 			smt_power *= 2.0;
 			smt_radius *= 1.25;
 		}
-		LaunchActor::GetSingleton().LaunchAtObjectNode(giant, radius * smt_radius, 0.0, power * smt_power, node);
+		LaunchActor::GetSingleton().LaunchAtCustomNode(giant, radius * smt_radius, 0.0, power * smt_power, node);
 	}
 
 	void GrabStaminaDrain(Actor* giant, Actor* tiny, float sizedifference) {
@@ -854,7 +854,7 @@ namespace Gts {
 												if (!Right) {
 													AnimationManager::StartAnim("GrindLeft", giant);
 												} else {
-													AnimationManager::StartAnim("GrindRIght", giant);
+													AnimationManager::StartAnim("GrindRight", giant);
 												}
 											} else {
 												if (!Right) {
@@ -974,7 +974,7 @@ namespace Gts {
 							}
 
 							ApplyActionCooldown(otherActor, CooldownSource::Damage_Hand);
-							ApplyShakeAtPoint(giant, 3.0 * pushpower * audio, node->world.translate, 0.0);
+							ApplyShakeAtPoint(giant, 1.8 * pushpower * audio, node->world.translate, 0.0);
 							CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 						}
 					}
@@ -1025,68 +1025,68 @@ namespace Gts {
 			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, false, true);
 		}
 
-		if (!ThighPoints.empty()) {
-			for (const auto& point: ThighPoints) {
-				float maxFootDistance = radius * giantScale;
+		float maxFootDistance = radius * giantScale;
 
-				if (IsDebugEnabled() && (actor->formID == 0x14 || IsTeammate(actor) || EffectsForEveryone(actor))) {
+		if (!ThighPoints.empty()) {
+			if (IsDebugEnabled() && (actor->formID == 0x14 || IsTeammate(actor) || EffectsForEveryone(actor))) {
+				for (auto point: ThighPoints) {
 					DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance);
 				}
-			
-				NiPoint3 giantLocation = actor->GetPosition();
-				for (auto otherActor: find_actors()) {
-					if (otherActor != actor) {
-						float tinyScale = get_visual_scale(otherActor);
-						if (giantScale / tinyScale > SCALE_RATIO) {
-							NiPoint3 actorLocation = otherActor->GetPosition();
+			}
+		
+			NiPoint3 giantLocation = actor->GetPosition();
+			for (auto otherActor: find_actors()) {
+				if (otherActor != actor) {
+					float tinyScale = get_visual_scale(otherActor);
+					if (giantScale / tinyScale > SCALE_RATIO) {
+						NiPoint3 actorLocation = otherActor->GetPosition();
 
-							if ((actorLocation-giantLocation).Length() < BASE_CHECK_DISTANCE*giantScale) {
-								int nodeCollisions = 0;
-								float force = 0.0;
+						if ((actorLocation-giantLocation).Length() < BASE_CHECK_DISTANCE*giantScale) {
+							int nodeCollisions = 0;
+							float force = 0.0;
 
-								auto model = otherActor->GetCurrent3D();
-
-								if (model) {
-									for (auto point: ThighPoints) {
-										VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
-											float distance = (point - a_obj.world.translate).Length();
-											if (distance < maxFootDistance) {
-												nodeCollisions += 1;
-												force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
-												return false;
-											}
-											return true;
-										});
-									}
-								}
-								if (nodeCollisions > 0) {
-									damage_zones_applied += 1.0;
-									if (damage_zones_applied < 1.0) {
-										damage_zones_applied = 1.0; // just to be safe
-									}
-									damage /= damage_zones_applied;
-									if (CooldownCheck) {
-										float pushForce = std::clamp(force, 0.04f, 0.10f);
-										bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
-										if (!OnCooldown) {
-											float pushCalc = 0.06 * pushForce * speed;
-											Laugh_Chance(actor, otherActor, 1.35, "ThighCrush");
-											float difference = giantScale / (tinyScale * GetSizeFromBoundingBox(otherActor));
-											PushTowards(actor, otherActor, leg, pushCalc * difference, true);
-											CollisionDamage.DoSizeDamage(actor, otherActor, damage * speed * perk, bbmult, crush_threshold, random, Cause, true);
-											ApplyActionCooldown(otherActor, CooldownSource::Damage_Thigh);
+							auto model = otherActor->GetCurrent3D();
+							
+							if (model) {
+								for (auto point: ThighPoints) {
+									VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
+										float distance = (point - a_obj.world.translate).Length();
+										if (distance < maxFootDistance) {
+											nodeCollisions += 1;
+											force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
+											return false;
 										}
-									} else {
-										Utils_PushCheck(actor, otherActor, Get_Bone_Movement_Speed(actor, Cause)); // pass original un-altered force
-										CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, true);
+										return true;
+									});
+								}
+							}
+							if (nodeCollisions > 0) {
+								damage_zones_applied += 1.0;
+								if (damage_zones_applied < 1.0) {
+									damage_zones_applied = 1.0; // just to be safe
+								}
+								damage /= damage_zones_applied;
+								if (CooldownCheck) {
+									float pushForce = std::clamp(force, 0.04f, 0.10f);
+									bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
+									if (!OnCooldown) {
+										float pushCalc = 0.06 * pushForce * speed;
+										Laugh_Chance(actor, otherActor, 1.35, "ThighCrush");
+										float difference = giantScale / (tinyScale * GetSizeFromBoundingBox(otherActor));
+										PushTowards(actor, otherActor, leg, pushCalc * difference, true);
+										CollisionDamage.DoSizeDamage(actor, otherActor, damage * speed * perk, bbmult, crush_threshold, random, Cause, true);
+										ApplyActionCooldown(otherActor, CooldownSource::Damage_Thigh);
 									}
+								} else {
+									Utils_PushCheck(actor, otherActor, Get_Bone_Movement_Speed(actor, Cause)); // pass original un-altered force
+									CollisionDamage.DoSizeDamage(actor, otherActor, damage, bbmult, crush_threshold, random, Cause, true);
 								}
 							}
 						}
 					}
 				}
 			}
-		} 
+		}
 	}
 
 	void ApplyFingerDamage(Actor* giant, float radius, float damage, NiAVObject* node, float random, float bbmult, float crushmult, float Shrink, DamageSource Cause) { // Apply crawl damage to each bone individually
@@ -1235,21 +1235,21 @@ namespace Gts {
 		auto Calf = find_node(actor, CalfLookup);
 		auto Toe = find_node(actor, ToeLookup);
 		if (!Foot) {
-			log::info("Missing Foot node");
+			//log::info("Missing Foot node on {}", actor->GetDisplayFullName());
 			return footPoints;
 		}
 		if (!Calf) {
 			Calf = find_node(actor, CalfLookup_Failed); // Not all skeletons have them
-			log::info("Calf1 not found");
+			//log::info("Calf1 not found");
 			if (!Calf) {
-				log::info("Calf2 not found");
+				//log::info("Calf2 not found");
 				return footPoints;
 			}
 		}
 		if (!Toe) {
 			Toe = find_node(actor, ToeLookup_Failed); // Not all skeletons have them
 			if (!Toe) {
-				log::info("Missing Toe node");
+				//log::info("Missing Toe node");
 				return footPoints;
 			}
 		}
@@ -1421,8 +1421,7 @@ namespace Gts {
 		AdjustFacialExpression(giant, 1, 0.40, "modifier"); // blink R
 
 		float random = (rand()% 25) * 0.01;
-		log::info("Smile Random: {}", random);
-		float smile = 0.25 + (random); // up to +0.50 to open mouth
+		float smile = 0.25 + random; // up to +0.50 to open mouth
 
 		AdjustFacialExpression(giant, 3, random, "phenome"); // Slightly open mouth
 		AdjustFacialExpression(giant, 7, 1.0, "phenome"); // Close mouth stronger to counter opened mouth from smiling

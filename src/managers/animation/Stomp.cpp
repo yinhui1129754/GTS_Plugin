@@ -58,10 +58,9 @@ namespace {
 				float scaleRatio = giantScale / tinyScale;
 				
 				float actorRadius = 35.0;
-				auto bounds = get_bound(tiny);
-				if (bounds) {
-					actorRadius = (bounds->extents.x + bounds->extents.y + bounds->extents.z) / 6.0;
-				}
+				auto bounds = get_bound_values(tiny);
+				actorRadius = (bounds.x + bounds.y + bounds.z) / 6.0;
+				
 
 				actorRadius *= tinyScale;
 				
@@ -138,7 +137,7 @@ namespace {
 
 		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 10, 0.25, Event, 1.0, Source);
 		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
-		DoFootstepSound(giant, 1.0 + animSpeed/8, Event, Node);
+		DoFootstepSound(giant, 1.0, Event, Node);
 		
 		DrainStamina(giant, "StaminaDrain_Stomp", "DestructionBasics", false, 1.8); // cancel stamina drain
 
@@ -161,7 +160,7 @@ namespace {
 
 		//log::info("Doing Shake with power: {}", shake_power);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.02, Node, 0.0);
+		Rumbling::Once(rumble, giant, shake_power, 0.025, Node, 0.0);
 		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 25, 0.25, Event, 1.0, DamageSource::CrushedRight);
 		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
 		DoFootstepSound(giant, 1.0 + animSpeed/14, Event, RNode);

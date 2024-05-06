@@ -218,13 +218,13 @@ namespace Gts {
 		float BonusShrink = 7.4;
 		float bonus = 1.0;
 		if (BalanceMode >= 2.0) {
-			BonusShrink *= GetShrinkPenalty(scale);
+			BonusShrink *= GetShrinkPenalty(scale) * 1.6;
 		}
 
 		if (QuestStage < 100.0 || BalanceMode >= 2.0) {
 			if (actor->formID == 0x14 || IsTeammate(actor)) {
 				game_mode_int = 6; // QuestMode
-				if (QuestStage >= 10 && QuestStage < 40) {
+				if (QuestStage < 40) {
 					shrinkRate = 0.00086 * BonusShrink * 2.0;
 				} else if (QuestStage >= 40 && QuestStage < 80) {
 					shrinkRate = 0.00086 * BonusShrink * 1.6;
@@ -235,18 +235,17 @@ namespace Gts {
 				shrinkRate *= Potion_GetShrinkResistance(actor);
 
 				if (Potion_IsUnderGrowthPotion(actor)) {
-					shrinkRate *= 0.0;
-					log::info("Potion_IsUnderGrowthPotion");
+					shrinkRate *= 0.0; // prevent shrinking in that case
 				} 
 				if (HasGrowthSpurt(actor)) {
-					shrinkRate *= 0.15;
+					shrinkRate *= 0.25;
 				}
 				if (actor->IsInCombat() && BalanceMode == 1.0) {
 					shrinkRate = 0.0;
 				} else if (SizeManager::GetSingleton().GetGrowthSpurt(actor) > 0.01) {
 					shrinkRate = 0.0;
 				} else if (actor->IsInCombat() && BalanceMode >= 2.0) {
-					shrinkRate *= 0.030;
+					shrinkRate *= 0.12; // shrink at 12% rate
 				}
 
 				if (fabs(shrinkRate) <= 1e-6) {

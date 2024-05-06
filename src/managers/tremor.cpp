@@ -71,7 +71,7 @@ namespace Gts {
 				tremor *= 1.15; // slightly stronger footstep tremor for player
 				if (HasSMT(actor)) {
 					threshold = 0.55;
-					calamity = 1.5;
+					calamity = 1.45;
 				}
 			} 
 
@@ -81,7 +81,7 @@ namespace Gts {
 
 			if (!actor->AsActorState()->IsSwimming()) {
 				if (actor->AsActorState()->IsSprinting()) {
-					tremor *= 1.35; // Sprinting makes tremor stronger
+					tremor *= 1.20; // Sprinting makes tremor stronger
 				}
 				if (actor->AsActorState()->IsWalking()) {
 					tremor *= 0.80; // Walking makes tremor weaker
@@ -103,13 +103,13 @@ namespace Gts {
 
 							if (actor->formID == 0x14 && pcEffects) {
 								if (impact.kind == FootEvent::JumpLand) { // let Rumble Manager handle it.
-									DoJumpingRumble(actor, tremor * calamity, 0.025, node->name, duration);
+									DoJumpingRumble(actor, tremor * calamity, 0.03, node->name, duration);
 								} else {
 									ApplyShakeAtPoint(actor, tremor * calamity, node->world.translate, duration);
 								}
 							} else if (actor->formID != 0x14 && npcEffects) {
 								if (impact.kind == FootEvent::JumpLand) { // let Rumble Manager handle it.
-									DoJumpingRumble(actor, tremor * calamity, 0.025, node->name, duration);
+									DoJumpingRumble(actor, tremor * calamity, 0.03, node->name, duration);
 								} else {
 									ApplyShakeAtPoint(actor, tremor * calamity, node->world.translate, duration);
 								}

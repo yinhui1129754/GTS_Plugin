@@ -3,6 +3,7 @@
 #include "magic/effects/common.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
+#include "ActionSettings.hpp"
 #include "data/runtime.hpp"
 #include "magic/magic.hpp"
 #include "scale/scale.hpp"
@@ -31,7 +32,7 @@ namespace Gts {
 			float scale = get_visual_scale(caster);
 			float mult = 0.40;
 			if (this->IsDual) {
-				Rumbling::For("SlowGrow", caster, 6.0, 0.10, "NPC COM [COM ]", 0.35, 0.0);
+				Rumbling::For("SlowGrow", caster, Rumble_Growth_SlowGrowth_Start, 0.10, "NPC COM [COM ]", 0.35, 0.0);
 				mult = 0.85;
 			}
 			SpawnCustomParticle(caster, ParticleType::Green, NiPoint3(), "NPC Root [Root]", scale * mult);
@@ -70,7 +71,7 @@ namespace Gts {
 		}
 
 		Grow(caster, 0.0, power * bonus);
-		Rumbling::Once("SlowGrow", caster, 0.30, 0.05);
+		Rumbling::Once("SlowGrow", caster, Rumble_Growth_SlowGrowth_Loop, 0.05);
 		//log::info("Slowly Growing, actor: {}", caster->GetDisplayFullName());
 	}
 

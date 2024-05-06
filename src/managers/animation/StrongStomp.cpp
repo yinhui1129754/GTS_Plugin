@@ -75,7 +75,7 @@ namespace {
 	void DoImpactRumble(Actor* giant, float force, std::string_view node, std::string_view name) {
 		float smt = 1.0;
 		if (HasSMT(giant)) {
-			smt *= 2.0;
+			smt *= 1.5;
 		}
 		smt *= GetHighHeelsBonusDamage(giant, true);
 		Rumbling::Once(name, giant, force * smt, 0.10, node, 0.0);

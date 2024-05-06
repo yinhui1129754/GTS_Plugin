@@ -414,7 +414,19 @@ namespace Gts {
 				return bbx;
 			}
 		}
+		log::info("Bounding Box not found for {}", actor->GetDisplayFullName());
 		return nullptr;
+	}
+
+	NiPoint3 get_bound_values(Actor* actor) {
+		NiPoint3 result = NiPoint3(22.0, 14.0, 64.0); // Default human scale that we return if actor for some reason doesn't have BBX data
+		if (actor) {
+			auto bound = get_bound(actor);
+			if (bound) {
+				result = bound->extents;
+			}
+		}
+		return result;
 	}
 
 	NiAVObject* get_bumper(Actor* actor) {

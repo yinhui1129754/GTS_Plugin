@@ -87,28 +87,20 @@ namespace Gts {
 	}
 
 	float get_bounding_box_to_mult(Actor* actor) {
-		auto nif_bb = get_bound(actor);
-		if (nif_bb) {
-			auto nif_dim = nif_bb->extents;
-			float x = nif_dim.x;
-			float y = nif_dim.y;
-			float z = nif_dim.z;
-			float natural_scale = std::clamp(get_natural_scale(actor), 0.1f, 1.0f);
+		auto nif_dim = get_bound_values(actor);
+		float x = nif_dim.x;
+		float y = nif_dim.y;
+		float z = nif_dim.z;
+		float natural_scale = std::clamp(get_natural_scale(actor), 0.1f, 1.0f);
 
-			float box = pow(x*y*z/(22.0f*14.0f*64.0f), 1.0f/3.0f) * natural_scale;
-			//log::info("Found bounds for {}, bounds :{}", actor->GetDisplayFullName(), Vector2Str(nif_dim));
-			//log::info("Value: {}, NS: {}", box, natural_scale);
-			return box;
-		}
-		return 1.0;
+		float box = pow(x*y*z/(22.0f*14.0f*64.0f), 1.0f/3.0f);
+		//log::info("Found bounds for {}, bounds :{}", actor->GetDisplayFullName(), Vector2Str(nif_dim));
+		//log::info("Value: {}, NS: {}", box, natural_scale);
+		return box;
 	}
 
 	float get_bounding_box_z(Actor* actor) {
-		auto nif_bb = get_bound(actor);
-		if (nif_bb) {
-			auto nif_dim = nif_bb->extents;
-			return nif_dim.z;
-		}
-		return 0.0;
+		auto nif_bb = get_bound_values(actor);
+		return nif_bb.z;
 	}
 }

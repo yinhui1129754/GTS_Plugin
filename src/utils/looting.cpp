@@ -148,9 +148,9 @@ namespace Gts {
 		bool PCLoot = Runtime::GetBool("GtsEnableLooting");
 		bool NPCLoot = Runtime::GetBool("GtsNPCEnableLooting");
 
-		float expectedtime = 0.1;
+		float expectedtime = 0.15;
 		if (IsDragon(from)) {
-			expectedtime = 0.25; // Because dragons don't spawn loot right away...sigh...
+			expectedtime = 0.45; // Because dragons don't spawn loot right away...sigh...
 		}
 
 		if (reset) {
@@ -264,7 +264,7 @@ namespace Gts {
 		dropbox->SetDisplayName(name, false); // Rename container to match chosen name
 		if (IsDragon(actor) && !actor->IsDead()) {
 			TESObjectREFR* ref = skyrim_cast<TESObjectREFR*>(actor);
-			ref->GetInventoryChanges()->InitLeveledItems();
+			//ref->GetInventoryChanges()->InitLeveledItems();
 			log::info("{} Isn't dead, initiating leveled items", actor->GetDisplayFullName());
 		}
 

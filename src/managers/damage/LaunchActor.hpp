@@ -25,7 +25,7 @@ namespace Gts {
 			void LaunchAtNode(Actor* giant, float radius, float power, std::string_view node);
 			void LaunchAtNode(Actor* giant, float radius, float power, NiAVObject* node);
 
-			void LaunchAtObjectNode(Actor* giant, float radius, float min_radius, float power, NiAVObject* node);
+			void LaunchAtCustomNode(Actor* giant, float radius, float min_radius, float power, NiAVObject* node);
 
 			void LaunchAtFoot(Actor* giant, float radius, float power, bool right_foot);
 	};

@@ -41,7 +41,7 @@ namespace {
 	NiPoint3 CastRayDownwards(Actor* tiny) {
 		bool success = false;
 		NiPoint3 ray_start = tiny->GetPosition();
-		ray_start.z += 40.0; // overrize .z with tiny .z + 40, so ray starts from above a bit
+		ray_start.z += 60.0; // overrize .z with tiny .z + 60, so ray starts from above a bit
 		NiPoint3 ray_direction(0.0, 0.0, -1.0);
 
 		float ray_length = 180;

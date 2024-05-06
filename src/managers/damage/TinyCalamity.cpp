@@ -290,34 +290,32 @@ namespace Gts {
 
     void TinyCalamity_BonusSpeed(Actor* giant) { // Manages SMT bonus speed
 		// Andy's TODO: Calc on demand rather than poll
-		float cap = 1.0;
-		float speed = 1.0; 
-        float decay = 1.0;
 
 		auto Attributes = Persistent::GetSingleton().GetData(giant);
 		float Gigantism = 1.0 + (Ench_Aspect_GetPower(giant) * 0.25);
 
-		bool OwnsPerk = Runtime::HasPerk(giant, "NoSpeedLoss");
-		float& currentspeed = Attributes->smt_run_speed;
+        float speed = 1.0; 
+        float decay = 1.0;
+        float cap = 1.0;
 
+		float& currentspeed = Attributes->smt_run_speed;
 		if (giant->AsActorState()->IsSprinting() && HasSMT(giant)) { // SMT Active and sprinting
-			if (OwnsPerk) {
+			if (Runtime::HasPerk(giant, "NoSpeedLoss")) {
 				speed = 1.25;
                 decay = 1.5;
 				cap = 1.25;
 			}
 
-			currentspeed += 0.004400 * speed * Gigantism; // increase MS
+			currentspeed += 0.004400 * speed * Gigantism * 5; // increase MS
 
 			if (currentspeed > cap) {
 				currentspeed = cap;
 			}
 
             FullSpeed_ApplyEffect(giant, currentspeed);
-
 		} else { // else decay bonus speed over time
 			if (currentspeed > 0.0) {
-				currentspeed -= 0.045000 / decay;
+				currentspeed -= (0.045000 * 5) / decay;
 			} else if (currentspeed <= 0.0) {
 				currentspeed = 0.0;
 			} 

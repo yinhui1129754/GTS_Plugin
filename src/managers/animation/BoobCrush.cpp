@@ -242,7 +242,7 @@ namespace {
 		auto BreastL03 = find_node(giant, "L Breast03");
 		auto BreastR03 = find_node(giant, "R Breast03");
 
-		float shake_power = Rumble_Cleavage_Impact * dust * damage;
+		float shake_power = Rumble_Cleavage_Impact/2 * dust * damage;
 
 		if (BreastL03 && BreastR03) {
 			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastL03, 4, 0.70, 0.85, DamageSource::BreastImpact);
@@ -330,7 +330,7 @@ namespace {
 		SetButtCrushSize(giant, bonus, false);
 		SpringGrow(giant, bonus, 0.3 / GetAnimationSlowdown(giant), "BreastCrushGrowth", false);
 
-		float WasteStamina = 80.0 * GetButtCrushCost(giant);
+		float WasteStamina = 100.0 * GetButtCrushCost(giant);
 		DamageAV(giant, ActorValue::kStamina, WasteStamina);
 		
 		Runtime::PlaySoundAtNode("growthSound", giant, 1.0, 1.0, "NPC Pelvis [Pelv]");

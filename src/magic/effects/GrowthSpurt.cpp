@@ -5,6 +5,7 @@
 #include "magic/effects/common.hpp"
 #include "scale/scale.hpp"
 #include "data/runtime.hpp"
+#include "ActionSettings.hpp"
 #include "timer.hpp"
 #include "managers/Rumble.hpp"
 
@@ -12,7 +13,7 @@ namespace {
 	void PlayShrinkAudio(Actor* actor, bool timer_1, bool timer_2, float power) {
 		float scale = get_visual_scale(actor);
 		float falloff = 0.18 * scale;
-		Rumbling::Once("GrowthSpurt", actor, 7.0, 0.05);
+		Rumbling::Once("GrowthSpurt", actor, Rumble_Shrink_GrowthSpurt, 0.05);
 		if (timer_1) {
 			Runtime::PlaySoundAtNode_FallOff("xlRumble", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}
@@ -25,7 +26,7 @@ namespace {
 	void PlayGrowthAudio(Actor* actor, bool timer_1, bool timer_2, float power) {
 		float scale = get_visual_scale(actor);
 		float falloff = 0.18 * scale;
-		Rumbling::Once("GrowthSpurt", actor, scale * 2, 0.05);
+		Rumbling::Once("GrowthSpurt", actor, Rumble_Growth_GrowthSpurt, 0.05);
 		if (timer_1) {
 			Runtime::PlaySoundAtNode_FallOff("xlRumble", actor, power/20, 1.0, "NPC Pelvis [Pelv]", falloff);
 		}

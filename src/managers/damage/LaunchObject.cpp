@@ -118,7 +118,8 @@ namespace Gts {
 		float giantScale = get_visual_scale(giant);
 
 		power *= Multiply_By_Perk(giant);
-		power *= GetHighHeelsBonusDamage(giant, true);;
+		power *= GetHighHeelsBonusDamage(giant, true);
+		float HH = HighHeelManager::GetHHOffset(giant).Length();
 
 		if (HasSMT(giant)) {
 			power *= 8.0;
@@ -129,7 +130,10 @@ namespace Gts {
 		std::vector<ObjectRefHandle> Refs = GetNearbyObjects(giant);
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-			DebugAPI::DrawSphere(glm::vec3(footPoints[0].x, footPoints[0].y, footPoints[0].z), maxFootDistance, 600, {0.0, 1.0, 0.0, 1.0});
+			for (auto point: footPoints) {
+				point.z -= HH;
+				DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 600, {0.0, 1.0, 0.0, 1.0});
+			}
 		}
 
         for (auto object: Refs) {
@@ -139,6 +143,7 @@ namespace Gts {
 					if (objectref && objectref->Is3DLoaded()) {
 						NiPoint3 objectlocation = objectref->GetPosition();
 						for (auto point: footPoints) {
+							point.z -= HH;
 							float distance = (point - objectlocation).Length();
 							if (distance <= maxFootDistance) {
 								float force = 1.0 - distance / maxFootDistance;

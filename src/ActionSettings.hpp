@@ -12,6 +12,7 @@ namespace Gts {
     const float Minimum_Actor_Crush_Scale_Idle = 16.0f; // x16.0 crush threshold for just standing still
 //-----------------------------------------Default Trigger Threshold Values
     const float Action_Sandwich = 6.0f; // used for sandwich only
+    const float Action_ThighCrush = 12.0f; // Used for AI only
 	const float Action_Crush = 10.0f;
 	const float Action_Booty = 2.0f; // for butt and cleavage crush
 	const float Action_Vore = 8.0f;
@@ -61,16 +62,16 @@ namespace Gts {
     const float Damage_ThighCrush_Stand_Up = 8.0f;
     const float Damage_ThighCrush_Butt_DOT = 0.003f;
     const float Damage_ThighCrush_Legs_Idle = 0.0012f;
-    const float Damage_ThighCrush_CrossLegs_Out = 3.4f; 
-    const float Damage_ThighCrush_CrossLegs_In = 4.6f; 
+    const float Damage_ThighCrush_CrossLegs_Out = 3.2f; 
+    const float Damage_ThighCrush_CrossLegs_In = 4.4f; 
     const float Damage_ThighCrush_CrossLegs_FeetImpact = 2.8f;
 
     ////////////////breast
 
     const float Damage_BreastCrush_Body = 26.0f; // for body impact
 	const float Damage_BreastCrush_Impact = 32.0f; // when doing impact
-    const float Damage_BreastCrush_BodyDOT = 0.004f; // damage under body
-    const float Damage_BreastCrush_BreastDOT = 0.010f; // damage under breasts
+    const float Damage_BreastCrush_BodyDOT = 0.0006f; // damage under body
+    const float Damage_BreastCrush_BreastDOT = 0.001f; // damage under breasts
 
     ////////////////Knee
 
@@ -166,7 +167,7 @@ namespace Gts {
     const float Radius_ButtCrush_FootImpact = 7.2f;
 
     /////////Thigh Crush
-    const float Radius_ThighCrush_Butt_DOT = 11.0f;
+    const float Radius_ThighCrush_Butt_DOT = 12.2f;
     const float Radius_ThighCrush_ButtCrush_Drop = 8.8f;
     const float Radius_ThighCrush_Idle = 7.2f;
     
@@ -221,42 +222,52 @@ namespace Gts {
 
 
     //-----------------------------------------Camera Rumble power settings
-    const float Rumble_Default_FootWalk = 2.6f; // Used for vanilla anims such as walking, running, sprinting
+    const float Rumble_Default_FootWalk = 2.10f; // Used for vanilla anims such as walking, running, sprinting
     const float Rumble_Default_JumpLand = 1.6f; // Multiplies footwalk, used for vanilla anims such as walking, running, sprinting
+
+    const float Rumble_Default_MassiveJump = 2.6f; // Used when player jumps and scale is >= x3.0
 
     ////////////////////////////////////////////////////
 
-    const float Rumble_Stomp_Normal = 2.6f;
+    const float Rumble_Stomp_Normal = 2.4f;
     const float Rumble_Stomp_Strong = 4.0f;
     const float Rumble_Stomp_Land_Normal = 2.75f;
 
 
     // Tramples
-    const float Rumble_Trample_Stage1 = 2.4f;
-    const float Rumble_Trample_Stage2 = 3.4f;
-    const float Rumble_Trample_Stage3 = 4.8f;
+    const float Rumble_Trample_Stage1 = 2.2f;
+    const float Rumble_Trample_Stage2 = 3.0f;
+    const float Rumble_Trample_Stage3 = 4.15f;
 
     // Foot Grind
     const float Rumble_FootGrind_DOT = 0.25f;
     const float Rumble_FootGrind_Rotate = 0.85f;
     const float Rumble_FootGrind_Impact = 2.4f;
 
+    // Hugs
+
+    const float Rumble_Hugs_HugCrush = 8.0f;
+    const float Rumble_Hugs_Release = 4.2f;
+    const float Rumble_Hugs_Shrink = 3.2f;
+    const float Rumble_Hugs_Catch = 4.2f;
+    const float Rumble_Hugs_Heal = 3.8f;
 
     // Grab
     const float Rumble_Grab_Throw_Footstep = 3.0f;
+    const float Rumble_Grab_Hand_Attack = 3.4f;
 
     // Thigh Sandwich
-    const float Rumble_ThighSandwich_ThighImpact_Heavy = 1.8f;
-    const float Rumble_ThighSandwich_ThighImpact = 1.0f;
+    const float Rumble_ThighSandwich_ThighImpact_Heavy = 3.4f;
+    const float Rumble_ThighSandwich_ThighImpact = 2.6f;
     const float Rumble_ThighSandwich_DropDown = 3.2f;
 
     /// Thigh Crush
-    const float Rumble_ThighCrush_StandUp = 2.4f;
-    const float Rumble_ThighCrush_LegSpread_Light_End = 0.15f;
-    const float Rumble_ThighCrush_LegCross_Heavy_End = 0.25f;
+    const float Rumble_ThighCrush_StandUp = 2.0f;
+    const float Rumble_ThighCrush_LegSpread_Light_End = 0.16f;
+    const float Rumble_ThighCrush_LegCross_Heavy_End = 0.18f;
 
     const float Rumble_ThighCrush_LegSpread_Light_Loop = 0.12f;
-    const float Rumble_ThighCrush_LegSpread_Heavy_Loop = 0.18f;
+    const float Rumble_ThighCrush_LegSpread_Heavy_Loop = 0.16f;
 
 
     // Butt crush
@@ -272,8 +283,30 @@ namespace Gts {
 
     // Crawling
     const float Rumble_Crawl_KneeDrop = 4.8f;       // Knee Crush
-    const float Rumble_Crawl_KneeHand_Impact = 1.4f;// A bit higher value since it gets cut off by sneak modifier
+    const float Rumble_Crawl_KneeHand_Impact = 2.0f;// A bit higher value since it gets cut off by sneak modifier
+
+    // Finger Grind
+    const float Rumble_FingerGrind_Rotate = 1.0f;
+    const float Rumble_FingerGrind_Impact = 1.25f;
+    const float Rumble_FingerGrind_Finisher = 1.75f;
 
     // Vore
     const float Rumble_Vore_Stomp_Light = 2.0f;
+
+    // Misc
+    const float Rumble_Misc_ShrinkOutburst = 6.25f; // when performing shrink outburst
+    const float Rumble_Misc_MightOfDragons = 2.85f; // when growing after gaining dragon soul
+    const float Rumble_Misc_TearClothes = 3.5f;
+
+    const float Rumble_Misc_EnableTinyProtection = 3.8f;
+    const float Rumble_Misc_FailTinyProtection = 6.2f;
+
+    const float Rumble_Growth_GrowthSpurt = 0.75f;
+    const float Rumble_Shrink_GrowthSpurt = 0.75f;
+
+    const float Rumble_Growth_SlowGrowth_Start = 1.75f;
+    const float Rumble_Growth_SlowGrowth_Loop = 0.35f;
+
+    const float Rumble_Kill_CrushOther = 7.6f;
+    const float Rumble_Kill_ShrinkToNothing = 8.6f;
 }

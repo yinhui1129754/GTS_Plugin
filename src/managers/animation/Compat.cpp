@@ -93,33 +93,33 @@ namespace {
 		}
 	}
 
-	void GTS_CustomDamage_Butt_ON(AnimationEventData& data) {
-		PrintMessageBox("GTS_CustomDamage_Butt_ON");
+	void GTS_CustomDamage_Butt_On(AnimationEventData& data) {
+		//PrintMessageBox("GTS_CustomDamage_Butt_ON");
 	}
 
-	void GTS_CustomDamage_Butt_OFF(AnimationEventData& data) {
-		PrintMessageBox("GTS_CustomDamage_Butt_OFF");
+	void GTS_CustomDamage_Butt_Off(AnimationEventData& data) {
+		//PrintMessageBox("GTS_CustomDamage_Butt_OFF");
 	}
 
-	void GTS_CustomDamage_Legs_ON(AnimationEventData& data) {
-		PrintMessageBox("GTS_CustomDamage_Legs_ON");
+	void GTS_CustomDamage_Legs_On(AnimationEventData& data) {
+		//PrintMessageBox("GTS_CustomDamage_Legs_ON");
 	}
-	void GTS_CustomDamage_Legs_OFF(AnimationEventData& data) {
-		PrintMessageBox("GTS_CustomDamage_Legs_OFF");
-	}
-
-	void GTS_CustomDamage_FullBody_ON(AnimationEventData& data) {
-		PrintMessageBox("GTS_CustomDamage_FullBody_ON");
-	}
-	void GTS_CustomDamage_FullBody_OFF(AnimationEventData& data) {
-		PrintMessageBox("GTS_CustomDamage_FullBody_OFF");
+	void GTS_CustomDamage_Legs_Off(AnimationEventData& data) {
+		//PrintMessageBox("GTS_CustomDamage_Legs_OFF");
 	}
 
-	void GTS_CustomDamage_Cleavage_ON(AnimationEventData& data) {
-		PrintMessageBox("GTS_CustomDamage_Cleavage_ON");
+	void GTS_CustomDamage_FullBody_On(AnimationEventData& data) {
+		//PrintMessageBox("GTS_CustomDamage_FullBody_ON");
 	}
-	void GTS_CustomDamage_Cleavage_OFF(AnimationEventData& data) {
-		PrintMessageBox("GTS_CustomDamage_Cleavage_OFF");
+	void GTS_CustomDamage_FullBody_Off(AnimationEventData& data) {
+		//PrintMessageBox("GTS_CustomDamage_FullBody_OFF");
+	}
+
+	void GTS_CustomDamage_Cleavage_On(AnimationEventData& data) {
+		//PrintMessageBox("GTS_CustomDamage_Cleavage_ON");
+	}
+	void GTS_CustomDamage_Cleavage_Off(AnimationEventData& data) {
+		//PrintMessageBox("GTS_CustomDamage_Cleavage_OFF");
 	}
 
 	void MCO_SecondDodge(AnimationEventData& data) {
@@ -158,17 +158,17 @@ namespace Gts
 		AnimationManager::RegisterEvent("MCO_SecondDodge", "MCOCompat1", MCO_SecondDodge);
 		AnimationManager::RegisterEvent("SoundPlay.MCO_DodgeSound", "Compat", MCO_DodgeSound);
 
-		AnimationManager::RegisterEvent("GTS_CustomDamage_Butt_ON", "Compat", GTS_CustomDamage_Butt_ON);
-		AnimationManager::RegisterEvent("GTS_CustomDamage_Butt_OFF", "Compat", GTS_CustomDamage_Butt_OFF);
+		AnimationManager::RegisterEvent("GTS_CustomDamage_Butt_On", "Compat", GTS_CustomDamage_Butt_On);
+		AnimationManager::RegisterEvent("GTS_CustomDamage_Butt_Off", "Compat", GTS_CustomDamage_Butt_Off);
 
-		AnimationManager::RegisterEvent("GTS_CustomDamage_Legs_ON", "Compat", GTS_CustomDamage_Legs_ON);
-		AnimationManager::RegisterEvent("GTS_CustomDamage_Legs_OFF", "Compat", GTS_CustomDamage_Legs_OFF);
+		AnimationManager::RegisterEvent("GTS_CustomDamage_Legs_On", "Compat", GTS_CustomDamage_Legs_On);
+		AnimationManager::RegisterEvent("GTS_CustomDamage_Legs_Off", "Compat", GTS_CustomDamage_Legs_Off);
 
-		AnimationManager::RegisterEvent("GTS_CustomDamage_FullBody_ON", "Compat", GTS_CustomDamage_FullBody_ON);
-		AnimationManager::RegisterEvent("GTS_CustomDamage_FullBody_OFF", "Compat", GTS_CustomDamage_FullBody_OFF);
+		AnimationManager::RegisterEvent("GTS_CustomDamage_FullBody_On", "Compat", GTS_CustomDamage_FullBody_On);
+		AnimationManager::RegisterEvent("GTS_CustomDamage_FullBody_Off", "Compat", GTS_CustomDamage_FullBody_Off);
 
-		AnimationManager::RegisterEvent("GTS_CustomDamage_Cleavage_ON", "Compat", GTS_CustomDamage_Cleavage_ON);
-		AnimationManager::RegisterEvent("GTS_CustomDamage_Cleavage_OFF", "Compat", GTS_CustomDamage_Cleavage_OFF);
+		AnimationManager::RegisterEvent("GTS_CustomDamage_Cleavage_On", "Compat", GTS_CustomDamage_Cleavage_On);
+		AnimationManager::RegisterEvent("GTS_CustomDamage_Cleavage_Off", "Compat", GTS_CustomDamage_Cleavage_Off);
 	}
 
 	void AnimationCompat::RegisterTriggers() {

@@ -34,11 +34,11 @@ namespace Gts {
 		auto base_spell = GetBaseEffect();
 
 		if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionWeak")) {
-			this->power = 0.5;
-		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionNormal")) {
 			this->power = 1.0;
-		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionStrong")) {
+		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionNormal")) {
 			this->power = 1.5;
+		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionStrong")) {
+			this->power = 2.0;
 		} else if (base_spell == Runtime::GetMagicEffect("EffectGrowthPotionExtreme")) {
 			this->power = 2.5;
 		} 
@@ -57,7 +57,7 @@ namespace Gts {
 				ApplyActionCooldown(caster, CooldownSource::Emotion_Moan);
 			}
 			if (caster->formID == 0x14) {
-				shake_camera(caster, 0.50, 0.33);
+				shake_camera(caster, 0.75, 0.55);
 			}
 		}
 
@@ -74,20 +74,18 @@ namespace Gts {
 			return;
 		}
 
-		float AlchemyLevel = std::clamp(caster->AsActorValueOwner()->GetActorValue(ActorValue::kAlchemy)/100.0f + 1.0f, 1.0f, 2.0f);
-		Rumbling::Once("GrowthPotion", caster, 0.4, 0.05);
-		
 		PlayGrowthAudio(caster, this->timer.ShouldRun());
 
 		float HP = GetMaxAV(caster, ActorValue::kHealth) * 0.00020 * this->power;
 		caster->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HP * TimeScale());
 
-		float Power = BASE_POWER * AlchemyLevel;
+		float Power = BASE_POWER * 1.5;
 
 		Grow(caster, Power, 0.0);
-		Rumbling::Once("GrowButton", caster, 0.6, 0.05);
-		log::info("This Power: {}", this->power);
-		log::info("Enlarging {} with the power of {}", caster->GetDisplayFullName(), Power);
+		Rumbling::Once("GrowthPotion", caster, 1.0, 0.10, "NPC COM [COM ]", 0.0);
+
+		//log::info("This Power: {}", this->power);
+		//log::info("Enlarging {} with the power of {}", caster->GetDisplayFullName(), Power);
 	}
 
 	void GrowthPotion::OnFinish() {

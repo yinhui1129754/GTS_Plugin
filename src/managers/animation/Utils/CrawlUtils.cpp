@@ -88,7 +88,7 @@ namespace Gts {
 		float smt = 1.0;
 		float minimal_scale = 1.5;
 
-		LaunchActor::GetSingleton().LaunchAtObjectNode(actor, launch_dist, damage_dist, multiplier, node); // Launch actors
+		LaunchActor::GetSingleton().LaunchAtCustomNode(actor, launch_dist, damage_dist, multiplier, node); // Launch actors
 		// Order matters here since we don't want to make it even stronger during SMT, so that's why SMT check is after this function
 		
 		if (actor->formID == 0x14) {
@@ -101,7 +101,8 @@ namespace Gts {
 			}
 		}
 
-		std::string rumbleName = std::format("{}{}", tag, actor->formID);
+		//std::string rumbleName = std::format("{}{}", tag, actor->formID);
+		std::string rumbleName = std::format("CrawlRumble_{}", actor->formID);
 		Rumbling::Once(rumbleName, actor, Rumble_Crawl_KneeHand_Impact * multiplier * smt, 0.02, name, 0.0); // Do Rumble
 
 		DoDamageAtPoint(actor, damage_dist, damage, node, 20, 0.05, crushmult, Cause); // Do size-related damage
@@ -153,18 +154,8 @@ namespace Gts {
 
 		float damage_zones_applied = 0.0;
 
-		std::vector<NiPoint3> points = {
-			NiPoint3(0.0, 0.0, 0.0), // The standard position
-		};
-		std::vector<NiPoint3> CrawlPoints = {};
-
-		for (NiPoint3 point: points) {
-			CrawlPoints.push_back(NodePosition);
-		}
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-			for (auto point: CrawlPoints) {
-				DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxDistance);
-			}
+			DebugAPI::DrawSphere(glm::vec3(NodePosition.x, NodePosition.y, NodePosition.z), maxDistance);
 		}
 
 		NiPoint3 giantLocation = giant->GetPosition();
@@ -174,37 +165,35 @@ namespace Gts {
 				float tinyScale = get_visual_scale(otherActor);
 				if (giantScale / tinyScale > SCALE_RATIO) {
 					NiPoint3 actorLocation = otherActor->GetPosition();
-					for (auto point: CrawlPoints) {
-						if ((actorLocation-giantLocation).Length() <= CheckDistance) {
-							
-							int nodeCollisions = 0;
-							float force = 0.0;
+					if ((actorLocation-giantLocation).Length() <= CheckDistance) {
+						
+						int nodeCollisions = 0;
+						float force = 0.0;
 
-							auto model = otherActor->GetCurrent3D();
+						auto model = otherActor->GetCurrent3D();
 
-							if (model) {
-								VisitNodes(model, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
-									float distance = (NodePosition - a_obj.world.translate).Length();
-									if (distance < maxDistance) {
-										nodeCollisions += 1;
-										force = 1.0 - distance / maxDistance;
-										return false;
-									}
-									return true;
-								});
-							}
-							if (nodeCollisions > 0) {
-								damage_zones_applied += 1.0;
-								if (damage_zones_applied < 1.0) {
-									damage_zones_applied = 1.0; // just to be safe
+						if (model) {
+							VisitNodes(model, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
+								float distance = (NodePosition - a_obj.world.translate).Length();
+								if (distance < maxDistance) {
+									nodeCollisions += 1;
+									force = 1.0 - distance / maxDistance;
+									return false;
 								}
-								damage /= damage_zones_applied;
-								float aveForce = std::clamp(force, 0.14f, 0.70f);
-								
-								Utils_PushCheck(giant, otherActor, Get_Bone_Movement_Speed(giant, Cause)); 
-								
-								CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
+								return true;
+							});
+						}
+						if (nodeCollisions > 0) {
+							damage_zones_applied += 1.0;
+							if (damage_zones_applied < 1.0) {
+								damage_zones_applied = 1.0; // just to be safe
 							}
+							damage /= damage_zones_applied;
+							float aveForce = std::clamp(force, 0.14f, 0.70f);
+							
+							Utils_PushCheck(giant, otherActor, Get_Bone_Movement_Speed(giant, Cause)); 
+							
+							CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 						}
 					}
 				}

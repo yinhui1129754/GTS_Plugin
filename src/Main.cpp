@@ -1,4 +1,5 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
+#include "hooks/Experiments.hpp"
 
 #include "Config.hpp"
 #include "hooks/hooks.hpp"
@@ -16,8 +17,6 @@
 #include <stddef.h>
 #include <thread>
 #include "git.h"
-
-#include "hooks/Experiments.hpp"
 
 using namespace RE::BSScript;
 using namespace Gts;
@@ -116,6 +115,7 @@ namespace {
 				case MessagingInterface::kDataLoaded: // All ESM/ESL/ESP plugins have loaded, main menu is now active.
 					// It is now safe to access form data.
 					Cprint("[GTSPlugin.dll]: [ Giantess Mod v 2.00 {} Beta was succesfully initialized. Waiting for New Game/Save Load. ]", gitData);
+					//Hooks::Hook_Experiments::PatchShaking();
 					EventDispatcher::DoDataReady();
 					break;
 				// Skyrim game events.

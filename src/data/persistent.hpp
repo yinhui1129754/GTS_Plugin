@@ -94,6 +94,7 @@ namespace Gts {
 			bool Kick_Ai = true;
 			bool Hugs_Ai = true;
 			bool Butt_Ai = true;
+			bool Thigh_Ai = true;
 			bool delete_actors = true;
 			bool hostile_toggle = true;
 			bool legacy_sounds = false;
