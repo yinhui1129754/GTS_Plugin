@@ -312,8 +312,8 @@ namespace {
 		DoDustExplosion(&data.giant, 2.0, FootEvent::Left, LNode);
 		DoDamageEffect(&data.giant, 6.0 * perk, 1.6, 10, 0.20, FootEvent::Right, 1.0, DamageSource::CrushedRight);
 		DoDamageEffect(&data.giant, 6.0 * perk, 1.6, 10, 0.20, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
-		DoLaunch(&data.giant, 0.85 * perk, 2.2, FootEvent::Right);
-		DoLaunch(&data.giant, 0.85 * perk, 2.2, FootEvent::Left);
+		DoLaunch(&data.giant, 0.85 * perk, 3.2, FootEvent::Right);
+		DoLaunch(&data.giant, 0.85 * perk, 3.2, FootEvent::Left);
 
 		
 		float shake_power = Rumble_ThighSandwich_DropDown * GetHighHeelsBonusDamage(&data.giant, true);

@@ -169,7 +169,7 @@ namespace {
 		}
 		
 		DoDamageEffect(giant, Damage_ThighCrush_Stand_Up * mult * perk, Radius_ThighCrush_Stand_Up, 25, 0.20, Event, 1.0, Source);
-		DoLaunch(giant, 0.65 * mult * perk, 1.55 * animSpeed, Event);
+		DoLaunch(giant, 0.65 * mult * perk, 2.0 * animSpeed, Event);
 		Rumbling::Once(rumble, giant, shake_power, 0.10, Node, 0.0);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, 1.0, Event, Node);

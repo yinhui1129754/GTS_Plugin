@@ -33,6 +33,7 @@ namespace {
 			.actor = giant,
 			.kind = kind,
 			.scale = get_visual_scale(giant) * mult,
+			.modifier = mult,
 			.nodes = find_node(giant, node),
 		};
 		explosion.OnImpact(impact_data); // Play explosion

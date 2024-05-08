@@ -223,7 +223,7 @@ namespace {
 			shake_camera(player, 0.45, 0.30);
 			return;
 		}
-		SpringGrow(player, amt, halflife, "Input", true);
+		SpringGrow(player, amt, halflife, "Input_G", true);
 	}
 
 	void CallRapidShrink(StaticFunctionTag*, float amt, float halflife) {
@@ -234,7 +234,7 @@ namespace {
 			shake_camera(player, 0.45, 0.30);
 			return;
 		}
-		SpringShrink(player, amt, halflife, "Input");
+		SpringShrink(player, amt, halflife, "Input_S");
 	}
 
 }

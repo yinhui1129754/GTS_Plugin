@@ -108,7 +108,7 @@ namespace Gts {
 		}
 	}
 
-    void PushObjectsUpwards(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power) {
+    void PushObjectsUpwards(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power, bool IsFoot) {
 		auto profiler = Profilers::Profile("Other: Launch Objects");
 		bool AllowLaunch = Persistent::GetSingleton().launch_objects;
 		if (!AllowLaunch) {
@@ -125,13 +125,23 @@ namespace Gts {
 			power *= 8.0;
 		}
 
+		if (giantScale < 2.5) {  // slowly gain power of shakes
+			float reduction = (giantScale - 1.5);
+			if (reduction < 0.0) {
+				reduction = 0.0;
+			}
+			power *= reduction;
+		}
+
 		float start_power = Push_Object_Upwards * (1.0 + Potion_GetMightBonus(giant));
 
 		std::vector<ObjectRefHandle> Refs = GetNearbyObjects(giant);
 
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
 			for (auto point: footPoints) {
-				point.z -= HH;
+				if (IsFoot) {
+					point.z -= HH;
+				}
 				DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), maxFootDistance, 600, {0.0, 1.0, 0.0, 1.0});
 			}
 		}
@@ -143,7 +153,9 @@ namespace Gts {
 					if (objectref && objectref->Is3DLoaded()) {
 						NiPoint3 objectlocation = objectref->GetPosition();
 						for (auto point: footPoints) {
-							point.z -= HH;
+							if (IsFoot) {
+								point.z -= HH;
+							}
 							float distance = (point - objectlocation).Length();
 							if (distance <= maxFootDistance) {
 								float force = 1.0 - distance / maxFootDistance;

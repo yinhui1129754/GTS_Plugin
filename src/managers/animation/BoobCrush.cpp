@@ -217,7 +217,7 @@ namespace {
 			if (Node) {
 				std::string rumbleName = std::format("Node: {}", Nodes);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BodyImpact, Damage_BreastCrush_Body * damage, Node, 400, 0.10, 0.85, DamageSource::BodyCrush);
-				DoLaunch(giant, 1.20 * perk, 4.20, Node);
+				DoLaunch(giant, 2.25 * perk, 5.0, Node);
 				Rumbling::Once(rumbleName, giant, 1.00 * damage, 0.02, Nodes, 0.0);
 			}
 		}
@@ -251,7 +251,7 @@ namespace {
 			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Left, "R Breast03");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "R Breast03");
 			DoFootstepSound(giant, 1.25, FootEvent::Left, "L Breast03");
-			DoLaunch(giant, 1.20 * perk, 4.20, FootEvent::Breasts);
+			DoLaunch(giant, 2.25 * perk, 5.0, FootEvent::Breasts);
 			Rumbling::Once("Breast_L", giant, shake_power * smt, 0.05, "L Breast03", 0.0);
 			Rumbling::Once("Breast_R", giant, shake_power * smt, 0.05, "R Breast03", 0.0);
 			ModGrowthCount(giant, 0, true); // Reset limit
@@ -263,7 +263,7 @@ namespace {
 			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Left, "NPC R Breast");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC R Breast");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC L Breast");
-			DoLaunch(giant, 1.20 * perk, 4.20, FootEvent::Breasts);
+			DoLaunch(giant, 2.25 * perk, 5.0, FootEvent::Breasts);
 			Rumbling::Once("Breast_L", giant, shake_power * smt, 0.05, "NPC L Breast", 0.0);
 			Rumbling::Once("Breast_R", giant, shake_power * smt, 0.05, "NPC R Breast", 0.0);
 			ModGrowthCount(giant, 0, true); // Reset limit

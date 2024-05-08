@@ -126,6 +126,7 @@ namespace Gts {
 				std::string message = std::format("Breast Crush is on a cooldown: {:.1f} sec", cooldown);
 				TiredSound(giant, message);
 			}
+			shake_camera(giant, 0.45, 0.30);
 		}
 	}
 

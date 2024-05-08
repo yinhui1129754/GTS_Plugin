@@ -106,6 +106,7 @@ namespace Gts {
 			bool PCEffectImmunity = false;
 
 			bool EnableIcons = true;
+			bool allow_weight_gain = true;
 
 			float tremor_scale = 1.0;
 			float npc_tremor_scale = 1.0;

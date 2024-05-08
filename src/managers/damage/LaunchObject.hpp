@@ -16,7 +16,7 @@ using namespace RE;
 namespace Gts {
         float GetLaunchPower_Object(float sizeRatio, bool Launch);
         
-        void PushObjectsUpwards(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power);
+        void PushObjectsUpwards(Actor* giant, std::vector<NiPoint3> footPoints, float maxFootDistance, float power, bool IsFoot);
         void PushObjectsTowards(Actor* giant, TESObjectREFR* object, NiAVObject* Bone, float power, float radius, bool Kick);
         void PushObjects(std::vector<ObjectRefHandle> refs, Actor* giant, NiAVObject* bone, float power, float radius, bool Kick);
         std::vector<ObjectRefHandle> GetNearbyObjects(Actor* giant);

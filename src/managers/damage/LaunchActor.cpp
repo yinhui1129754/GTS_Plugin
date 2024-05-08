@@ -237,7 +237,10 @@ namespace Gts {
 			std::vector<NiPoint3> LaunchObjectPoints = {point};
 
 			NiPoint3 giantLocation = giant->GetPosition();
-			PushObjectsUpwards(giant, LaunchObjectPoints, maxDistance, power);
+
+			bool IsFoot = (node->name == "NPC R Foot [Rft ]" || node->name == "NPC L Foot [Lft ]");
+
+			PushObjectsUpwards(giant, LaunchObjectPoints, maxDistance, power, IsFoot);
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {
@@ -282,7 +285,7 @@ namespace Gts {
 			}
 
 			NiPoint3 giantLocation = giant->GetPosition();
-			PushObjectsUpwards(giant, CoordsToCheck, maxFootDistance * GetHighHeelsBonusDamage(giant, true), power);
+			PushObjectsUpwards(giant, CoordsToCheck, maxFootDistance, power, true);
 
 			for (auto otherActor: find_actors()) {
 				if (otherActor != giant) {

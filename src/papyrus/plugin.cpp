@@ -208,6 +208,9 @@ namespace {
 	void SetToggleIcons(StaticFunctionTag*, bool enabled) {
 		Persistent::GetSingleton().EnableIcons = enabled;
 	}
+	void SetWeightGain(StaticFunctionTag*, bool enabled) {
+		Persistent::GetSingleton().allow_weight_gain = enabled;
+	}
 	void EnableCollisionLayerAndMotion(StaticFunctionTag*, TESObjectREFR* ref) {
 		if (!ref) {
 			return;
@@ -510,6 +513,7 @@ namespace Gts {
 		vm->RegisterFunction("SetNPCProtection", PapyrusClass, SetNPCProtection);
 		vm->RegisterFunction("SetPCProtection", PapyrusClass, SetPCProtection);
 		vm->RegisterFunction("SetToggleIcons", PapyrusClass, SetToggleIcons);
+		vm->RegisterFunction("SetWeightGain", PapyrusClass, SetWeightGain);
 		vm->RegisterFunction("DisableCollisionLayerAndMotion", PapyrusClass, DisableCollisionLayerAndMotion);
 		vm->RegisterFunction("EnableCollisionLayerAndMotion", PapyrusClass, EnableCollisionLayerAndMotion);
 		vm->RegisterFunction("ResetQuestProgression", PapyrusClass, ResetQuestProgression);

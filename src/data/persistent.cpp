@@ -50,6 +50,7 @@ namespace {
 	inline const auto PC_EffectImmunity = _byteswap_ulong('PCER');
 
 	inline const auto EnableIconsRecord = _byteswap_ulong('EIRC');
+	inline const auto AllowWeightGainRecord = _byteswap_ulong('AWGR');
 
 	inline const auto StolenAttributes = _byteswap_ulong('STAT');
 	inline const auto Att_HealthStorage = _byteswap_ulong('HTSG');
@@ -586,6 +587,10 @@ namespace Gts {
 				bool EnableIcons;
 				serde->ReadRecordData(&EnableIcons, sizeof(EnableIcons));
 				GetSingleton().EnableIcons = EnableIcons;
+			} else if (type == AllowWeightGainRecord) {
+				bool allow_weight_gain;
+				serde->ReadRecordData(&allow_weight_gain, sizeof(allow_weight_gain));
+				GetSingleton().allow_weight_gain = allow_weight_gain;
 			} else if (type == IsSpeedAdjustedRecord) {
 				bool is_speed_adjusted;
 				serde->ReadRecordData(&is_speed_adjusted, sizeof(is_speed_adjusted));
@@ -971,6 +976,14 @@ namespace Gts {
 
 		bool EnableIcons = GetSingleton().EnableIcons;
 		serde->WriteRecordData(&EnableIcons, sizeof(EnableIcons));
+
+		if (!serde->OpenRecord(AllowWeightGainRecord, 1)) {
+			log::error("Unable to open Gain Weight Record to write cosave data");
+			return;
+		}
+		
+		bool allow_weight_gain = GetSingleton().allow_weight_gain;
+		serde->WriteRecordData(&allow_weight_gain, sizeof(allow_weight_gain));
 
 		if (!serde->OpenRecord(HostileToggle, 1)) {
 			log::error("Unable to open Hostile Toggle Actors record to write cosave data");

@@ -35,7 +35,7 @@ namespace {
     const double SOUND_COOLDOWN = 2.0f;
     const double HIT_COOLDOWN = 1.0f;
     const double AI_GROWTH_COOLDOWN = 2.0f;
-    const double SHRINK_OUTBURST_COOLDOWN = 12.0f;
+    const double SHRINK_OUTBURST_COOLDOWN = 18.0f;
 
 
     float Calculate_ButtCrushTimer(Actor* actor) {

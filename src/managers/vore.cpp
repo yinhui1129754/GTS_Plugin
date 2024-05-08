@@ -109,7 +109,7 @@ namespace {
 		}
 	}
 
-	void Task_Vore_FinishVoreBuff(const VoreInformation& VoreInfo) {
+	void Task_Vore_FinishVoreBuff(const VoreInformation& VoreInfo, float amount_of_tinies) {
 
 		Actor* giant = VoreInfo.giantess;
 
@@ -128,7 +128,7 @@ namespace {
 			if (giant) {
 				ModSizeExperience(giant, 0.20 + (tinySize * 0.02));
 				VoreMessage_Absorbed(giant, tiny_name);
-				CallGainWeight(giant, 3.0 * tinySize);
+				CallGainWeight(giant, 3.0 * tinySize * amount_of_tinies);
 				BuffAttributes(giant, tinySize);
 				update_target_scale(giant, sizePower * 0.8, SizeEffectType::kGrow);
 				AdjustSizeReserve(giant, sizePower);
@@ -146,7 +146,7 @@ namespace {
 		}
 	}
 
-	void Task_Vore_StartVoreBuff(Actor* giant, Actor* tiny) {
+	void Task_Vore_StartVoreBuff(Actor* giant, Actor* tiny, float amount_of_tinies) {
 		float default_duration = 80.0;
 		float mealEffiency = 0.2; // Normal pred has 20% efficent stomach
 		float growth = 2.0;
@@ -213,7 +213,7 @@ namespace {
 			AddStolenAttributes(giantref, sizeToApply * TimeScale());
 
 			if (timepassed >= default_duration) {
-				Task_Vore_FinishVoreBuff(VoreInfo);
+				Task_Vore_FinishVoreBuff(VoreInfo, amount_of_tinies);
 				return false;
 			}
 
@@ -237,7 +237,7 @@ namespace Gts {
 		for (auto& [key, tinyref]: this->tinies) {
 			auto tiny = tinyref.get().get();
 			auto giant = this->giant.get().get();
-			Task_Vore_StartVoreBuff(giant, tiny);
+			Task_Vore_StartVoreBuff(giant, tiny, this->tinies.size());
 			VoreMessage_SwallowedAbsorbing(giant, tiny);
 
 			if (giant->formID == 0x14) {

@@ -60,6 +60,7 @@ Function SetActorAudioOverride(Bool enabled) global native; ; Allows/disallows N
 Function SetNPCProtection(Bool enabled) global native       ; Protect friendly NPC's from size-related damage/effects
 Function SetPCProtection(Bool enabled) global native        ; Protect Player from friendly size-related effects 
 Function SetToggleIcons(Bool enabled) global native         ; enabled/disable Guide icons
+Function SetWeightGain(Bool enabled) global native          ; enabled/disable weight gain on fully absorbing someone during vore
 Function DisableCollisionLayerAndMotion(ObjectReference ref) global native
 Function EnableRaycastSize(Bool enabled) global native
     

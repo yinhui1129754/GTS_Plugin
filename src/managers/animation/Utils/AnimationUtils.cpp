@@ -1497,17 +1497,16 @@ namespace Gts {
 
 	float GetHugShrinkThreshold(Actor* actor) {
 		float threshold = 2.5;
-		float bonus = 1.0;
 		if (Runtime::HasPerk(actor, "HugCrush")) {
-			bonus += 0.25;
+			threshold *= 1.25;
 		}
 		if (Runtime::HasPerk(actor, "HugCrush_Greed")) {
-			bonus += 0.35;
+			threshold *= 1.35;
 		}
 		if (HasGrowthSpurt(actor)) {
-			bonus *= 2.0;
+			threshold *= 2.0;
 		}
-		return threshold * bonus;
+		return threshold;
 	}
 
 	float GetHugCrushThreshold(Actor* actor) {

@@ -124,7 +124,7 @@ namespace {
 				DoDustExplosion(giant, 1.8 * dust, FootEvent::Left, "NPC L Butt");
 				DoFootstepSound(giant, 1.2, FootEvent::Right, RNode);
 				DoFootstepSound(giant, 1.2, FootEvent::Left, LNode);
-				DoLaunch(&data.giant, 0.95, 4.2, FootEvent::Butt);
+				DoLaunch(&data.giant, 2.25, 5.0, FootEvent::Butt);
 
 				float shake_power = Rumble_Crawl_KneeDrop/2 * smt;
 

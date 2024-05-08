@@ -1722,7 +1722,7 @@ namespace Gts {
 		if (caster->formID == 0x14) {
 			tremor_scale = persist.tremor_scale;
 			if (IsFirstPerson()) {
-				tremor_scale *= 0.33; // Less annoying FP screen shake
+				tremor_scale *= 0.25; // Less annoying FP screen shake
 			}
 			distance = get_distance_to_camera(coords); // else we use player camera distance (for player only)
 			sizedifference = sourcesize;
@@ -1827,12 +1827,35 @@ namespace Gts {
 		}
 	}
 
+
 	void CallGainWeight(Actor* giant, float value) {
-		auto progressionQuest = Runtime::GetQuest("MainQuest");
-		if (progressionQuest) {
-			CallFunctionOn(progressionQuest, "gtsProgressionQuest", "GainWeight", giant, value);
+		log::info("weight gain: {}", Persistent::GetSingleton().allow_weight_gain);
+		if (Persistent::GetSingleton().allow_weight_gain) {
+			if (giant->formID == 0x14) {
+				std::string_view name = "Vore_Weight";
+				auto gianthandle = giant->CreateRefHandle();
+				TaskManager::RunOnce(name, [=](auto& progressData) {
+					if (!gianthandle) {
+						return false;
+					}
+					auto giantref = gianthandle.get().get();
+					float& original_weight = giantref->GetActorBase()->weight;
+					if (original_weight >= 100.0) {
+						return false;
+					} 
+					if (original_weight + value >= 100.0) {
+						original_weight = 100.0;
+					} else {
+						original_weight += value;
+					}
+					giantref->DoReset3D(true);
+					log::info("Updating Weight");
+					return false;
+				});
+			}
 		}
 	}
+	
 
 	void CallVampire() {
 		auto progressionQuest = Runtime::GetQuest("MainQuest");
@@ -2053,7 +2076,8 @@ namespace Gts {
 		Impact impact_data = Impact {
 			.actor = giant,
 			.kind = kind,
-			.scale = get_visual_scale(giant) * modifier,
+			.scale = get_visual_scale(giant),
+			.modifier = modifier,
 			.nodes = points,
 		};
 		footstepSound.OnImpact(impact_data); // Play sound
@@ -2063,11 +2087,12 @@ namespace Gts {
 		auto& explosion = ExplosionManager::GetSingleton();
 
 		std::vector<NiAVObject*> points = {find_node(giant, node)};
-
+		
 		Impact impact_data = Impact {
 			.actor = giant,
 			.kind = kind,
-			.scale = get_visual_scale(giant) * modifier,
+			.scale = get_visual_scale(giant),
+			.modifier = modifier,
 			.nodes = points,
 		};
 		explosion.OnImpact(impact_data); // Play explosion
@@ -2220,8 +2245,7 @@ namespace Gts {
 					if (sizedifference < 1.2) {
 						return false; // terminate task
 					} else if (sizedifference > 1.2 && sizedifference < 3.0) {
-						tiny->SetGraphVariableFloat("staggerMagnitude", 100.00f); // Stagger actor
-						tiny->NotifyAnimationGraph("staggerStart");
+						StaggerActor(giant, tiny, 0.25f * sizedifference);
 						return false; //Only Stagger
 					}
 				}

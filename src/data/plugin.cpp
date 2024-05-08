@@ -41,7 +41,7 @@ namespace Gts {
 	bool Plugin::Live() {
 		if (Plugin::Ready()) {
 			auto ui = RE::UI::GetSingleton();
-			if (!ui->GameIsPaused()) {
+			if (!ui->GameIsPaused() || ui->GetMenu("RaceSex Menu")) {
 				// Not paused
 				return true;
 			}

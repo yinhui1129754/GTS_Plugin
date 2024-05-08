@@ -148,6 +148,7 @@ namespace Gts {
 		Actor* actor;
 		FootEvent kind;
 		float scale;
+		float modifier;
 		std::vector<NiAVObject*> nodes;
 	};
 

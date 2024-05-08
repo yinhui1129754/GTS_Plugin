@@ -110,6 +110,7 @@ namespace Gts {
 				NiPoint3 explosion_pos = CastRayStatics(actor, ray_start, ray_direction, ray_length, success);
 
 				scale *= 1.0 + (Potion_GetMightBonus(actor) * 0.5);
+				scale *= impact.modifier;
 
 				//log::info("Explosion success: {}", success);
 
