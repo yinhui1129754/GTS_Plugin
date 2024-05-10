@@ -56,7 +56,6 @@ namespace Gts {
 		if (evt.perk == Runtime::GetPerk("hhBonus")) {
 			for (auto actor: find_actors()) {
 				if (actor) {
-					log::info("HH perk was added");
 					this->data.try_emplace(actor);
 					auto& hhData = this->data[actor];
 					hhData.wasWearingHh = false;

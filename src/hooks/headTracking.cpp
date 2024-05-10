@@ -8,21 +8,53 @@ using namespace SKSE;
 
 
 namespace {
+	bool KnockedDown(Actor* giant) {
+		return static_cast<int>(giant->AsActorState()->GetKnockState()) != 0; // Another way of checking ragdoll just in case
+	}
+
 	float affect_by_scale(TESObjectREFR* ref, float original) {
 		Actor* giant = skyrim_cast<Actor*>(ref);
 		if (giant) {
-			if (IsRagdolled(giant)) { // For some Bethesda™ reason - it breaks tiny ragdoll (their skeleton stretches :/) when they're small, so they fly into the sky.
+			bool ragdolled = (IsRagdolled(giant) || KnockedDown(giant));
+			if (ragdolled || IsDragon(giant)) {  // Dragons behave funny if we edit them...sigh...
+				// For some Bethesda™ reason - it breaks tiny ragdoll (their skeleton stretches :/) when they're small, so they fly into the sky.
 				return original;      // We really want to prevent that, so we return original value.
 			}
-			float fix = original * ((get_giantess_scale(giant)) / game_getactorscale(giant)); // game_getscale() is used here, so we want to / it again
-			//if (giant->formID == 0x14) {
-				//log::info("headtracking value: {}", fix);
-			//}
+			float fix = original * ((get_giantess_scale(giant)) / game_getactorscale(giant)); // game_getscale() is used here by the game, so we want to / it again
+
 			return fix;
 			// ^ Compensate it, since SetScale() already affects HT by default
 		}
 		return original;
 	}
+
+	/*void SetHeadtrackTargetImpl(Actor* actor, NiPoint3& target) {
+		if (!actor) {
+			return;
+		}
+		bool ragdolled = (IsRagdolled(actor) || KnockedDown(actor));
+		if (IsHeadtracking(actor) || ragdolled) { // Needed to fix TDM bugs with deforming Meshes of Actors when we lock onto someone
+			return;
+		}
+		// log::info("Actor: {}", actor->GetDisplayFullName());
+		auto headPos = actor->GetLookingAtLocation();
+		// log::info("headPos: {}", Vector2Str(headPos));
+		auto model = actor->Get3D();
+		if (!model) {
+			return;
+		}
+		auto trans = model->world;
+		auto transInv = trans.Invert();
+		auto scale = get_visual_scale(actor);
+
+		// log::info("headPos (local): {}", Vector2Str(transInv*headPos));
+		auto unscaledHeadPos = trans * (transInv*headPos * (1.0/scale));
+		// log::info("unscaledHeadPos: {}", Vector2Str(unscaledHeadPos));
+		// log::info("unscaledHeadPos (local): {}", Vector2Str(transInv*headPos));
+		auto direction = target - headPos;
+		// log::info("direction: {}", Vector2Str(direction));
+		target = unscaledHeadPos + direction;
+	}*/
 }
 
 namespace Hooks
@@ -47,21 +79,14 @@ namespace Hooks
             }
         );
 
-		/*static CallHook<float(TESObjectREFR* param_1)>GetEyeHeight_140601E40(  // Get Eye Height, rarely called
-			REL::RelocationID(36845, 37869), REL::Relocate(0x71, 0x71),
-			[](auto* param_1) {
-				// 36845
-				// 0x140601eb1 - 0x140601E40 = 0x71
-
-				//AE: (99% correct, seems to match the function)
-				// FUN_140629d00 (48 83 ec 58)
-				// 0x140629d71 - 0x140629d00 = 0x71
-				float result = GetEyeHeight_140601E40(param_1);
-				float Alter = affect_by_scale(param_1, result);
-				log::info("(23) GetEyeHeight_140601E40 Hooked");
-				return Alter;
-            }
-        );*/
+		/*static FunctionHook<void(AIProcess* a_this, Actor* a_owner, NiPoint3& a_targetPosition)> 
+			SetHeadtrackTarget(RELOCATION_ID(38850, 39887),
+				[](auto* a_this, auto* a_owner, auto& a_targetPosition) {
+				SetHeadtrackTargetImpl(a_owner, a_targetPosition);
+				SetHeadtrackTarget(a_this, a_owner, a_targetPosition);
+				return;
+			}
+		);*/
 	}
 }
 

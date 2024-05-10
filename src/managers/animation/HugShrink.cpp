@@ -106,18 +106,11 @@ namespace {
 
 	void GTS_Hug_Moan(AnimationEventData& data) {
 		auto giant = &data.giant;
-
 		PlayMoanSound(giant, 1.0);
-		AdjustFacialExpression(giant, 0, 1.0, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 1.0, "modifier"); // blink R
-		AdjustFacialExpression(giant, 0, 0.75, "phenome");
+		Task_FacialEmotionTask_Moan(giant, 2.75, "HugMoan");
 	}
 
 	void GTS_Hug_Moan_End(AnimationEventData& data) {
-		auto giant = &data.giant;
-		AdjustFacialExpression(giant, 0, 0.0, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 0.0, "modifier"); // blink R
-		AdjustFacialExpression(giant, 0, 0.0, "phenome");
 	}
 
 	void GTS_Hug_FacialOn(AnimationEventData& data) { // Smug or something
@@ -132,6 +125,7 @@ namespace {
 		int Random = rand() % 5 + 1;
 		if (Random >= 4) {
 			PlayLaughSound(&data.giant, 1.0, 1);
+			Task_FacialEmotionTask_Smile(&data.giant, 2.25, "HugSmile");
 		}
 	}
 
@@ -491,6 +485,7 @@ namespace Gts {
 			// Ensure they are NOT in ragdoll
 			ForceRagdoll(tinyref, false);
 			if (!HugAttach(gianthandle, tinyhandle)) {
+				AbortHugAnimation(giantref, tinyref);
 				return false;
 			}
 

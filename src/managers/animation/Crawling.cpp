@@ -164,11 +164,11 @@ namespace {
 			auto Uarm = find_node(giant, "NPC R Forearm [RLar]");
 			auto Arm = find_node(giant, "NPC R Hand [RHnd]");
 			if (Uarm) {
-				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Uarm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeRight);
+				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Uarm, NiPoint3(0,0,0), 10, 0.30, crush, pushpower, DamageSource::HandSwipeRight);
 				PushObjects(Objects, giant, Uarm, pushpower, Radius_Sneak_HandSwipe, false);
 			}
 			if (Arm) {
-				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Arm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeRight);
+				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Arm, NiPoint3(0,0,0), 10, 0.30, crush, pushpower, DamageSource::HandSwipeRight);
 				PushObjects(Objects, giant, Arm, pushpower, Radius_Sneak_HandSwipe, false);
 			}
 			return true;
@@ -189,11 +189,11 @@ namespace {
 			auto Uarm = find_node(giant, "NPC L Forearm [LLar]");
 			auto Arm = find_node(giant, "NPC L Hand [LHnd]");
 			if (Uarm) {
-				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Uarm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeLeft);
+				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Uarm, NiPoint3(0,0,0), 10, 0.30, crush, pushpower, DamageSource::HandSwipeLeft);
 				PushObjects(Objects, giant, Uarm, pushpower, Radius_Sneak_HandSwipe, false);
 			}
 			if (Arm) {
-				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Arm, 10, 0.30, crush, pushpower, DamageSource::HandSwipeLeft);
+				DoDamageAtPoint_Cooldown(giant, Radius_Sneak_HandSwipe, Damage_Crawl_HandSwipe * power, Arm, NiPoint3(0,0,0), 10, 0.30, crush, pushpower, DamageSource::HandSwipeLeft);
 				PushObjects(Objects, giant, Arm, pushpower, Radius_Sneak_HandSwipe, false);
 			}
 			return true;

@@ -72,7 +72,7 @@ namespace {
 
 			float AnimSpeed = AnimationManager::GetSingleton().GetAnimSpeed(giant);
 			float speed = 1.25 * AnimSpeed * halflife * Speed_up;
-
+			//log::info("Running Facial Task: {}", name);
 			float value = (pass * speed);
 			auto FaceData = GetFacialData(giantref);
 			if (FaceData) {
@@ -132,12 +132,15 @@ namespace {
 
 			float value = (pass * speed);
 			auto FaceData = GetFacialData(giantref);
+			//log::info("Running Facial Task: {}", name);
 			if (FaceData) {
 				if (Reset) {
 					value = modified - (pass * speed);
 					Phenome_ManageModifiers(FaceData, modifier, value);
-					if (value <= 0) {
+					if (value <= 0 || value >= target) {
 						Phenome_ManageModifiers(FaceData, modifier, 0.0);
+						return false;
+					} if (value == target) {
 						return false;
 					}
 					return true;

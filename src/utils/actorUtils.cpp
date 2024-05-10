@@ -913,6 +913,19 @@ namespace Gts {
 		}
 	}
 
+	bool IsHeadtracking(Actor* giant) { // Used to report True when we lock onto something, should be Player Exclusive.
+		//Currently used to fix TDM mesh issues when we lock on someone.
+		//auto profiler = Profilers::Profile("ActorUtils: HeadTracking");
+		bool tracking = false;
+		bool headtracking = false;
+		if (giant->formID == 0x14) {
+			giant->GetGraphVariableBool("TDM_TargetLock", tracking); // get HT value, requires newest versions of TDM to work properly
+		} else {
+			giant->GetGraphVariableBool("bHeadtracking", headtracking);
+		}
+		return tracking && headtracking;
+	}
+
 	bool AnimationsInstalled(Actor* giant) {
 		bool installed = false;
 		giant->GetGraphVariableBool("GTS_Installed", installed);
@@ -1711,7 +1724,7 @@ namespace Gts {
 		auto& persist = Persistent::GetSingleton();
 		
 		float might = 1.0 + Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
-		float tremor_scale = persist.npc_tremor_scale; // slightly weaker tremor for npc's
+		float tremor_scale = persist.npc_tremor_scale * 0.85; // slightly weaker tremor for npc's
 		
 		float distance = (coords - receiver->GetPosition()).Length(); // In that case we apply shake based on actor distance
 
@@ -2198,6 +2211,9 @@ namespace Gts {
 	}
 
 	void PushTowards(Actor* giantref, Actor* tinyref, std::string_view bone, float power, bool sizecheck) {
+		if (!AllowStagger(giantref, tinyref)) {
+			return;
+		} 
 		NiAVObject* node = find_node(giantref, bone);
 		if (node) {
 			PushTowards(giantref, tinyref, node, power, sizecheck);
@@ -3197,14 +3213,15 @@ namespace Gts {
 			float levelbonus = 1.0 + ((GetGtsSkillLevel(attacker) * 0.01) * 0.50);
 			value *= levelbonus;
 
-			if (HpPercentage < 0.70) { // Mostly a warning to indicate that actor dislikes it (They don't always aggro right away, with mods at least)
+			if (receiver->formID != 0x14) { // Mostly a warning to indicate that actor dislikes it (They don't always aggro right away, with mods at least)
+				if (value >= GetAV(receiver, ActorValue::kHealth) * 0.50 || HpPercentage < 0.70) { // in that case make hostile
+					if (!IsTeammate(receiver) && !IsHostile(attacker, receiver)) {
+						StartCombat(receiver, attacker); // Make actor hostile and add bounty of 40 (can't be configured, needs different hook probably). 
+					}
+				}
 				Attacked(receiver, attacker);
 			} 
-			if (value >= GetAV(receiver, ActorValue::kHealth) * 0.50) { // in that case make hostile
-				if (!IsTeammate(receiver) && !IsHostile(attacker, receiver)) {
-					StartCombat(receiver, attacker); // Make actor hostile and add bounty of 40 (can't be configured, needs different hook probably). 
-				}
-			}
+			
 			ApplyDamage(attacker, receiver, value * difficulty * GetDamageSetting());
 		} else if (receiver->IsDead()) {
 			Task_InitHavokTask(receiver);

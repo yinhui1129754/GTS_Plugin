@@ -237,34 +237,35 @@ namespace Gts {
 		if (tiny->IsDead()) {
 			return;
 		}
-		if (!Runtime::HasPerkTeam(giant, "BoneCrusher")) {
-			return;
-		}
-		int rng = (rand()% random + 1);
-		if (rng <= 2 && random > 0) {
-			float gs = get_visual_scale(giant);
-			float ts = get_visual_scale(tiny);
-			if (HasSMT(giant)) {
-				gs += 3.0; // Allow to break bones with SMT
-			}
-			float sizediff = gs/ts;
-			if (sizediff < 3.0) {
-				return;
-			}
+		if (Runtime::HasPerkTeam(giant, "BoneCrusher")) {
+			if (random > 0) {
+				int rng = (rand()% random + 1);
+				if (rng <= 2) {
+					float gs = get_visual_scale(giant);
+					float ts = get_visual_scale(tiny);
+					if (HasSMT(giant)) {
+						gs += 3.0; // Allow to break bones with SMT
+					}
+					float sizediff = gs/ts;
+					if (sizediff < 3.0) {
+						return;
+					}
 
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dis(-0.2, 0.2);
-			if (!IsLiving(tiny)) {
-				SpawnDustParticle(giant, tiny, "NPC Root [Root]", 1.0);
-			} else {
-				auto root = find_node(tiny, "NPC Root [Root]");
-				if (root) {
-					SpawnParticle(tiny, 0.20, "GTS/Damage/Explode.nif", root->world.rotate, root->world.translate, ts * 1, 7, root);
+					std::random_device rd;
+					std::mt19937 gen(rd());
+					std::uniform_real_distribution<float> dis(-0.2, 0.2);
+					if (!IsLiving(tiny)) {
+						SpawnDustParticle(giant, tiny, "NPC Root [Root]", 1.0);
+					} else {
+						auto root = find_node(tiny, "NPC Root [Root]");
+						if (root) {
+							SpawnParticle(tiny, 0.20, "GTS/Damage/Explode.nif", root->world.rotate, root->world.translate, ts * 1, 7, root);
+						}
+					}
+					SizeManager::GetSingleton().ModSizeVulnerability(tiny, 0.05);
+					InflictSizeDamage(giant, tiny, damage);
 				}
 			}
-			SizeManager::GetSingleton().ModSizeVulnerability(tiny, 0.05);
-			InflictSizeDamage(giant, tiny, damage);
 		}
 	}
 }

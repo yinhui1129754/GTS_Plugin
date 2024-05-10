@@ -283,6 +283,11 @@ namespace Gts {
 					TransferInventory(smoll, giant, 1.0, false, true, DamageSource::Vored, true);
 				});
 			}
+		} else {
+			for (auto& [key, tinyref]: this->tinies) { // just clear the data
+				auto tiny = tinyref.get().get();
+				SetBeingHeld(tiny, false);
+			}
 		}
 		this->tinies.clear();
 	}

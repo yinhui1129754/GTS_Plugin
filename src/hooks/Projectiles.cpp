@@ -54,9 +54,7 @@ namespace {
 				log::info("3d1: fp");
 				node = projectile->Get3D1(true);
 			}
-			//log::info("3d1");
 		} if (!node) {
-			//log::info("3d");
 			node = projectile->Get3D();
 		} 
 		if (node) {
@@ -67,7 +65,7 @@ namespace {
 				auto owner_get = skyrim_cast<Actor*>(owner.get().get());
 				if (owner_get) {
 					//log::info("Owner_get found: {}", owner_get->GetDisplayFullName());
-					float scaling = get_visual_scale(owner_get);
+					float scaling = std::clamp(get_visual_scale(owner_get), 0.02f, 1.0f); // not bigger than 1.0x
 					node->local.scale *= scaling;
 
 					if (apply_speed) {
@@ -114,14 +112,14 @@ namespace Hooks
 
 		//_GetLinearVelocityProjectile = ProjectileVtbl.write_vfunc(0x86, GetLinearVelocityProjectile); // We don't need this one
 		_Handle3DLoaded_Arrow = ArrowProjectileVtbl.write_vfunc(0xC0, Handle3DLoaded_Arrow);
-		_AddImpact_Arrow = ArrowProjectileVtbl.write_vfunc(0xBD, AddImpact_Arrow);
+		/*_AddImpact_Arrow = ArrowProjectileVtbl.write_vfunc(0xBD, AddImpact_Arrow);
 		_Handle3DLoaded_Missile = MissileProjectileVtbl.write_vfunc(0xC0, Handle3DLoaded_Missile);
 		_Handle3DLoaded_Beam = BeamProjectileVtbl.write_vfunc(0xC0, Handle3DLoaded_Beam);
 		_Handle3DLoaded_Barrier = BarrierProjectileVtbl.write_vfunc(0xC0, Handle3DLoaded_Barrier);
 		_Handle3DLoaded_Cone = ConeProjectileVtbl.write_vfunc(0xC0, Handle3DLoaded_Cone);
 		_Handle3DLoaded_Flame = FlameProjectileVtbl.write_vfunc(0xC0, Handle3DLoaded_Flame); // FlameProjectile.cpp -> Handle3DLoaded (C0)
 
-		_Initialize_Explosion = ExplosionVtbl.write_vfunc(0x90, Initialize_Explosion);
+		_Initialize_Explosion = ExplosionVtbl.write_vfunc(0x90, Initialize_Explosion);*/
 	}
 
 	void Hook_Projectiles::GetLinearVelocityProjectile(RE::Projectile* a_this, RE::NiPoint3& a_outVelocity)
@@ -137,7 +135,7 @@ namespace Hooks
 		// Scale Arrow projectile once (when it first spawns). Affects only visuals.
 		log::info("Arrow True");
 		_Handle3DLoaded_Arrow(a_this);
-		ScaleProjectile(a_this, 10000.0, true);
+		ScaleProjectile(a_this, 1.0, false);
 	}
 
 	void Hook_Projectiles::AddImpact_Arrow(RE::Projectile* a_this, TESObjectREFR* a_ref, const NiPoint3& a_targetLoc, const NiPoint3& a_velocity, hkpCollidable* a_collidable, std::int32_t a_arg6, std::uint32_t a_arg7) {

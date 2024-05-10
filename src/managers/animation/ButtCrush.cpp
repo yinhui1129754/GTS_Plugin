@@ -65,7 +65,7 @@ namespace {
 	void StartRumble(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: ALL_RUMBLE_NODES) {
 			std::string rumbleName = std::format("ButtCrush_{}{}", tag, node_name);
-			Rumbling::Start(rumbleName, &actor, power, halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power / ALL_RUMBLE_NODES.size(), halflife, node_name);
 		}
 	}
 
@@ -141,7 +141,7 @@ namespace {
 
 		Runtime::PlaySoundAtNode("growthSound", giant, 1.0, 1.0, "NPC Pelvis [Pelv]");
 
-		StartRumble("BCRumble", data.giant, 0.08, 0.40);
+		StartRumble("BCRumble", data.giant, 1.25, 0.30);
 	}
 
 	void GTSBEH_ButtCrush_GrowthFinish(AnimationEventData& data) {

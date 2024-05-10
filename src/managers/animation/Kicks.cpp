@@ -46,7 +46,7 @@ namespace {
 		}
 	}
 
-	void StartDamageAt(Actor* actor, float power, float crush, float pushpower, std::string_view node, DamageSource Source) {
+	void StartDamageAt(Actor* actor, float power, float crush, float pushpower, bool Right, std::string_view node, DamageSource Source) {
 		std::string name = std::format("LegKick_{}", actor->formID);
 		auto gianthandle = actor->CreateRefHandle();
 
@@ -58,9 +58,13 @@ namespace {
 			}
 			auto giant = gianthandle.get().get();
 			auto Leg = find_node(giant, node);
+			GetFootCoordinates(actor, Right);
 			if (Leg) {
-				DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, 10, 0.30, crush, pushpower, Source);
-				PushObjects(Objects, giant, Leg, pushpower, Radius_Kick, true);
+				auto coords = GetFootCoordinates(actor, Right);
+				if (!coords.empty()) {
+					DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, coords[1], 10, 0.30, crush, pushpower, Source); // At Toe point
+					PushObjects(Objects, giant, Leg, pushpower, Radius_Kick, true);
+				}
 			}
 			return true;
 		});
@@ -92,11 +96,11 @@ namespace {
 	}
 
 	void GTS_Kick_HitBox_On_R(AnimationEventData& data) {
-		StartDamageAt(&data.giant, Damage_Kick, 1.8, Push_Kick_Normal, "NPC R Toe0 [RToe]", DamageSource::KickedRight);
+		StartDamageAt(&data.giant, Damage_Kick, 1.8, Push_Kick_Normal, true, "NPC R Toe0 [RToe]", DamageSource::KickedRight);
 		DrainStamina(&data.giant, "StaminaDrain_StrongKick", "DestructionBasics", true, 4.0);
 	}
 	void GTS_Kick_HitBox_On_L(AnimationEventData& data) {
-		StartDamageAt(&data.giant, Damage_Kick, 1.8, Push_Kick_Normal, "NPC L Toe0 [LToe]", DamageSource::KickedLeft);
+		StartDamageAt(&data.giant, Damage_Kick, 1.8, Push_Kick_Normal, false, "NPC L Toe0 [LToe]", DamageSource::KickedLeft);
 		DrainStamina(&data.giant, "StaminaDrain_StrongKick", "DestructionBasics", true, 4.0);
 	}
 	void GTS_Kick_HitBox_Off_R(AnimationEventData& data) {
@@ -107,11 +111,11 @@ namespace {
 	}
 
 	void GTS_Kick_HitBox_Power_On_R(AnimationEventData& data) {
-		StartDamageAt(&data.giant, Damage_Kick_Strong, 1.8, Push_Kick_Strong, "NPC R Toe0 [RToe]", DamageSource::KickedRight);
+		StartDamageAt(&data.giant, Damage_Kick_Strong, 1.8, Push_Kick_Strong, true, "NPC R Toe0 [RToe]", DamageSource::KickedRight);
 		DrainStamina(&data.giant, "StaminaDrain_StrongKick", "DestructionBasics", true, 8.0);
 	}
 	void GTS_Kick_HitBox_Power_On_L(AnimationEventData& data) {
-		StartDamageAt(&data.giant, Damage_Kick_Strong, 1.8, Push_Kick_Strong, "NPC L Toe0 [LToe]", DamageSource::KickedLeft);
+		StartDamageAt(&data.giant, Damage_Kick_Strong, 1.8, Push_Kick_Strong, false, "NPC L Toe0 [LToe]", DamageSource::KickedLeft);
 		DrainStamina(&data.giant, "StaminaDrain_StrongKick", "DestructionBasics", true, 8.0);
 	}
 	void GTS_Kick_HitBox_Power_Off_R(AnimationEventData& data) {

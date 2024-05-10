@@ -11,6 +11,8 @@ namespace Gts {
 		Main,
 		Camera,
 		Havok,
+		Bone,
+		Papyrus,
 	};
 
 	class BaseTask {
@@ -205,7 +207,36 @@ namespace Gts {
 				for (auto task: toRemove) {
 					this->taskings.erase(task);
 				}
+			}
 
+			virtual void BoneUpdate() override {
+				std::vector<std::string> toRemove = {};
+				for (auto& [name, task]: this->taskings) {
+					if (task->UpdateOn() == UpdateKind::Bone) {
+						if (!task->Update()) {
+							toRemove.push_back(name);
+						}
+					}
+				}
+
+				for (auto task: toRemove) {
+					this->taskings.erase(task);
+				}
+			}
+
+			virtual void PapyrusUpdate() override {
+				std::vector<std::string> toRemove = {};
+				for (auto& [name, task]: this->taskings) {
+					if (task->UpdateOn() == UpdateKind::Papyrus) {
+						if (!task->Update()) {
+							toRemove.push_back(name);
+						}
+					}
+				}
+
+				for (auto task: toRemove) {
+					this->taskings.erase(task);
+				}
 			}
 
 			static void ChangeUpdate(std::string_view name, UpdateKind updateOn) {

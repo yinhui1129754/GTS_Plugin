@@ -23,7 +23,7 @@ namespace {
 		return endless;
 	}
 
-    float get_default_size_limit(float NaturalScale, float BaseLimit) { // default sie limit for everyone
+    float get_default_size_limit(float NaturalScale, float BaseLimit) { // default size limit for everyone
         float size_calc = NaturalScale + ((BaseLimit - 1.0f) * NaturalScale);
         float GetLimit = std::clamp(size_calc, NaturalScale, 99999999.0f);
 
@@ -32,8 +32,9 @@ namespace {
 
     float get_mass_based_limit(Actor* actor, float NaturalScale) { // get mass based size limit for Player if using Mass Based mode
         float low_limit = get_endless_height(actor);
-        if (low_limit < 2) {
-            low_limit = Runtime::GetFloat("sizeLimit");
+        if (low_limit <= 0.0) {
+            low_limit = Runtime::GetFloat("sizeLimit"); // Cap max size through normal size rules
+            // Else max possible size is unlimited
         }
         float size_calc = NaturalScale + (Runtime::GetFloat("GtsMassBasedSize") * NaturalScale);
         float GetLimit = std::clamp(size_calc, NaturalScale, low_limit);
@@ -69,8 +70,6 @@ namespace Gts {
             float NaturalScale = get_natural_scale(actor);
             float QuestStage = Runtime::GetStage("MainQuest");
 			float GameScale = game_get_scale_overrides(actor);
-
-			
 
 			float BaseLimit = Runtime::GetFloatOr("sizeLimit", 1.0);
             float NPCLimit = Runtime::GetFloatOr("NPCSizeLimit", 1.0); // 0 by default

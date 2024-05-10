@@ -194,37 +194,32 @@ namespace Gts {
 	//===============Size-Vulnerability
 
 	void SizeManager::SetSizeVulnerability(Actor* actor, float amt) {
-		if (!actor) {
-			return;
+		if (actor) {
+			auto Transient = Transient::GetSingleton().GetData(actor);
+			if (Transient) {
+				Transient->SizeVulnerability = amt;
+			}
 		}
-		auto Persistent = Persistent::GetSingleton().GetData(actor);
-		if (!Persistent) {
-			return;
-		}
-		Persistent->SizeVulnerability = amt;
 	}
 
 	float SizeManager::GetSizeVulnerability(Actor* actor) {
-		if (!actor) {
-			return 0.0;
+		if (actor) {
+			auto Transient = Transient::GetSingleton().GetData(actor);
+			if (Transient) {
+				return std::clamp(Transient->SizeVulnerability, 0.0f, 0.35f);
+			}
 		}
-		auto Persistent = Persistent::GetSingleton().GetData(actor);
-		if (!Persistent) {
-			return 0.0;
-		}
-		return clamp(0.0, 3.0, Persistent->SizeVulnerability);
+		return 0.0;
 	}
 
 	void SizeManager::ModSizeVulnerability(Actor* actor, float amt) {
-		if (!actor) {
-			return;
-		}
-		auto Persistent = Persistent::GetSingleton().GetData(actor);
-		if (!Persistent) {
-			return;
-		}
-		if (Persistent->SizeVulnerability < 3) {
-			Persistent->SizeVulnerability += amt;
+		if (actor) {
+			auto Transient = Transient::GetSingleton().GetData(actor);
+			if (Transient) {
+				if (Transient->SizeVulnerability < 0.35) {
+					Transient->SizeVulnerability += amt;
+				}
+			}
 		}
 	}
 	//===============Size-Vulnerability
@@ -251,7 +246,17 @@ namespace Gts {
 		if (!Persistent) {
 			return;
 		}
-		Persistent->AllowHitGrowth = allow;
+
+		for (auto follower: FindTeammates()) {
+			if (follower) {
+				auto TeammateData = Persistent::GetSingleton().GetData(follower);
+				if (TeammateData) {
+					TeammateData->AllowHitGrowth = allow; // Affect teammates as well
+				}
+			}
+		}
+
+		Persistent->AllowHitGrowth = allow; // Affect the player
 	}
 
 	//===============Size-Vulnerability

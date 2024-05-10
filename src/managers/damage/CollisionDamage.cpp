@@ -87,10 +87,10 @@ namespace {
 			case DamageSource::CrushedLeft:
 				HighHeel = true;
 			break;
-			case DamageSource::KickedRight:
+			case DamageSource::WalkRight:
 				HighHeel = true;
 			break;
-			case DamageSource::KickedLeft:
+			case DamageSource::WalkLeft:
 				HighHeel = true;
 			break;
 		}
@@ -98,11 +98,10 @@ namespace {
 	}
 
 	void ModVulnerability(Actor* giant, Actor* tiny, float damage) {
-		if (!Runtime::HasPerkTeam(giant, "GrowingPressure")) {
-			return;
+		if (Runtime::HasPerkTeam(giant, "GrowingPressure")) {
+			auto& sizemanager = SizeManager::GetSingleton();
+			sizemanager.ModSizeVulnerability(tiny, damage * 0.0015);
 		}
-		auto& sizemanager = SizeManager::GetSingleton();
-		sizemanager.ModSizeVulnerability(tiny, damage * 0.0015);
 	}
 
 	float HighHeels_PerkDamage(Actor* giant, DamageSource Cause) {

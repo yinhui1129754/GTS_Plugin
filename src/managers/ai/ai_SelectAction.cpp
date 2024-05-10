@@ -86,18 +86,21 @@ namespace Gts {
 
 	void AI_TryAction(Actor* actor) {
 		float scale = std::clamp(get_visual_scale(actor), 1.0f, 6.0f);
-
+		if (GetAV(actor, ActorValue::kHealth) < 0) {
+			log::info("Action: {} Health is < 0", actor->GetDisplayFullName());
+			return;
+		}
 		if (!IsGtsBusy(actor)) {
 			int rng = rand() % 100;
 			if (rng > 7 && rng < 33 * scale) {
-				AI_DoStompAndButtCrush(actor);
+				AI_DoStomp_Kick_ButtCrush(actor);
 				return;
-			} else if (rng > 2 && rng < 7) {
+			} else if (rng > 3 && rng < 7) {
 				AI_DoSandwich(actor);
 				return;
-			} else if (rng <= 2) {
+			} else if (rng <= 3) {
 				int HugsOrThigh = rand()% 10;
-				if (HugsOrThigh > 4) {
+				if (HugsOrThigh > 5) {
 					AI_DoHugs(actor);
 				} else {
 					AI_DoThighCrush(actor);
@@ -107,7 +110,7 @@ namespace Gts {
 		// Random Vore is managed inside Vore.cpp, RandomVoreAttempt(Actor* pred) function
 	}
 
-	void AI_DoStompAndButtCrush(Actor* pred) {
+	void AI_DoStomp_Kick_ButtCrush(Actor* pred) {
 		int rng = rand() % 10;
         int butt_rng = rand() % 10;
         int action_rng = rand() % 10;
@@ -144,7 +147,7 @@ namespace Gts {
 			return;
 		}
 		int rng = rand() % 7;
-		if (rng >= 6) {
+		if (rng >= 5) {
 			if (CanDoPaired(pred) && !IsSynced(pred) && !IsTransferingTiny(pred)) {
 				auto& hugs = HugAnimationController::GetSingleton();
 				std::size_t numberOfPrey = 1;

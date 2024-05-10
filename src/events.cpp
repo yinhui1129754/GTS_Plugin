@@ -12,6 +12,9 @@ namespace Gts {
 	void EventListener::Update() {
 	}
 
+	void EventListener::BoneUpdate() {
+	}
+
 	// Called on Papyrus OnUpdate
 	void EventListener::PapyrusUpdate() {
 
@@ -119,6 +122,15 @@ namespace Gts {
 			listener->Update();
 		}
 	}
+
+	void EventDispatcher::DoBoneUpdate() {
+		for (auto listener: EventDispatcher::GetSingleton().listeners) {
+			auto profiler = Profilers::Profile(listener->DebugName());
+			listener->BoneUpdate();
+			log::info("BoneUpdateRunning");
+		}
+	}
+
 	void EventDispatcher::DoPapyrusUpdate() {
 		for (auto listener: EventDispatcher::GetSingleton().listeners) {
 			auto profiler = Profilers::Profile(listener->DebugName());

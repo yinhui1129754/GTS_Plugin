@@ -10,7 +10,7 @@ using namespace RE;
 
 namespace Gts {
     void AI_TryAction(Actor* actor);
-    void AI_DoStompAndButtCrush(Actor* pred);
+    void AI_DoStomp_Kick_ButtCrush(Actor* pred);
     void AI_DoSandwich(Actor* pred);
     void AI_DoHugs(Actor* pred);
     void AI_StartHugs(Actor* pred, Actor* prey);

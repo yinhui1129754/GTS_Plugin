@@ -32,6 +32,45 @@ namespace {
 	const auto KillMoveFrontSideRoot00 =    0x100e8B;
 	const auto KillMoveBackSideRoot00 =     0x100F16;
 
+	// Attacks that we want to prevent
+
+	const auto MountedDraw = 16779659;
+	const auto DrawMagic = 561168;
+	const auto DefaultDrawWeapon = 561169;
+	//const auto NonMountedDraw = 16779666;
+	const auto DrawSheathRoot = 78512;
+
+	// Magic
+	const auto CastDualMagic = 220049;
+	const auto AttackMagicLeftRoot = 116570;
+	const auto AttackMagicRightRoot = 116321;
+
+
+	// Left Hand
+	const auto BowLeftAttack = 619835;
+	const auto LeftHandAttack = 765123;
+	const auto AttackLeftRoot = 78358;
+	const auto LeftAttackRelease = 16779651;
+	const auto ReleaseLeftRoot = 78940;
+	// Normal attack
+	const auto NormalAttack = 78357;
+
+	// Right Hand
+	const auto AttackRightRoot = 78353;
+	const auto RightAttackRelease = 83292;
+	const auto ReleaseRightRoot = 78943;
+	// Power attacks
+	const auto PowerAttack = 951382;
+	const auto PowerBash = 951378;
+	const auto PowerAttackRoot = 78724;
+	// Sprint
+	const auto SprintStart = 1069299;
+	const auto SprintRootStart = 242856;
+	const auto SprintRootStop = 78362;
+	// Blocking
+	const auto BlockHit = 80631;
+	const auto BlockHitRoot = 80630;
+
 	bool ShouldBlockFalling(Actor* actor) {
 		bool block = false;
 		auto charCont = actor->GetCharController();
@@ -98,6 +137,37 @@ namespace {
 		return Block;
 	}
 
+	bool IsDisallowed(FormID idle) {
+		switch (idle) {
+			case DefaultSheathe:
+				//log::info("Block DefaultSheathe");
+				return true;
+			break;	
+			case JumpRoot:
+				//log::info("Block JumpRoot");
+				return true;
+			break;	
+			case NonMountedDraw:
+				//log::info("Block NonMountedDraw");
+				return true;
+			break;	
+			case NonMountedForceEquip:
+				//log::info("Block NonMountedForceEquip");
+				return true;
+			break;	
+			case JumpStandingStart:
+				//log::info("Block JumpStandingStart");
+				return true;	
+			break;	
+			case JumpDirectionalStart:
+				//log::info("Block JumpDirectionalStart");
+				return true;	
+			break;
+			return false;
+		}
+		return false;
+	}
+
 	bool BlockAnimation(TESIdleForm* idle, ConditionCheckParams* params) {
 		if (!idle) {
 			return false;
@@ -108,8 +178,6 @@ namespace {
 		Actor* performer = params->actionRef->As<RE::Actor>();
 
 		if (performer) {
-			//auto* EventName = idle->GetFormEditorID();
-
 			if (PreventKillMove(Form, params, performer, params->targetRef)) {
 				//log::info("KILLMOVE PREVENTED");
 				//log::info("Block PreventKillMove");
@@ -118,10 +186,10 @@ namespace {
 
 			if (IsThighSandwiching(performer)) { // Disallow anims in these 2 cases 
 				//log::info("Block IsThighSandwiching");
-				return true;
+				return IsDisallowed(Form);
 			} if (IsBetweenBreasts(performer)) {
 				//log::info("Block IsBetweenBreasts");
-				return true;
+				return IsDisallowed(Form);
 			}
 
 			if (PreventJumpFall(Form, performer)) {
@@ -131,7 +199,7 @@ namespace {
 
 			if (performer->formID == 0x14 && IsGtsBusy(performer) && IsFreeCameraEnabled()) {
 				//log::info("Block performer->formID == 0x14 && IsGtsBusy(performer) && IsFreeCameraEnabled()");
-				return true; 							// One of cases when we alter anims for Player. 
+				return IsDisallowed(Form); 							// One of cases when we alter anims for Player. 
 				// Needed because it's problematic to disallow specific controls through controls.hpp
 			}
 
@@ -140,35 +208,8 @@ namespace {
 				return false;
 			}
 
-			switch (Form) {
-				case DefaultSheathe:
-					//log::info("Block DefaultSheathe");
-					return true;
-				break;	
-				case JumpRoot:
-					//log::info("Block JumpRoot");
-					return true;
-				break;	
-				case NonMountedDraw:
-					//log::info("Block NonMountedDraw");
-					return true;
-				break;	
-				case NonMountedForceEquip:
-					//log::info("Block NonMountedForceEquip");
-					return true;
-				break;	
-				case JumpStandingStart:
-					//log::info("Block JumpStandingStart");
-					return true;	
-				break;	
-				case JumpDirectionalStart:
-					//log::info("Block JumpDirectionalStart");
-					return true;	
-				break;
-				return false;
-			}
+			return IsDisallowed(Form);
 			//log::info("Blocking anims for {}", performer->GetDisplayFullName());
-			return false;
 		}
 		return false;
 	}

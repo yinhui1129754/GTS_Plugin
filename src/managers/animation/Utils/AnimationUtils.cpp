@@ -874,108 +874,101 @@ namespace Gts {
 			}
 		}
 	}
-	
 
-	void DoDamageAtPoint_Cooldown(Actor* giant, float radius, float damage, NiAVObject* node, float random, float bbmult, float crushmult, float pushpower, DamageSource Cause) { // Apply crawl damage to each bone individually
+	void DoDamageAtPoint_Cooldown(Actor* giant, float radius, float damage, NiAVObject* node, NiPoint3 NodePosition, float random, float bbmult, float crushmult, float pushpower, DamageSource Cause) { // Apply crawl damage to each bone individually
 		auto profiler = Profilers::Profile("Other: CrawlDamage");
-		if (!node) {
-			return;
-		}
-		if (!giant) {
-			return;
-		}
-		auto& sizemanager = SizeManager::GetSingleton();
-		float giantScale = get_visual_scale(giant);
+		if (node) {
+			if (!giant) {
+				return;
+			}
+			auto& sizemanager = SizeManager::GetSingleton();
+			float giantScale = get_visual_scale(giant);
 
-		float SCALE_RATIO = 1.0;
-		bool SMT = false;
+			float SCALE_RATIO = 1.0;
+			bool SMT = false;
 
+			if (NodePosition.Length() < 1) {
+				NodePosition = node->world.translate;
+			}
 
-		if (HasSMT(giant)) {
-			giantScale += 2.40; // enough to push giants around, but not mammoths/dragons
-			SMT = true; // set SMT to true
-		}
+			if (HasSMT(giant)) {
+				giantScale += 2.40; // enough to push giants around, but not mammoths/dragons
+				SMT = true; // set SMT to true
+			}
 
-		NiPoint3 NodePosition = node->world.translate;
+			float maxDistance = radius * giantScale;
+			float CheckDistance = 220 * giantScale;
 
-		if (Cause == DamageSource::KickedLeft || Cause == DamageSource::KickedRight) {
-			// Apply Down offset in that case
-			float HH = HighHeelManager::GetHHOffset(giant).Length();
-			NodePosition.z -= HH * 0.75;
-		}
+			if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant))) {
+				DebugAPI::DrawSphere(glm::vec3(NodePosition.x, NodePosition.y, NodePosition.z), maxDistance, 400.0);
+			}
 
-		float maxDistance = radius * giantScale;
-		float CheckDistance = 220 * giantScale;
+			NiPoint3 giantLocation = giant->GetPosition();
 
-		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant))) {
-			DebugAPI::DrawSphere(glm::vec3(NodePosition.x, NodePosition.y, NodePosition.z), maxDistance, 400.0);
-		}
+			for (auto otherActor: find_actors()) {
+				if (otherActor != giant) {
+					float tinyScale = get_visual_scale(otherActor);
+					NiPoint3 actorLocation = otherActor->GetPosition();
+					if ((actorLocation - giantLocation).Length() < CheckDistance) {
+						tinyScale *= GetSizeFromBoundingBox(otherActor); // take Giant/Dragon scale into account
 
-		NiPoint3 giantLocation = giant->GetPosition();
+						int nodeCollisions = 0;
+						float force = 0.0;
 
-		for (auto otherActor: find_actors()) {
-			if (otherActor != giant) {
-				float tinyScale = get_visual_scale(otherActor);
-				NiPoint3 actorLocation = otherActor->GetPosition();
-				if ((actorLocation - giantLocation).Length() < CheckDistance) {
-					tinyScale *= GetSizeFromBoundingBox(otherActor); // take Giant/Dragon scale into account
+						auto model = otherActor->GetCurrent3D();
 
-					int nodeCollisions = 0;
-					float force = 0.0;
+						if (model) {
+							VisitNodes(model, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
+								float distance = (NodePosition - a_obj.world.translate).Length();
+								if (distance < maxDistance) {
+									nodeCollisions += 1;
+									force = 1.0 - distance / maxDistance;
+									return false;
+								}
+								return true;
+							});
+						}
+						if (nodeCollisions > 0) {
+							bool allow = IsActionOnCooldown(otherActor, CooldownSource::Damage_Hand);
+							if (!allow) {
+								float aveForce = std::clamp(force, 0.16f, 0.70f);
+								float pushForce = std::clamp(force, 0.04f, 0.10f);
+								float audio = 1.0;
+								if (SMT) {
+									pushForce *= 1.5;
+									audio = 3.0;
+								}
+								if (otherActor->IsDead()) {
+									tinyScale *= 0.6;
+								}
 
-					auto model = otherActor->GetCurrent3D();
+								float difference = giantScale / tinyScale;
+								float Threshold = GetStaggerThreshold(Cause);
 
-					if (model) {
-						VisitNodes(model, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
-							float distance = (NodePosition - a_obj.world.translate).Length();
-							if (distance < maxDistance) {
-								nodeCollisions += 1;
-								force = 1.0 - distance / maxDistance;
-								return false;
+								int Random = rand() % 100 + 1;
+								int RagdollChance = (-32 + (32 / Threshold) * difference);
+								bool roll = RagdollChance > Random;
+								//log::info("Roll: {}, RandomChance {}, Threshold: {}", roll, RagdollChance, Random);
+								//eventually it reaches 100% chance to ragdoll an actor (at ~x3.0 size difference)
+
+								if (difference > 1.35 && (roll || otherActor->IsDead())) {
+									PushTowards(giant, otherActor, node, pushForce * pushpower, true);
+								} else if (difference > 0.88 * Threshold) {
+									float push = std::clamp(0.25f * (difference - 0.25f), 0.25f, 1.0f);
+									StaggerActor(giant, otherActor, push);
+								}
+
+								float Volume = std::clamp(difference*pushForce, 0.15f, 1.0f);
+
+								auto node = find_node(giant, GetDeathNodeName(Cause));
+								if (node) {
+									Runtime::PlaySoundAtNode("SwingImpact", giant, Volume, 1.0, node); // play swing impact sound
+								}
+
+								ApplyActionCooldown(otherActor, CooldownSource::Damage_Hand);
+								ApplyShakeAtPoint(giant, 1.8 * pushpower * audio, node->world.translate, 0.0);
+								CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 							}
-							return true;
-						});
-					}
-					if (nodeCollisions > 0) {
-						bool allow = IsActionOnCooldown(otherActor, CooldownSource::Damage_Hand);
-						if (!allow) {
-							float aveForce = std::clamp(force, 0.16f, 0.70f);
-							float pushForce = std::clamp(force, 0.04f, 0.10f);
-							float audio = 1.0;
-							if (SMT) {
-								pushForce *= 1.5;
-								audio = 3.0;
-							}
-							if (otherActor->IsDead()) {
-								tinyScale *= 0.6;
-							}
-
-							float difference = giantScale / tinyScale;
-							float Threshold = GetStaggerThreshold(Cause);
-
-							int Random = rand() % 100 + 1;
-							int RagdollChance = (-32 + (32 / Threshold) * difference);
-							bool roll = RagdollChance > Random;
-							//log::info("Roll: {}, RandomChance {}, Threshold: {}", roll, RagdollChance, Random);
-							//eventually it reaches 100% chance to ragdoll an actor (at ~x3.0 size difference)
-
-							if (difference > 1.35 && (roll || otherActor->IsDead())) {
-								PushTowards(giant, otherActor, node, pushForce * pushpower, true);
-							} else if (difference > 0.88 * Threshold) {
-								float push = std::clamp(0.25f * (difference - 0.25f), 0.25f, 1.0f);
-								StaggerActor(giant, otherActor, push);
-							}
-
-							float Volume = std::clamp(difference*pushForce, 0.15f, 1.0f);
-
-							auto node = find_node(giant, GetDeathNodeName(Cause));
-							if (node) {
-								Runtime::PlaySoundAtNode("SwingImpact", giant, Volume, 1.0, node); // play swing impact sound
-							}
-
-							ApplyActionCooldown(otherActor, CooldownSource::Damage_Hand);
-							ApplyShakeAtPoint(giant, 1.8 * pushpower * audio, node->world.translate, 0.0);
-							CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 						}
 					}
 				}
@@ -1219,16 +1212,13 @@ namespace Gts {
 		std::string_view CalfLookup = leftCalfLookup;
 		std::string_view ToeLookup = leftToeLookup;
 
-		std::string_view CalfLookup_Failed = leftCalfLookup_failed; // Used if DLL fails to find what it needs
-		std::string_view ToeLookup_Failed = leftToeLookup_failed;
-
+		std::string_view ToeFailed = leftToeLookup_failed;
 		if (Right) {
 			FootLookup = rightFootLookup;
 			CalfLookup = rightCalfLookup;
 			ToeLookup = rightToeLookup;
 
-			CalfLookup_Failed = rightCalfLookup_failed;
-			ToeLookup_Failed = rightToeLookup_failed;
+			ToeFailed = rightToeLookup_failed;
 		}
 
 		auto Foot = find_node(actor, FootLookup);
@@ -1239,17 +1229,11 @@ namespace Gts {
 			return footPoints;
 		}
 		if (!Calf) {
-			Calf = find_node(actor, CalfLookup_Failed); // Not all skeletons have them
-			//log::info("Calf1 not found");
-			if (!Calf) {
-				//log::info("Calf2 not found");
-				return footPoints;
-			}
+			return footPoints;
 		}
 		if (!Toe) {
-			Toe = find_node(actor, ToeLookup_Failed); // Not all skeletons have them
+			Toe = find_node(actor, ToeFailed);
 			if (!Toe) {
-				//log::info("Missing Toe node");
 				return footPoints;
 			}
 		}
@@ -1262,7 +1246,9 @@ namespace Gts {
 			NiPoint3 forward = inverseFoot*toe->world.translate;
 			forward = forward / forward.Length();
 
-			NiPoint3 up = inverseFoot*((calf->world.translate + foot->world.translate) / 2);
+			NiPoint3 up_1 = ((calf->world.translate + foot->world.translate) / 2);
+
+			NiPoint3 up = inverseFoot*((up_1 + foot->world.translate) / 2);
 
 			up = up / up.Length();
 
@@ -1278,7 +1264,7 @@ namespace Gts {
 			// x = side, y = forward, z = up/down      
 			NiPoint3(0.0, hh/10, -(0.25 + hh * 0.25)), 	// basic foot pos
 			// ^ Point 1: ---()  
-			NiPoint3(0.0, 8.0 + hh/10, -hh * 1.10), // Toe point		
+			NiPoint3(0.0, 8.0 + hh/10, -(0.5 + hh)), // Toe point		
 			// ^ Point 2: ()---   
 			NiPoint3(0.0, hh/70, -hh * 1.10), // Underheel point 
 			//            -----
@@ -1388,9 +1374,9 @@ namespace Gts {
 		float start = Time::WorldTimeElapsed();
 		std::string name = std::format("{}_Facial_{}", naming, giant->formID);
 
-		AdjustFacialExpression(giant, 0, 1.0, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 1.0, "modifier"); // blink R
-		AdjustFacialExpression(giant, 0, 0.75, "phenome"); // open mouth
+		AdjustFacialExpression(giant, 0, 1.0, 0.0, duration/2, "modifier"); // blink L
+		AdjustFacialExpression(giant, 1, 1.0, 0.0, duration/2, "modifier"); // blink R
+		AdjustFacialExpression(giant, 0, 1.0, "phenome"); // open mouth
 
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!giantHandle) {
@@ -1399,9 +1385,10 @@ namespace Gts {
 			float finish = Time::WorldTimeElapsed();
 			auto giantref = giantHandle.get().get();
 			float timepassed = finish - start;
+
 			if (timepassed >= duration) {
-				AdjustFacialExpression(giantref, 0, 0.0, "modifier"); // blink L
-				AdjustFacialExpression(giantref, 1, 0.0, "modifier"); // blink R
+				AdjustFacialExpression(giant, 0, 0.0, 0.0, 0.0, "modifier"); // blink L
+				AdjustFacialExpression(giant, 1, 0.0, 0.0, 0.0, "modifier"); // blink R
 				AdjustFacialExpression(giantref, 0, 0.0, "phenome"); // close mouth
 				return false;
 			}

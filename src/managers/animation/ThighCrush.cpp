@@ -95,14 +95,14 @@ namespace {
 	void StartLegRumbling(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: LEG_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power / LEG_RUMBLE_NODES.size(),  halflife, node_name);
 		}
 	}
 
 	void StartBodyRumble(std::string_view tag, Actor& actor, float power, float halflife) {
 		for (auto& node_name: BODY_RUMBLE_NODES) {
 			std::string rumbleName = std::format("{}{}", tag, node_name);
-			Rumbling::Start(rumbleName, &actor, power,  halflife, node_name);
+			Rumbling::Start(rumbleName, &actor, power / BODY_RUMBLE_NODES.size(),  halflife, node_name);
 		}
 	}
 
@@ -181,7 +181,7 @@ namespace {
 
 	void GTStosit(AnimationEventData& data) {
 		float speed = data.animSpeed;
-		StartLegRumbling("ThighCrush", data.giant, 0.06, 0.10);
+		StartLegRumbling("ThighCrush", data.giant, 1.35, 0.10);
 		ManageCamera(&data.giant, true, CameraTracking::Thigh_Crush); // Track feet
 
 		RunThighCollisionTask(&data.giant, true, false, Radius_ThighCrush_Idle, Damage_ThighCrush_Legs_Idle, 0.02, 2.0, 600, "ThighIdle_R");
@@ -193,7 +193,7 @@ namespace {
 
 	void GTSsitloopenter(AnimationEventData& data) {
 		float speed = data.animSpeed;
-		StartLegRumbling("ThighCrush", data.giant, 0.07 * speed, 0.10);
+		StartLegRumbling("ThighCrush", data.giant, 1.25 * speed, 0.10);
 		data.disableHH = true;
 		data.HHspeed = 4.0;
 		data.stage = 2;
@@ -206,6 +206,7 @@ namespace {
 	}
 
 	void GTSsitloopend(AnimationEventData& data) {
+		StopLegRumbling("ThighCrush", data.giant);
 		data.stage = 4;
 	}
 

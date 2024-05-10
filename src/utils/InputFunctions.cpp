@@ -205,27 +205,32 @@ namespace {
 			return;
 		}
 		if (Cache->SizeReserve > 0.0) {
-			float duration = data.Duration();
-			float shake_power = std::clamp(Cache->SizeReserve/15 * duration, 0.0f, 2.0f);
-			Rumbling::Once("SizeReserve", player, shake_power, 0.05);
+			bool Attacking = false;
+			player->GetGraphVariableBool("GTS_IsGrabAttacking", Attacking);
 
-			if (duration >= 1.2 && Runtime::HasPerk(player, "SizeReserve") && Cache->SizeReserve > 0) {
-				float SizeCalculation = duration - 1.2;
-				float gigantism = 1.0 + Ench_Aspect_GetPower(player);
-				float Volume = std::clamp(get_visual_scale(player) * Cache->SizeReserve/10.0f, 0.10f, 2.0f);
-				static Timer timergrowth = Timer(3.00);
-				if (timergrowth.ShouldRunFrame()) {
-					Runtime::PlaySoundAtNode("growthSound", player, Cache->SizeReserve/50 * duration, 1.0, "NPC Pelvis [Pelv]");
-					Task_FacialEmotionTask_Moan(player, 2.0, "SizeReserve");
-					PlayMoanSound(player, Volume);
-				}
+			if (!Attacking) {
+				float duration = data.Duration();
+				float shake_power = std::clamp(Cache->SizeReserve/15 * duration, 0.0f, 2.0f);
+				Rumbling::Once("SizeReserve", player, shake_power, 0.05);
 
-				update_target_scale(player, (SizeCalculation/80) * gigantism, SizeEffectType::kNeutral);
-				regenerate_health(player, (SizeCalculation/80) * gigantism);
+				if (duration >= 1.2 && Runtime::HasPerk(player, "SizeReserve") && Cache->SizeReserve > 0) {
+					float SizeCalculation = duration - 1.2;
+					float gigantism = 1.0 + Ench_Aspect_GetPower(player);
+					float Volume = std::clamp(get_visual_scale(player) * Cache->SizeReserve/10.0f, 0.10f, 2.0f);
+					static Timer timergrowth = Timer(3.00);
+					if (timergrowth.ShouldRunFrame()) {
+						Runtime::PlaySoundAtNode("growthSound", player, Cache->SizeReserve/50 * duration, 1.0, "NPC Pelvis [Pelv]");
+						Task_FacialEmotionTask_Moan(player, 2.0, "SizeReserve");
+						PlayMoanSound(player, Volume);
+					}
 
-				Cache->SizeReserve -= SizeCalculation/80;
-				if (Cache->SizeReserve <= 0) {
-					Cache->SizeReserve = 0.0; // Protect against negative values.
+					update_target_scale(player, (SizeCalculation/80) * gigantism, SizeEffectType::kNeutral);
+					regenerate_health(player, (SizeCalculation/80) * gigantism);
+
+					Cache->SizeReserve -= SizeCalculation/80;
+					if (Cache->SizeReserve <= 0) {
+						Cache->SizeReserve = 0.0; // Protect against negative values.
+					}
 				}
 			}
 		}

@@ -15,6 +15,7 @@
 #include "managers/tremor.hpp"
 #include "managers/Rumble.hpp"
 #include "data/persistent.hpp"
+#include "ActionSettings.hpp"
 #include "managers/vore.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
@@ -24,7 +25,7 @@
 
 namespace {
 	const float MINIMUM_STOMP_DISTANCE = 50.0;
-	const float MINIMUM_STOMP_SCALE_RATIO = 1.75;
+	const float MINIMUM_STOMP_SCALE_RATIO = 1.5;
 	const float STOMP_ANGLE = 50;
 	const float PI = 3.14159;
 
@@ -41,23 +42,30 @@ namespace {
 			log::info("{} Is Gts Busy", pred->GetDisplayFullName());
 			return; // No Vore attempts if in GTS_Busy
 		}
+
+		if (GetAV(pred, ActorValue::kHealth) < 0) {
+			log::info("{} Health is < 0", pred->GetDisplayFullName());
+			return;
+		}
+		
 		log::info("PerformRandomVore started");
 		auto& VoreManager = Vore::GetSingleton();
 
 		for (auto actor: find_actors()) {
-			if (!actor->Is3DLoaded() || actor->IsDead()) {
-				return;
-			}
-			int Requirement = 20 * SizeManager::GetSingleton().BalancedMode();
+			if (actor->Is3DLoaded()) {
+				if (!actor->IsDead()) {
+					int Requirement = 14 * SizeManager::GetSingleton().BalancedMode();
 
-			int random = rand() % Requirement;
-			int trigger_threshold = 2;
-			if (random <= trigger_threshold) {
-				log::info("Random < threshold");
-				std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, 1);
-				for (auto prey: preys) {
-					VoreManager.StartVore(pred, prey);
-					log::info("StartVore called, can vore: {}", VoreManager.CanVore(pred, prey));
+					int random = rand() % Requirement;
+					int trigger_threshold = 2;
+					if (random <= trigger_threshold) {
+						log::info("Random < threshold");
+						std::vector<Actor*> preys = VoreManager.GetVoreTargetsInFront(pred, 1);
+						for (auto prey: preys) {
+							VoreManager.StartVore(pred, prey);
+							log::info("StartVore called, can vore: {}", VoreManager.CanVore(pred, prey));
+						}
+					}
 				}
 			}
 		}
@@ -121,7 +129,7 @@ namespace Gts {
 					Actor* Performer = AbleToAct[idx];
 					if (Performer) {
 						AI_TryAction(Performer);
-						log::info("Performing action on {}, AbleToAct size: {}", Performer->GetDisplayFullName(), AbleToAct.size());
+						//log::info("Performing action on {}, AbleToAct size: {}", Performer->GetDisplayFullName(), AbleToAct.size());
 					}
 				}
 			}
@@ -226,7 +234,7 @@ namespace Gts {
 		if (IsCrawling(pred)) {
 			bonus = 2.0; // +100% stomp distance
 		}
-		if (prey->IsDead() && pred_scale/prey_scale < 8.0) {
+		if (prey->IsDead() && pred_scale/prey_scale < Action_Crush) {
 			return false;
 		}
 

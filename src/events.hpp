@@ -216,6 +216,8 @@ namespace Gts {
 			// Called on Live (non paused) gameplay
 			virtual void Update();
 
+			virtual void BoneUpdate();
+
 			// Called on Papyrus OnUpdate
 			virtual void PapyrusUpdate();
 
@@ -287,6 +289,7 @@ namespace Gts {
 
 			static void AddListener(EventListener* listener);
 			static void DoUpdate();
+			static void DoBoneUpdate();
 			static void DoPapyrusUpdate();
 			static void DoHavokUpdate();
 			static void DoCameraUpdate();

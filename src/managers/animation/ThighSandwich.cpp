@@ -316,7 +316,7 @@ namespace {
 		DoLaunch(&data.giant, 0.85 * perk, 3.2, FootEvent::Left);
 
 		
-		float shake_power = Rumble_ThighSandwich_DropDown * GetHighHeelsBonusDamage(&data.giant, true);
+		float shake_power = Rumble_ThighSandwich_DropDown/2 * GetHighHeelsBonusDamage(&data.giant, true);
 
 		if (HasSMT(&data.giant)) {
 			shake_power *= 2.0;

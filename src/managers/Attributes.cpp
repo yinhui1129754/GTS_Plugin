@@ -140,9 +140,16 @@ namespace Gts {
 		}
 
 		float BalancedMode = SizeManager::GetSingleton().BalancedMode();
+		float natural_scale = get_natural_scale(actor, true);
 		float scale = get_giantess_scale(actor);
 		if (scale <= 0) {
 			scale = 1.0;
+		} 
+		if (scale < 1.0) {
+			scale /= natural_scale; 
+			// Fix: negative bonuses when natural scale is < 1.0
+			// No Fix: 0.91/1.0 = 0.91   (0.91 is just example of current size)
+			// Fix:    0.91/0.91(natural size) = 1.0
 		}
 		switch (av) {
 			case ActorValue::kHealth: {
@@ -182,7 +189,6 @@ namespace Gts {
 			case ActorValue::kSpeedMult: {
 				// TODO: Rework to something more succient that garuentees 1xspeed@1xscale
 				SoftPotential& MS_adjustment = Persistent::GetSingleton().MS_adjustment;
-				scale = get_visual_scale(actor); // take real scale into account for MS, makes sense after all. Smaller = slower.
 				float MS_mult = soft_core(scale, MS_adjustment);
 				float MS_mult_limit = std::clamp(MS_mult, 0.750f, 1.0f);
 				float Multy = std::clamp(MS_mult, 0.70f, 1.0f);

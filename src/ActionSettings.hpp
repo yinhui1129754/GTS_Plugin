@@ -22,10 +22,10 @@ namespace Gts {
 
 //-----------------------------------------Default Damage Values
 
-    const float Damage_Grab_Attack = 1.6f;
+    const float Damage_Grab_Attack = 3.6f;
     ////////////////Defaults
 
-    const float Damage_Default_Underfoot = 0.004f; // when we just stand still
+    const float Damage_Default_Underfoot = 0.003f; // when we just stand still
 
     const float Damage_Walk_Defaut = 9.0f; // when we walk around normally
     const float Damage_Jump_Default = 10.0f; // when we jump land
@@ -257,8 +257,8 @@ namespace Gts {
     const float Rumble_Grab_Hand_Attack = 3.4f;
 
     // Thigh Sandwich
-    const float Rumble_ThighSandwich_ThighImpact_Heavy = 3.4f;
-    const float Rumble_ThighSandwich_ThighImpact = 2.6f;
+    const float Rumble_ThighSandwich_ThighImpact_Heavy = 2.8f;
+    const float Rumble_ThighSandwich_ThighImpact = 2.0f;
     const float Rumble_ThighSandwich_DropDown = 3.2f;
 
     /// Thigh Crush
@@ -266,8 +266,8 @@ namespace Gts {
     const float Rumble_ThighCrush_LegSpread_Light_End = 0.16f;
     const float Rumble_ThighCrush_LegCross_Heavy_End = 0.18f;
 
-    const float Rumble_ThighCrush_LegSpread_Light_Loop = 0.12f;
-    const float Rumble_ThighCrush_LegSpread_Heavy_Loop = 0.16f;
+    const float Rumble_ThighCrush_LegSpread_Light_Loop = 1.20f;
+    const float Rumble_ThighCrush_LegSpread_Heavy_Loop = 1.45f;
 
 
     // Butt crush

@@ -52,7 +52,7 @@ namespace Hooks
 		trampoline.create(512);
 
 		Hook_MainUpdate::Hook(trampoline);
-		//Hook_Projectiles::Hook(); // Experimental stuff with scaling arrows and other projectiles. It works but mostly visually.
+		Hook_Projectiles::Hook(); // Experimental stuff with scaling arrows and other projectiles. It works but mostly visually.
 		Hook_BGSImpactManager::Hook();
 		Hook_BGSImpactManager::Hook(trampoline);
 		Hook_VM::Hook();
