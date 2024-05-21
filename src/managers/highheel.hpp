@@ -27,6 +27,7 @@ namespace Gts {
 			static void UpdateHHOffset(Actor* actor);
 			static NiPoint3 GetBaseHHOffset(Actor* actor); // Unscaled HH as read from the shoe data
 			static NiPoint3 GetHHOffset(Actor* actor); // Scaled HH
+			static float GetHHMultiplier(Actor* actor); // get current multiplier of HH
 
 			void ApplyHH(Actor* actor, bool force);
 

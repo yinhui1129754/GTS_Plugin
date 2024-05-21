@@ -87,15 +87,16 @@ namespace Gts {
 	}
 
 	float get_bounding_box_to_mult(Actor* actor) {
-		auto nif_dim = get_bound_values(actor);
+		auto nif_dim = NiPoint3(22.0, 14.0, 64.0);
+		auto temp_actor_data = Transient::GetSingleton().GetData(actor);
+		if (temp_actor_data) {
+			nif_dim = temp_actor_data->BoundingBox_Cache;
+		}
 		float x = nif_dim.x;
 		float y = nif_dim.y;
 		float z = nif_dim.z;
-		float natural_scale = std::clamp(get_natural_scale(actor), 0.1f, 1.0f);
 
 		float box = pow(x*y*z/(22.0f*14.0f*64.0f), 1.0f/3.0f);
-		//log::info("Found bounds for {}, bounds :{}", actor->GetDisplayFullName(), Vector2Str(nif_dim));
-		//log::info("Value: {}, NS: {}", box, natural_scale);
 		return box;
 	}
 

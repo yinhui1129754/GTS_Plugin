@@ -218,7 +218,7 @@ namespace {
 			return;
 		}
 		float health = GetHealthPercentage(huggedActor);
-		float HpThreshold = GetHPThreshold(player);
+		float HpThreshold = GetHugCrushThreshold(player);
 		if (HasSMT(player)) {
 			AnimationManager::StartAnim("Huggies_HugCrush", player);
 			AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
@@ -379,7 +379,7 @@ namespace Gts {
 			DamageAV(tinyref, ActorValue::kStamina, (0.60 * TimeScale())); // Drain Stamina
 			DamageAV(giantref, ActorValue::kStamina, 0.50 * stamina * TimeScale()); // Damage GTS Stamina
 			
-			TransferSize(giantref, tinyref, false, shrink, steal, false, ShrinkSource::hugs); // Shrink foe, enlarge gts
+			TransferSize(giantref, tinyref, false, shrink, steal, false, ShrinkSource::Hugs); // Shrink foe, enlarge gts
 			ModSizeExperience(giantref, 0.00020);
 			Attacked(tinyref, giantref); // make it look like we attack the tiny
 			Rumbling::Once("HugSteal", giantref, Rumble_Hugs_Shrink, 0.12, "NPC COM [COM ]", 0.0);

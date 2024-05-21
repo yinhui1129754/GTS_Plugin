@@ -107,8 +107,9 @@ namespace Gts {
 
 		float DamageMult = 0.6;
 		float giantSize = get_visual_scale(giant);
+		float tinySize = std::clamp(get_visual_scale(tiny), 0.5f, 999999.0f); // clamp else they will fly into the sky
+		float highheel = GetHighHeelsBonusDamage(tiny, true);
 
-		float highheel = GetHighHeelsBonusDamage(giant, true);
 		float startpower = Push_Actor_Upwards * highheel * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
 		
 
@@ -127,11 +128,11 @@ namespace Gts {
 			force += 0.20;
 		}
 		float Adjustment = GetSizeFromBoundingBox(tiny);
-
-		float sizeRatio = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
+		
+		float sizeRatio = giantSize/tinySize;
 
 		bool IsLaunching = IsActionOnCooldown(tiny, CooldownSource::Damage_Launch);
-		if (!IsLaunching) {
+		if (!IsLaunching && giantSize > 2.0) {
 
 			if (force >= 0.10) {
 				float power = (1.0 * launch_power) / Adjustment;

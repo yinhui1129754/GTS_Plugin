@@ -78,7 +78,6 @@ namespace {
 			smt *= 1.5;
 		}
 		smt *= GetHighHeelsBonusDamage(giant, true);
-		log::info("Shake Power: {}", shake_power * smt);
 		Rumbling::Once(name, giant, shake_power * smt, 0.05, node, 0.0);
 	}
 

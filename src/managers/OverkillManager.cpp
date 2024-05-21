@@ -37,24 +37,6 @@ namespace {
             Runtime::CreateExplosion(tiny, get_visual_scale(tiny) * 0.5, "BloodExplosion");
         }
     }
-
-    void MoveItems(ActorHandle giantHandle, ActorHandle tinyHandle, FormID ID) {
-        std::string taskname = std::format("Overkill {}", ID);
-        TaskManager::RunOnce(taskname, [=](auto& update){
-            if (!tinyHandle) {
-                return;
-            }
-            if (!giantHandle) {
-                return;
-            }
-            auto giant = giantHandle.get().get();
-            auto tiny = tinyHandle.get().get();
-            float scale = get_visual_scale(tiny);
-            TransferInventory(tiny, giant, scale, false, true, DamageSource::Overkill, true);
-            // ^ transferInventory>TransferInventoryToDropBox also plays crush audio on loot pile
-            // Works like that because Audio very often disappears on actors, so it's easier to play it on the object
-        });
-    }
 }
 
 namespace Gts {
@@ -82,7 +64,6 @@ namespace Gts {
 			if (!giant) {
 				continue;
 			}
-
 			if (data.state == OverkillState::Healthy) {
 				SetReanimatedState(tiny);
 				data.state = OverkillState::Overkilling;
@@ -96,7 +77,7 @@ namespace Gts {
                     ActorHandle tinyHandle = tiny->CreateRefHandle();
 
                     PlayGoreEffects(tiny, giant);    
-                    MoveItems(giantHandle, tinyHandle, tiny->formID);
+                    MoveItems(giantHandle, tinyHandle, tiny->formID, DamageSource::Overkill);
                     PrintDeathSource(giant, tiny, DamageSource::Overkill);
 
                     if (tiny->formID != 0x14) {

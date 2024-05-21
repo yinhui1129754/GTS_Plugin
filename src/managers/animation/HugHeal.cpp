@@ -61,7 +61,6 @@ namespace {
 			Hugs_FixAnimationDesync(giant, tiny, true); // reset anim speed override so .dll won't use it
 		}
 		SetSneaking(giant, false, 0);
-		log::info("Calling Abort Hug_Friendly");
 		
 		std::string name_normal = std::format("Huggies_{}", giant->formID);
 		std::string name_forced = std::format("Huggies_Forced_{}", giant->formID);

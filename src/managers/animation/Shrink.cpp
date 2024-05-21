@@ -36,12 +36,6 @@ namespace {
 		}
 	}
 
-	void CancelShrink(Actor* actor) {
-		std::string name = std::format("ManualShrink_{}", actor->formID);
-		TaskManager::Cancel(name);
-		SetHalfLife(actor, 1.0);
-	}
-
 	void ShrinkTask(Actor* actor) {
 		if (!actor) {
 			return;
@@ -55,7 +49,7 @@ namespace {
 			
 		Runtime::PlaySoundAtNode("shrinkSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
 
-		SetHalfLife(actor, 0.0);
+		//SetHalfLife(actor, 0.0);
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {
 				return false;
@@ -98,7 +92,6 @@ namespace {
 	void GTSShrink_SlowShrink(AnimationEventData& data) {
 	}
 	void GTSShrink_StopShrink(AnimationEventData& data) {
-		//CancelShrink(&data.giant);
 	}
 	void GTSShrink_Exit(AnimationEventData& data) {
 	}

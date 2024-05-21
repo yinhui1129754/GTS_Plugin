@@ -11,6 +11,14 @@ profile = false
 initDelay = 0
 step = 0
 
+[voice]
+# How deep the voice of NPC's can be if NPC size is > 1.0.
+# Values below 1.0 won't have any effect. Change the value above 1.0 to apply effect.
+# Default: 1.0 (always keep normal voice). Going above 2.0 is not recommended.
+# Formula: 1.0 / maxVoiceFrequency. Value can't be bigger than 10.0
+
+maxVoiceFrequency = 1.0
+
 [tremor]
 # linear, smoothstep, softcore, cubic
 method = "linear"

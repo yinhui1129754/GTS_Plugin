@@ -1,4 +1,6 @@
 #include "managers/cameras/camutil.hpp"
+#include "managers/GtsSizeManager.hpp"
+#include "managers/highheel.hpp"
 #include "scale/modscale.hpp"
 #include "scale/scale.hpp"
 #include "data/runtime.hpp"
@@ -57,6 +59,20 @@ namespace {
 }
 
 namespace Gts {
+
+	float HighHeelOffset() {
+		Actor* player = PlayerCharacter::GetSingleton();
+		float hh = 0.0;
+		if (player) {
+			hh = HighHeelManager::GetBaseHHOffset(player).z;
+			hh *= HighHeelManager::GetHHMultiplier(player);
+			if (IsFootGrinding(player) || isTrampling(player)) {
+				hh = 0.0;
+			}
+		}
+		return hh;
+	}
+
 	void SetINIFloat(std::string_view name, float value) {
 		auto ini_conf = INISettingCollection::GetSingleton();
 		Setting* setting = ini_conf->GetSetting(name);

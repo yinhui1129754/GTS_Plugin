@@ -41,10 +41,10 @@ namespace {
 	NiPoint3 CastRayDownwards(Actor* tiny) {
 		bool success = false;
 		NiPoint3 ray_start = tiny->GetPosition();
-		ray_start.z += 60.0; // overrize .z with tiny .z + 60, so ray starts from above a bit
+		ray_start.z += 90.0; // overrize .z with tiny .z + 90, so ray starts from above a bit
 		NiPoint3 ray_direction(0.0, 0.0, -1.0);
 
-		float ray_length = 180;
+		float ray_length = 800;
 
 		NiPoint3 endpos = CastRayStatics(tiny, ray_start, ray_direction, ray_length, success);
 		if (success) {
@@ -168,8 +168,6 @@ namespace Gts {
 		auto Calf = find_node(giant, CalfLookup);
 		auto Toe = find_node(giant, ToeLookup);
 
-
-
 		if (!Foot) {
 			return NiPoint3(0,0,0);
 		}
@@ -177,6 +175,7 @@ namespace Gts {
 			return NiPoint3(0,0,0);
 		}
 		if (!Toe) {
+			log::info("Toe not found!");
 			return NiPoint3(0,0,0);
 		}
 		NiMatrix3 footRotMat;

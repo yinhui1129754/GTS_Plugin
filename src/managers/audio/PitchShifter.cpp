@@ -11,6 +11,8 @@
 #include "spring.hpp"
 #include "timer.hpp"
 
+#include "Config.hpp"
+
 #include "node.hpp"
 
 #include <vector>
@@ -42,12 +44,21 @@ namespace Gts {
 
 							float size = (scale * 0.20) + 0.8;
 							float frequence = (1.0 / size) / (1.0 * size);
-							float freq = std::clamp(frequence, 1.0f, 1.5f);
-							// < 1  = deep voice, below 0.5 = audio bugs out
+
+							
+
+							auto config = Config::GetSingleton().GetVoice();
+							float config_param = config.GetVoiceFrequency();
+
+							float freq_high = 1.0 / std::clamp(config_param, 1.0f, 10.0f);
+
+							log::info("Freq high: {}", freq_high);
+							float freq_low = 1.5;
+
+							float freq = std::clamp(frequence, freq_high, freq_low);
+							// < 1  = deep voice, below 0.5 = audio bugs out, not recommended
 							// > 1 = mouse-like voice, not recommended to go above 1.5	
 
-							//log::info("-----For: {}", tiny->GetDisplayFullName());
-							//log::info("Freq: {}", freq);
 							if (Audio_1.soundID != BSSoundHandle::kInvalidID) {
 								Audio_1.SetFrequency(freq);
 								Audio_1.SetVolume(volume);

@@ -60,8 +60,8 @@ namespace Gts {
 				data.state = ShrinkState::Shrinking;
 				log::info("Set state to shrinking");
 			} else if (data.state == ShrinkState::Shrinking) {
-				Attacked(tiny, giant);
 				ModSizeExperience(giant, 0.24 * GetXPModifier(tiny)); // Adjust Size Matter skill
+				Attacked(tiny, giant);
 				if (giant->formID == 0x14 && IsDragon(tiny)) {
 					CompleteDragonQuest(tiny, ParticleType::Red, tiny->IsDead());
 				}
@@ -109,8 +109,7 @@ namespace Gts {
 					}
 					auto giant = giantHandle.get().get();
 					auto tiny = tinyHandle.get().get();
-					float scale = get_visual_scale(tiny);
-					TransferInventory(tiny, giant, scale, false, true, DamageSource::Crushed, true);
+					TransferInventory(tiny, giant, currentSize * GetSizeFromBoundingBox(tiny), false, true, DamageSource::Crushed, true);
 					log::info("Transfer task succeeded");
 					// Actor reset is done within TransferInventory
 				});

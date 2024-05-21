@@ -51,6 +51,45 @@ namespace {
 		ForceFollowerAnimation(player, FollowerAnimType::Vore);
 	}
 
+	VoreInformation GetVoreInfo(Actor* giant, Actor* tiny, float growth_mult) {
+		float recorded_scale = std::clamp(get_visual_scale(tiny), 0.02f, 999999.0f);
+		float restore_power = 0.0;
+		float mealEffiency = 0.2; // Normal pred has 20% efficent stomach
+		float growth = 2.0;
+
+		std::string_view tiny_name = tiny->GetDisplayFullName();
+
+		if (Runtime::HasPerkTeam(giant, "Gluttony")) {
+			mealEffiency += 0.2;
+		}
+		if (Runtime::HasPerkTeam(giant, "AdditionalGrowth")) {
+			growth *= 1.25;
+		}
+		if (Runtime::HasPerkTeam(giant, "Gluttony")) {
+			restore_power = GetMaxAV(tiny, ActorValue::kHealth) * 4 * mealEffiency;
+		}
+
+		float bounding_box = GetSizeFromBoundingBox(tiny);
+		float gain_power = recorded_scale * mealEffiency * growth * growth_mult * bounding_box; // power of most buffs that we start
+
+		log::info("BB Value for {} is {}", tiny->GetDisplayFullName(), bounding_box);
+		
+		VoreInformation VoreInfo = VoreInformation { // Create Vore Info
+			.giantess = giant,
+			.WasGiant = IsGiant(tiny),
+			.WasDragon = IsDragon(tiny),
+			.WasMammoth = IsMammoth(tiny),
+			.WasLiving = IsLiving(tiny),
+			.Scale = get_visual_scale(tiny),
+			.Vore_Power = gain_power,
+			.Restore_Power = restore_power,
+			.Natural_Scale = bounding_box,
+			.Tiny_Name = tiny->GetDisplayFullName(),
+		};
+
+		return VoreInfo;
+	}
+
 	void BuffAttributes(Actor* giant, float tinyscale) {
 		if (!giant) {
 			return;
@@ -99,17 +138,18 @@ namespace {
 	}
 
 	void Vore_AdvanceQuest(Actor* pred, Actor* tiny, bool WasDragon, bool WasGiant) {
-		if (!AllowDevourment() && pred->formID == 0x14 && WasDragon) {
+		if (pred->formID == 0x14 && WasDragon) {
 			CompleteDragonQuest(tiny, ParticleType::Blue, false);
+			return;
 		}
 		if (WasGiant) {
-			AdvanceQuestProgression(pred, tiny, 7, 1, true);
+			AdvanceQuestProgression(pred, tiny, QuestStage::Giant, 1, true);
 		} else {
-			AdvanceQuestProgression(pred, tiny, 6, 1, true);
+			AdvanceQuestProgression(pred, tiny, QuestStage::Vore, 1, true);
 		}
 	}
 
-	void Task_Vore_FinishVoreBuff(const VoreInformation& VoreInfo, float amount_of_tinies) {
+	void Task_Vore_FinishVoreBuff(const VoreInformation& VoreInfo, float amount_of_tinies, bool Allow_Devourment) {
 
 		Actor* giant = VoreInfo.giantess;
 
@@ -123,102 +163,99 @@ namespace {
 		float natural_scale = VoreInfo.Natural_Scale;
 
 		std::string_view tiny_name = VoreInfo.Tiny_Name;
+
+		bool Devourment = AllowDevourment();
+		float multiplier = 1.0;
+		if (Devourment) {
+			multiplier = 0.5;
+		}
 		
-		if (!AllowDevourment()) {
+		if (!Devourment || Allow_Devourment) {
 			if (giant) {
-				ModSizeExperience(giant, 0.20 + (tinySize * 0.02));
-				VoreMessage_Absorbed(giant, tiny_name);
-				CallGainWeight(giant, 3.0 * tinySize * amount_of_tinies);
-				BuffAttributes(giant, tinySize);
 				update_target_scale(giant, sizePower * 0.8, SizeEffectType::kGrow);
+				GainWeight(giant, 3.0 * tinySize * amount_of_tinies * multiplier);
+				ModSizeExperience(giant, 0.20 * multiplier + (tinySize * 0.02));
+				VoreMessage_Absorbed(giant, tiny_name);
 				AdjustSizeReserve(giant, sizePower);
+				BuffAttributes(giant, tinySize);
+				
 				if (giant->formID == 0x14) {
-					AdjustSizeLimit(0.0260, giant);
-					AdjustMassLimit(0.0106, giant);
-					SurvivalMode_AdjustHunger(giant, tinySize, natural_scale, WasDragon, WasLiving, 1);
+					AdjustSizeLimit(0.0260 * multiplier, giant);
+					AdjustMassLimit(0.0106 * multiplier, giant);
+					SurvivalMode_AdjustHunger(giant, tinySize * natural_scale * multiplier, WasLiving, true);
 				}
 				Rumbling::Once("GrowthRumble", giant, 1.75, 0.30);
 				if (Vore::GetSingleton().GetVoreData(giant).GetTimer() == true) {
 					PlayMoanSound(giant, 1.0); // play timed sound. Timer is a must else we moan 10 times at once for example.
 					Task_FacialEmotionTask_Moan(giant, 2.0, "Vore");
 				}
+
+				log::info("Finished Vore, natural_scale: {}", natural_scale);
 			}
 		}
 	}
 
 	void Task_Vore_StartVoreBuff(Actor* giant, Actor* tiny, float amount_of_tinies) {
-		float default_duration = 80.0;
-		float mealEffiency = 0.2; // Normal pred has 20% efficent stomach
-		float growth = 2.0;
+		if (!AllowDevourment()) {
+			float start_time = Time::WorldTimeElapsed();
+			float default_duration = 80.0;
 
-		float start_time = Time::WorldTimeElapsed();
+			std::string_view tiny_name = tiny->GetDisplayFullName();
 
-		float recorded_scale = get_visual_scale(tiny);
-		float restore_power = 0.0;
-
-		std::string_view tiny_name = tiny->GetDisplayFullName();
-
-		if (Runtime::HasPerkTeam(giant, "Gluttony")) {
-			default_duration *= 0.5;
-			mealEffiency += 0.2;
-		}
-		if (Runtime::HasPerkTeam(giant, "AdditionalGrowth")) {
-			growth *= 1.25;
-		}
-		if (IsDragon(tiny) || IsMammoth(tiny)) {
-			mealEffiency *= 6.0;
-		}
-		if (IsGiant(tiny)) {
-			mealEffiency *= 2.6;
-		}
-		if (Runtime::HasPerkTeam(giant, "Gluttony")) {
-			restore_power = GetMaxAV(tiny, ActorValue::kHealth) * 4 * mealEffiency;
-		}
-
-		ActorHandle gianthandle = giant->CreateRefHandle();
-		float gain_power = recorded_scale * mealEffiency * growth; // power of most buffs that we start
-
-		std::string name = std::format("Vore_Buff_{}_{}", giant->formID, tiny->formID);
-
-		Vore_AdvanceQuest(giant, tiny, IsDragon(tiny), IsGiant(tiny)); // Progress quest
-
-		VoreInformation VoreInfo = VoreInformation { // create Vore Info
-			.giantess = giant,
-			.WasGiant = IsGiant(tiny),
-			.WasDragon = IsDragon(tiny),
-			.WasMammoth = IsMammoth(tiny),
-			.WasLiving = IsLiving(tiny),
-			.Scale = get_visual_scale(tiny),
-			.Vore_Power = gain_power,
-			.Natural_Scale = get_natural_scale(tiny),
-			.Tiny_Name = tiny->GetDisplayFullName(),
-		};
-
-		TaskManager::Run(name, [=](auto& progressData) {
-			if (!gianthandle) {
-				return false;
+			if (Runtime::HasPerkTeam(giant, "Gluttony")) {
+				default_duration *= 0.5;
 			}
-			auto giantref = gianthandle.get().get();
-			float timepassed = Time::WorldTimeElapsed() - start_time;
+
+			std::string name = std::format("Vore_Buff_{}_{}", giant->formID, tiny->formID);
+
+			VoreInformation VoreInfo = GetVoreInfo(giant, tiny, 1.0);
+			ActorHandle gianthandle = giant->CreateRefHandle();
+
+			float Regeneration = VoreInfo.Restore_Power;
+			float Growth = VoreInfo.Vore_Power;
 			
-			float regenlimit = GetMaxAV(giantref, ActorValue::kHealth) * 0.0006; // Limit it per frame
-			float healthToApply = std::clamp(restore_power/4000.0f, 0.0f, regenlimit);
-			float sizeToApply = gain_power/5500;
+			TaskManager::Run(name, [=](auto& progressData) {
+				if (!gianthandle) {
+					return false;
+				}
+				auto giantref = gianthandle.get().get();
+				float timepassed = Time::WorldTimeElapsed() - start_time;
+				
+				float regenlimit = GetMaxAV(giantref, ActorValue::kHealth) * 0.0006; // Limit it per frame
+				float healthToApply = std::clamp(Regeneration/4000.0f, 0.0f, regenlimit);
+				float sizeToApply = Growth/5500;
 
-			DamageAV(giantref, ActorValue::kHealth, -healthToApply * TimeScale());
-			DamageAV(giantref, ActorValue::kStamina, -healthToApply * TimeScale()); 
-			// Restore HP and Stamina for GTS
+				DamageAV(giantref, ActorValue::kHealth, -healthToApply * TimeScale());
+				DamageAV(giantref, ActorValue::kStamina, -healthToApply * TimeScale()); 
+				// Restore HP and Stamina for GTS
 
-			update_target_scale(giantref, sizeToApply * TimeScale(), SizeEffectType::kGrow);
-			AddStolenAttributes(giantref, sizeToApply * TimeScale());
+				update_target_scale(giantref, sizeToApply * TimeScale(), SizeEffectType::kGrow);
+				AddStolenAttributes(giantref, sizeToApply * TimeScale());
 
-			if (timepassed >= default_duration) {
-				Task_Vore_FinishVoreBuff(VoreInfo, amount_of_tinies);
-				return false;
+				if (timepassed >= default_duration) {
+					Task_Vore_FinishVoreBuff(VoreInfo, amount_of_tinies, false);
+					if (giantref->formID == 0x14) {
+						shake_camera(giantref, 0.50, 0.75);
+					}
+					return false;
+				}
+
+				return true;
+			});
+		}
+	}
+
+	void DevourmentBonuses(Actor* Pred, Actor* Prey, bool Digested, float mult) {
+		VoreInformation VoreInfo = GetVoreInfo(Pred, Prey, mult);
+
+		if (Digested) {
+			Vore_AdvanceQuest(Pred, Prey, IsDragon(Prey), IsGiant(Prey)); // Progress quest
+			if (Pred->formID == 0x14) {
+				shake_camera(Pred, 0.50, 0.75);
 			}
+		}
 
-			return true;
-		});
+		Task_Vore_FinishVoreBuff(VoreInfo, 1.0, true);
 	}
 }
 
@@ -237,19 +274,24 @@ namespace Gts {
 		for (auto& [key, tinyref]: this->tinies) {
 			auto tiny = tinyref.get().get();
 			auto giant = this->giant.get().get();
-			Task_Vore_StartVoreBuff(giant, tiny, this->tinies.size());
-			VoreMessage_SwallowedAbsorbing(giant, tiny);
-
+			
 			if (giant->formID == 0x14) {
-				CallVampire();
-
+				if (IsLiving(tiny) && IsHuman(tiny)) {
+					CallVampire();
+				}
+				bool Giant = IsGiant(tiny);
 				bool Living = IsLiving(tiny);
 				bool Dragon = IsDragon(tiny);
+				bool Mammoth = IsMammoth(tiny);
+				
 				float DefaultScale = get_natural_scale(tiny);
 				ModSizeExperience(giant, 0.08 + (DefaultScale*0.025));
 
-				SurvivalMode_AdjustHunger(this->giant.get().get(), get_visual_scale(tiny), DefaultScale, Dragon, Living, 0);
+				SurvivalMode_AdjustHunger(this->giant.get().get(), get_visual_scale(tiny) * GetSizeFromBoundingBox(tiny), Living, false);
 			}
+
+			Task_Vore_StartVoreBuff(giant, tiny, this->tinies.size());
+			VoreMessage_SwallowedAbsorbing(giant, tiny);
 		}
 	}
 	void VoreData::KillAll() {
@@ -268,6 +310,8 @@ namespace Gts {
 					TriggerScreenBlood(50);
 					tiny->SetAlpha(0.0); // Player can't be disintegrated: simply nothing happens. So we Just make player Invisible instead.
 				}
+
+				Vore_AdvanceQuest(giantref.get().get(), tiny, IsDragon(tiny), IsGiant(tiny)); // Progress quest
 
 				std::string taskname = std::format("VoreAbsorb {}", tiny->formID);
 
@@ -708,6 +752,28 @@ namespace Gts {
 		voreData.AddTiny(prey);
 
 		AnimationManager::GetSingleton().StartAnim("StartVore", pred);
+	}
+
+	void Vore::Devourment_Compatibility(Actor* Pred, Actor* Prey, bool Digested) {
+		if (Pred) {
+			if (Prey) {
+				auto Data = Transient::GetSingleton().GetData(Prey);
+				if (Data) {
+					bool& Devoured = Data->Devourment_Devoured;
+					bool& Eaten = Data->Devourment_Eaten;
+					if (Digested && !Devoured) { // Actors was completely absorbed (stage 2)
+						Notify("{} was devoured by {}", Prey->GetDisplayFullName(), Pred->GetDisplayFullName());
+						Cprint("{} was devoured by {}", Prey->GetDisplayFullName(), Pred->GetDisplayFullName());
+						DevourmentBonuses(Pred, Prey, true, 1.0);
+						Devoured = true;
+					} else if (!Eaten) { // health bar was absorbed (stage 1)
+						DevourmentBonuses(Pred, Prey, false, 1.0);
+						log::info("Adding to Eaten faction");
+						Eaten = true;
+					}
+				}
+			}
+		}
 	}
 
 	// Gets the current vore data of a giant

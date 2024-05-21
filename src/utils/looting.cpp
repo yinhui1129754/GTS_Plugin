@@ -221,7 +221,7 @@ namespace Gts {
 
 	void TransferInventoryToDropbox(Actor* giant, Actor* actor, const float scale, bool removeQuestItems, DamageSource Cause, bool Resurrected) {
 		bool soul = false;
-		float Scale = std::clamp(scale * GetSizeFromBoundingBox(actor), 0.10f, 4.4f);
+		float Scale = std::clamp(scale, 0.10f, 4.4f);
 
 		if (Resurrected) {
 			return;
@@ -303,4 +303,22 @@ namespace Gts {
 			}
 		}
 	}
+
+	void MoveItems(ActorHandle giantHandle, ActorHandle tinyHandle, FormID ID, DamageSource Cause) {
+		std::string taskname = std::format("MoveItems_{}", ID);
+		TaskManager::RunOnce(taskname, [=](auto& update){
+			if (!tinyHandle) {
+				return;
+			}
+			if (!giantHandle) {
+				return;
+			}
+			auto giant = giantHandle.get().get();
+			auto tiny = tinyHandle.get().get();
+			float scale = get_visual_scale(tiny) * GetSizeFromBoundingBox(tiny);
+			TransferInventory(tiny, giant, scale, false, true, Cause, true);
+			// ^ transferInventory>TransferInventoryToDropBox also plays crush audio on loot pile
+			// Works like that because Audio very often disappears on actors, so it's easier to play it on the object
+		});
+    }
 }

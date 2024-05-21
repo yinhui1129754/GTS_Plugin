@@ -75,7 +75,7 @@ namespace {
 
 	void TotalControlGrowEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
-		if (Runtime::HasPerk(player, "ColossalGrowth")) {
+		if (Runtime::HasPerk(player, "GrowthDesirePerkAug")) {
 			float scale = get_visual_scale(player);
 			float stamina = std::clamp(GetStaminaPercentage(player), 0.05f, 1.0f);
 
@@ -93,7 +93,7 @@ namespace {
 	}
 	void TotalControlShrinkEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
-		if (Runtime::HasPerk(player, "ColossalGrowth")) {
+		if (Runtime::HasPerk(player, "GrowthDesirePerkAug")) {
 			float scale = get_visual_scale(player);
 			float stamina = std::clamp(GetStaminaPercentage(player), 0.05f, 1.0f);
 
@@ -116,7 +116,7 @@ namespace {
 	}
 	void TotalControlGrowOtherEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
-		if (Runtime::HasPerk(player, "ColossalGrowth")) {
+		if (Runtime::HasPerk(player, "GrowthDesirePerkAug")) {
 			for (auto actor: find_actors()) {
 				if (!actor) {
 					continue;
@@ -141,7 +141,7 @@ namespace {
 	}
 	void TotalControlShrinkOtherEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
-		if (Runtime::HasPerk(player, "ColossalGrowth")) {
+		if (Runtime::HasPerk(player, "GrowthDesirePerkAug")) {
 			for (auto actor: find_actors()) {
 				if (!actor) {
 					continue;
@@ -167,7 +167,7 @@ namespace {
 
 	void RapidGrowthEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
-		if (!Runtime::HasPerk(player, "ColossalGrowth")) {
+		if (!Runtime::HasPerk(player, "GrowthDesirePerkAug")) {
 			return;
 		}
 		if (!IsGtsBusy(player) && !IsChangingSize(player)) {
@@ -184,7 +184,7 @@ namespace {
 	}
 	void RapidShrinkEvent(const InputEventData& data) {
 		auto player = PlayerCharacter::GetSingleton();
-		if (!Runtime::HasPerk(player, "ColossalGrowth")) {
+		if (!Runtime::HasPerk(player, "GrowthDesirePerkAug")) {
 			return;
 		}
 		if (!IsGtsBusy(player) && !IsChangingSize(player)) {

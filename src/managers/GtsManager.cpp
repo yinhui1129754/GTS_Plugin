@@ -341,6 +341,9 @@ void GtsManager::OnAddPerk(const AddPerkEvent& evt) {
 		if (evt.perk == Runtime::GetPerk("ColossalGrowth")) {
 			CallHelpMessage();
 		}
+		if (evt.perk == Runtime::GetPerk("GrowthDesirePerkAug")) {
+			PrintMessageBox("You're now able to grow and shrink yourself manually at will. By default, press L.Shift + 1 or 2. You can affect followers by pressing L.Shift + Left Arrow + Arrow Up, and can also affect self by pressing Left Arrow + Arrow Up");
+		}
 		if (evt.perk == Runtime::GetPerk("FastShrink") && !Runtime::HasSpell(evt.actor, "ShrinkBolt")) {
 			Runtime::AddSpell(evt.actor, "ShrinkBolt");
 		}

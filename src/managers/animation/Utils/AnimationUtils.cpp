@@ -264,13 +264,10 @@ namespace Gts {
 	}
 
 	void HugCrushOther(Actor* giant, Actor* tiny) {
+		AdvanceQuestProgression(giant, tiny, QuestStage::Crushing, 1.0, false);
 		Attacked(tiny, giant);
-		if (giant->formID == 0x14 && IsDragon(tiny)) {
-			CompleteDragonQuest(tiny, ParticleType::Red, tiny->IsDead());
-		}
-		float currentSize = get_visual_scale(tiny);
 
-		ModSizeExperience(giant, 0.24); // Adjust Size Matter skill
+		ModSizeExperience(giant, 0.22); // Adjust Size Matter skill
 		KillActor(giant, tiny);
 
 		if (!IsLiving(tiny)) {
@@ -279,9 +276,9 @@ namespace Gts {
 			if (!LessGore()) {
 				auto root = find_node(tiny, "NPC Root [Root]");
 				if (root) {
-					SpawnParticle(tiny, 0.20, "GTS/Damage/Explode.nif", NiMatrix3(), root->world.translate, 2.0, 7, root);
-					SpawnParticle(tiny, 0.20, "GTS/Damage/Explode.nif", NiMatrix3(), root->world.translate, 2.0, 7, root);
-					SpawnParticle(tiny, 0.20, "GTS/Damage/Explode.nif", NiMatrix3(), root->world.translate, 2.0, 7, root);
+					SpawnParticle(tiny, 1.20, "GTS/Damage/Explode.nif", NiMatrix3(), root->world.translate, 2.0, 7, root);
+					SpawnParticle(tiny, 1.20, "GTS/Damage/Explode.nif", NiMatrix3(), root->world.translate, 2.0, 7, root);
+					SpawnParticle(tiny, 1.20, "GTS/Damage/Explode.nif", NiMatrix3(), root->world.translate, 2.0, 7, root);
 					SpawnParticle(tiny, 1.20, "GTS/Damage/ShrinkOrCrush.nif", NiMatrix3(), root->world.translate, get_visual_scale(tiny) * 10, 7, root);
 				}
 				Runtime::CreateExplosion(tiny, get_visual_scale(tiny)/4, "BloodExplosion");
@@ -297,7 +294,7 @@ namespace Gts {
 
 		ActorHandle giantHandle = giant->CreateRefHandle();
 		ActorHandle tinyHandle = tiny->CreateRefHandle();
-		std::string taskname = std::format("HugCrush {}", tiny->formID);
+		std::string taskname = std::format("HugCrush_{}", tiny->formID);
 
 		TaskManager::RunOnce(taskname, [=](auto& update){
 			if (!tinyHandle) {
@@ -308,9 +305,11 @@ namespace Gts {
 			}
 			auto giant = giantHandle.get().get();
 			auto tiny = tinyHandle.get().get();
-			float scale = get_visual_scale(tiny);
+
+			float scale = get_visual_scale(tiny) * GetSizeFromBoundingBox(tiny);
 			TransferInventory(tiny, giant, scale, false, true, DamageSource::Crushed, true);
 		});
+
 		if (tiny->formID != 0x14) {
 			Disintegrate(tiny, true); // Set critical stage 4 on actor
 		} else {
@@ -338,8 +337,6 @@ namespace Gts {
 		AdjustFacialExpression(giant, 1, 0.0, "modifier");
 
 		AnimationManager::StartAnim("Huggies_Spare", giant); // Start "Release" animation on Giant
-		
-		log::info("Starting abort animation, friendly: {}", Friendly);
 
 		if (Friendly) { // If friendly, we don't want to push/release actor
 			AnimationManager::StartAnim("Huggies_Spare", tiny);
@@ -354,8 +351,6 @@ namespace Gts {
 			Hugs_FixAnimationDesync(giant, tiny, true); // reset anim speed override so .dll won't use it
 		}
 		HugShrink::Release(giant);
-		log::info("Releasing Tiny");
-		
 	}
 
 	void Utils_UpdateHugBehaviors(Actor* giant, Actor* tiny) { // blend between two anims: send value to behaviors
@@ -387,6 +382,30 @@ namespace Gts {
 			giant->SetGraphVariableFloat("GTS_HHoffset", 0.0); // reset it
 		}
 	}
+
+	void Task_HighHeel_SyncVoreAnim(Actor* giant) {
+		// Purpose of this task is to blend between 2 animations based on value.
+		// The problem: hand that grabs the tiny is becomming offset if we equip High Heels
+		// This task fixes that (by, again, blending with anim that has hand placed lower).
+		std::string name = std::format("Vore_AdjustHH_{}", giant->formID);
+		ActorHandle gianthandle = giant->CreateRefHandle();
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			Actor* giantref = gianthandle.get().get();
+
+			Utils_UpdateHighHeelBlend(giantref, false);
+			// make behaviors read the value to blend between anims
+
+			if (!IsVoring(giantref)) {
+				Utils_UpdateHighHeelBlend(giantref, true);
+				return false; // just a fail-safe to cancel the task if we're outside of Vore anim
+			}
+			
+			return true;
+		});
+    }
 
 	void StartHealingAnimation(Actor* giant, Actor* tiny) {
 		UpdateFriendlyHugs(giant, tiny, false);
@@ -561,7 +580,7 @@ namespace Gts {
 
 	float GetPerkBonus_Thighs(Actor* Giant) {
 		if (Runtime::HasPerkTeam(Giant, "KillerThighs")) {
-			return 1.15;
+			return 1.25;
 		} else {
 			return 1.0;
 		}
@@ -595,17 +614,13 @@ namespace Gts {
 				return true;
 			}
 
-			float zpos = coordinates.z;
-
-			zpos = AttachToUnderFoot(giant, tiny, Right).z; // fix Z if it is wrong
-
-			NiPoint3 attach = NiPoint3(coordinates.x, coordinates.y, zpos);
-
-			AttachTo(giantref, tinyref, attach);
-			if (!isTrampling(giantref)) {
+			if (!isTrampling(giantref) || coordinates.Length() <= 0.0) {
 				SetBeingGrinded(tinyref, false);
 				return false;
 			}
+			
+			AttachTo(giantref, tinyref, coordinates);
+
 			if (tinyref->IsDead()) {
 				SetBeingGrinded(tinyref, false);
 				return false;
@@ -1499,10 +1514,10 @@ namespace Gts {
 	float GetHugCrushThreshold(Actor* actor) {
 		float hp = 0.20;
 		if (Runtime::HasPerkTeam(actor, "HugCrush_MightyCuddles")) {
-			hp += 0.10; // 0.30
+			hp += 0.10;
 		}
 		if (Runtime::HasPerkTeam(actor, "HugCrush_HugsOfDeath")) {
-			hp += 0.20; // 0.50
+			hp += 0.20;
 		}
 		return hp;
 	}

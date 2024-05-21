@@ -70,7 +70,7 @@ namespace Gts {
 			gain_size *= 0.20;
 		}
 
-		TransferSize(caster, target, true, shrink_power, gain_size, false, ShrinkSource::magic);
+		TransferSize(caster, target, true, shrink_power, gain_size, false, ShrinkSource::Magic);
 		Attacked(target, caster);// make it seen as hostile action
 
 		if (ShrinkToNothing(caster, target)) { // chance to receive more size xp and grow even bigger

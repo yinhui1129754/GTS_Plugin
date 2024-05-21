@@ -64,38 +64,35 @@ namespace Gts {
 		}
 	}
 
-	void SurvivalMode_AdjustHunger(Actor* giant, float tinyscale, float naturalsize, bool IsDragon, bool IsLiving, float type) {
-		if (giant->formID != 0x14) {
-			return; //Only for Player
-		}
-		auto Survival = Runtime::GetGlobal("Survival_ModeEnabled");
-		if (!Survival) {
-			return; // Abort if it doesn't exist (Should fix issues if we don't have AE CC mods)
-		}
-		float SurvivalEnabled = Runtime::GetBool("Survival_ModeEnabled");
-		if (!SurvivalEnabled) {
-			return; // Survival OFF, do nothing.
-		}
-		auto HungerNeed = Runtime::GetGlobal("Survival_HungerNeedValue"); // Obtain
-		float restore = 16.0 * 6.0; // * 6.0 to compensate default size difference threshold for Vore
+	void SurvivalMode_AdjustHunger(Actor* giant, float tinyscale, bool IsLiving, bool Finished) {
+		if (giant->formID == 0x14) {
+			if (!AllowDevourment()) { // Seems like Devourment already manages Hunger system, no need to touch it in that case
+				auto Survival = Runtime::GetGlobal("Survival_ModeEnabled");
+				if (!Survival) {
+					return; // Abort if it doesn't exist (Should fix issues if we don't have AE CC mods)
+				}
+				float SurvivalEnabled = Runtime::GetBool("Survival_ModeEnabled");
+				if (SurvivalEnabled) {
+					auto HungerNeed = Runtime::GetGlobal("Survival_HungerNeedValue"); // Obtain
+					float restore = 128.0;
 
-		if (IsDragon) {
-			naturalsize *= 8.0; // Dragons are huge, makes sense to give a lot of value
-		}
-		if (!IsLiving) {
-			naturalsize *= 0.20; // Less effective on non living targets
-		}
-		if (type >= 1.0) {
-			restore *= 6.0; // Stronger gain on Vore Finish
-		}
+					if (!IsLiving) {
+						tinyscale *= 0.20; // Less effective on non living targets
+					}
+					if (Finished) {
+						restore *= 6.0; // Stronger gain on Vore Finish
+					}
 
-		float power = (get_visual_scale(giant)/tinyscale); // Get size difference and * it by natural size
+					float power = (get_visual_scale(giant)/tinyscale); // Get size difference and * it by natural size
 
-		HungerNeed->value -= (restore / power) * naturalsize;
-		if (HungerNeed->value <= 0.0) {
-			HungerNeed->value = 0.0; // Cap it at 0.0
+					HungerNeed->value -= (restore / power);
+					if (HungerNeed->value <= 0.0) {
+						HungerNeed->value = 0.0; // Cap it at 0.0
+					}
+					float value = HungerNeed->value;
+					SurvivalMode_RefreshSpells(giant, value);
+				}
+			}
 		}
-		float value = HungerNeed->value;
-		SurvivalMode_RefreshSpells(giant, value);
 	}
 }

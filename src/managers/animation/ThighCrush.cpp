@@ -113,8 +113,8 @@ namespace {
 		}
 	}
 
-	void RunThighCollisionTask(Actor* giant, bool right, bool CooldownCheck, float radius, float damage, float bbmult, float crush_threshold, int random, std::string_view tn) {
-		std::string name = std::format("ThighCrush_{}_{}", giant->formID, tn);
+	void RunThighCollisionTask(Actor* giant, bool right, bool CooldownCheck, float radius, float damage, float bbmult, float crush_threshold, int random, std::string_view taskname) {
+		std::string name = std::format("ThighCrush_{}_{}", giant->formID, taskname);
 		auto gianthandle = giant->CreateRefHandle();
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {

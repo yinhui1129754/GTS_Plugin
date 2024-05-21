@@ -6,6 +6,48 @@ using namespace Gts;
 using namespace RE;
 
 namespace {
+
+	std::vector<string> Layers {
+		"kInvalid",
+		"kSphere",
+		"kFirstType",
+		"kCylinder",
+		"kTriangle",
+		"kBox",
+		"kCapsule",
+		"kConvexVertices",
+		"kCollection",
+		"kBVTree",
+		"kList",
+		"kMOPP",
+		"kConvexTranslate",
+		"kConvexTransform",
+		"kSampledHeightField",
+		"kExtendedMesh",
+		"kTransform",
+		"kCompressedMesh",
+		"kCompound",
+		"kTotalSPU",
+		"kConvex",
+		"kMOPPEmbedded",
+		"kConvexPiece",
+		"kMultiSphere",
+		"kConvexList",
+		"kTriangleCollection",
+		"kMultiRay",
+		"kHeightField",
+		"kSphereRep",
+		"kBV",
+		"kPlane",
+		"kPhantomCallback",
+		"kUser0",
+		"kUser1",
+		"kUser2",
+		"kTotal",
+		"kAll",
+	};
+	
+
 	void CastRayImpl(TESObjectREFR* ref, const NiPoint3& in_origin, const NiPoint3& direction, const float& unit_length, AllRayCollector* collector) {
 		float length = unit_to_meter(unit_length);
 		if (!ref) {
@@ -77,8 +119,15 @@ namespace Gts {
 		if (collector->HasHit()) {
 			for (auto& hit: collector->GetHits()) {
 				// This varient filters out the char ones
+				
 				auto collision_layer = static_cast<COL_LAYER>(hit.rootCollidable->broadPhaseHandle.collisionFilterInfo & 0x7F);
-				if (collision_layer != COL_LAYER::kCharController && collision_layer != COL_LAYER::kWeapon) {
+				int layer_as_int = static_cast<int>(collision_layer);
+
+				if (collision_layer != COL_LAYER::kCharController && collision_layer != COL_LAYER::kWeapon && 
+					layer_as_int != 56) {
+					/*if (ref->formID == 0x14) {
+						log::info("------Hitting Layer: {}, as int: {}", collision_layer, layer_as_int); // Weapons hit "unknown" layer :/
+					}*/
 					success = true;
 					return hit.position;
 				}

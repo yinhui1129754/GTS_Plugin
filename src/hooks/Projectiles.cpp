@@ -31,7 +31,6 @@ namespace {
 					//log::info("Owner_get found: {}", owner_get->GetDisplayFullName());
 					float scaling = get_visual_scale(owner_get);
 					float shake_power = scaling * (node->world.translate.Length() / distance);
-					log::info("Shake Power: {}", shake_power);
 
 					shake_camera_at_node(node->world.translate, shake_power, 1.5);
 

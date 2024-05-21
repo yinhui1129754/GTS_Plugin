@@ -67,18 +67,16 @@ namespace Gts {
 					auto leftPosLocal = transform * (leftFoot->world * NiPoint3());
 					auto rightPosLocal = transform * (rightFoot->world * NiPoint3());
 					this->smoothFootPos.target = (leftPosLocal + rightPosLocal) / 2.0;
-					if (!IsCrawling(player)) {
-						NiPoint3 highheelOffset = HighHeelManager::GetHHOffset(player);
-						this->smoothFootPos.target.z += OFFSET*playerScale;
-						if (highheelOffset.Length() > 1e-4) {
-							this->smoothFootPos.target -= highheelOffset;
-						}
+
+					NiPoint3 highheelOffset = HighHeelManager::GetHHOffset(player) * HighHeelManager::GetHHMultiplier(player);
+					this->smoothFootPos.target.z += OFFSET*playerScale;
+					if (highheelOffset.Length() > 1e-4) {
+						this->smoothFootPos.target -= highheelOffset * 1.6;
 					}
+					
 				}
 			}
 		}
 		return this->smoothFootPos.value;
 	}
-
-
 }

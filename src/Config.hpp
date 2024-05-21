@@ -45,6 +45,19 @@ namespace Gts {
 			int _initDelay = 0;
 	};
 
+	class Voice {
+		public:
+			Voice() = default;
+
+			[[nodiscard]] inline float GetVoiceFrequency() const noexcept {
+				return _maxVoiceFrequency;
+			}
+			Voice(const toml::value& data);
+
+			private:
+				float _maxVoiceFrequency;
+	};
+
 
 	class Tremor {
 		public:
@@ -92,9 +105,12 @@ namespace Gts {
 				return _frame;
 			}
 
-
 			[[nodiscard]] inline const Tremor& GetTremor() const noexcept {
 				return _tremor;
+			}
+
+			[[nodiscard]] inline const Voice& GetVoice() const noexcept {
+				return _voice;
 			}
 
 			[[nodiscard]] static const Config& GetSingleton() noexcept;
@@ -105,5 +121,6 @@ namespace Gts {
 			Debug _debug;
 			Frame _frame;
 			Tremor _tremor;
+			Voice _voice;
 	};
 }

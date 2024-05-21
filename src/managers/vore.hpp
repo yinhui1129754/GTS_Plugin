@@ -100,6 +100,9 @@ namespace Gts
 
 			// Do the vore (this has no checks make sure they can vore with CanVore first)
 			void StartVore(Actor* pred, Actor* prey);
+			
+			// Make Devourment events apply all bonuses
+			void Devourment_Compatibility(Actor* Pred, Actor* Prey, bool Digested);
 
 			// Gets the current vore data of a giant
 			VoreData& GetVoreData(Actor* giant);

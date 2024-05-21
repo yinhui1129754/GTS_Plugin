@@ -44,18 +44,6 @@ namespace {
 		}
 	}
 
-	void ProgressQuest(Actor* giant, Actor* tiny) {
-		if (!tiny->IsDead()) {
-			if (IsGiant(tiny)) {
-				AdvanceQuestProgression(giant, tiny, 7, 1, false);
-			} else {
-				AdvanceQuestProgression(giant, tiny, 3, 1, false);
-			}
-		} else {
-			AdvanceQuestProgression(giant, tiny, 3, 0.25, false);
-		}
-	}
-
 	void FearChance(Actor* giant)  {
 		float size = get_visual_scale(giant);
 		int MaxValue = (20 - (1.6 * size));
@@ -146,7 +134,6 @@ namespace Gts {
 
 			if (data.state == CrushState::Healthy) {
 				SetReanimatedState(tiny);
-				ProgressQuest(giant, tiny);
 				data.state = CrushState::Crushing;
 			} else if (data.state == CrushState::Crushing) {
 				Attacked(tiny, giant);
@@ -171,6 +158,8 @@ namespace Gts {
 				std::random_device rd;
 				std::mt19937 gen(rd());
 				std::uniform_real_distribution<float> dis(-0.2, 0.2);
+
+				
 
 				AddSMTDuration(giant, 5.0);
 				ScareChance(giant);
@@ -206,8 +195,7 @@ namespace Gts {
 
 					auto giant = giantHandle.get().get();
 					auto tiny = tinyHandle.get().get();
-					float scale = get_visual_scale(tiny);
-					TransferInventory(tiny, giant, scale, false, true, DamageSource::Crushed, true);
+					TransferInventory(tiny, giant, currentSize * GetSizeFromBoundingBox(tiny), false, true, DamageSource::Crushed, true);
 					// Actor Reset is done inside TransferInventory:StartResetTask!
 				});
 

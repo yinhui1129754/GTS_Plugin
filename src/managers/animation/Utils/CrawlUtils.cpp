@@ -91,7 +91,7 @@ namespace Gts {
 
 		//std::string rumbleName = std::format("{}{}", tag, actor->formID);
 		std::string rumbleName = std::format("CrawlRumble_{}", actor->formID);
-		Rumbling::Once(rumbleName, actor, Rumble_Crawl_KneeHand_Impact * multiplier * smt, 0.02, name, 0.0); // Do Rumble
+		Rumbling::Once(rumbleName, actor, Rumble_Crawl_KneeHand_Impact/2 * multiplier * smt, 0.02, name, 0.0); // Do Rumble
 
 		DoDamageAtPoint(actor, damage_dist, damage, node, 20, 0.05, crushmult, Cause); // Do size-related damage
 		DoCrawlingSounds(actor, scale, node, FootEvent::Left);                      // Do impact sounds
@@ -177,8 +177,6 @@ namespace Gts {
 								damage_zones_applied = 1.0; // just to be safe
 							}
 							damage /= damage_zones_applied;
-							float aveForce = std::clamp(force, 0.14f, 0.70f);
-							
 							Utils_PushCheck(giant, otherActor, Get_Bone_Movement_Speed(giant, Cause)); 
 							
 							CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);

@@ -141,7 +141,7 @@ namespace {
 		
 		DrainStamina(giant, "StaminaDrain_Stomp", "DestructionBasics", false, 1.8); // cancel stamina drain
 
-		DoLaunch(giant, 0.80 * perk, 1.75 * animSpeed, Event);
+		DoLaunch(giant, 0.80 * perk, 2.0 * animSpeed, Event);
 
 		FootGrindCheck(giant, Radius_Stomp, false, right);
 	}
@@ -165,7 +165,7 @@ namespace {
 		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
 		DoFootstepSound(giant, 1.0 + animSpeed/14, Event, RNode);
 		
-		DoLaunch(giant, 0.75 * perk, 2.5 + animSpeed/4, Event);
+		DoLaunch(giant, 0.90 * perk, 3.2 + animSpeed/2, Event);
 		KeepInPlace(giant);
 	}
 

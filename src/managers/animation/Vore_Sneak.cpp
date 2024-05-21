@@ -26,36 +26,6 @@ using namespace RE;
 using namespace Gts;
 
 namespace {
-	bool IsVoring(Actor* giant) {
-		bool Voring;
-		giant->GetGraphVariableBool("GTS_IsVoring", Voring);
-		return Voring;
-	}
-
-    void Task_HighHeel_SyncVoreAnim(Actor* giant) {
-		// Purpose of this task is to blend between 2 animations based on value.
-		// The problem: hand that grabs the tiny is becomming offset if we equip High Heels
-		// This task fixes that (by, again, blending with anim that has hand placed lower).
-		std::string name = std::format("Vore_AdjustHH_{}", giant->formID);
-		ActorHandle gianthandle = giant->CreateRefHandle();
-		TaskManager::Run(name, [=](auto& progressData) {
-			if (!gianthandle) {
-				return false;
-			}
-			Actor* giantref = gianthandle.get().get();
-
-			Utils_UpdateHighHeelBlend(giantref, false);
-			// make behaviors read the value to blend between anims
-
-			if (!IsVoring(giantref)) {
-				Utils_UpdateHighHeelBlend(giantref, true);
-				return false; // just a fail-safe to cancel the task if we're outside of Vore anim
-			}
-			
-			return true;
-		});
-    }
-
     void GTS_Sneak_Vore_Start(AnimationEventData& data) {
         auto giant = &data.giant;
 		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);

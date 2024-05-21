@@ -5,6 +5,8 @@
 using namespace RE;
 
 namespace Gts {
+	float HighHeelOffset();
+
 	void SetINIFloat(std::string_view name, float value);
 
 	float GetINIFloat(std::string_view name);

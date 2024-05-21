@@ -88,6 +88,9 @@ namespace Gts {
 			bool Protection = false;
 			bool GrowthPotion = false;
 
+			bool Devourment_Devoured = false;
+			bool Devourment_Eaten = false;
+
 			bool disable_collision = false;
 			bool was_sneaking = false;
 
@@ -113,6 +116,8 @@ namespace Gts {
 			float MovementSlowdown = 1.0;
 			float ShrinkResistance = 0.0;
 			float MightValue = 0.0;
+
+			NiPoint3 BoundingBox_Cache = get_bound_values(actor); // Default Human Height
 
 			// Volume scales cubically
 			float base_volume = bound_values[0] * bound_values[1] * bound_values[2] * scale * scale * scale;
@@ -161,6 +166,9 @@ namespace Gts {
 			result.MovementSlowdown = MovementSlowdown;
 			result.ShrinkResistance = ShrinkResistance;
 			result.MightValue = MightValue;
+
+			result.BoundingBox_Cache = BoundingBox_Cache;
+
 			result.OverrideCamera = OverrideCamera;
 			result.WasReanimated = WasReanimated;
 			result.FPCrawling = FPCrawling;
@@ -168,6 +176,9 @@ namespace Gts {
 			result.Overkilled = Overkilled;
 			result.Protection = Protection;
 			result.GrowthPotion = GrowthPotion;
+
+			result.Devourment_Devoured = Devourment_Devoured;
+			result.Devourment_Eaten = Devourment_Eaten;
 
 			result.disable_collision = disable_collision;
 			result.was_sneaking = was_sneaking;

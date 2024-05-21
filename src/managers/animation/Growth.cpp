@@ -38,7 +38,7 @@ namespace {
 	void CancelGrowth(Actor* actor) {
 		std::string name = std::format("ManualGrowth_{}", actor->formID);
 		TaskManager::Cancel(name);
-		SetHalfLife(actor, 1.0);
+		//SetHalfLife(actor, 1.0);
 	}
 
 	void GrowthTask(Actor* actor) {
@@ -109,7 +109,7 @@ namespace {
 	void GTSGrowth_SpurtSlowdownPoint(AnimationEventData& data) {
 	}
 	void GTSGrowth_SpurtStop(AnimationEventData& data) {
-		CancelGrowth(&data.giant);
+		//CancelGrowth(&data.giant);
 	}
 	void GTSGrowth_Exit(AnimationEventData& data) {
 	}

@@ -63,7 +63,8 @@ namespace {
 			log::info("{} Is Gts Busy", pred->GetDisplayFullName());
 			return;
 		}
-		if (rng <= 2 && butt_rng <= 2 && Persistent::GetSingleton().Butt_Ai) {
+
+		if (rng <= 2 && butt_rng <= 2) {
 			AI_ButtCrush(pred, prey);
 			return;
 		} else if (rng <= 3) {

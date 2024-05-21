@@ -33,6 +33,7 @@ namespace Gts {
 	bool IsEquipBusy(Actor* actor);
 	
 	bool IsRagdolled(Actor* actor);
+	bool IsGrowing(Actor* actor);
 	bool IsChangingSize(Actor* actor);
 
 	bool IsFootGrinding(Actor* actor);
@@ -42,6 +43,7 @@ namespace Gts {
 	bool IsInBalanceMode();
 	bool IsHugCrushing(Actor* actor);
 	bool IsHugHealing(Actor* actor);
+	bool IsVoring(Actor* giant);
 	bool IsHuggingFriendly(Actor* actor);
 	bool IsTransitioning(Actor* actor);
 	bool IsJumping(Actor* actor);
@@ -124,8 +126,6 @@ namespace Gts {
 
 	std::vector<Actor*> Vore_GetMaxVoreCount(Actor* giant, std::vector<Actor*> actors);
 
-	float GetHPThreshold(Actor* actor);
-
 	float Ench_Aspect_GetPower(Actor* giant);
 	float Ench_Hunger_GetPower(Actor* giant);
 
@@ -172,7 +172,7 @@ namespace Gts {
 
 	void ForceRagdoll(Actor* actor, bool forceOn);
 
-	std::vector<hkpRigidBody*> GetActorRBs(Actor* actor);
+	std::vector<hkpRigidBody*> GetActorRB(Actor* actor);
 	void PushActorAway(Actor* source_act, Actor* receiver, float force);
 	void KnockAreaEffect(TESObjectREFR* source, float afMagnitude, float afRadius);
 	void ApplyManualHavokImpulse(Actor* target, float afX, float afY, float afZ, float Multiplier);
@@ -198,7 +198,7 @@ namespace Gts {
 	
 	void ResetCameraTracking();
 	void CallDevourment(Actor* giant, Actor* tiny);
-	void CallGainWeight(Actor* giant, float value);
+	void GainWeight(Actor* giant, float value);
 	void CallVampire();
 	void CallHelpMessage();
 	void AddCalamityPerk();
@@ -274,11 +274,12 @@ namespace Gts {
 	void FixAnimationsAndCamera();
 
 	bool CanPerformAnimation(Actor* giant, float type);
-	void AdvanceQuestProgression(Actor* giant, float stage, float value);
-	void AdvanceQuestProgression(Actor* giant, Actor* tiny, float stage, float value, bool vore);
-	void SpawnCustomParticle(Actor* actor, ParticleType Type, NiPoint3 spawn_at_point, std::string_view spawn_at_node, float scale_mult);
+	void AdvanceQuestProgression(Actor* giant, Actor* tiny, QuestStage stage, float value, bool vore);
+	float GetQuestProgression(int stage);
 	void ResetQuest();
-	float GetQuestProgression(float stage);
+
+	void SpawnCustomParticle(Actor* actor, ParticleType Type, NiPoint3 spawn_at_point, std::string_view spawn_at_node, float scale_mult);
+
 	void InflictSizeDamage(Actor* attacker, Actor* receiver, float value);
 
 	float Sound_GetFallOff(NiAVObject* source, float mult);

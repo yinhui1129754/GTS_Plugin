@@ -75,7 +75,7 @@ namespace {
                 SetBetweenBreasts(tiny, false);
                 StartCombat(tiny, giantess);
                 
-                AdvanceQuestProgression(giantess, tiny, 5, 1.0, false);
+                AdvanceQuestProgression(giantess, tiny, QuestStage::HandCrush, 1.0, false);
                 
                 PrintDeathSource(giantess, tiny, DamageSource::HandCrushed);
             } else {
@@ -113,7 +113,7 @@ namespace {
 			float power = std::clamp(sizemanager.GetSizeAttribute(giant, SizeAttribute::Normal), 1.0f, 999999.0f);
 			float additionaldamage = 1.0 + sizemanager.GetSizeVulnerability(grabbedActor);
 			float damage = (Damage_Grab_Attack * sizeDiff) * power * additionaldamage * additionaldamage;
-			float experience = std::clamp(damage/800, 0.0f, 0.06f);
+			float experience = std::clamp(damage/1600, 0.0f, 0.06f);
 			if (HasSMT(giant)) {
 				bonus = 1.65;
 			}

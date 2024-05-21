@@ -61,22 +61,6 @@ namespace {
         }
     }
 
-    void MoveItems(ActorHandle giantHandle, ActorHandle tinyHandle, FormID ID) {
-        std::string taskname = std::format("CollisionDeath {}", ID);
-        TaskManager::RunOnce(taskname, [=](auto& update){
-            if (!tinyHandle) {
-                return;
-            }
-            if (!giantHandle) {
-                return;
-            }
-            auto giant = giantHandle.get().get();
-            auto tiny = tinyHandle.get().get();
-            float scale = get_visual_scale(tiny);
-            TransferInventory(tiny, giant, scale, false, true, DamageSource::Collision, true);
-        });
-    }
-
     void RefreshDuration(Actor* giant) {
         if (Runtime::HasPerk(giant, "NoSpeedLoss")) {
             AttributeManager::GetSingleton().OverrideSMTBonus(0.75); // Reduce speed after crush
@@ -152,7 +136,7 @@ namespace Gts {
 
         CrushBonuses(giant, tiny);                             // common.hpp
         PlayGoreEffects(tiny, giant);    
-        MoveItems(giantHandle, tinyHandle, tiny->formID);
+        MoveItems(giantHandle, tinyHandle, tiny->formID, DamageSource::Collision);
 
         Attacked(tiny, giant);
         

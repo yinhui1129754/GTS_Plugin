@@ -222,6 +222,12 @@ namespace Gts {
 		return HighHeelManager::GetBaseHHOffset(actor) * Scale;
 	}
 
+	float HighHeelManager::GetHHMultiplier(Actor* actor) {
+		auto& me = HighHeelManager::GetSingleton();
+		me.data.try_emplace(actor);
+		auto& hhData = me.data[actor];
+		return hhData.multiplier.value;
+	}
 	bool HighHeelManager::IsWearingHH(Actor* actor) {
 		return HighHeelManager::GetBaseHHOffset(actor).Length() > 1e-3;
 	}

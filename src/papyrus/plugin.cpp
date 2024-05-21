@@ -8,9 +8,11 @@
 #include "managers/GtsSizeManager.hpp"
 #include "utils/ItemDistributor.hpp"
 #include "magic/effects/common.hpp"
-#include <math.h>
+#include "managers/vore.hpp"
 #include <sstream>
 #include <iomanip>
+#include <math.h>
+
 
 
 using namespace SKSE;
@@ -238,7 +240,7 @@ namespace {
 		ResetQuest();
 	}
 
-	float Quest_GetProgression(StaticFunctionTag*, float stage) {
+	float Quest_GetProgression(StaticFunctionTag*, int stage) {
 		return GetQuestProgression(stage);
 	}
 
@@ -407,6 +409,10 @@ namespace {
 		return false;
 	}
 
+	void CallDevourmentCompatibility(StaticFunctionTag*, Actor* Pred, Actor* Prey, bool Digested) {
+		Vore::GetSingleton().Devourment_Compatibility(Pred, Prey, Digested);
+	}
+
 	bool GetDevourmentCompatibility(StaticFunctionTag*) {
 		return Persistent::GetSingleton().devourment_compatibility;
 	}
@@ -546,6 +552,7 @@ namespace Gts {
 		vm->RegisterFunction("IncreaseMassLimit", PapyrusClass, IncreaseMassLimit);
 		vm->RegisterFunction("DisintegrateTarget", PapyrusClass, DisintegrateTarget);
 		vm->RegisterFunction("WasDragonEaten", PapyrusClass, WasDragonEaten);
+		vm->RegisterFunction("CallDevourmentCompatibility", PapyrusClass, CallDevourmentCompatibility);
 		vm->RegisterFunction("GetDevourmentCompatibility", PapyrusClass, GetDevourmentCompatibility);
 		vm->RegisterFunction("SetDevourmentCompatibility", PapyrusClass, SetDevourmentCompatibility);
 		vm->RegisterFunction("DragonCheck", PapyrusClass, DragonCheck);

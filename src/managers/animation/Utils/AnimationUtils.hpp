@@ -33,6 +33,7 @@ namespace Gts {
 	void AbortHugAnimation(Actor* giant, Actor* tiny);
 	void Utils_UpdateHugBehaviors(Actor* giant, Actor* tiny);
 	void Utils_UpdateHighHeelBlend(Actor* giant, bool reset);
+	void Task_HighHeel_SyncVoreAnim(Actor* giant);
 	void StartHealingAnimation(Actor* giant, Actor* tiny);
 
 	void AllowToDoVore(Actor* actor, bool toggle);

@@ -205,7 +205,7 @@ namespace {
 		}
 	}
 	void BreastGrabMessage(std::string_view GiantName, std::string_view TinyName, int random) {
-		if (random == 1) {
+		if (random < 2) {
 			Cprint("{} was weakened and got accidentally crushed by {} breasts", TinyName, GiantName);
 		} else if (random == 2) {
 			Cprint("{} got unintentionally crushed by the breasts of {}", TinyName, GiantName);
@@ -220,7 +220,7 @@ namespace {
 		}
 	}
 	void BreastCrushMessage(std::string_view GiantName, std::string_view TinyName, int random) {
-		if (random == 1) {
+		if (random < 2) {
 			Cprint("{} was crushed under the soft breasts of {}", TinyName, GiantName);
 		} else if (random == 2) {
 			Cprint("{} ended up being crushed under the cleavage of {}", TinyName, GiantName);

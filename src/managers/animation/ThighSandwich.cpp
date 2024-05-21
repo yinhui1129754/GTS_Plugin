@@ -108,8 +108,6 @@ namespace {
 			InflictSizeDamage(giant, tiny, damage);
 		}
 
-		
-
 		float experience = std::clamp(damage/200, 0.0f, 0.20f);
 		ModSizeExperience(giant, experience);
 
@@ -120,7 +118,7 @@ namespace {
 			CrushManager::GetSingleton().Crush(giant, tiny);
 			
 			PrintDeathSource(giant, tiny, DamageSource::ThighSandwiched);
-			AdvanceQuestProgression(giant, tiny, 5, 1.0, false);
+			AdvanceQuestProgression(giant, tiny, QuestStage::HandCrush, 1.0, false);
 			auto node = find_node(giant, "NPC R FrontThigh");
 			if (node) {
 				Runtime::PlaySoundAtNode("GtsCrushSound", giant, 1.0, 1.0, node);

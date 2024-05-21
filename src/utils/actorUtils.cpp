@@ -381,7 +381,12 @@ namespace Gts {
 		bool ragdoll = actor->IsInRagdollState();
 		return ragdoll;
 	}
-
+	bool IsGrowing(Actor* actor) {
+		bool Growing = false;
+		actor->GetGraphVariableBool("GTS_IsGrowing", Growing);
+		return Growing;
+	}
+	
 	bool IsChangingSize(Actor* actor) { // Used to disallow growth/shrink during specific animations
 		bool Growing = false;
 		bool Shrinking = false;
@@ -430,6 +435,12 @@ namespace Gts {
 		bool IsHugHealing = false;
 		actor->GetGraphVariableBool("GTS_IsHugHealing", IsHugHealing);
 		return IsHugHealing;
+	}
+
+	bool IsVoring(Actor* giant) {
+		bool Voring;
+		giant->GetGraphVariableBool("GTS_IsVoring", Voring);
+		return Voring;
 	}
 
 	bool IsHuggingFriendly(Actor* actor) {
@@ -539,7 +550,7 @@ namespace Gts {
 
 	bool IsGtsBusy(Actor* actor) {
 		auto profiler = Profilers::Profile("ActorUtils: IsGtsBusy"); 
-		bool GTSBusy;
+		bool GTSBusy = false;
 		actor->GetGraphVariableBool("GTS_Busy", GTSBusy);
 
 		bool Busy = GTSBusy && !CanDoCombo(actor);
@@ -915,15 +926,14 @@ namespace Gts {
 
 	bool IsHeadtracking(Actor* giant) { // Used to report True when we lock onto something, should be Player Exclusive.
 		//Currently used to fix TDM mesh issues when we lock on someone.
-		//auto profiler = Profilers::Profile("ActorUtils: HeadTracking");
 		bool tracking = false;
 		bool headtracking = false;
 		if (giant->formID == 0x14) {
 			giant->GetGraphVariableBool("TDM_TargetLock", tracking); // get HT value, requires newest versions of TDM to work properly
-		} else {
-			giant->GetGraphVariableBool("bHeadtracking", headtracking);
-		}
-		return tracking && headtracking;
+		} //else {
+			//giant->GetGraphVariableBool("bHeadtracking", headtracking);
+		//}
+		return tracking;
 	}
 
 	bool AnimationsInstalled(Actor* giant) {
@@ -1070,17 +1080,6 @@ namespace Gts {
 		}  
 		//log::info("Max Vore for {} is {}", giant->GetDisplayFullName(), vories.size());
 		return vories;
-	}
-
-	float GetHPThreshold(Actor* actor) {
-		float hp = 0.20;
-		if (Runtime::HasPerkTeam(actor, "HugCrush_MightyCuddles")) {
-			hp += 0.10; // 0.30
-		}
-		if (Runtime::HasPerkTeam(actor, "HugCrush_HugsOfDeath")) {
-			hp += 0.20; // 0.50
-		}
-		return hp;
 	}
 
 	float Ench_Aspect_GetPower(Actor* giant) { 
@@ -1295,7 +1294,7 @@ namespace Gts {
 										} else if (huggedActor && huggedActor == otherActor && Ally && HasLovingEmbrace && !Healing) {
 											SpawnParticle(otherActor, 3.00, "GTS/UI/Icon_LovingEmbrace.nif", NiMatrix3(), Position, iconScale, 7, node);
 										} else if (huggedActor && huggedActor == otherActor && !IsHugCrushing(giant) && !Healing) {
-											bool LowHealth = (GetHealthPercentage(huggedActor) < GetHPThreshold(giant));
+											bool LowHealth = (GetHealthPercentage(huggedActor) < GetHugCrushThreshold(giant));
 											bool ForceCrush = Runtime::HasPerkTeam(giant, "HugCrush_MightyCuddles");
 											float Stamina = GetStaminaPercentage(giant);
 											if (HasSMT(giant) || LowHealth || (ForceCrush && Stamina > 0.50)) {
@@ -1353,7 +1352,7 @@ namespace Gts {
 			}
 
 			if (giant->formID == 0x14 && type == SizeEffectType::kShrink) {
-				OnTheEdge = GetPerkBonus_OnTheEdge(giant, amt); // Play Exclusive
+				OnTheEdge = GetPerkBonus_OnTheEdge(giant, amt); // Player Exclusive
 			}
 
 			float target = get_target_scale(giant);
@@ -1362,10 +1361,10 @@ namespace Gts {
 				Persistent->target_scale += amt;
 				Persistent->visual_scale += amt;
 
-				float initialScale = GetInitialScale(giant);// Do the same thing GtsManager does
+				/*float initialScale = GetInitialScale(giant);// Do the same thing GtsManager does
 				float GameScale = game_getactorscale(giant); 
 				
-				update_model_visuals(giant, scale * initialScale * GameScale); 
+				update_model_visuals(giant, scale * initialScale * GameScale); */
 			}
 		}
 	}
@@ -1385,7 +1384,7 @@ namespace Gts {
 		}
 
 		if (giant->formID == 0x14 && type == SizeEffectType::kShrink) {
-			OnTheEdge = GetPerkBonus_OnTheEdge(giant, amt); // Play Exclusive
+			OnTheEdge = GetPerkBonus_OnTheEdge(giant, amt); // Player Exclusive
 		}
 
 		mod_target_scale(giant, amt * OnTheEdge); // set target scale value
@@ -1406,7 +1405,7 @@ namespace Gts {
 		}
 		
 		if (giant->formID == 0x14 && type == SizeEffectType::kShrink) {
-			OnTheEdge = GetPerkBonus_OnTheEdge(giant, amt); // Play Exclusive
+			OnTheEdge = GetPerkBonus_OnTheEdge(giant, amt); // Player Exclusive
 		}
 
 		mod_target_scale(giant, amt * OnTheEdge); // set target scale value
@@ -1724,7 +1723,7 @@ namespace Gts {
 		auto& persist = Persistent::GetSingleton();
 		
 		float might = 1.0 + Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
-		float tremor_scale = persist.npc_tremor_scale * 0.85; // slightly weaker tremor for npc's
+		float tremor_scale = persist.npc_tremor_scale;
 		
 		float distance = (coords - receiver->GetPosition()).Length(); // In that case we apply shake based on actor distance
 
@@ -1812,16 +1811,16 @@ namespace Gts {
 		if (giant->formID == 0x14) { // don't enable for Player
 			return false;
 		}
-		float scale = get_visual_scale(giant);
-		if (scale > 1.10) {
-			bool dead = giant->IsDead();
-			bool everyone = Runtime::GetBool("PreciseDamageOthers");
-			if (!dead && everyone) {
-				return true;
-			} else {
-				return false;
-			}
+		//float scale = get_visual_scale(giant);
+		//if (scale > 1.10) {
+		bool dead = giant->IsDead();
+		bool everyone = Runtime::GetBool("PreciseDamageOthers");
+		if (!dead && everyone) {
+			return true;
+		} else {
+			return false;
 		}
+		//}
 		return false;
 	}
 
@@ -1841,7 +1840,7 @@ namespace Gts {
 	}
 
 
-	void CallGainWeight(Actor* giant, float value) {
+	void GainWeight(Actor* giant, float value) {
 		log::info("weight gain: {}", Persistent::GetSingleton().allow_weight_gain);
 		if (Persistent::GetSingleton().allow_weight_gain) {
 			if (giant->formID == 0x14) {
@@ -1913,13 +1912,10 @@ namespace Gts {
 		if (giant->formID == 0x14 && Runtime::HasPerk(giant, "SizeAbsorption")) {
 			auto attributes = Persistent::GetSingleton().GetData(giant);
 			if (attributes) {
-				//log::info("Adding {} to stolen attributes", value);
 				attributes->stolen_attributes += value;
-
 				if (attributes->stolen_attributes <= 0.0) {
 					attributes->stolen_attributes = 0.0; // Cap it just in case
 				}
-				//log::info("Stolen AV value: {}", attributes->stolen_attributes);
 			}
 		}
 	}
@@ -2062,6 +2058,7 @@ namespace Gts {
 		cost -= reduction_1;
 		cost *= reduction_2;
 		cost *= (1.0 - Potion_GetMightBonus(giant));
+		cost *= (1.0 - std::clamp(GetGtsSkillLevel(giant) * 0.0020f, 0.0f, 0.20f)); // Based on skill tree progression
 		return cost;
 	}
 
@@ -2675,7 +2672,7 @@ namespace Gts {
 	}
 
 	void StaggerActor(Actor* giant, Actor* tiny, float power) {
-		if (tiny->IsDead() || IsRagdolled(tiny) || GetAV(tiny, ActorValue::kHealth) <= 0.0) {
+		if (tiny->IsDead() || IsRagdolled(tiny) || IsBeingHugged(tiny) || GetAV(tiny, ActorValue::kHealth) <= 0.0) {
 			return;
 		}
 		StaggerActor_Directional(giant, power, tiny);
@@ -2955,14 +2952,14 @@ namespace Gts {
 						growData->addedSoFar = totalScaleToAdd;
 					}
 
-					log::info("target: {}, visual: {}", actorData->target_scale, actorData->visual_scale);
+					/*log::info("target: {}, visual: {}", actorData->target_scale, actorData->visual_scale);
 					log::info("Scale: {}, max_scale: {}", scale, max_scale);
 					if (!drain_stamina) { // Apply only to growth with animation
 						float initialScale = GetInitialScale(actor);// Do the same thing GtsManager does
 						float GameScale = game_getactorscale(actor); 
 						
 						update_model_visuals(actor, get_visual_scale(actor) * initialScale * GameScale); 
-					}
+					}*/
 				}
 			}
 			return fabs(growData->amount.value - growData->amount.target) > 1e-4;
@@ -2993,10 +2990,10 @@ namespace Gts {
 					actorData->visual_scale += deltaScale;
 					growData->addedSoFar = totalScaleToAdd;
 
-					float initialScale = GetInitialScale(actor);// Do the same thing GtsManager does
+					/*float initialScale = GetInitialScale(actor);// Do the same thing GtsManager does
 					float GameScale = game_getactorscale(actor); 
 					
-					update_model_visuals(actor, get_visual_scale(actor) * initialScale * GameScale); 
+					update_model_visuals(actor, get_visual_scale(actor) * initialScale * GameScale); */
 				}
 			}
 
@@ -3069,68 +3066,95 @@ namespace Gts {
 		}
 	}
 
-	void AdvanceQuestProgression(Actor* giant, float stage, float value) {
+	void AdvanceQuestProgression(Actor* giant, Actor* tiny, QuestStage stage, float value, bool vore) {
 		if (giant->formID == 0x14) { // Player Only
 			auto progressionQuest = Runtime::GetQuest("MainQuest");
 			if (progressionQuest) {
 				auto queststage = progressionQuest->GetCurrentStageID();
-				if (queststage < 10 || queststage >= 100) {
+				if (queststage >= 100 || queststage < 10) {
 					return;
 				}
-				if (stage == 1) {
-					Persistent::GetSingleton().HugStealCount += value;
-				} else if (stage == 2) {
-					Persistent::GetSingleton().StolenSize += value;
-				} else if (stage == 3 && queststage >= 30) {
-					Persistent::GetSingleton().CrushCount += value;
-				} else if (stage == 4 && queststage >= 40) {
-					Persistent::GetSingleton().STNCount += value;
-				} else if (stage == 5) {
-					Persistent::GetSingleton().HandCrushed += value;
-				} else if (stage == 6) {
-					Persistent::GetSingleton().VoreCount += value;
-				} else if (stage == 7) {
-					Persistent::GetSingleton().GiantCount += value;
+				switch (stage) {
+					case QuestStage::HugSteal: 				// Stage 0: hug steal 2 meters of size
+						Persistent::GetSingleton().HugStealCount += value;
+					break;
+					case QuestStage::HugSpellSteal:			// Stage 1: hug/spell steal 5 meters of size
+						if (queststage == 20) {
+							Persistent::GetSingleton().StolenSize += value;
+						}
+					break;
+					case QuestStage::Crushing:				// Stage 2: Crush 3 (*4 if dead) enemies
+						if (queststage >= 30 && queststage <= 40) {
+							Persistent::GetSingleton().CrushCount += value;
+							if (value < 1) {
+								SpawnCustomParticle(tiny, ParticleType::DarkRed, NiPoint3(), "NPC Root [Root]", 1.0);
+							} else {
+								SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
+							}
+							
+							float progression = GetQuestProgression(static_cast<int>(QuestStage::Crushing));
+							float goal = 3.0;
+							if (queststage == 40) { // Print this if in STN stage
+								progression = GetQuestProgression(static_cast<int>(QuestStage::ShrinkToNothing));
+								goal = 6.0;
+							}
+							Notify("Progress: {:.1f}/{:.1f}", progression, goal);
+						}
+					break;
+					case QuestStage::ShrinkToNothing:		// Stage 3: Crush or Shrink to nothing 6 enemies in total
+						if (queststage == 40) {
+							Persistent::GetSingleton().STNCount += value;
+							if (value < 1) {
+								SpawnCustomParticle(tiny, ParticleType::DarkRed, NiPoint3(), "NPC Root [Root]", 1.0);
+							} else {
+								SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
+							}
+							Notify("Progress: {:.1f}/{:.1f}", GetQuestProgression(static_cast<int>(QuestStage::ShrinkToNothing)), 6.0);
+						}
+					break;
+					case QuestStage::HandCrush:				// Stage 4: hand crush 3 enemies
+						Persistent::GetSingleton().HandCrushed += value;
+						SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
+						Notify("Progress: {:.1f}/{:.1f}", GetQuestProgression(static_cast<int>(QuestStage::HandCrush)), 3.0);
+					break;
+					case QuestStage::Vore:					// Stage 5: Vore 6 enemies
+						Persistent::GetSingleton().VoreCount += value;
+						SpawnCustomParticle(tiny, ParticleType::Blue, NiPoint3(), "NPC Root [Root]", 1.0);
+						Notify("Progress: {:.1f}/{:.1f}", GetQuestProgression(static_cast<int>(QuestStage::Vore)), 6.0);
+					break;
+					case QuestStage::Giant:					// Stage 6: Vore/crush/shrink a Giant
+						Persistent::GetSingleton().GiantCount += value;
+						if (vore) {
+							SpawnCustomParticle(tiny, ParticleType::Blue, NiPoint3(), "NPC Root [Root]", 1.0);
+						} else {
+							SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
+						}
+					break;
 				}
 			}
 		}
 	}
 
-	void AdvanceQuestProgression(Actor* giant, Actor* tiny, float stage, float value, bool vore) {
-		if (giant->formID == 0x14) { // Player Only
-			auto progressionQuest = Runtime::GetQuest("MainQuest");
-			if (progressionQuest) {
-				auto queststage = progressionQuest->GetCurrentStageID();
-				if (queststage < 10 || queststage >= 100) {
-					return;
-				}
-				float bonus = 1.0;//GetSizeFromBoundingBox(tiny);
-				if (stage == 1) {
-					Persistent::GetSingleton().HugStealCount += value;
-				} else if (stage == 2) {
-					Persistent::GetSingleton().StolenSize += value;
-				} else if (stage == 3 && queststage >= 30) {
-					Persistent::GetSingleton().CrushCount += value * bonus;
-					SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
-				} else if (stage == 4 && queststage >= 40) {
-					Persistent::GetSingleton().STNCount += value * bonus;
-					SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
-				} else if (stage == 5) {
-					Persistent::GetSingleton().HandCrushed += value * bonus;
-					SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
-				} else if (stage == 6) {
-					Persistent::GetSingleton().VoreCount += value * bonus;
-					SpawnCustomParticle(tiny, ParticleType::Blue, NiPoint3(), "NPC Root [Root]", 1.0);
-				} else if (stage == 7) {
-					Persistent::GetSingleton().GiantCount += value;
-					if (vore) {
-						SpawnCustomParticle(tiny, ParticleType::Blue, NiPoint3(), "NPC Root [Root]", 1.0);
-					} else {
-						SpawnCustomParticle(tiny, ParticleType::Red, NiPoint3(), "NPC Root [Root]", 1.0);
-					}
-				}
-			}
+	float GetQuestProgression(int stage) {
+		QuestStage Stage = static_cast<QuestStage>(stage);
+		switch (Stage) {
+			case QuestStage::HugSteal: 				// Stage 0: hug steal 2 meters of size
+				return Persistent::GetSingleton().HugStealCount;
+			case QuestStage::HugSpellSteal: 		// Stage 1: hug/spell steal 5 meters of size
+				return Persistent::GetSingleton().StolenSize;
+			case QuestStage::Crushing: 				// Stage 2: Crush 3 (*4 if dead) enemies
+				return Persistent::GetSingleton().CrushCount;
+			case QuestStage::ShrinkToNothing:  		// Stage 3: Crush or Shrink to nothing 6 enemies in total
+				return (Persistent::GetSingleton().CrushCount - 3.0) + Persistent::GetSingleton().STNCount;
+			case QuestStage::HandCrush: 			// Stage 4: hand crush 3 enemies
+				return Persistent::GetSingleton().HandCrushed;
+			case QuestStage::Vore: 					// Stage 5: Vore 6 enemies
+				return Persistent::GetSingleton().VoreCount;
+			case QuestStage::Giant:					// Stage 6: Vore/crush/shrink a Giant
+				return Persistent::GetSingleton().GiantCount;
+			break;
 		}
+		return 0.0;
 	}
 
 	void ResetQuest() {
@@ -3145,67 +3169,51 @@ namespace Gts {
 
 
 	void SpawnCustomParticle(Actor* actor, ParticleType Type, NiPoint3 spawn_at_point, std::string_view spawn_at_node, float scale_mult) {
-		float scale = scale_mult * GetSizeFromBoundingBox(actor);
+		if (actor) {
+			float scale = scale_mult * GetSizeFromBoundingBox(actor);
 
-		if (actor->IsDead()) {
-			scale *= 0.33;
-		}
+			if (actor->IsDead()) {
+				scale *= 0.33;
+			}
 
-		auto node = find_node(actor, spawn_at_node);
-		if (!node) {
-			return;
-		}
-		const char* particle_path = "None";
-		//log::info("Spawning particle");
-		switch (Type) {
-			case ParticleType::Red: 
-				particle_path = "GTS/Magic/Life_Drain.nif";
-			break;
-			case ParticleType::Green:
-				particle_path = "GTS/Magic/Slow_Grow.nif";
-			break;
-			case ParticleType::Blue:
-				particle_path = "GTS/Magic/Soul_Drain.nif";
-			break;
-			case ParticleType::Hearts:
-				particle_path = "GTS/Magic/Hearts.nif";
-			break;
-			case ParticleType::None:
+			auto node = find_node(actor, spawn_at_node);
+			if (!node) {
 				return;
-			break;
-		}
-		NiPoint3 pos = NiPoint3(); // Empty point 3
+			}
+			const char* particle_path = "None";
+			//log::info("Spawning particle");
+			switch (Type) {
+				case ParticleType::Red: 
+					particle_path = "GTS/Magic/Life_Drain.nif";
+				break;
+				case ParticleType::DarkRed:
+					particle_path = "GTS/Magic/Life_Drain_Dark.nif";
+				break;
+				case ParticleType::Green:
+					particle_path = "GTS/Magic/Slow_Grow.nif";
+				break;
+				case ParticleType::Blue:
+					particle_path = "GTS/Magic/Soul_Drain.nif";
+				break;
+				case ParticleType::Hearts:
+					particle_path = "GTS/Magic/Hearts.nif";
+				break;
+				case ParticleType::None:
+					return;
+				break;
+			}
+			NiPoint3 pos = NiPoint3(); // Empty point 3
 
-		if (spawn_at_point.Length() > 0.01) { // fill it up
-			pos = spawn_at_point;
-		} else {
-			pos = node->world.translate;
-		}
+			if (spawn_at_point.Length() > 0.01) { // fill it up
+				pos = spawn_at_point;
+			} else {
+				pos = node->world.translate;
+			}
 
-		SpawnParticle(actor, 4.60, particle_path, NiMatrix3(), pos, scale, 7, nullptr);
+			SpawnParticle(actor, 4.60, particle_path, NiMatrix3(), pos, scale, 7, nullptr);
+		}
 	}
 	
-
-	float GetQuestProgression(float stage) {
-		if (stage == 1) {
-			return Persistent::GetSingleton().HugStealCount;
-		} else if (stage == 2) {
-			return Persistent::GetSingleton().StolenSize;
-		} else if (stage == 3) {
-			return Persistent::GetSingleton().CrushCount;
-		} else if (stage == 4) {
-			return (Persistent::GetSingleton().CrushCount - 3.0) + Persistent::GetSingleton().STNCount;
-		} else if (stage == 5) {
-			return Persistent::GetSingleton().HandCrushed;
-		} else if (stage == 6) {
-			return Persistent::GetSingleton().VoreCount;
-		} else if (stage == 7) {
-			return Persistent::GetSingleton().GiantCount;
-		} else {
-			return 0.0;
-		}
-	}
-
 	void InflictSizeDamage(Actor* attacker, Actor* receiver, float value) {
 		if (!receiver->IsDead()) {
 			float HpPercentage = GetHealthPercentage(receiver);
@@ -3219,7 +3227,9 @@ namespace Gts {
 						StartCombat(receiver, attacker); // Make actor hostile and add bounty of 40 (can't be configured, needs different hook probably). 
 					}
 				}
-				Attacked(receiver, attacker);
+				if (value > 1.0) { // To prevent aggro when briefly colliding
+					Attacked(receiver, attacker);
+				}
 			} 
 			
 			ApplyDamage(attacker, receiver, value * difficulty * GetDamageSetting());

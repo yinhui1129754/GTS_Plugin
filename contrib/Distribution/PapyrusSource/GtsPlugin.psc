@@ -65,7 +65,7 @@ Function DisableCollisionLayerAndMotion(ObjectReference ref) global native
 Function EnableRaycastSize(Bool enabled) global native
     
 Function ResetQuestProgression() global native
-Float function Quest_GetProgression(float stage) global native    
+Float function Quest_GetProgression(int stage) global native    
 Float function GetAspectOfGiantessPower() global native
     
 
@@ -208,6 +208,9 @@ Function SetOnlyCombatVore(Bool enabled) global native
 
 ;CTD-free Set Critical Stage function
 Function DisintegrateTarget(Actor target) global native
+
+; apply all GTS bonuses like in normal vore case during Devourment events
+Function CallDevourmentCompatibility(Actor pred, Actor prey, bool Digested) global native
 
 ; returns the value of Devourment compatibility
 Bool function GetDevourmentCompatibility() global native   

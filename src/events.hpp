@@ -25,15 +25,28 @@ namespace Gts {
 	};
 	enum class ParticleType {
 		Red,
+		DarkRed,
 		Green,
 		Blue,
 		Hearts,
 		None,
 	};
+
+	enum class QuestStage {
+		HugSteal,
+		HugSpellSteal,
+		Crushing,
+		ShrinkToNothing,
+		HandCrush,
+		Vore,
+		Giant,
+		Dragon,
+	};
+
 	enum class ShrinkSource {
-		other,
-		magic,
-		hugs,
+		Other,
+		Magic,
+		Hugs,
 	};
 
 	enum class SizeEffectType {
@@ -169,6 +182,7 @@ namespace Gts {
 		bool WasLiving;
 		float Scale;
 		float Vore_Power;
+		float Restore_Power;
 		float Natural_Scale;
 		std::string_view Tiny_Name;
 	};

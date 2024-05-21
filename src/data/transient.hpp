@@ -33,8 +33,9 @@ namespace Gts {
 		float MovementSlowdown;
 		float ShrinkResistance;
 		float MightValue;
-		
 
+		NiPoint3 BoundingBox_Cache;
+		
 		bool Throw_WasThrown;
 		bool is_teammate;
 		bool can_do_vore;
@@ -53,6 +54,9 @@ namespace Gts {
 		bool Overkilled;
 		bool Protection;
 		bool GrowthPotion;
+
+		bool Devourment_Devoured;
+		bool Devourment_Eaten;
 		
 
 		bool disable_collision;

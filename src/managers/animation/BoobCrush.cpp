@@ -246,9 +246,9 @@ namespace {
 
 		if (BreastL03 && BreastR03) {
 			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastL03, 4, 0.70, 0.85, DamageSource::BreastImpact);
-			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastR03, 4, 0.70, 0.85, DamageSource::Breast);
-			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Right, "L Breast03");
-			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Left, "R Breast03");
+			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastR03, 4, 0.70, 0.85, DamageSource::BreastImpact);
+			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Left, "L Breast03");
+			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Right, "R Breast03");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "R Breast03");
 			DoFootstepSound(giant, 1.25, FootEvent::Left, "L Breast03");
 			DoLaunch(giant, 2.25 * perk, 5.0, FootEvent::Breasts);
@@ -259,8 +259,8 @@ namespace {
 		} else if (BreastL && BreastR) {
 			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastL, 4, 0.70, 0.85, DamageSource::BreastImpact);
 			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastR, 4, 0.70, 0.85, DamageSource::BreastImpact);
-			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Right, "NPC L Breast");
-			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Left, "NPC R Breast");
+			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Left, "NPC L Breast");
+			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Right, "NPC R Breast");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC R Breast");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC L Breast");
 			DoLaunch(giant, 2.25 * perk, 5.0, FootEvent::Breasts);
@@ -334,6 +334,7 @@ namespace {
 		DamageAV(giant, ActorValue::kStamina, WasteStamina);
 		
 		Runtime::PlaySoundAtNode("growthSound", giant, 1.0, 1.0, "NPC Pelvis [Pelv]");
+		Task_FacialEmotionTask_Moan(giant, 2.2 / GetAnimationSlowdown(giant), "BoobCrush_Growth");
 		
 		StartRumble("CleavageRumble", data.giant, 0.06, 0.60);
 	}

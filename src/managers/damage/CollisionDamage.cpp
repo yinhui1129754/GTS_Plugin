@@ -253,61 +253,61 @@ namespace Gts {
 
 		float size_difference = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
 
-		if (!Allow_Damage(giant, tiny, Cause, size_difference)) {
-			return; 
-		}
+		if (size_difference > 1.25) {
+			if (Allow_Damage(giant, tiny, Cause, size_difference)) {
+				float damagebonus = HighHeels_PerkDamage(giant, Cause); // 15% bonus HH damage if we have perk
 
-		float damagebonus = HighHeels_PerkDamage(giant, Cause); // 15% bonus HH damage if we have perk
+				float vulnerability = 1.0 + sizemanager.GetSizeVulnerability(tiny); // Get size damage debuff from enemy
+				float normaldamage = std::clamp(sizemanager.GetSizeAttribute(giant, SizeAttribute::Normal) * 0.30, 0.30, 999999.0);
 
-		float vulnerability = 1.0 + sizemanager.GetSizeVulnerability(tiny); // Get size damage debuff from enemy
-		float normaldamage = std::clamp(sizemanager.GetSizeAttribute(giant, SizeAttribute::Normal) * 0.30, 0.30, 999999.0);
+				float highheelsdamage = 1.0;
+				if (ApplyHighHeelBonus(giant, Cause)) {
+					highheelsdamage = GetHighHeelsBonusDamage(giant, true);
+				}
 
-		float highheelsdamage = 1.0;
-		if (ApplyHighHeelBonus(giant, Cause)) {
-			highheelsdamage = GetHighHeelsBonusDamage(giant, true);
-		}
+				float sprintdamage = 1.0; // default Sprint damage of 1.0
+				float weightdamage = 1.0 + (giant->GetWeight()*0.01);
 
-		float sprintdamage = 1.0; // default Sprint damage of 1.0
-		float weightdamage = 1.0 + (giant->GetWeight()*0.01);
+				if (giant->AsActorState()->IsSprinting()) {
+					sprintdamage = 1.5 * sizemanager.GetSizeAttribute(giant, SizeAttribute::Sprint);
+					damage *= 1.5;
+				}
 
-		if (giant->AsActorState()->IsSprinting()) {
-			sprintdamage = 1.5 * sizemanager.GetSizeAttribute(giant, SizeAttribute::Sprint);
-			damage *= 1.5;
-		}
+				float Might = 1.0 + Potion_GetMightBonus(giant);
+				float damage_result = (damage * size_difference * damagebonus) * (normaldamage * sprintdamage) * (highheelsdamage * weightdamage) * vulnerability;
 
-		float Might = 1.0 + Potion_GetMightBonus(giant);
-		float damage_result = (damage * size_difference * damagebonus) * (normaldamage * sprintdamage) * (highheelsdamage * weightdamage) * vulnerability;
+				damage_result *= Might;
 
-		damage_result *= Might;
+				TinyCalamity_ShrinkActor(giant, tiny, damage_result * 0.66 * GetDamageSetting());
 
-		TinyCalamity_ShrinkActor(giant, tiny, damage_result * 0.66 * GetDamageSetting());
+				if (giant->IsSneaking()) {
+					damage_result *= 0.70;
+				}
 
-		if (giant->IsSneaking()) {
-			damage_result *= 0.70;
-		}
+				SizeHitEffects::GetSingleton().BreakBones(giant, tiny, damage_result * bbmult, random);
+				// ^ Chance to break bonues and inflict additional damage, as well as making target more vulerable to size damage
 
-		SizeHitEffects::GetSingleton().BreakBones(giant, tiny, damage_result * bbmult, random);
-		// ^ Chance to break bonues and inflict additional damage, as well as making target more vulerable to size damage
+				if (!tiny->IsDead()) {
+					float experience = std::clamp(damage_result/500, 0.0f, 0.05f);
+					ModSizeExperience(giant, experience);
+				}
 
-		if (!tiny->IsDead()) {
-			float experience = std::clamp(damage_result/500, 0.0f, 0.05f);
-			ModSizeExperience(giant, experience);
-		}
-
-		if (tiny->formID == 0x14 && GetAV(tiny, ActorValue::kStamina) > 2.0) {
-			DamageAV(tiny, ActorValue::kStamina, damage_result * 2.0);
-			damage_result -= GetAV(tiny, ActorValue::kStamina); // Reduce damage by stamina amount
-			if (damage_result < 0) {
-				damage_result = 0; // just to be safe and to not restore attributes
+				if (tiny->formID == 0x14 && GetAV(tiny, ActorValue::kStamina) > 2.0) {
+					DamageAV(tiny, ActorValue::kStamina, damage_result * 2.0);
+					damage_result -= GetAV(tiny, ActorValue::kStamina); // Reduce damage by stamina amount
+					if (damage_result < 0) {
+						damage_result = 0; // just to be safe and to not restore attributes
+					}
+					if (damage_result < GetAV(tiny, ActorValue::kStamina)) {
+						return; // Fully protect against size-related damage
+					}
+				}
+				if (apply_damage) {
+					ModVulnerability(giant, tiny, damage_result);
+					InflictSizeDamage(giant, tiny, damage_result);
+					this->CrushCheck(giant, tiny, size_difference, crush_threshold, Cause);
+				}
 			}
-			if (damage_result < GetAV(tiny, ActorValue::kStamina)) {
-				return; // Fully protect against size-related damage
-			}
-		}
-		if (apply_damage) {
-			ModVulnerability(giant, tiny, damage_result);
-			InflictSizeDamage(giant, tiny, damage_result);
-			this->CrushCheck(giant, tiny, size_difference, crush_threshold, Cause);
 		}
 	}
 
@@ -323,12 +323,13 @@ namespace Gts {
 
 				if (!tiny->IsDead()) {
 					if (IsGiant(tiny)) {
-						AdvanceQuestProgression(giant, tiny, 7, 1, false);
+						AdvanceQuestProgression(giant, tiny, QuestStage::Giant, 1, false);
 					} else {
-						AdvanceQuestProgression(giant, tiny, 3, 1, false);
+						AdvanceQuestProgression(giant, tiny, QuestStage::Crushing, 1, false);
 					}
+				} else {
+					AdvanceQuestProgression(giant, tiny, QuestStage::Crushing, 0.25, false);
 				}
-
 				SetReanimatedState(tiny);
 
 				CrushBonuses(giant, tiny);

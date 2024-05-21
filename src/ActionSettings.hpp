@@ -62,13 +62,13 @@ namespace Gts {
     const float Damage_ThighCrush_Stand_Up = 8.0f;
     const float Damage_ThighCrush_Butt_DOT = 0.003f;
     const float Damage_ThighCrush_Legs_Idle = 0.0012f;
-    const float Damage_ThighCrush_CrossLegs_Out = 3.2f; 
-    const float Damage_ThighCrush_CrossLegs_In = 4.4f; 
+    const float Damage_ThighCrush_CrossLegs_Out = 2.6f; 
+    const float Damage_ThighCrush_CrossLegs_In = 3.2f; 
     const float Damage_ThighCrush_CrossLegs_FeetImpact = 2.8f;
 
     ////////////////breast
 
-    const float Damage_BreastCrush_Body = 26.0f; // for body impact
+    const float Damage_BreastCrush_Body = 18.0f; // for body impact
 	const float Damage_BreastCrush_Impact = 32.0f; // when doing impact
     const float Damage_BreastCrush_BodyDOT = 0.0006f; // damage under body
     const float Damage_BreastCrush_BreastDOT = 0.001f; // damage under breasts
@@ -79,8 +79,8 @@ namespace Gts {
 
     ////////////////kick
 
-	const float Damage_Kick = 5.0f;
-	const float Damage_Kick_Strong = 12.0f;
+	const float Damage_Kick = 6.0f;
+	const float Damage_Kick_Strong = 12.8f;
 
     ////////////////crawl
 
@@ -135,7 +135,7 @@ namespace Gts {
     // ----------------------For launching/pushing actors ^-----------------------------------------------
 
     // Below is For launching objects
-    const float Push_Object_Upwards = 0.18f;            // Used for objects only
+    const float Push_Object_Upwards = 0.16f;            // Used for objects only
     const float Push_Object_Forward = 0.0086f;          // Used for objects only
     const float Push_Actor_Upwards = 14.0f;             // Used for Actors only
 
@@ -180,9 +180,9 @@ namespace Gts {
     
     ////////Breast Crush
 
-    const float Radius_BreastCrush_BodyImpact = 16.0f;
+    const float Radius_BreastCrush_BodyImpact = 10.0f;
     const float Radius_BreastCrush_BreastImpact = 16.0f;
-    const float Radius_BreastCrush_BodyDOT = 14.0f; 
+    const float Radius_BreastCrush_BodyDOT = 10.0f; 
     const float Radius_BreastCrush_BreastDOT = 14.0f; 
 
     ///////Proning
@@ -217,7 +217,7 @@ namespace Gts {
     const float Radius_Sneak_FingerGrind_Finisher = 5.0f;
 
     ///////Kicks
-    const float Radius_Kick = 18.0f;
+    const float Radius_Kick = 19.6f;
     /////////////////////////////////////////////////////
 
 
@@ -241,7 +241,7 @@ namespace Gts {
 
     // Foot Grind
     const float Rumble_FootGrind_DOT = 0.25f;
-    const float Rumble_FootGrind_Rotate = 0.85f;
+    const float Rumble_FootGrind_Rotate = 0.65f;
     const float Rumble_FootGrind_Impact = 2.4f;
 
     // Hugs

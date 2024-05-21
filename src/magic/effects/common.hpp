@@ -211,12 +211,12 @@ namespace Gts {
 	}
 
 	inline float CalcPower(Actor* actor, float scale_factor, float bonus, bool shrink) {
-		float size_cap = 0.5;
 		float progress_mult = Persistent::GetSingleton().progression_multiplier;
+		float size_cap = 0.5;
 		// y = mx +c
 		// power = scale_factor * scale + bonus
-		if (shrink) { // allow for more size resistance when we need it
-			size_cap = 0.02; // up to 98% shrink resistance
+		if (shrink) { // allow for more size weakness when we need it
+			size_cap = 0.02; // up to 98% shrink weakness
 		}
 		float scale = std::clamp(get_visual_scale(actor), size_cap, 999999.0f);
 		return (scale * scale_factor + bonus) * progress_mult * MASTER_POWER * TimeScale();
@@ -262,7 +262,7 @@ namespace Gts {
 		float visual_scale = get_visual_scale(from);
 
 		float amount = CalcPower(from, scale_factor, bonus, false);
-		float amount_shrink = CalcPower(from, scale_factor, bonus, true);
+		float amount_shrink = CalcPower(from, scale_factor, bonus, false);
 
 		float shrink_amount = (amount*0.22);
 		float growth_amount = (amount_shrink*0.33*effeciency) * SizeSteal_GetPower(to, from);
@@ -278,12 +278,12 @@ namespace Gts {
 			XpMult = 0.25;
 		}
 
-		AdvanceSkill(to, ActorValue::kAlteration, shrink_amount, XpMult); // Gain vanilla Alteration xp
-
-		if (source == ShrinkSource::hugs) { // quest: shrink by 2 and 5 meters worth of size in total (stage 1 / 2) 
-			AdvanceQuestProgression(to, 1.0, shrink_amount);
-		} else {
-			AdvanceQuestProgression(to, 2.0, shrink_amount);
+		if (source == ShrinkSource::Hugs) { // For hugs: quest: shrink by 2 and 5 meters worth of size in total (stage 1 / 2) 
+			AdvanceQuestProgression(to, nullptr, QuestStage::HugSteal, shrink_amount, false); // Stage 1: steal 2 meters worth of size (hugs)
+			AdvanceQuestProgression(to, nullptr, QuestStage::HugSpellSteal, shrink_amount, false); // Stage 2: steal 5 meters worth of size (spells/hugs)
+		} else { // For spell shrink part of the quest
+			AdvanceSkill(to, ActorValue::kAlteration, shrink_amount, XpMult); // Gain vanilla Alteration xp
+			AdvanceQuestProgression(to, nullptr, QuestStage::HugSpellSteal, shrink_amount, false);
 		}
 
 		AddStolenAttributes(to, amount*effeciency);
@@ -351,10 +351,12 @@ namespace Gts {
 
 			if (!target->IsDead()) {
 				if (IsGiant(target)) {
-					AdvanceQuestProgression(caster, target, 7, 1, false);
+					AdvanceQuestProgression(caster, target, QuestStage::Giant, 1, false);
 				} else {
-					AdvanceQuestProgression(caster, target, 4, 1, false);
+					AdvanceQuestProgression(caster, target, QuestStage::ShrinkToNothing, 1, false);
 				}
+			} else {
+				AdvanceQuestProgression(caster, target, QuestStage::ShrinkToNothing, 0.25, false);
 			}
 
 			AdjustSizeLimit(0.0060, caster);

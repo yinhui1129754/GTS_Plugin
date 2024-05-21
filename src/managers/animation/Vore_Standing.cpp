@@ -142,6 +142,8 @@ namespace {
 		}
 		StartBodyRumble("BodyRumble", data.giant, 0.15, 0.10, false);
 
+		Task_HighHeel_SyncVoreAnim(giant);
+
 	}
 
 	void GTSvore_impactLS(AnimationEventData& data) {
@@ -227,7 +229,10 @@ namespace {
 		if (AllowDevourment()) {
 			for (auto& tiny: VoreData.GetVories()) {
 				CallDevourment(giant, tiny);
-			}
+			} 
+		} else {
+			Runtime::PlaySoundAtNode("VoreSwallow", giant, 1.0, 1.0, "NPC Head [Head]"); // Play sound
+			VoreData.Swallow();
 		}
 	}
 
@@ -257,14 +262,13 @@ namespace {
 	}
 
 	void GTSvore_handR_reposition_S(AnimationEventData& data) {
-		auto& VoreData = Vore::GetSingleton().GetVoreData(&data.giant);
-		VoreData.Swallow();
+		
 		auto giant = &data.giant;
+		/*if (!AllowDevourment()) {
+			
+		}*/
 		AdjustFacialExpression(giant, 0, 0.0, "modifier"); // blink L
 		AdjustFacialExpression(giant, 1, 0.0, "modifier"); // blink R
-		if (!AllowDevourment()) {
-			Runtime::PlaySoundAtNode("VoreSwallow", giant, 1.0, 1.0, "NPC Head [Head]"); // Play sound
-		}
 		StartRHandRumble("HandR", data.giant, 0.20, 0.15);
 	}
 
@@ -315,6 +319,8 @@ namespace {
 			EnableFreeCamera();
 		}
 		Rumbling::Stop("BodyRumble", &data.giant);
+
+		Utils_UpdateHighHeelBlend(giant, true);
 	}
 }
 
