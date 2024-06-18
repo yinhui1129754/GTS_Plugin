@@ -20,6 +20,6 @@ namespace Gts {
 	void SetButtCrushSize(Actor* giant, float value, bool reset);
 	float GetButtCrushSize(Actor* giant);
 	
-	void ForceFlee(Actor* giant, Actor* tiny, float duration);
+	void ForceFlee(Actor* giant, Actor* tiny, float duration, bool apply_size_difference);
 	void ScareActors(Actor* giant);
 }

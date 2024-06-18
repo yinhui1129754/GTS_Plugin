@@ -71,9 +71,8 @@ namespace {
 
 		float bounding_box = GetSizeFromBoundingBox(tiny);
 		float gain_power = recorded_scale * mealEffiency * growth * growth_mult * bounding_box; // power of most buffs that we start
+		gain_power *= 2.5;
 
-		log::info("BB Value for {} is {}", tiny->GetDisplayFullName(), bounding_box);
-		
 		VoreInformation VoreInfo = VoreInformation { // Create Vore Info
 			.giantess = giant,
 			.WasGiant = IsGiant(tiny),

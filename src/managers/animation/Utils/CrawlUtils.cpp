@@ -140,10 +140,8 @@ namespace Gts {
 		float CheckDistance = 220 * giantScale;
 		// Make a list of points to check
 
-		float damage_zones_applied = 0.0;
-
 		if (IsDebugEnabled() && (giant->formID == 0x14 || IsTeammate(giant) || EffectsForEveryone(giant))) {
-			DebugAPI::DrawSphere(glm::vec3(NodePosition.x, NodePosition.y, NodePosition.z), maxDistance);
+			DebugAPI::DrawSphere(glm::vec3(NodePosition.x, NodePosition.y, NodePosition.z), maxDistance, 300.0);
 		}
 
 		NiPoint3 giantLocation = giant->GetPosition();
@@ -172,12 +170,12 @@ namespace Gts {
 							});
 						}
 						if (nodeCollisions > 0) {
-							damage_zones_applied += 1.0;
-							if (damage_zones_applied < 1.0) {
-								damage_zones_applied = 1.0; // just to be safe
-							}
-							damage /= damage_zones_applied;
+							//damage /= nodeCollisions;
 							Utils_PushCheck(giant, otherActor, Get_Bone_Movement_Speed(giant, Cause)); 
+
+							if (IsButtCrushing(giant) && GetSizeDifference(giant, otherActor, SizeType::VisualScale, false, true) > 1.2) {
+								PushActorAway(giant, otherActor, 1.0);
+							}
 							
 							CollisionDamage::GetSingleton().DoSizeDamage(giant, otherActor, damage, bbmult, crushmult, random, Cause, true);
 						}

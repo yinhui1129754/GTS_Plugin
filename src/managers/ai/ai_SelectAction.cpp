@@ -29,7 +29,7 @@ namespace {
 		int crush_rng = rand() % 4;
 
 		float health = GetHealthPercentage(tiny);
-		float HpThreshold = GetHugCrushThreshold(giant);
+		float HpThreshold = GetHugCrushThreshold(giant, tiny);
 
 		bool low_hp = (health <= HpThreshold);
 		bool allow_perform = (tiny->formID != 0x14 && IsHostile(giant, tiny)) || (rng <= 1);
@@ -244,12 +244,12 @@ namespace Gts {
 		if (Persistent::GetSingleton().Thigh_Ai == false) {
 			return;
 		}
-		std::vector<Actor*> tinies = ThighCrushController::GetSingleton().GetThighTargetsInFront(giant, 1);
+		std::vector<Actor*> tinies = ThighCrushController::GetSingleton().GetThighTargetsInFront(giant, 1, true);
 		log::info("Starting Thigh Crush");
 		if (!tinies.empty()) {
 			Actor* tiny = tinies[0];
 			if (tiny) {
-				ThighCrushController::GetSingleton().StartThighCrush(giant, tiny);
+				ThighCrushController::GetSingleton().StartThighCrush(giant, tiny, true);
 			}
 		}
 	}
@@ -285,13 +285,13 @@ namespace Gts {
 						return true;
 					}
 
-					std::vector<Actor*> targets = ThighCrushController::GetSingleton().GetThighTargetsInFront(giantref, 1);
+					std::vector<Actor*> targets = ThighCrushController::GetSingleton().GetThighTargetsInFront(giantref, 1, true);
 					log::info("Seeking Targets");
 					if (targets.empty()) {
 						log::info("Is Empty");
 						AnimationManager::StartAnim("ThighLoopExit", giantref);
 						return true;
-					} else if (!targets.empty() && !ThighCrushController::GetSingleton().CanThighCrush(giantref, targets[0])) {
+					} else if (!targets.empty() && !ThighCrushController::GetSingleton().CanThighCrush(giantref, targets[0], true)) {
 						log::info("Can't Thigh Crush {}", targets[0]->GetDisplayFullName());
 						AnimationManager::StartAnim("ThighLoopExit", giantref);
 						return true;

@@ -385,12 +385,18 @@ namespace Gts {
 			break;
 			case DamageSource::KickedRight:
 			case DamageSource::CrushedRight:
+			case DamageSource::WalkRight:
+			case DamageSource::FootIdleR:
 			case DamageSource::FootGrindedRight:
+			case DamageSource::FootGrindedRight_Impact:
 				return rFoot;
 			break;
 			case DamageSource::KickedLeft:
 			case DamageSource::CrushedLeft:
+			case DamageSource::FootIdleL:
+			case DamageSource::WalkLeft:
 			case DamageSource::FootGrindedLeft:
+			case DamageSource::FootGrindedLeft_Impact:
 				return lFoot;
 			break;
 			case DamageSource::KneeIdleR:
@@ -430,6 +436,8 @@ namespace Gts {
 		switch (cause) {
 			case DamageSource::CrushedLeft:
 			case DamageSource::CrushedRight:
+			case DamageSource::FootIdleR:
+			case DamageSource::FootIdleL:
 			case DamageSource::WalkRight:
 			case DamageSource::WalkLeft:
 				CrushedMessage(GiantName, TinyName, random, HighHeelManager::IsWearingHH(giant));
@@ -469,6 +477,8 @@ namespace Gts {
 			break;
 			case DamageSource::FootGrindedLeft:
 			case DamageSource::FootGrindedRight:
+			case DamageSource::FootGrindedLeft_Impact:
+			case DamageSource::FootGrindedRight_Impact:
 				FootGrindedMessage(GiantName, TinyName, random);
 			break;
 			case DamageSource::Melted: 
@@ -508,6 +518,8 @@ namespace Gts {
 			break;
 			case DamageSource::RightFinger:
 			case DamageSource::LeftFinger:
+			case DamageSource::RightFinger_Impact:
+			case DamageSource::LeftFinger_Impact:
 				FingerGrindedMessage(GiantName, TinyName, random);
 			break;
 			case DamageSource::HandSwipeLeft:

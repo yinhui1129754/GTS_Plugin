@@ -52,7 +52,6 @@ namespace Gts {
 
 							float freq_high = 1.0 / std::clamp(config_param, 1.0f, 10.0f);
 
-							log::info("Freq high: {}", freq_high);
 							float freq_low = 1.5;
 
 							float freq = std::clamp(frequence, freq_high, freq_low);

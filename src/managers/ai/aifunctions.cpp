@@ -71,7 +71,7 @@ namespace Gts {
 		if (!tiny->IsDead()) {
 			StartCombat(tiny, giant);
 		}
-		float hp = GetMaxAV(tiny, ActorValue::kHealth) * 3.0;	
+		float hp = GetMaxAV(tiny, ActorValue::kHealth) * 9.0;	
 		InflictSizeDamage(giant, tiny, hp); // just to make sure
 		
 		if (tiny->formID == 0x14) {
@@ -160,15 +160,16 @@ namespace Gts {
 		return 0.0;
 	}
 
-	void ForceFlee(Actor* giant, Actor* tiny, float duration) {
+	void ForceFlee(Actor* giant, Actor* tiny, float duration, bool apply_size_difference) {
 		float oldConfidence = GetAV(tiny, ActorValue::kConfidence);
 
 		float Start = Time::WorldTimeElapsed();
 		std::string name = std::format("ScareAway_{}", tiny->formID);
 		ActorHandle tinyHandle = tiny->CreateRefHandle();
 		ActorHandle giantHandle = giant->CreateRefHandle();
-
-		duration *= GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
+		if (apply_size_difference) {
+			duration *= GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
+		}
 
 		SetAV(tiny, ActorValue::kConfidence, 0.0);
 

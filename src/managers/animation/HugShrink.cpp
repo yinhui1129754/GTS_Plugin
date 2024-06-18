@@ -36,7 +36,15 @@ using namespace std;
 
 
 namespace {
-
+	void ShrinkPulse_DecreaseSize(Actor* tiny, float scale) {
+		float min_scale = 0.06;
+		float target_scale = get_target_scale(tiny);
+		if (target_scale > min_scale) {
+			set_target_scale(tiny, scale*0.60);
+		} else {
+			set_target_scale(tiny, min_scale);
+		}
+	}
 	void Hugs_ShakeCamera(Actor* giant) {
 		if (giant->formID == 0x14) {
 			shake_camera(giant, 0.75, 0.35);
@@ -139,10 +147,14 @@ namespace {
 		}
 		auto scale = get_visual_scale(huggedActor);
 		float sizedifference = get_visual_scale(giant)/scale;
+
 		Attacked(huggedActor, giant);
-		set_target_scale(huggedActor, scale*0.60);
-		ModSizeExperience(giant, scale/6);
+
+		ShrinkPulse_DecreaseSize(huggedActor, scale);
+
+		
 		Rumbling::For("ShrinkPulse", giant, Rumble_Hugs_Shrink, 0.10, "NPC COM [COM ]", 0.50 / GetAnimationSlowdown(giant), 0.0);
+		ModSizeExperience(giant, scale/6);
 	}
 
 	void GTS_Hug_RunShrinkTask(AnimationEventData& data) {}
@@ -214,23 +226,23 @@ namespace {
 	void HugCrushEvent(const InputEventData& data) {
 		Actor* player = GetPlayerOrControlled();
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
-		if (!huggedActor) {
-			return;
-		}
-		float health = GetHealthPercentage(huggedActor);
-		float HpThreshold = GetHugCrushThreshold(player);
-		if (HasSMT(player)) {
-			AnimationManager::StartAnim("Huggies_HugCrush", player);
-			AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
-			AddSMTPenalty(player, 10.0); // Mostly called inside ShrinkUntil
-			DamageAV(player, ActorValue::kStamina, 60);
-			return;
-		} else if (health <= HpThreshold) {
-			AnimationManager::StartAnim("Huggies_HugCrush", player);
-			AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
-			return;
-		} else {
-			Notify("{} is too healthy to be hug crushed: {:.2f}/{:.2f}", huggedActor->GetDisplayFullName(), health, HpThreshold);
+		if (huggedActor) {
+		
+			float health = GetHealthPercentage(huggedActor);
+			float HpThreshold = GetHugCrushThreshold(player, huggedActor);
+			if (HasSMT(player)) {
+				AnimationManager::StartAnim("Huggies_HugCrush", player);
+				AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
+				AddSMTPenalty(player, 10.0); // Mostly called inside ShrinkUntil
+				DamageAV(player, ActorValue::kStamina, 60);
+				return;
+			} else if (health <= HpThreshold) {
+				AnimationManager::StartAnim("Huggies_HugCrush", player);
+				AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
+				return;
+			} else {
+				Notify("{} is too healthy to be hug crushed: {:.2f}/{:.2f}", huggedActor->GetDisplayFullName(), health, HpThreshold);
+			}
 		}
 	}
 

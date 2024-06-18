@@ -60,6 +60,12 @@ namespace {
 		AdjustFacialExpression(&data.giant, 1, 0.5, 0.32, 0.72, "phenome"); // Open it wider
 		AdjustFacialExpression(&data.giant, 0, 0.8, 0.32, 0.72, "modifier"); // blink L
 		AdjustFacialExpression(&data.giant, 1, 0.8, 0.32, 0.72, "modifier"); // blink R
+
+		auto& VoreData = Vore::GetSingleton().GetVoreData(&data.giant);
+
+		for (auto& tiny: VoreData.GetVories()) {
+			set_target_scale(tiny, get_target_scale(tiny) / 3);
+		}
     }
     void GTS_Sneak_Vore_Swallow(AnimationEventData& data) {
         Actor* giant = &data.giant;

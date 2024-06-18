@@ -162,7 +162,9 @@ namespace {
 		
 		DoFootstepSound(&data.giant, 0.90, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, 0.90, FootEvent::Left, LNode);
-		DoDamageEffect(&data.giant, 1.8, 1.3, 30, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
+		DoDamageEffect(&data.giant, Damage_Vore_Standing_Footstep, Radius_Vore_Standing_Footstep, 30, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
+		DoLaunch(&data.giant, 0.50, 1.20, FootEvent::Left);
+		
 	}
 
 	void GTSvore_sit_end(AnimationEventData& data) {
@@ -209,6 +211,10 @@ namespace {
 		AdjustFacialExpression(giant, 1, 0.5, "phenome"); // Open it wider
 		AdjustFacialExpression(giant, 0, 0.80, "modifier"); // blink L
 		AdjustFacialExpression(giant, 1, 0.80, "modifier"); // blink R
+
+		for (auto& tiny: VoreData.GetVories()) {
+			set_target_scale(tiny, get_target_scale(tiny) / 2);
+		}
 	}
 
 	void GTSvore_bringactor_end(AnimationEventData& data) {
@@ -307,7 +313,7 @@ namespace {
 		float perk = GetPerkBonus_Basics(&data.giant);
 		DoFootstepSound(&data.giant, 0.90, FootEvent::Right, RNode);
 		DoDustExplosion(&data.giant, 0.90, FootEvent::Right, RNode);
-		DoDamageEffect(&data.giant, 1.8, 1.3, 30, 0.25, FootEvent::Right, 1.0, DamageSource::CrushedRight);
+		DoDamageEffect(&data.giant, Damage_Vore_Standing_Footstep, Radius_Vore_Standing_Footstep, 30, 0.25, FootEvent::Right, 1.0, DamageSource::CrushedRight);
 		DoLaunch(&data.giant, 0.70 * perk, 1.20 * data.animSpeed, FootEvent::Right);
 	}
 

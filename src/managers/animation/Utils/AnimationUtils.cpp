@@ -441,6 +441,21 @@ namespace Gts {
 		}
 	}
 
+	void LaunchTask(Actor* actor, float radius, float power, FootEvent kind) {
+		std::string taskname = std::format("LaunchTask_{}", actor->formID);
+		ActorHandle giantref = actor->CreateRefHandle();
+		TaskManager::RunOnce(taskname, [=](auto& update) {
+			if (!giantref) {
+				return;
+			}
+			auto giant = giantref.get().get();
+
+			//giant->SetGraphVariableBool("GTS_IsStomping", false);
+
+			DoLaunch(giant, radius, power, kind);
+		});
+	}
+
 	void DoLaunch(Actor* giant, float radius, float power, FootEvent kind) {
 		float smt_power = 1.0;
 		float smt_radius = 1.0;
@@ -614,7 +629,7 @@ namespace Gts {
 				return true;
 			}
 
-			if (!isTrampling(giantref) || coordinates.Length() <= 0.0) {
+			if (!IsTrampling(giantref) || coordinates.Length() <= 0.0) {
 				SetBeingGrinded(tinyref, false);
 				return false;
 			}
@@ -764,15 +779,14 @@ namespace Gts {
 					for (auto point: CrawlPoints) {
 						if ((actorLocation-giantLocation).Length() <= CheckDistance) {
 							int nodeCollisions = 0;
-							float force = 0.0;
 
 							auto model = otherActor->GetCurrent3D();
 							if (model) {
-								VisitNodes(model, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
+								VisitNodes(model, [&nodeCollisions, NodePosition, maxDistance](NiAVObject& a_obj) {
 									float distance = (NodePosition - a_obj.world.translate).Length();
-									if (distance < maxDistance) {
+		
+									if (distance - Collision_Distance_Override < maxDistance) {
 										nodeCollisions += 1;
-										force = 1.0 - distance / maxDistance;
 										return false;
 									}
 									return true;
@@ -801,7 +815,7 @@ namespace Gts {
 		}
 
 		float giantScale = get_visual_scale(actor);
-		const float BASE_CHECK_DISTANCE = 90.0;
+		const float BASE_CHECK_DISTANCE = 180.0;
 		float SCALE_RATIO = 3.0;
 
 		float maxFootDistance = radius * giantScale;
@@ -810,7 +824,7 @@ namespace Gts {
 		if (HasSMT(actor)) {
 			SCALE_RATIO = 0.8;
 		}
-		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(actor, Right);
+		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(actor, Right, false);
 		if (!CoordsToCheck.empty()) {
 			if (IsDebugEnabled() && (actor->formID == 0x14 || IsTeammate(actor))) {
 				for (const auto& footPoints: CoordsToCheck) {
@@ -836,7 +850,8 @@ namespace Gts {
 								for (auto point: CoordsToCheck) {
 									VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
-										if (distance < maxFootDistance) {
+
+										if (distance - Collision_Distance_Override <= maxFootDistance) {
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
 											return false;
@@ -849,38 +864,47 @@ namespace Gts {
 								float aveForce = std::clamp(force, 0.00f, 0.70f);
 								ActorHandle giantHandle = actor->CreateRefHandle();
 								ActorHandle tinyHandle = otherActor->CreateRefHandle();
-								std::string taskname = std::format("GrindCheckL_{}_{}", actor->formID, otherActor->formID);
-								TaskManager::RunOnce(taskname, [=](auto& update){
+
+								float Start = Time::WorldTimeElapsed();
+
+								std::string taskname = std::format("GrindCheck_{}_{}", actor->formID, otherActor->formID);
+								TaskManager::RunFor(taskname, 1.0, [=](auto& update){
 									if (!tinyHandle) {
-										return;
+										return false;
 									}
 									if (!giantHandle) {
-										return;
+										return false;
 									}
 									
+									float Finish = Time::WorldTimeElapsed();
+
 									auto giant = giantHandle.get().get();
 									auto tiny = tinyHandle.get().get();
 
-									if (CanDoDamage(giant, tiny, false)) {
-										if (aveForce >= 0.00 && !tiny->IsDead()) {
-											SetBeingGrinded(tiny, true);
-											if (!strong) {
-												DoFootGrind(giant, tiny, Right);
-												if (!Right) {
-													AnimationManager::StartAnim("GrindLeft", giant);
+									if (Finish - Start > 0.02) {
+										if (CanDoDamage(giant, tiny, false)) {
+											if (aveForce >= 0.00 && !tiny->IsDead()) {
+												SetBeingGrinded(tiny, true);
+												if (!strong) {
+													DoFootGrind(giant, tiny, Right);
+													if (!Right) {
+														AnimationManager::StartAnim("GrindLeft", giant);
+													} else {
+														AnimationManager::StartAnim("GrindRight", giant);
+													}
 												} else {
-													AnimationManager::StartAnim("GrindRight", giant);
+													if (!Right) {
+														AnimationManager::StartAnim("TrampleStartL", giant);
+													} else {
+														AnimationManager::StartAnim("TrampleStartR", giant);
+													}
+													DoFootTrample(giant, tiny, Right);
 												}
-											} else {
-												if (!Right) {
-													AnimationManager::StartAnim("TrampleStartL", giant);
-												} else {
-													AnimationManager::StartAnim("TrampleStartR", giant);
-												}
-												DoFootTrample(giant, tiny, Right);
 											}
 										}
+										return false;
 									}
+									return true;
 								});
 							}
 						}
@@ -1002,7 +1026,6 @@ namespace Gts {
 		float giantScale = get_visual_scale(actor);
 		float perk = GetPerkBonus_Thighs(actor);
 		const float BASE_CHECK_DISTANCE = 90.0;
-		float damage_zones_applied = 0.0;
 		float SCALE_RATIO = 1.75;
 
 		if (HasSMT(actor)) {
@@ -1029,8 +1052,8 @@ namespace Gts {
 		float feet_damage = (Damage_ThighCrush_CrossLegs_FeetImpact * perk * speed);
 		
 		if (CooldownCheck) {
-			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, true, true);
-			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, false, true);
+			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, true, true, false);
+			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, false, true, false);
 		}
 
 		float maxFootDistance = radius * giantScale;
@@ -1059,7 +1082,7 @@ namespace Gts {
 								for (auto point: ThighPoints) {
 									VisitNodes(model, [&nodeCollisions, &force, point, maxFootDistance](NiAVObject& a_obj) {
 										float distance = (point - a_obj.world.translate).Length();
-										if (distance < maxFootDistance) {
+										if (distance - Collision_Distance_Override < maxFootDistance) {
 											nodeCollisions += 1;
 											force = 1.0 - distance / maxFootDistance;//force += 1.0 - distance / maxFootDistance;
 											return false;
@@ -1069,11 +1092,7 @@ namespace Gts {
 								}
 							}
 							if (nodeCollisions > 0) {
-								damage_zones_applied += 1.0;
-								if (damage_zones_applied < 1.0) {
-									damage_zones_applied = 1.0; // just to be safe
-								}
-								damage /= damage_zones_applied;
+								//damage /= nodeCollisions;
 								if (CooldownCheck) {
 									float pushForce = std::clamp(force, 0.04f, 0.10f);
 									bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
@@ -1150,7 +1169,7 @@ namespace Gts {
 							if (model) {
 								VisitNodes(model, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
 									float distance = (NodePosition - a_obj.world.translate).Length();
-									if (distance < maxDistance) {
+									if (distance - Collision_Distance_Override < maxDistance) {
 										nodeCollisions += 1;
 										force = 1.0 - distance / maxDistance;
 										return false;
@@ -1219,7 +1238,7 @@ namespace Gts {
 		return coordinates;
 	}
 
-	std::vector<NiPoint3> GetFootCoordinates(Actor* actor, bool Right) {
+	std::vector<NiPoint3> GetFootCoordinates(Actor* actor, bool Right, bool ignore_rotation) {
 		// Get world HH offset
 		NiPoint3 hhOffsetbase = HighHeelManager::GetBaseHHOffset(actor);
 		std::vector<NiPoint3> footPoints = {};
@@ -1265,6 +1284,17 @@ namespace Gts {
 
 			NiPoint3 up = inverseFoot*((up_1 + foot->world.translate) / 2);
 
+			if (!actor->IsSneaking()) { // So foot zones face straigth, a very rough fix
+				if (!IsCrawling(actor)) {
+					bool ignore = (IsStomping(actor) || IsVoring(actor) || IsTrampling(actor) || IsThighSandwiching(actor));
+					if (ignore_rotation || ignore) {
+						up = (toe->world.translate + foot->world.translate) / 2;
+						up.z += 35.0 * get_visual_scale(actor);
+						up = inverseFoot*up;
+					}
+				}
+			}
+
 			up = up / up.Length();
 
 			NiPoint3 side = forward.UnitCross(up);
@@ -1277,11 +1307,11 @@ namespace Gts {
 		// Make a list of points to check
 		std::vector<NiPoint3> points = {
 			// x = side, y = forward, z = up/down      
-			NiPoint3(0.0, hh/10, -(0.25 + hh * 0.25)), 	// basic foot pos
+			NiPoint3(0.0, hh/10, -(1.0 + hh * 0.25)), 	// basic foot pos
 			// ^ Point 1: ---()  
-			NiPoint3(0.0, 8.0 + hh/10, -(0.5 + hh)), // Toe point		
+			NiPoint3(0.0, 8.0 + hh/10, -(0.35 + hh)), // Toe point		
 			// ^ Point 2: ()---   
-			NiPoint3(0.0, hh/70, -hh * 1.10), // Underheel point 
+			NiPoint3(0.0, hh/70, -(1.25 + hh)), // Underheel point 
 			//            -----
 			// ^ Point 3: ---()  
 		};
@@ -1511,14 +1541,18 @@ namespace Gts {
 		return threshold;
 	}
 
-	float GetHugCrushThreshold(Actor* actor) {
-		float hp = 0.20;
-		if (Runtime::HasPerkTeam(actor, "HugCrush_MightyCuddles")) {
+	float GetHugCrushThreshold(Actor* giant, Actor* tiny) {
+		float hp = 0.12;
+		if (Runtime::HasPerkTeam(giant, "HugCrush_MightyCuddles")) {
+			hp += 0.08;
+		}
+		if (Runtime::HasPerkTeam(giant, "HugCrush_HugsOfDeath")) {
 			hp += 0.10;
 		}
-		if (Runtime::HasPerkTeam(actor, "HugCrush_HugsOfDeath")) {
-			hp += 0.20;
-		}
-		return hp;
+
+		float difference = GetSizeDifference(giant, tiny, SizeType::GiantessScale, false, false);
+		float clamped_diff = std::clamp(difference, 1.0f, 10.0f);
+
+		return hp * clamped_diff;
 	}
 }

@@ -140,6 +140,12 @@ namespace {
 		AdjustFacialExpression(giant, 1, 0.5, "phenome"); // Open it wider
 		AdjustFacialExpression(giant, 0, 0.80, "modifier"); // blink L
 		AdjustFacialExpression(giant, 1, 0.80, "modifier"); // blink R
+
+		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
+
+		for (auto& tiny: VoreData.GetVories()) {
+			set_target_scale(tiny, get_target_scale(tiny) / 3);
+		}
 	}
 
 	void GTSCrawlVore_CloseMouth(AnimationEventData& data) {

@@ -274,7 +274,7 @@ namespace Gts {
 
 		float maxFootDistance = BASE_CHECK_DISTANCE * radius * giantScale;
 
-		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(giant, right_foot);
+		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(giant, right_foot, false);
 		float HH = HighHeelManager::GetHHOffset(giant).Length();
 
 		if (!CoordsToCheck.empty()) {

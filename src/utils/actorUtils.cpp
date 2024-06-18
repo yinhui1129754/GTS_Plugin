@@ -461,12 +461,6 @@ namespace Gts {
 		return grind;
 	}
 
-	bool isTrampling(Actor* actor) {
-		bool trample = false;
-		actor->GetGraphVariableBool("GTS_IsTrampling", trample);
-		return trample;
-	}
-
 	bool IsJumping(Actor* actor) {
 		bool jumping = false;
 		actor->GetGraphVariableBool("bInJumpState", jumping);
@@ -534,12 +528,6 @@ namespace Gts {
 		return sandwiching > 0;
 	}
 
-	bool IsStomping(Actor* actor) {
-		int Stomping = 0;
-		actor->GetGraphVariableInt("GTS_IsStomping", Stomping);
-		return Stomping > 0;
-	}
-
 	bool IsBeingEaten(Actor* tiny) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
@@ -555,6 +543,20 @@ namespace Gts {
 
 		bool Busy = GTSBusy && !CanDoCombo(actor);
 		return Busy;
+	}
+
+	bool IsStomping(Actor* actor) {
+		bool Stomping = false;
+		actor->GetGraphVariableBool("GTS_IsStomping", Stomping);
+
+		return Stomping;
+	}
+
+	bool IsTrampling(Actor* actor) {
+		bool Trampling;
+		actor->GetGraphVariableBool("GTS_IsTrampling", Trampling);
+
+		return Trampling;
 	}
 
 	bool CanDoCombo(Actor* actor) {
@@ -1294,7 +1296,7 @@ namespace Gts {
 										} else if (huggedActor && huggedActor == otherActor && Ally && HasLovingEmbrace && !Healing) {
 											SpawnParticle(otherActor, 3.00, "GTS/UI/Icon_LovingEmbrace.nif", NiMatrix3(), Position, iconScale, 7, node);
 										} else if (huggedActor && huggedActor == otherActor && !IsHugCrushing(giant) && !Healing) {
-											bool LowHealth = (GetHealthPercentage(huggedActor) < GetHugCrushThreshold(giant));
+											bool LowHealth = (GetHealthPercentage(huggedActor) < GetHugCrushThreshold(giant, otherActor));
 											bool ForceCrush = Runtime::HasPerkTeam(giant, "HugCrush_MightyCuddles");
 											float Stamina = GetStaminaPercentage(giant);
 											if (HasSMT(giant) || LowHealth || (ForceCrush && Stamina > 0.50)) {
@@ -1754,13 +1756,13 @@ namespace Gts {
 
 		// To Sermit: Same value as before just with the math reduced to minimal steps
 		float intensity = sizedifference * 18.8 / distance;
-		float duration = 0.25 * (1 + (intensity));
+		float duration = 0.33 * (1 + (intensity));
 
 		if (duration_override > 0) {
 			duration *= duration_override;
 		}
 		intensity = std::clamp(intensity, 0.0f, 1e8f);
-		duration = std::clamp(duration, 0.0f, 1.8f);
+		duration = std::clamp(duration, 0.0f, 2.4f);
 		if (intensity > 0.0) {
 			shake_controller(intensity * modifier, intensity * modifier, duration);
 			shake_camera_at_node(coords, intensity * modifier, duration);
@@ -2066,6 +2068,10 @@ namespace Gts {
 		if (!giant) {
 			return 1.0;
 		}
+		if (!Persistent::GetSingleton().is_speed_adjusted) {
+			return 1.0;
+		}
+
 		float scale = get_visual_scale(giant);
 		SoftPotential getspeed {
 			.k = 0.142, // 0.125
@@ -2169,7 +2175,7 @@ namespace Gts {
 		float sizedifference_tinypov = tinySize/giantSize;
 
 		int ragdollchance = rand() % 30 + 1.0;
-		if (!IsRagdolled(tiny) && sizedifference > 2.8 && ragdollchance < 4.0 * sizedifference) { // Chance for ragdoll. Becomes 100% at high scales
+		if (giantSize > 1.25 && !IsRagdolled(tiny) && sizedifference > 2.8 && ragdollchance < 4.0 * sizedifference) { // Chance for ragdoll. Becomes 100% at high scales
 			PushActorAway(giant, tiny, 1.0); // Ragdoll
 			return;
 		} else if (sizedifference > 1.25) { // Always Stagger
@@ -2185,7 +2191,6 @@ namespace Gts {
 		auto model = tiny->GetCurrent3D();
 	
 		if (model) {
-			//log::info("Trying to push: {}, force: {}", tiny->GetDisplayFullName(), force);
 			bool isdamaging = IsActionOnCooldown(tiny, CooldownSource::Push_Basic);
 			if (!isdamaging && (force >= 0.12 || IsFootGrinding(giant))) {
 				//log::info("Check passed, pushing {}, force: {}", tiny->GetDisplayFullName(), force);
@@ -2196,11 +2201,14 @@ namespace Gts {
 	}
 
 	void DoDamageEffect(Actor* giant, float damage, float radius, int random, float bonedamage, FootEvent kind, float crushmult, DamageSource Cause) {
+		DoDamageEffect(giant, damage, radius, random, bonedamage, kind, crushmult, Cause, false);
+	}
+	void DoDamageEffect(Actor* giant, float damage, float radius, int random, float bonedamage, FootEvent kind, float crushmult, DamageSource Cause, bool ignore_rotation) {
 		if (kind == FootEvent::Left) {
-			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, false, false);
+			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, false, false, ignore_rotation);
 		}
 		if (kind == FootEvent::Right) {
-			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, true, false);
+			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, true, false, ignore_rotation);
 			//                                                                                  ^        ^           ^ - - - - Normal Crush
 			//                                                       Chance to trigger bone crush   Damage of            Threshold multiplication
 			//                                                                                      Bone Crush
@@ -2656,7 +2664,7 @@ namespace Gts {
 				bool IsScared = IsActionOnCooldown(tiny, CooldownSource::Action_ScareOther);
 				if (!IsScared && GetAV(tiny, ActorValue::kConfidence) > 0) {
 					ApplyActionCooldown(tiny, CooldownSource::Action_ScareOther);
-					ForceFlee(giant, tiny, duration); // always scare
+					ForceFlee(giant, tiny, duration, true); // always scare
 				}
 			}
 		}

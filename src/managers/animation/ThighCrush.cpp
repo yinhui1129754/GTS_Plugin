@@ -14,6 +14,7 @@
 //    - "GTSstandRS",                   // [11] Silent impact of right feet
 //    - "GTStoexit",                    // [12] Leave animation, disable air rumble and such
 
+#include "managers/animation/Controllers/ThighCrushController.hpp"
 #include "managers/animation/Sneak_Slam_FingerGrind.hpp"
 #include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/animation/AnimationManager.hpp"
@@ -81,6 +82,20 @@ namespace {
 			} else {
 				int rng = 100 + (rand()% range);
 				data.animSpeed = (rng/100 * force);
+			}
+		}
+	}
+
+	void FreezeTinies(Actor* giant, float duration) {
+		std::vector<Actor*> tinies = ThighCrushController::GetSingleton().GetThighTargetsInFront(giant, 1000, false);
+		log::info("Found Tinies: {}", tinies.size());
+		if (!tinies.empty()) {
+			for (auto tiny: tinies) {
+				if (tiny) {
+					if (tiny->formID != 0x14 && !IsTeammate(tiny)) {
+						ForceFlee(giant, tiny, duration, false);
+					}
+				}
 			}
 		}
 	}
@@ -155,7 +170,7 @@ namespace {
 		});
 	}
 
-	void ThighCrush_GetUpFootstepDamage(Actor* giant, float animSpeed, float mult, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
+	void ThighCrush_GetUpFootstepDamage(Actor* giant, bool right, float animSpeed, float mult, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float getup = 1.0;
 		float speed = animSpeed;
 		float scale = get_visual_scale(giant);
@@ -188,6 +203,9 @@ namespace {
 		RunThighCollisionTask(&data.giant, false, false, Radius_ThighCrush_Idle, Damage_ThighCrush_Legs_Idle, 0.02, 2.0, 600, "ThighIdle_L");
 
 		RunButtCollisionTask(&data.giant);
+
+		FreezeTinies(&data.giant, 2.8 / GetAnimationSlowdown(&data.giant));
+
 		data.stage = 1;
 	}
 
@@ -303,19 +321,19 @@ namespace {
 
 	void GTSstandR(AnimationEventData& data) {
 		// do stand up damage
-		ThighCrush_GetUpFootstepDamage(&data.giant, data.animSpeed, 1.0, FootEvent::Right, DamageSource::CrushedRight, RNode, "ThighCrushStompR");
+		ThighCrush_GetUpFootstepDamage(&data.giant, true, data.animSpeed, 1.0, FootEvent::Right, DamageSource::CrushedRight, RNode, "ThighCrushStompR");
 		data.stage = 9;
 	}
 
 	void GTSstandL(AnimationEventData& data) {
 		// do stand up damage
-		ThighCrush_GetUpFootstepDamage(&data.giant, data.animSpeed, 1.0, FootEvent::Left, DamageSource::CrushedLeft, LNode, "ThighCrushStompL");
+		ThighCrush_GetUpFootstepDamage(&data.giant, false, data.animSpeed, 1.0, FootEvent::Left, DamageSource::CrushedLeft, LNode, "ThighCrushStompL");
 		data.stage = 9;
 	}
 
 	void GTSstandRS(AnimationEventData& data) {
 		// do weaker stand up damage
-		ThighCrush_GetUpFootstepDamage(&data.giant, data.animSpeed, 0.8, FootEvent::Right, DamageSource::CrushedRight, RNode, "ThighCrushStompR");
+		ThighCrush_GetUpFootstepDamage(&data.giant, true, data.animSpeed, 0.8, FootEvent::Right, DamageSource::CrushedRight, RNode, "ThighCrushStompR");
 		data.stage = 9;
 	}
 	void GTSBEH_Next(AnimationEventData& data) {

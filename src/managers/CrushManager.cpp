@@ -78,8 +78,8 @@ namespace {
 				Rate *= 2.0;
 			}
 			CrushGrow(caster, 0, Rate * SizeSteal_GetPower(caster, target));
+			PleasureText(caster);
 		}
-		PleasureText(caster);
 	}
 	void MoanOrLaugh(Actor* giant, Actor* target) {
 		static Timer voicetimer = Timer(2.4);

@@ -42,6 +42,8 @@ namespace {
 	std::random_device rd;
 	std::mt19937 e2(rd());
 
+	
+
 	std::vector<Actor*> FindSquished(Actor* giant) {
 		/*
 		Find actor that are being pressed underfoot
@@ -100,12 +102,12 @@ namespace {
 	/*
 	Will keep the tiny in place for a second
 	*/
-	void KeepInPlace(Actor* giant) {
+	void KeepInPlace(Actor* giant, float duration) {
 		for (auto tiny: FindSquished(giant)) {
 			auto giantRef = giant->CreateRefHandle();
 			auto tinyRef = tiny->CreateRefHandle();
 			auto currentPos = tiny->GetPosition();
-			TaskManager::RunFor(1.5, [=](const auto& data){
+			TaskManager::RunFor(duration, [=](const auto& data){
 				if (!tinyRef) {
 					return false;	
 				}
@@ -129,24 +131,42 @@ namespace {
 
 		// TO ANDY: i commented it out for tests
 		//MoveUnderFoot(giant, Node); 
-
 		float hh = GetHighHeelsBonusDamage(giant, true);
 		float shake_power = Rumble_Stomp_Normal * smt * hh;
 
-		Rumbling::Once(rumble, giant, shake_power, 0.05, Node, 0.0);
+		std::string taskname = std::format("StompAttack_{}", giant->formID);
+		ActorHandle giantHandle = giant->CreateRefHandle();
 
-		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 10, 0.25, Event, 1.0, Source);
-		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
-		DoFootstepSound(giant, 1.0, Event, Node);
+		float Start = Time::WorldTimeElapsed();
 		
-		DrainStamina(giant, "StaminaDrain_Stomp", "DestructionBasics", false, 1.8); // cancel stamina drain
+		TaskManager::RunFor(taskname, 1.0, [=](auto& update){ // Needed because anim has a wrong timing
+			if (!giantHandle) {
+				return false;
+			}
 
-		DoLaunch(giant, 0.80 * perk, 2.0 * animSpeed, Event);
+			float Finish = Time::WorldTimeElapsed();
+			auto giant = giantHandle.get().get();
+		
+			if (Finish - Start > 0.02) { 
 
-		FootGrindCheck(giant, Radius_Stomp, false, right);
+				Rumbling::Once(rumble, giant, shake_power, 0.05, Node, 0.0);
+				DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 10, 0.25, Event, 1.0, Source);
+				DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
+				DoFootstepSound(giant, 1.0, Event, Node);
+				
+				DrainStamina(giant, "StaminaDrain_Stomp", "DestructionBasics", false, 1.8); // cancel stamina drain
+
+				LaunchTask(giant, 0.80 * perk, 2.0* animSpeed, Event);
+				
+				FootGrindCheck(giant, Radius_Stomp, false, right);
+
+				return false;
+			}
+			return true;
+		});
 	}
 
-	void Stomp_Land_DoEverything(Actor* giant, float animSpeed, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
+	void Stomp_Land_DoEverything(Actor* giant, float animSpeed, bool right, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
 		float smt = 1.0;
 		float dust = 0.85;
@@ -158,15 +178,33 @@ namespace {
 		float hh = GetHighHeelsBonusDamage(giant, true);
 		float shake_power = Rumble_Stomp_Land_Normal * smt * hh;
 
-		//log::info("Doing Shake with power: {}", shake_power);
+		std::string taskname = std::format("StompLand_{}_{}", giant->formID, Time::WorldTimeElapsed());
+		ActorHandle giantHandle = giant->CreateRefHandle();
 
-		Rumbling::Once(rumble, giant, shake_power, 0.025, Node, 0.0);
-		DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 25, 0.25, Event, 1.0, DamageSource::CrushedRight);
-		DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
-		DoFootstepSound(giant, 1.0 + animSpeed/14, Event, RNode);
+		float Start = Time::WorldTimeElapsed();
 		
-		DoLaunch(giant, 0.90 * perk, 3.2 + animSpeed/2, Event);
-		KeepInPlace(giant);
+		TaskManager::RunFor(taskname, 1.0, [=](auto& update){ // Needed because anim has a bit too early timings
+			if (!giantHandle) {
+				return false;
+			}
+
+			float Finish = Time::WorldTimeElapsed();
+
+			if (Finish - Start > 0.025) { 
+				auto giant = giantHandle.get().get();
+
+				Rumbling::Once(rumble, giant, shake_power, 0.025, Node, 0.0);
+				DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 25, 0.25, Event, 1.0, DamageSource::CrushedRight);
+				DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
+				DoFootstepSound(giant, 1.0 + animSpeed/14, Event, RNode);
+
+				LaunchTask(giant, 0.90 * perk, 3.2 + animSpeed/2, Event);
+				return false;
+			}
+			return true;
+		});
+		
+		//KeepInPlace(giant, 1.5);
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////// Events
@@ -181,7 +219,6 @@ namespace {
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", true, 1.8);
 		Rumbling::Start("StompR_Loop", &data.giant, 0.25, 0.15, RNode);
 		ManageCamera(&data.giant, true, CameraTracking::R_Foot);
-
 	}
 
 	void GTSstompstartL(AnimationEventData& data) {
@@ -208,13 +245,13 @@ namespace {
 
 	void GTSstomplandR(AnimationEventData& data) {
 		//Rumbling::Stop("StompLandL", &data.giant);
-		Stomp_Land_DoEverything(&data.giant, data.animSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "StompLand");
+		Stomp_Land_DoEverything(&data.giant, data.animSpeed, true, FootEvent::Right, DamageSource::CrushedRight, RNode, "StompLand");
 		StopLoopRumble(&data.giant);
 	}
 
 	void GTSstomplandL(AnimationEventData& data) {
 		//Rumbling::Stop("StompLandR", &data.giant);
-		Stomp_Land_DoEverything(&data.giant, data.animSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "StompLand");
+		Stomp_Land_DoEverything(&data.giant, data.animSpeed, false, FootEvent::Left, DamageSource::CrushedLeft, LNode, "StompLand");
 		StopLoopRumble(&data.giant);
 	}
 

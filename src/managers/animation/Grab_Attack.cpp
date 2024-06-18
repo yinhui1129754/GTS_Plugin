@@ -67,7 +67,9 @@ namespace {
                 } else {
                     Runtime::PlaySoundAtNode("SoftHandAttack", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
                 }
-                Runtime::PlaySoundAtNode("GtsCrushSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
+                
+                Runtime::PlaySoundAtNode("DefaultCrush", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
+
                 AdjustSizeReserve(giantess, get_visual_scale(tiny)/10);
                 SpawnHurtParticles(giantess, tiny, 3.0, 1.6);
                 SpawnHurtParticles(giantess, tiny, 3.0, 1.6);

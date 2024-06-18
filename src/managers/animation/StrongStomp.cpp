@@ -92,7 +92,7 @@ namespace {
 		Runtime::PlaySoundAtNode("xlRumble", giant, 0.14 * bonus * scale * animspeed, 1.0, feet);
 	}
 
-	void StrongStomp_DoEverything(Actor* giant, float animSpeed, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
+	void StrongStomp_DoEverything(Actor* giant, float animSpeed, bool right, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
 		float SMT = 1.0;
 		float damage = 1.0;
@@ -101,18 +101,39 @@ namespace {
 			damage = 1.25;
 		}
 
+		std::string taskname = std::format("StrongStompAttack_{}", giant->formID);
+		ActorHandle giantHandle = giant->CreateRefHandle();
+
+		float Start = Time::WorldTimeElapsed();
 		
+		TaskManager::RunFor(taskname, 1.0, [=](auto& update){ // Needed because anim has wrong timing
+			if (!giantHandle) {
+				return false;
+			}
 
-		DoDamageEffect(giant, Damage_Stomp_Strong * damage * perk, Radius_Stomp_Strong, 5, 0.35, Event, 1.0, Source);
-		DoImpactRumble(giant, Node, rumble);
-		DoDustExplosion(giant, 1.33 * (SMT + (animSpeed * 0.05)), Event, Node);
+			float Finish = Time::WorldTimeElapsed();
+			auto giant = giantHandle.get().get();
 
-		DrainStamina(giant, "StaminaDrain_StrongStomp", "DestructionBasics", false, 3.4);
+			if (Finish - Start > 0.07) { 
 
-		DoFootstepSound(giant, SMT + (animSpeed/10), Event, Node);
-		DoLaunch(giant, 1.05 * perk, 3.6 + animSpeed/2, Event);
+				DoDamageEffect(giant, Damage_Stomp_Strong * damage * perk, Radius_Stomp_Strong, 5, 0.35, Event, 1.0, Source);
+				DoImpactRumble(giant, Node, rumble);
+				DoDustExplosion(giant, 1.33 * (SMT + (animSpeed * 0.05)), Event, Node);
 
-		DoSounds(giant, 1.15 + animSpeed/20, Node);
+				DrainStamina(giant, "StaminaDrain_StrongStomp", "DestructionBasics", false, 3.4);
+
+				DoFootstepSound(giant, SMT + (animSpeed/10), Event, Node);
+
+				LaunchTask(giant, 1.05 * perk, 3.6 + animSpeed/2, Event);
+
+				DoSounds(giant, 1.15 + animSpeed/20, Node);
+
+				
+				return false;
+			}
+			return true;
+		});
+		
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -172,7 +193,7 @@ namespace {
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
 
-		StrongStomp_DoEverything(&data.giant, SavedSpeed, FootEvent::Right, DamageSource::CrushedRight, RNode, "HeavyStompR");
+		StrongStomp_DoEverything(&data.giant, SavedSpeed, true, FootEvent::Right, DamageSource::CrushedRight, RNode, "HeavyStompR");
 	}
 	void GTS_StrongStomp_ImpactL(AnimationEventData& data) {
 		float SavedSpeed = data.animSpeed;
@@ -181,7 +202,7 @@ namespace {
 		data.canEditAnimSpeed = false;
 		data.animSpeed = 1.0;
 
-		StrongStomp_DoEverything(&data.giant, SavedSpeed, FootEvent::Left, DamageSource::CrushedLeft, LNode, "HeavyStompL");
+		StrongStomp_DoEverything(&data.giant, SavedSpeed, false, FootEvent::Left, DamageSource::CrushedLeft, LNode, "HeavyStompL");
 	}
 
 	void GTS_StrongStomp_ReturnRL_Start(AnimationEventData& data) {StartLegRumbling("StrongStompR", data.giant, 0.25, 0.10, true);}

@@ -117,6 +117,8 @@ namespace Gts {
 			float ShrinkResistance = 0.0;
 			float MightValue = 0.0;
 
+			int CrushedTinies = 0;
+
 			NiPoint3 BoundingBox_Cache = get_bound_values(actor); // Default Human Height
 
 			// Volume scales cubically
@@ -166,6 +168,8 @@ namespace Gts {
 			result.MovementSlowdown = MovementSlowdown;
 			result.ShrinkResistance = ShrinkResistance;
 			result.MightValue = MightValue;
+
+			result.CrushedTinies = CrushedTinies;
 
 			result.BoundingBox_Cache = BoundingBox_Cache;
 

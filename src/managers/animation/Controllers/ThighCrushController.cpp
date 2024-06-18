@@ -38,7 +38,7 @@ namespace Gts {
 		return "ThighCrushController";
 	}
 
-	std::vector<Actor*> ThighCrushController::GetThighTargetsInFront(Actor* pred, std::size_t numberOfPrey) {
+	std::vector<Actor*> ThighCrushController::GetThighTargetsInFront(Actor* pred, std::size_t numberOfPrey, bool ai_triggered) {
 		// Get vore target for actor
 		auto& sizemanager = SizeManager::GetSingleton();
 		if (!pred) {
@@ -63,9 +63,9 @@ namespace Gts {
 		});
 
 		// Filter out invalid targets
-		preys.erase(std::remove_if(preys.begin(), preys.end(),[pred, this](auto prey)
+		preys.erase(std::remove_if(preys.begin(), preys.end(),[pred, this, ai_triggered](auto prey)
 		{
-			return !this->CanThighCrush(pred, prey);
+			return !this->CanThighCrush(pred, prey, ai_triggered);
 		}), preys.end());
 
 		// Filter out actors not in front
@@ -115,7 +115,7 @@ namespace Gts {
 		return preys;
 	}
 
-	bool ThighCrushController::CanThighCrush(Actor* pred, Actor* prey) {
+	bool ThighCrushController::CanThighCrush(Actor* pred, Actor* prey, bool ai_triggered) {
 		if (pred == prey) {
 			return false;
 		}
@@ -142,6 +142,10 @@ namespace Gts {
 		float MINIMUM_DISTANCE = MINIMUM_THIGH_DISTANCE + HighHeelManager::GetBaseHHOffset(pred).Length();
 		float MINIMUM_CRUSH_SCALE = Action_ThighCrush;
 
+		if (ai_triggered) {
+			MINIMUM_CRUSH_SCALE = 0.92;
+		}
+
 		float prey_distance = (pred->GetPosition() - prey->GetPosition()).Length();
 		
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale)) {
@@ -158,9 +162,9 @@ namespace Gts {
 		return false;
 	}
 
-	void ThighCrushController::StartThighCrush(Actor* pred, Actor* prey) {
+	void ThighCrushController::StartThighCrush(Actor* pred, Actor* prey, bool ai_triggered) {
 		auto& ThighCrush = ThighCrushController::GetSingleton();
-		if (!ThighCrush.CanThighCrush(pred, prey)) {
+		if (!ThighCrush.CanThighCrush(pred, prey, ai_triggered)) {
 			return;
 		}
 		if (IsThighCrushing(pred)) {

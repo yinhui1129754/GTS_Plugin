@@ -145,10 +145,10 @@ namespace Gts {
 
 			if (kind != FootEvent::JumpLand) {
 				if (kind == FootEvent::Left) {
-					DoDamageEffect(actor, Damage_Walk_Defaut, Radius_Walk_Default * bonus, 25, 0.25, kind, 1.25, DamageSource::WalkLeft);
+					DoDamageEffect(actor, Damage_Walk_Defaut, Radius_Walk_Default * bonus, 25, 0.25, kind, 1.25, DamageSource::WalkLeft, true);
 				}
 				if (kind == FootEvent::Right) {
-					DoDamageEffect(actor, Damage_Walk_Defaut, Radius_Walk_Default * bonus, 25, 0.25, kind, 1.25, DamageSource::WalkRight);
+					DoDamageEffect(actor, Damage_Walk_Defaut, Radius_Walk_Default * bonus, 25, 0.25, kind, 1.25, DamageSource::WalkRight, true);
 				}
 				//                     ^          ^
 				//                 Damage         Radius
@@ -175,8 +175,8 @@ namespace Gts {
 					float timepassed = Time::WorldTimeElapsed() - Start;
 
 					if (timepassed >= 0.15) {
-						DoDamageEffect(giant, Damage_Jump_Default * damage, Radius_Jump_Default * fallmod, 20, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
-						DoDamageEffect(giant, Damage_Jump_Default * damage, Radius_Jump_Default * fallmod, 20, 0.25, FootEvent::Right, 1.0, DamageSource::CrushedRight);
+						DoDamageEffect(giant, Damage_Jump_Default * damage, Radius_Jump_Default * fallmod, 20, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft, true);
+						DoDamageEffect(giant, Damage_Jump_Default * damage, Radius_Jump_Default * fallmod, 20, 0.25, FootEvent::Right, 1.0, DamageSource::CrushedRight, true);
 
 						DoLaunch(giant, 1.20 * perk * fallmod, 1.75 * fallmod, FootEvent::Left);
 						DoLaunch(giant, 1.20 * perk * fallmod, 1.75 * fallmod, FootEvent::Right);

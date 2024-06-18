@@ -125,6 +125,8 @@ namespace Gts {
 
 				if (collision_layer != COL_LAYER::kCharController && collision_layer != COL_LAYER::kWeapon && 
 					layer_as_int != 56) {
+					// 8 = kBiped
+					// 56 = Supposedly weapon collisions
 					/*if (ref->formID == 0x14) {
 						log::info("------Hitting Layer: {}, as int: {}", collision_layer, layer_as_int); // Weapons hit "unknown" layer :/
 					}*/

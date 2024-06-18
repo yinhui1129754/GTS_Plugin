@@ -66,7 +66,7 @@ namespace Gts {
 		if (player) {
 			hh = HighHeelManager::GetBaseHHOffset(player).z;
 			hh *= HighHeelManager::GetHHMultiplier(player);
-			if (IsFootGrinding(player) || isTrampling(player)) {
+			if (IsFootGrinding(player) || IsTrampling(player) || IsStomping(player) || IsVoring(player)) {
 				hh = 0.0;
 			}
 		}

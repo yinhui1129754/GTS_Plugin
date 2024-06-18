@@ -37,7 +37,6 @@ namespace Gts {
 	bool IsChangingSize(Actor* actor);
 
 	bool IsFootGrinding(Actor* actor);
-	bool isTrampling(Actor* actor);
 	bool IsProning(Actor* actor);
 	bool IsCrawling(Actor* actor);
 	bool IsInBalanceMode();
@@ -55,9 +54,12 @@ namespace Gts {
 	bool CanDoPaired(Actor* actor);
 	bool IsThighCrushing(Actor* actor);
 	bool IsThighSandwiching(Actor* actor);
-	bool IsStomping(Actor* actor);
 	bool IsBeingEaten(Actor* tiny);
 	bool IsGtsBusy(Actor* actor);
+
+	bool IsStomping(Actor* actor);
+	bool IsTrampling(Actor* actor);
+
 	bool CanDoCombo(Actor* actor);
 	bool IsCameraEnabled(Actor* actor);
 	bool IsCrawlVoring(Actor* actor);
@@ -226,8 +228,10 @@ namespace Gts {
 	void SetCanBePushed(Actor* tiny, bool prevent);
 
 	void Utils_PushCheck(Actor* giant, Actor* tiny, float force);
+
 	void StaggerOr(Actor* giant, Actor* tiny, float afX, float afY, float afZ, float afMagnitude);
 	void DoDamageEffect(Actor* giant, float damage, float radius, int random, float bonedamage, FootEvent kind, float crushmult, DamageSource Cause);
+	void DoDamageEffect(Actor* giant, float damage, float radius, int random, float bonedamage, FootEvent kind, float crushmult, DamageSource Cause, bool ignore_rotation);
 
 	void PushTowards(Actor* giantref, Actor* tinyref, std::string_view bone, float power, bool sizecheck);
 	void PushTowards_Task(ActorHandle giantHandle, ActorHandle tinyHandle, const NiPoint3& startCoords, const NiPoint3& endCoords, std::string_view TaskName, float power, bool sizecheck);

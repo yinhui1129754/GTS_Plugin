@@ -26,6 +26,7 @@ namespace {
 				Type = NodeMovementType::Movement_LeftHand;
 			break;
 			case DamageSource::WalkRight:
+			case DamageSource::FootIdleR:
 			case DamageSource::CrushedRight:
 			case DamageSource::FootGrindedRight:
 			case DamageSource::KickedRight:
@@ -33,6 +34,7 @@ namespace {
 				Type = NodeMovementType::Movement_RightLeg;
 			break;	
 			case DamageSource::WalkLeft:
+			case DamageSource::FootIdleL:
 			case DamageSource::CrushedLeft:
 			case DamageSource::FootGrindedLeft:
 			case DamageSource::KickedLeft:

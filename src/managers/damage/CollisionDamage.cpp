@@ -4,6 +4,7 @@
 #include "managers/damage/SizeHitEffects.hpp"
 #include "managers/damage/TinyCalamity.hpp"
 #include "magic/effects/TinyCalamity.hpp"
+#include "managers/audio/GoreAudio.hpp"
 #include "managers/RipClothManager.hpp"
 #include "managers/ai/aifunctions.hpp"
 #include "managers/GtsSizeManager.hpp"
@@ -39,7 +40,35 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
-
+	bool StrongGore(DamageSource cause) {
+		bool Strong = false;
+		switch (cause) {
+			case DamageSource::FootGrindedRight_Impact:
+			case DamageSource::FootGrindedLeft_Impact:
+			case DamageSource::RightFinger_Impact:
+			case DamageSource::LeftFinger_Impact:
+			case DamageSource::HandCrawlRight:
+			case DamageSource::HandCrawlLeft:
+			case DamageSource::KneeDropRight:
+			case DamageSource::KneeDropLeft:
+			case DamageSource::KneeRight:
+			case DamageSource::KneeLeft:
+			case DamageSource::HandDropRight:
+			case DamageSource::HandDropLeft:
+			case DamageSource::HandSlamRight:
+			case DamageSource::HandSlamLeft:
+			case DamageSource::CrushedRight:
+			case DamageSource::CrushedLeft:
+			case DamageSource::WalkRight:
+			case DamageSource::WalkLeft:
+			case DamageSource::BodyCrush:
+			case DamageSource::BreastImpact:
+			case DamageSource::Booty:
+				Strong = true;
+			break;
+		}
+		return Strong;
+	}
 	bool Allow_Damage(Actor* giant, Actor* tiny, DamageSource cause, float difference) {
 		float threshold = 3.0;
 
@@ -100,7 +129,7 @@ namespace {
 	void ModVulnerability(Actor* giant, Actor* tiny, float damage) {
 		if (Runtime::HasPerkTeam(giant, "GrowingPressure")) {
 			auto& sizemanager = SizeManager::GetSingleton();
-			sizemanager.ModSizeVulnerability(tiny, damage * 0.0015);
+			sizemanager.ModSizeVulnerability(tiny, damage * 0.0010);
 		}
 	}
 
@@ -148,7 +177,7 @@ namespace Gts {
 		return "CollisionDamage";
 	}
 
-	void CollisionDamage::DoFootCollision(Actor* actor, float damage, float radius, int random, float bbmult, float crush_threshold, DamageSource Cause, bool Right, bool ApplyCooldown) { // Called from GtsManager.cpp, checks if someone is close enough, then calls DoSizeDamage()
+	void CollisionDamage::DoFootCollision(Actor* actor, float damage, float radius, int random, float bbmult, float crush_threshold, DamageSource Cause, bool Right, bool ApplyCooldown, bool ignore_rotation) { // Called from GtsManager.cpp, checks if someone is close enough, then calls DoSizeDamage()
 		auto profiler = Profilers::Profile("CollisionDamageLeft: DoFootCollision_Left");
 		auto& CollisionDamage = CollisionDamage::GetSingleton();
 		if (!actor) {
@@ -156,7 +185,7 @@ namespace Gts {
 		}
 
 		float giantScale = get_visual_scale(actor) * GetSizeFromBoundingBox(actor);
-		float BASE_CHECK_DISTANCE = 120.0;
+		float BASE_CHECK_DISTANCE = 180.0;
 		float SCALE_RATIO = 1.15;
 		float Calamity = 1.0;
 
@@ -167,14 +196,15 @@ namespace Gts {
 			Calamity = 3.0 * Get_Bone_Movement_Speed(actor, Cause); // larger range for shrinking radius with Tiny Calamity
 		}
 
-		float damage_zones_applied = 0.0;
 		float maxFootDistance = radius * giantScale;
-		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(actor, Right);
+		std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(actor, Right, ignore_rotation);
 
 		if (!CoordsToCheck.empty()) {
 			if (IsDebugEnabled() && (actor->formID == 0x14 || IsTeammate(actor) || EffectsForEveryone(actor))) {
-				for (auto footPoints: CoordsToCheck) {
-					DebugAPI::DrawSphere(glm::vec3(footPoints.x, footPoints.y, footPoints.z), maxFootDistance);
+				if (Cause != DamageSource::FootIdleL && Cause != DamageSource::FootIdleR) {
+					for (auto footPoints: CoordsToCheck) {
+						DebugAPI::DrawSphere(glm::vec3(footPoints.x, footPoints.y, footPoints.z), maxFootDistance, 300);
+					}
 				}
 			}
 
@@ -193,27 +223,29 @@ namespace Gts {
 							auto model = otherActor->GetCurrent3D();
 							
 							if (model) {
+								bool StopDamageLookup = false;
 								for (auto point: CoordsToCheck) {
-									VisitNodes(model, [&nodeCollisions, &Calamity, &DoDamage, point, maxFootDistance](NiAVObject& a_obj) {
-										float distance = (point - a_obj.world.translate).Length();
-										if (distance < maxFootDistance) {
-											nodeCollisions += 1;
-											return false;
-										} else if (distance > maxFootDistance && distance < maxFootDistance*Calamity) {
-											nodeCollisions += 1;
-											DoDamage = false;
-											return false;
-										}
-										return true;
-									});
+									if (!StopDamageLookup) {
+										VisitNodes(model, [&nodeCollisions, &Calamity, &DoDamage, SMT, point, maxFootDistance, &StopDamageLookup](NiAVObject& a_obj) {
+											float distance = (point - a_obj.world.translate).Length();
+											if (distance - Collision_Distance_Override < maxFootDistance) {
+												StopDamageLookup = true;
+												nodeCollisions += 1;
+												return false;
+											} else if (SMT && distance - Collision_Distance_Override > maxFootDistance && distance < maxFootDistance*Calamity) {
+												StopDamageLookup = true;
+												nodeCollisions += 1;
+												DoDamage = false;
+												return false;
+											}
+											return true;
+										});
+									}
 								}
 							}
 							if (nodeCollisions > 0) {
-								damage_zones_applied += 1.0;
-								if (damage_zones_applied < 1.0) {
-									damage_zones_applied = 1.0; // just to be safe
-								}
-								damage /= damage_zones_applied;
+								//damage /= nodeCollisions;
+
 								if (ApplyCooldown) { // Needed to fix Thigh Crush stuff
 									auto& sizemanager = SizeManager::GetSingleton();
 									bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
@@ -336,15 +368,11 @@ namespace Gts {
 				PrintDeathSource(giant, tiny, Cause);
 				if (!LessGore()) {
 					auto node = find_node(giant, GetDeathNodeName(Cause));
-					if (node) {
-						if (IsMechanical(tiny)) {
-							return;
-						} else {
-							Runtime::PlaySoundAtNode("GtsCrushSound", giant, 1.0, 1.0, node);
-						}
-					} else {
-						Runtime::PlaySound("GtsCrushSound", giant, 1.0, 1.0);
-					}
+					if (IsMechanical(tiny)) {
+						return;
+					} 
+
+					PlayCrushSound(giant, node, true, StrongGore(Cause)); // Run Crush Sound task that will determine which exact type of crushing audio to play
 				}
 
 				CrushManager::GetSingleton().Crush(giant, tiny);

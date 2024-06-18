@@ -26,7 +26,7 @@ namespace {
 
 	const double HEALTHGATE_COOLDOWN = 60.0f;
 	const double SCARE_COOLDOWN = 6.0f;
-	const double BUTTCRUSH_COOLDOWN = 60.0f;
+	const double BUTTCRUSH_COOLDOWN = 30.0f;
 	const double HUGS_COOLDOWN = 10.0f;
 
     const double LAUGH_COOLDOWN = 5.0f;
@@ -42,10 +42,10 @@ namespace {
 		bool lvl70 = Runtime::HasPerk(actor, "ButtCrush_UnstableGrowth");
 		bool lvl100 = Runtime::HasPerk(actor, "ButtCrush_LoomingDoom");
 		float reduction = 1.0;
-		if (lvl100) { // 25% reduction
-			reduction -= 0.25;
-		} if (lvl70) { // 15% reduction
+		if (lvl100) { // 15% reduction
 			reduction -= 0.15;
+		} if (lvl70) { // 10% reduction
+			reduction -= 0.10;
 		} 
 		return BUTTCRUSH_COOLDOWN * reduction;
 	}

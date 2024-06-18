@@ -19,7 +19,7 @@ namespace Gts {
 	};
 
 	void BlockFirstPerson(Actor* actor, bool block);
-
+	
 	void Hugs_FixAnimationDesync(Actor* giant, Actor* tiny, bool reset);
 	void ForceFollowerAnimation(Actor* giant, FollowerAnimType Type);
 	void Vore_AttachToRightHandTask(Actor* giant, Actor* tiny);
@@ -39,6 +39,8 @@ namespace Gts {
 	void AllowToDoVore(Actor* actor, bool toggle);
 	void AllowToBeCrushed(Actor* actor, bool toggle);
 	void ManageCamera(Actor* giant, bool enable, CameraTracking type);
+
+	void LaunchTask(Actor* actor, float radius, float power, FootEvent kind);
 
 	void DoLaunch(Actor* giant, float radius, float damage, FootEvent kind);
 	void DoLaunch(Actor* giant, float radius, float damage, NiAVObject* node);
@@ -65,7 +67,7 @@ namespace Gts {
 	void ApplyFingerDamage(Actor* giant, float radius, float damage, NiAVObject* node, float random, float bbmult, float crushmult, float Shrink, DamageSource Cause);
 
 	std::vector<NiPoint3> GetThighCoordinates(Actor* giant, std::string_view calf, std::string_view feet, std::string_view thigh);
-	std::vector<NiPoint3> GetFootCoordinates(Actor* actor, bool Right);
+	std::vector<NiPoint3> GetFootCoordinates(Actor* actor, bool Right, bool ignore_rotation);
 	NiPoint3 GetHeartPosition(Actor* giant, Actor* tiny);
 
 	void AbsorbShout_BuffCaster(Actor* giantref, Actor* tinyref);
@@ -78,5 +80,5 @@ namespace Gts {
 
 	float GetHugStealRate(Actor* actor);
 	float GetHugShrinkThreshold(Actor* actor);
-	float GetHugCrushThreshold(Actor* actor);
+	float GetHugCrushThreshold(Actor* giant, Actor* tiny);
 }

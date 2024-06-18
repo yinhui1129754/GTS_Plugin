@@ -58,9 +58,8 @@ namespace {
 			}
 			auto giant = gianthandle.get().get();
 			auto Leg = find_node(giant, node);
-			GetFootCoordinates(actor, Right);
 			if (Leg) {
-				auto coords = GetFootCoordinates(actor, Right);
+				auto coords = GetFootCoordinates(actor, Right, false);
 				if (!coords.empty()) {
 					DoDamageAtPoint_Cooldown(giant, Radius_Kick, power, Leg, coords[1], 10, 0.30, crush, pushpower, Source); // At Toe point
 					PushObjects(Objects, giant, Leg, pushpower, Radius_Kick, true);

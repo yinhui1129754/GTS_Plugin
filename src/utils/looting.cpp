@@ -95,7 +95,7 @@ namespace {
 			if (!dropbox3D) {
 				return true; // Retry next frame
 			} else {
-				Runtime::PlaySound("GtsCrushSound", dropboxPtr, 1.0, 1.0);
+				Runtime::PlaySound("DefaultCrush", dropboxPtr, 1.0, 1.0);
 				return false;
 			}
 		});

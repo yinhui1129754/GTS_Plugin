@@ -31,6 +31,7 @@
 #include "managers/ThighSandwichController.hpp"
 #include "managers/animation/ThighSandwich.hpp"
 #include "managers/damage/LaunchActor.hpp"
+#include "managers/audio/GoreAudio.hpp"
 #include "managers/cameras/camutil.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/ai/aifunctions.hpp"
@@ -120,11 +121,9 @@ namespace {
 			PrintDeathSource(giant, tiny, DamageSource::ThighSandwiched);
 			AdvanceQuestProgression(giant, tiny, QuestStage::HandCrush, 1.0, false);
 			auto node = find_node(giant, "NPC R FrontThigh");
-			if (node) {
-				Runtime::PlaySoundAtNode("GtsCrushSound", giant, 1.0, 1.0, node);
-			} else {
-				Runtime::PlaySound("GtsCrushSound", giant, 1.0, 1.0);
-			}
+			
+			PlayCrushSound(giant, node, false, false);
+
 			sandwichdata.Remove(tiny);
 		}
 	}
@@ -308,8 +307,9 @@ namespace {
 		DoFootstepSound(&data.giant, 1.05, FootEvent::Left, LNode);
 		DoDustExplosion(&data.giant, 2.0, FootEvent::Right, RNode);
 		DoDustExplosion(&data.giant, 2.0, FootEvent::Left, LNode);
-		DoDamageEffect(&data.giant, 6.0 * perk, 1.6, 10, 0.20, FootEvent::Right, 1.0, DamageSource::CrushedRight);
-		DoDamageEffect(&data.giant, 6.0 * perk, 1.6, 10, 0.20, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
+		DoDamageEffect(&data.giant, Damage_ThighSandwich_FallDownImpact * perk, Radius_ThighSandwich_FootFallDown, 10, 0.20, FootEvent::Right, 1.0, DamageSource::CrushedRight);
+		DoDamageEffect(&data.giant, Damage_ThighSandwich_FallDownImpact * perk, Radius_ThighSandwich_FootFallDown, 10, 0.20, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
+
 		DoLaunch(&data.giant, 0.85 * perk, 3.2, FootEvent::Right);
 		DoLaunch(&data.giant, 0.85 * perk, 3.2, FootEvent::Left);
 

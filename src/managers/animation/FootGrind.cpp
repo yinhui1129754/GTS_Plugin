@@ -39,7 +39,7 @@ namespace {
 		explosion.OnImpact(impact_data); // Play explosion
 	}
 
-	void ApplyDamageOverTime(Actor* giant, std::string_view node, std::string_view task_name) {
+	void ApplyDamageOverTime(Actor* giant, std::string_view node, FootEvent Event, std::string_view task_name) {
 		auto gianthandle = giant->CreateRefHandle();
 		std::string r_name = std::format("FootGrindDOT_{}", giant->formID);
 		std::string name = std::format("FootGrind_{}_{}", giant->formID, task_name);
@@ -56,7 +56,7 @@ namespace {
 
 			Rumbling::Once(r_name, giantref, Rumble_FootGrind_DOT, 0.025, RNode, 0.0);
 			float speed = AnimationManager::GetBonusAnimationSpeed(giant);
-			DoDamageEffect(giantref, Damage_Foot_Grind_DOT * speed, Radius_Foot_Grind_DOT, 10000, 0.025, FootEvent::Right, 2.5, DamageSource::FootGrindedRight);
+			DoDamageEffect(giantref, Damage_Foot_Grind_DOT * speed, Radius_Foot_Grind_DOT, 10000, 0.025, Event, 2.5, DamageSource::FootGrindedRight);
 			return true;
 		});
 	}
@@ -73,12 +73,13 @@ namespace {
 		ApplyDustRing(giant, kind, node, 0.9);
 	}
 
-	void Footgrind_DoImpact(Actor* giant, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
+	void Footgrind_DoImpact(Actor* giant, bool right, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
 		ApplyDustRing(giant, Event, Node, 1.05);
 		DoFootstepSound(giant, 1.0, Event, Node);
-		DoLaunch(giant, 0.75 * perk, 1.35 * perk, Event);
+
 		DoDamageEffect(giant, Damage_Foot_Grind_Impact, Radius_Foot_Grind_Impact, 20, 0.15, Event, 1.0, Source);
+		LaunchTask(giant, 0.75 * perk, 1.35 * perk, Event);
 
 		DamageAV(giant, ActorValue::kStamina, 30 * GetWasteMult(giant));
 
@@ -114,7 +115,7 @@ namespace {
 		data.canEditAnimSpeed = true;
 		data.animSpeed = 1.0;
 		DrainStamina(&data.giant, "StaminaDrain_FootGrind", "DestructionBasics", true, 0.25);
-		ApplyDamageOverTime(&data.giant, LNode, "Left_Light");
+		ApplyDamageOverTime(&data.giant, LNode, FootEvent::Left, "Left_Light");
 	}
 
 	void GTSstomp_FootGrindR_Enter(AnimationEventData& data) {
@@ -122,7 +123,7 @@ namespace {
 		data.canEditAnimSpeed = true;
 		data.animSpeed = 1.0;
 		DrainStamina(&data.giant, "StaminaDrain_FootGrind", "DestructionBasics", true, 0.25);
-		ApplyDamageOverTime(&data.giant, RNode, "Right_Light");
+		ApplyDamageOverTime(&data.giant, RNode, FootEvent::Right, "Right_Light");
 	}
 
 	void GTSstomp_FootGrindL_MV_S(AnimationEventData& data) { // Feet starts to move: Left
@@ -152,11 +153,11 @@ namespace {
 	}
 
 	void GTSstomp_FootGrindR_Impact(AnimationEventData& data) { // When foot hits the ground after lifting the leg up. R Foot
-		Footgrind_DoImpact(&data.giant, FootEvent::Right, DamageSource::FootGrindedRight, RNode, "GrindStompR");
+		Footgrind_DoImpact(&data.giant, true, FootEvent::Right, DamageSource::FootGrindedRight_Impact, RNode, "GrindStompR");
 	}
 
 	void GTSstomp_FootGrindL_Impact(AnimationEventData& data) { // When foot hits the ground after lifting the leg up. L Foot
-		Footgrind_DoImpact(&data.giant, FootEvent::Left, DamageSource::FootGrindedLeft, LNode, "GrindStompL");
+		Footgrind_DoImpact(&data.giant, false, FootEvent::Left, DamageSource::FootGrindedLeft_Impact, LNode, "GrindStompL");
 	}
 
 	void GTSstomp_FootGrindR_Exit(AnimationEventData& data) { // Remove foot from enemy: Right

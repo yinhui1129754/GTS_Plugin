@@ -65,8 +65,7 @@ namespace {
 			}
 		}
 	}
-    void Finger_DoDamage(Actor* giant, bool Right, float Radius, float Damage, float CrushMult, float ShrinkMult) {
-		DamageSource source = DamageSource::RightFinger;
+    void Finger_DoDamage(Actor* giant, DamageSource source, bool Right, float Radius, float Damage, float CrushMult, float ShrinkMult) {
 		std::string_view NodeLookup = Rfinger;
 		if (!Right) {
 			source = DamageSource::LeftFinger;
@@ -91,7 +90,7 @@ namespace {
 	};  
 
 	void GTS_Sneak_FingerGrind_Impact_R(AnimationEventData& data) {
-		Finger_DoDamage(&data.giant, true, Radius_Sneak_FingerGrind_Impact, Damage_Sneak_FingerGrind_Impact, 2.8, 1.2);
+		Finger_DoDamage(&data.giant, DamageSource::RightFinger_Impact, true, Radius_Sneak_FingerGrind_Impact, Damage_Sneak_FingerGrind_Impact, 2.8, 1.2);
 		Finger_DoSounds(&data.giant, Rfinger, 1.0);
 		Finger_ApplyVisuals(&data.giant, Rfinger, 2.6, 1.0);
 
@@ -100,7 +99,7 @@ namespace {
 		DrainStamina(&data.giant, "StaminaDrain_FingerGrind", "DestructionBasics", true, 0.8);
 	};
     void GTS_Sneak_FingerGrind_Impact_L(AnimationEventData& data) {
-		Finger_DoDamage(&data.giant, false, Radius_Sneak_FingerGrind_Impact, Damage_Sneak_FingerGrind_Impact, 2.8, 1.2);
+		Finger_DoDamage(&data.giant, DamageSource::LeftFinger_Impact, false, Radius_Sneak_FingerGrind_Impact, Damage_Sneak_FingerGrind_Impact, 2.8, 1.2);
 		Finger_DoSounds(&data.giant, Lfinger, 1.0);
 		Finger_ApplyVisuals(&data.giant, Lfinger, 2.6, 1.0);
 
@@ -110,30 +109,29 @@ namespace {
 	};
 
 	void GTS_Sneak_FingerGrind_Rotation_R(AnimationEventData& data) {
-		Finger_DoDamage(&data.giant, true, Radius_Sneak_FingerGrind_DOT, Damage_Sneak_FingerGrind_DOT, 3.2, 0.8);
+		Finger_DoDamage(&data.giant, DamageSource::RightFinger, true, Radius_Sneak_FingerGrind_DOT, Damage_Sneak_FingerGrind_DOT, 3.2, 0.8);
 		Rumbling::Once("FingerROT", &data.giant, Rumble_FingerGrind_Rotate, 0.025, Rfinger, 0.0);
 		Finger_ApplyVisuals(&data.giant, Rfinger, 2.6, 0.85);
 	};   
     void GTS_Sneak_FingerGrind_Rotation_L(AnimationEventData& data) {
-		Finger_DoDamage(&data.giant, false, Radius_Sneak_FingerGrind_DOT, Damage_Sneak_FingerGrind_DOT, 3.2, 0.8);
+		Finger_DoDamage(&data.giant, DamageSource::LeftFinger, false, Radius_Sneak_FingerGrind_DOT, Damage_Sneak_FingerGrind_DOT, 3.2, 0.8);
 		Rumbling::Once("FingerROT", &data.giant, Rumble_FingerGrind_Rotate, 0.025, Lfinger, 0.0);
 		Finger_ApplyVisuals(&data.giant, Lfinger, 2.6, 0.85);
 	};   
 
 	void GTS_Sneak_FingerGrind_Finisher_R(AnimationEventData& data) {
-		Finger_DoDamage(&data.giant, true, Radius_Sneak_FingerGrind_Finisher, Damage_Sneak_FingerGrind_Finisher, 2.4, 3.0);
+		Finger_DoDamage(&data.giant, DamageSource::RightFinger_Impact, true, Radius_Sneak_FingerGrind_Finisher, Damage_Sneak_FingerGrind_Finisher, 2.4, 3.0);
 		Rumbling::Once("FingerFIN", &data.giant, Rumble_FingerGrind_Finisher, 0.045, Rfinger, 0.0);
         Finger_ApplyVisuals(&data.giant, Rfinger, 2.6, 1.25);
 		Finger_DoSounds(&data.giant, Rfinger, 1.5);
         StopStaminaDrain(&data.giant);	
 	};
     void GTS_Sneak_FingerGrind_Finisher_L(AnimationEventData& data) {
-		Finger_DoDamage(&data.giant, false, Radius_Sneak_FingerGrind_Finisher, Damage_Sneak_FingerGrind_Finisher, 2.4, 3.0);
+		Finger_DoDamage(&data.giant, DamageSource::LeftFinger, false, Radius_Sneak_FingerGrind_Finisher, Damage_Sneak_FingerGrind_Finisher, 2.4, 3.0);
 		Rumbling::Once("FingerFIN", &data.giant, Rumble_FingerGrind_Finisher, 0.045, Lfinger, 0.0);
         Finger_ApplyVisuals(&data.giant, Lfinger, 2.6, 1.25);
 		Finger_DoSounds(&data.giant, Lfinger, 1.5);
         StopStaminaDrain(&data.giant);
-		
 	};
 
 	void GTS_Sneak_FingerGrind_CameraOff_R(AnimationEventData& data) {TrackMatchingHand(&data.giant, CrawlEvent::RightHand, false);}

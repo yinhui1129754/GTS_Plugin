@@ -143,8 +143,7 @@ namespace Gts {
 
 			NiPoint3 playerLocalOffset = currentState->GetPlayerLocalOffset(cameraPosLocal, IsCurrentlyCrawling);
 
-			offset.z += HighHeelOffset();
-			//playerLocalOffset.z += HighHeelOffset();
+			//offset.z += HighHeelOffset();
 
 			if (currentState->PermitManualEdit()) {
 				this->smoothOffset.target = this->manualEdit;

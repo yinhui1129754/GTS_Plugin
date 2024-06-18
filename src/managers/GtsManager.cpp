@@ -311,8 +311,8 @@ void GtsManager::Update() {
 				ScareActors(actor);
 				FixActorFade(actor);
 
-				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
-				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);
+				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleL, false, false, false);
+				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleR, true, false, false);
 				
 				ClothManager::GetSingleton().CheckRip();
 				TinyCalamity_SeekActors(actor);
@@ -326,8 +326,8 @@ void GtsManager::Update() {
 			}
 			if (Runtime::GetBool("PreciseDamageOthers")) {
 				if (actor->formID != 0x14 && !IsTeammate(actor)) {
-					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedLeft, false, false);
-					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::CrushedRight, true, false);
+					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleL, false, false, false);
+					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleR, true, false, false);
 				}
 			}
 			update_actor(actor);

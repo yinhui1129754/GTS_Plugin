@@ -42,7 +42,7 @@ namespace {
 		Runtime::PlaySoundAtNode("xlRumble", giant, 0.14 * bonus * scale * animspeed, 1.0, feet);
 	}
 
-	void FootTrample_Stage1(Actor* giant, bool Right, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
+	void FootTrample_Stage1(Actor* giant, bool right, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
 		float smt = 1.0;
 		float dust = 1.0;
@@ -52,17 +52,35 @@ namespace {
 			smt = 1.5;
 		}
 
-		DoDamageEffect(giant, Damage_Trample * perk, Radius_Trample, 100, 0.10, Event, 1.10, Source);
-		DrainStamina(giant, "StaminaDrain_Trample", "DestructionBasics", true, 0.6); // start stamina drain
+		float Start = Time::WorldTimeElapsed();
+		ActorHandle giantHandle = giant->CreateRefHandle();
+		std::string taskname = std::format("TrampleAttack_{}", giant->formID);
 
-		float shake_power = Rumble_Trample_Stage1 * smt * GetHighHeelsBonusDamage(giant, true);
+		TaskManager::RunFor(taskname, 1.0, [=](auto& update){ // Needed because anim has a bit wrong timing(s)
+			if (!giantHandle) {
+				return false;
+			}
 
-		Rumbling::Once(rumble, giant, shake_power, 0.025, Node, 0.0);
-		DoLaunch(giant, 0.65 * perk, 1.15 * perk, Event);
-		DoDustExplosion(giant, dust * smt, Event, Node);
-		DoFootstepSound(giant, 1.0, Event, Node);
-		
-		FootGrindCheck(giant, Radius_Trample, true, Right);
+			float Finish = Time::WorldTimeElapsed();
+			auto giant = giantHandle.get().get();
+
+			if (Finish - Start > 0.06) { 
+				DoDamageEffect(giant, Damage_Trample * perk, Radius_Trample, 100, 0.10, Event, 1.10, Source);
+				DrainStamina(giant, "StaminaDrain_Trample", "DestructionBasics", true, 0.6); // start stamina drain
+
+				float shake_power = Rumble_Trample_Stage1 * smt * GetHighHeelsBonusDamage(giant, true);
+				
+				Rumbling::Once(rumble, giant, shake_power, 0.025, Node, 0.0);
+				LaunchTask(giant, 0.65 * perk, 1.15 * perk, Event);
+				DoDustExplosion(giant, dust * smt, Event, Node);
+				DoFootstepSound(giant, 1.0, Event, Node);
+				
+				FootGrindCheck(giant, Radius_Trample, true, right);
+
+				return false;
+			}
+			return true;
+		});
 	}
 
 	void FootTrample_Stage2(Actor* giant, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {

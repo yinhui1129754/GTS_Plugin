@@ -216,7 +216,7 @@ namespace {
 			auto Node = find_node(giant, Nodes);
 			if (Node) {
 				std::string rumbleName = std::format("Node: {}", Nodes);
-				DoDamageAtPoint(giant, Radius_BreastCrush_BodyImpact, Damage_BreastCrush_Body * damage, Node, 400, 0.10, 0.85, DamageSource::BodyCrush);
+				DoDamageAtPoint(giant, Radius_BreastCrush_BodyImpact, Damage_BreastCrush_Body * damage, Node, 400, 0.10, 0.8, DamageSource::BodyCrush);
 				DoLaunch(giant, 2.25 * perk, 5.0, Node);
 				Rumbling::Once(rumbleName, giant, 1.00 * damage, 0.02, Nodes, 0.0);
 			}
@@ -245,8 +245,8 @@ namespace {
 		float shake_power = Rumble_Cleavage_Impact/2 * dust * damage;
 
 		if (BreastL03 && BreastR03) {
-			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastL03, 4, 0.70, 0.85, DamageSource::BreastImpact);
-			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastR03, 4, 0.70, 0.85, DamageSource::BreastImpact);
+			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastL03, 4, 0.70, 0.8, DamageSource::BreastImpact);
+			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastR03, 4, 0.70, 0.8, DamageSource::BreastImpact);
 			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Left, "L Breast03");
 			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Right, "R Breast03");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "R Breast03");
@@ -257,8 +257,8 @@ namespace {
 			ModGrowthCount(giant, 0, true); // Reset limit
 			return;
 		} else if (BreastL && BreastR) {
-			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastL, 4, 0.70, 0.85, DamageSource::BreastImpact);
-			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastR, 4, 0.70, 0.85, DamageSource::BreastImpact);
+			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastL, 4, 0.70, 0.8, DamageSource::BreastImpact);
+			DoDamageAtPoint(giant, Radius_BreastCrush_BreastImpact, Damage_BreastCrush_Impact * damage, BreastR, 4, 0.70, 0.8, DamageSource::BreastImpact);
 			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Left, "NPC L Breast");
 			DoDustExplosion(giant, 1.25 * dust + damage/10, FootEvent::Right, "NPC R Breast");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC R Breast");

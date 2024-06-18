@@ -7,6 +7,8 @@ using namespace RE;
 using namespace SKSE;
 
 namespace Gts {
+//-----------------------------------------Misc
+    const float Collision_Distance_Override = 5.4f;
 //-----------------------------------------Size Limits
     const float Minimum_Actor_Scale = 0.04f;
     const float Minimum_Actor_Crush_Scale_Idle = 16.0f; // x16.0 crush threshold for just standing still
@@ -28,7 +30,7 @@ namespace Gts {
     const float Damage_Default_Underfoot = 0.003f; // when we just stand still
 
     const float Damage_Walk_Defaut = 9.0f; // when we walk around normally
-    const float Damage_Jump_Default = 10.0f; // when we jump land
+    const float Damage_Jump_Default = 10.6f; // when we jump land
 
 	const float Damage_Stomp = 11.0f;
 	const float Damage_Stomp_Strong = 22.0f;
@@ -37,7 +39,7 @@ namespace Gts {
 
     const float Damage_Foot_Grind_Impact = 6.8f;
     const float Damage_Foot_Grind_Rotate = 1.4f;
-    const float Damage_Foot_Grind_DOT = 0.048f;
+    const float Damage_Foot_Grind_DOT = 0.028f;
 
     ////////////////Trample
 
@@ -56,6 +58,7 @@ namespace Gts {
 
     ////////////////Thigh Sandwich
     const float Damage_ThighSandwich_Impact = 0.5f;
+    const float Damage_ThighSandwich_FallDownImpact = 12.6f;
     const float Damage_ThighSandwich_DOT = 0.004f;
 
     ////////////////Thigh Crush
@@ -113,6 +116,9 @@ namespace Gts {
     const float Damage_Sneak_FingerGrind_Impact = 3.0f;
     const float Damage_Sneak_FingerGrind_Finisher = 6.0f;
 
+    ////////////////Vore
+    const float Damage_Vore_Standing_Footstep = 8.8f;
+
     ////////////////Throw
 
     const float Damage_Throw_Collision = 10.0f; // unused for now, buggy: 
@@ -143,13 +149,13 @@ namespace Gts {
 
 //-----------------------------------------Default effect radius variables
 
-    const float Radius_Default_Idle = 6.4f;
+    const float Radius_Default_Idle = 6.6f;
 
     const float Radius_Walk_Default = 7.0f;
     const float Radius_Jump_Default = 20.0f; 
 
-    const float Radius_Stomp = 6.8f;
-    const float Radius_Stomp_Strong = 7.4f;
+    const float Radius_Stomp = 7.0f;
+    const float Radius_Stomp_Strong = 7.6f;
 
     /////////Foot Grind
     const float Radius_Foot_Grind_Impact = 7.4f;
@@ -165,6 +171,9 @@ namespace Gts {
     const float Radius_ButtCrush_Impact = 20.0f;
     const float Radius_ButtCrush_HandImpact = 8.0f;
     const float Radius_ButtCrush_FootImpact = 7.2f;
+
+    /////////Thigh Sandwich
+    const float Radius_ThighSandwich_FootFallDown = 8.6f;
 
     /////////Thigh Crush
     const float Radius_ThighCrush_Butt_DOT = 12.2f;
@@ -215,6 +224,9 @@ namespace Gts {
     const float Radius_Sneak_FingerGrind_DOT = 4.2f;
     const float Radius_Sneak_FingerGrind_Impact = 4.6f;
     const float Radius_Sneak_FingerGrind_Finisher = 5.0f;
+
+    ///////Vore
+    const float Radius_Vore_Standing_Footstep = 7.0f;
 
     ///////Kicks
     const float Radius_Kick = 19.6f;

@@ -150,7 +150,7 @@ namespace Gts {
         StaggerActor(giant, 0.5f);
         RefreshDuration(giant);
 
-        Runtime::PlaySound("GtsCrushSound", giant, 1.0, 1.0);
+        Runtime::PlaySound("DefaultCrush", giant, 1.0, 1.0);
 
         if (tiny->formID != 0x14) {
             Disintegrate(tiny, true); // Set critical stage 4 on actors

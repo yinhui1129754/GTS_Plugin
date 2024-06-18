@@ -208,47 +208,66 @@ namespace {
 			dust = 1.25;
 			smt = 1.5;
 		}
+		std::string taskname = std::format("ButtCrushAttack_{}", giant->formID);
+		ActorHandle giantHandle = giant->CreateRefHandle();
 
-		SetButtCrushSize(giant, 0.0, true);
+		float Start = Time::WorldTimeElapsed();
+		
+		TaskManager::RunFor(taskname, 1.0, [=](auto& update){ // Needed because anim has wrong timing
+			if (!giantHandle) {
+				return false;
+			}
 
-		float damage = GetButtCrushDamage(giant);
-		auto ThighL = find_node(giant, "NPC L Thigh [LThg]");
-		auto ThighR = find_node(giant, "NPC R Thigh [RThg]");
-		auto ButtR = find_node(giant, "NPC R Butt");
-		auto ButtL = find_node(giant, "NPC L Butt");
+			float Finish = Time::WorldTimeElapsed();
+			auto giant = giantHandle.get().get();
 
-		ApplyThighDamage(giant, true, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
-		ApplyThighDamage(giant, false, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
+			if (Finish - Start > 0.04) { 
 
-		float shake_power = Rumble_ButtCrush_ButtImpact/2 * dust * damage;
+				SetButtCrushSize(giant, 0.0, true);
 
-		if (ButtR && ButtL) {
-			if (ThighL && ThighR) {
-				DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighL, 4, 0.70, 0.85, DamageSource::Booty);
-				DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighR, 4, 0.70, 0.85, DamageSource::Booty);
-				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC R Butt");
-				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC L Butt");
-				DoLaunch(&data.giant, 2.25 * perk, 5.0, FootEvent::Butt);
-				DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
+				float damage = GetButtCrushDamage(giant);
+				auto ThighL = find_node(giant, "NPC L Thigh [LThg]");
+				auto ThighR = find_node(giant, "NPC R Thigh [RThg]");
+				auto ButtR = find_node(giant, "NPC R Butt");
+				auto ButtL = find_node(giant, "NPC L Butt");
+
+				ApplyThighDamage(giant, true, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
+				ApplyThighDamage(giant, false, false, Radius_ThighCrush_ButtCrush_Drop, Damage_ButtCrush_LegDrop * damage, 0.35, 1.0, 14, DamageSource::ThighCrushed);
+
+				float shake_power = Rumble_ButtCrush_ButtImpact/2 * dust * damage;
+
+				if (ButtR && ButtL) {
+					if (ThighL && ThighR) {
+						DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighL, 4, 0.70, 0.8, DamageSource::Booty);
+						DoDamageAtPoint(giant, Radius_ButtCrush_Impact, Damage_ButtCrush_ButtImpact * damage, ThighR, 4, 0.70, 0.8, DamageSource::Booty);
+						DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC R Butt");
+						DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC L Butt");
+						DoLaunch(&data.giant, 2.25 * perk, 5.0, FootEvent::Butt);
+						DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
+						
+						Rumbling::Once("Butt_L", &data.giant, shake_power * smt, 0.05, "NPC R Butt", 0.0);
+						Rumbling::Once("Butt_R", &data.giant, shake_power * smt, 0.05, "NPC L Butt", 0.0);
+					}
+				} else {
+					if (!ButtR) {
+						Notify("Error: Missing Butt Nodes"); // Will help people to troubleshoot it. Not everyone has 3BB/XPMS32 body.
+						Notify("Error: effects not inflicted");
+						Notify("install 3BBB/XP32 Skeleton");
+					}
+					if (!ThighL) {
+						Notify("Error: Missing Thigh Nodes");
+						Notify("Error: effects not inflicted");
+						Notify("install 3BBB/XP32 Skeleton");
+					}
+				}
+				ModGrowthCount(giant, 0, true); // Reset limit
+				ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush);
+				DisableButtTrackTask(giant);
 				
-				Rumbling::Once("Butt_L", &data.giant, shake_power * smt, 0.05, "NPC R Butt", 0.0);
-				Rumbling::Once("Butt_R", &data.giant, shake_power * smt, 0.05, "NPC L Butt", 0.0);
+				return false;
 			}
-		} else {
-			if (!ButtR) {
-				Notify("Error: Missing Butt Nodes"); // Will help people to troubleshoot it. Not everyone has 3BB/XPMS32 body.
-				Notify("Error: effects not inflicted");
-				Notify("install 3BBB/XP32 Skeleton");
-			}
-			if (!ThighL) {
-				Notify("Error: Missing Thigh Nodes");
-				Notify("Error: effects not inflicted");
-				Notify("install 3BBB/XP32 Skeleton");
-			}
-		}
-		ModGrowthCount(giant, 0, true); // Reset limit
-		ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush);
-		DisableButtTrackTask(giant);
+			return true;
+		});
 	}
 
 	void GTSButtCrush_Exit(AnimationEventData& data) {

@@ -34,6 +34,8 @@ namespace Gts {
 		float ShrinkResistance;
 		float MightValue;
 
+		int CrushedTinies;
+
 		NiPoint3 BoundingBox_Cache;
 		
 		bool Throw_WasThrown;
