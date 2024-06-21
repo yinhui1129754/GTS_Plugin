@@ -27,6 +27,7 @@ namespace Gts {
 		float SizeVulnerability;
 		float push_force;
 		float otherScales;
+		float vore_recorded_scale;
 		float WorldFov_Default;
 		float FpFov_Default;
 		float ButtCrushGrowthAmount;

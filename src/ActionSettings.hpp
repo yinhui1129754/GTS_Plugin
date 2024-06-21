@@ -113,8 +113,8 @@ namespace Gts {
     const float Damage_Sneak_HandSlam_Strong_Secondary = 2.6f;
 
     const float Damage_Sneak_FingerGrind_DOT = 0.0032f;
-    const float Damage_Sneak_FingerGrind_Impact = 3.0f;
-    const float Damage_Sneak_FingerGrind_Finisher = 6.0f;
+    const float Damage_Sneak_FingerGrind_Impact = 3.2f;
+    const float Damage_Sneak_FingerGrind_Finisher = 6.8f;
 
     ////////////////Vore
     const float Damage_Vore_Standing_Footstep = 8.8f;
@@ -223,7 +223,7 @@ namespace Gts {
 
     const float Radius_Sneak_FingerGrind_DOT = 4.2f;
     const float Radius_Sneak_FingerGrind_Impact = 4.6f;
-    const float Radius_Sneak_FingerGrind_Finisher = 5.0f;
+    const float Radius_Sneak_FingerGrind_Finisher = 5.4f;
 
     ///////Vore
     const float Radius_Vore_Standing_Footstep = 7.0f;

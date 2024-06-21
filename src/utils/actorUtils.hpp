@@ -22,6 +22,8 @@ namespace Gts {
 
 	Actor* GetCharContActor(bhkCharacterController* charCont);
 
+	void Task_AdjustHalfLifeTask(Actor* tiny, float halflife, float revert_after);
+
 	float GetLaunchPower(Actor* giant, float sizeRatio);
 
 	void StartResetTask(Actor* tiny);

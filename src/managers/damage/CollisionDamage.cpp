@@ -129,6 +129,11 @@ namespace {
 	void ModVulnerability(Actor* giant, Actor* tiny, float damage) {
 		if (Runtime::HasPerkTeam(giant, "GrowingPressure")) {
 			auto& sizemanager = SizeManager::GetSingleton();
+
+			if (IsBeingHeld(giant, tiny)) {
+				damage *= 10.0; // Faster damage boost for grabbing
+			}
+
 			sizemanager.ModSizeVulnerability(tiny, damage * 0.0010);
 		}
 	}
@@ -155,9 +160,9 @@ namespace {
 		}
 		if (matches) {
 			if (rumbling_feet) {
-				value *= 1.25; // 25% bonus damage if we have lvl 60 perk
+				value += 0.25; // 25% bonus damage if we have lvl 65 perk
 			} if (perk) {
-				value *= 1.15; // 15% bonus damage if we have High Heels perk
+				value += 0.15; // 15% bonus damage if we have High Heels perk
 			}
 		}
 		

@@ -74,7 +74,7 @@ namespace {
 
 		NiAVObject* node = find_node(giant, NodeLookup);
 
-		ApplyFingerDamage(giant, Radius, Damage, node, 50, 0.10, CrushMult, -0.034 * ShrinkMult, source);
+		ApplyFingerDamage(giant, Radius, Damage, node, 50, 0.10, CrushMult, -0.038 * ShrinkMult, source);
 	}
 
     ////////////////////////////////////////////////////////////////////
@@ -120,14 +120,14 @@ namespace {
 	};   
 
 	void GTS_Sneak_FingerGrind_Finisher_R(AnimationEventData& data) {
-		Finger_DoDamage(&data.giant, DamageSource::RightFinger_Impact, true, Radius_Sneak_FingerGrind_Finisher, Damage_Sneak_FingerGrind_Finisher, 2.4, 3.0);
+		Finger_DoDamage(&data.giant, DamageSource::RightFinger_Impact, true, Radius_Sneak_FingerGrind_Finisher, Damage_Sneak_FingerGrind_Finisher, 2.4, 4.0);
 		Rumbling::Once("FingerFIN", &data.giant, Rumble_FingerGrind_Finisher, 0.045, Rfinger, 0.0);
         Finger_ApplyVisuals(&data.giant, Rfinger, 2.6, 1.25);
 		Finger_DoSounds(&data.giant, Rfinger, 1.5);
         StopStaminaDrain(&data.giant);	
 	};
     void GTS_Sneak_FingerGrind_Finisher_L(AnimationEventData& data) {
-		Finger_DoDamage(&data.giant, DamageSource::LeftFinger, false, Radius_Sneak_FingerGrind_Finisher, Damage_Sneak_FingerGrind_Finisher, 2.4, 3.0);
+		Finger_DoDamage(&data.giant, DamageSource::LeftFinger, false, Radius_Sneak_FingerGrind_Finisher, Damage_Sneak_FingerGrind_Finisher, 2.4, 4.0);
 		Rumbling::Once("FingerFIN", &data.giant, Rumble_FingerGrind_Finisher, 0.045, Lfinger, 0.0);
         Finger_ApplyVisuals(&data.giant, Lfinger, 2.6, 1.25);
 		Finger_DoSounds(&data.giant, Lfinger, 1.5);

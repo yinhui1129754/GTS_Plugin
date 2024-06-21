@@ -124,7 +124,7 @@ namespace Gts {
 				int layer_as_int = static_cast<int>(collision_layer);
 
 				if (collision_layer != COL_LAYER::kCharController && collision_layer != COL_LAYER::kWeapon && 
-					layer_as_int != 56) {
+					layer_as_int != 56 && layer_as_int != 8) {
 					// 8 = kBiped
 					// 56 = Supposedly weapon collisions
 					/*if (ref->formID == 0x14) {

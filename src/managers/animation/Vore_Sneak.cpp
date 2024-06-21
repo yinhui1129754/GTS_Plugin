@@ -56,15 +56,16 @@ namespace {
     }
 
     void GTS_Sneak_Vore_OpenMouth(AnimationEventData& data) {
-        AdjustFacialExpression(&data.giant, 0, 1.0, 0.32, 0.72, "phenome"); // Start opening mouth
-		AdjustFacialExpression(&data.giant, 1, 0.5, 0.32, 0.72, "phenome"); // Open it wider
-		AdjustFacialExpression(&data.giant, 0, 0.8, 0.32, 0.72, "modifier"); // blink L
-		AdjustFacialExpression(&data.giant, 1, 0.8, 0.32, 0.72, "modifier"); // blink R
+		auto giant = &data.giant;
+		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
 
-		auto& VoreData = Vore::GetSingleton().GetVoreData(&data.giant);
+        AdjustFacialExpression(giant, 0, 1.0, 0.32, 0.72, "phenome"); // Start opening mouth
+		AdjustFacialExpression(giant, 1, 0.5, 0.32, 0.72, "phenome"); // Open it wider
+		AdjustFacialExpression(giant, 0, 0.8, 0.32, 0.72, "modifier"); // blink L
+		AdjustFacialExpression(giant, 1, 0.8, 0.32, 0.72, "modifier"); // blink R
 
 		for (auto& tiny: VoreData.GetVories()) {
-			set_target_scale(tiny, get_target_scale(tiny) / 3);
+			Vore::GetSingleton().ShrinkOverTime(giant, tiny, 0.1);
 		}
     }
     void GTS_Sneak_Vore_Swallow(AnimationEventData& data) {

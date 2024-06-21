@@ -144,7 +144,7 @@ namespace {
 		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
 
 		for (auto& tiny: VoreData.GetVories()) {
-			set_target_scale(tiny, get_target_scale(tiny) / 3);
+			Vore::GetSingleton().ShrinkOverTime(giant, tiny, 0.1);
 		}
 	}
 

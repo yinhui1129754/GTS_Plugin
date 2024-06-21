@@ -52,8 +52,6 @@ namespace {
 		float Volume = std::clamp(get_visual_scale(actor)/8.0f, 0.20f, 1.0f);
 		Runtime::PlaySoundAtNode("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
 
-		
-
 		//SetHalfLife(actor, 0.0);
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!gianthandle) {

@@ -52,7 +52,7 @@ namespace {
 	}
 
 	VoreInformation GetVoreInfo(Actor* giant, Actor* tiny, float growth_mult) {
-		float recorded_scale = std::clamp(get_visual_scale(tiny), 0.02f, 999999.0f);
+		float recorded_scale = Vore::GetSingleton().ReadOriginalScale(tiny);
 		float restore_power = 0.0;
 		float mealEffiency = 0.2; // Normal pred has 20% efficent stomach
 		float growth = 2.0;
@@ -71,7 +71,7 @@ namespace {
 
 		float bounding_box = GetSizeFromBoundingBox(tiny);
 		float gain_power = recorded_scale * mealEffiency * growth * growth_mult * bounding_box; // power of most buffs that we start
-		gain_power *= 2.5;
+		//gain_power *= 1.25; // To compensate Shrinking a bit
 
 		VoreInformation VoreInfo = VoreInformation { // Create Vore Info
 			.giantess = giant,
@@ -79,7 +79,7 @@ namespace {
 			.WasDragon = IsDragon(tiny),
 			.WasMammoth = IsMammoth(tiny),
 			.WasLiving = IsLiving(tiny),
-			.Scale = get_visual_scale(tiny),
+			.Scale = recorded_scale,
 			.Vore_Power = gain_power,
 			.Restore_Power = restore_power,
 			.Natural_Scale = bounding_box,
@@ -269,6 +269,7 @@ namespace Gts {
 	void VoreData::EnableMouthShrinkZone(bool enabled) {
 		this->killZoneEnabled = enabled;
 	}
+
 	void VoreData::Swallow() {
 		for (auto& [key, tinyref]: this->tinies) {
 			auto tiny = tinyref.get().get();
@@ -286,7 +287,7 @@ namespace Gts {
 				float DefaultScale = get_natural_scale(tiny);
 				ModSizeExperience(giant, 0.08 + (DefaultScale*0.025));
 
-				SurvivalMode_AdjustHunger(this->giant.get().get(), get_visual_scale(tiny) * GetSizeFromBoundingBox(tiny), Living, false);
+				SurvivalMode_AdjustHunger(this->giant.get().get(), Vore::GetSingleton().ReadOriginalScale(tiny) * GetSizeFromBoundingBox(tiny), Living, false);
 			}
 
 			Task_Vore_StartVoreBuff(giant, tiny, this->tinies.size());
@@ -751,6 +752,39 @@ namespace Gts {
 		voreData.AddTiny(prey);
 
 		AnimationManager::GetSingleton().StartAnim("StartVore", pred);
+	}
+
+	void Vore::RecordOriginalScale(Actor* tiny) {
+		auto Data = Transient::GetSingleton().GetData(tiny);
+		if (Data) {
+			Data->vore_recorded_scale = std::clamp(get_visual_scale(tiny), 0.02f, 999999.0f);
+		}
+	}
+
+	float Vore::ReadOriginalScale(Actor* tiny) {
+		auto Data = Transient::GetSingleton().GetData(tiny);
+		if (Data) {
+			return Data->vore_recorded_scale;
+		}
+		return 1.0;
+	}
+
+	void Vore::ShrinkOverTime(Actor* giant, Actor* tiny, float over_time) {
+		if (tiny) {
+			
+			float Adjustment_Gts = GetSizeFromBoundingBox(giant);
+			float Adjustment_Tiny = GetSizeFromBoundingBox(tiny);
+
+			float predscale = get_visual_scale(giant) * Adjustment_Gts;
+			float preyscale = get_target_scale(tiny) * Adjustment_Tiny;
+			float targetScale = predscale/(40.0 * Adjustment_Tiny);
+
+			if (preyscale > targetScale) {
+				Vore::GetSingleton().RecordOriginalScale(tiny); // We're shrinking the tiny which affects effectiveness of vore bonuses, this fixes it
+				Task_AdjustHalfLifeTask(tiny, over_time, 1.0);
+				set_target_scale(tiny, targetScale);
+			}
+		}
 	}
 
 	void Vore::Devourment_Compatibility(Actor* Pred, Actor* Prey, bool Digested) {

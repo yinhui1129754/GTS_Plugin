@@ -252,6 +252,9 @@ namespace Gts {
 		if (giant == tiny) {
 			return;
 		}
+        if (IsBeingHeld(giant, tiny)) { // Don't explode the ones in our hand
+            return;
+        }
 		auto& persistent = Persistent::GetSingleton();
 		if (persistent.GetData(giant)) {
 			if (persistent.GetData(giant)->smt_run_speed >= 1.0) {

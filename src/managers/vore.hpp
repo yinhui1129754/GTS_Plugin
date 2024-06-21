@@ -100,6 +100,12 @@ namespace Gts
 
 			// Do the vore (this has no checks make sure they can vore with CanVore first)
 			void StartVore(Actor* pred, Actor* prey);
+
+
+			void RecordOriginalScale(Actor* tiny);
+			float ReadOriginalScale(Actor* tiny);
+
+			void ShrinkOverTime(Actor* giant, Actor* tiny, float over_time);
 			
 			// Make Devourment events apply all bonuses
 			void Devourment_Compatibility(Actor* Pred, Actor* Prey, bool Digested);

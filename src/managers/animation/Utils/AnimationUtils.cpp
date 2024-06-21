@@ -1162,16 +1162,14 @@ namespace Gts {
 						if ((actorLocation-giantLocation).Length() <= CheckDistance) {
 
 							int nodeCollisions = 0;
-							float force = 0.0;
 
 							auto model = otherActor->GetCurrent3D();
 
 							if (model) {
-								VisitNodes(model, [&nodeCollisions, &force, NodePosition, maxDistance](NiAVObject& a_obj) {
+								VisitNodes(model, [&nodeCollisions, NodePosition, maxDistance](NiAVObject& a_obj) {
 									float distance = (NodePosition - a_obj.world.translate).Length();
 									if (distance - Collision_Distance_Override < maxDistance) {
 										nodeCollisions += 1;
-										force = 1.0 - distance / maxDistance;
 										return false;
 									}
 									return true;

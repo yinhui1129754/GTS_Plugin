@@ -213,7 +213,7 @@ namespace {
 		AdjustFacialExpression(giant, 1, 0.80, "modifier"); // blink R
 
 		for (auto& tiny: VoreData.GetVories()) {
-			set_target_scale(tiny, get_target_scale(tiny) / 2);
+			Vore::GetSingleton().ShrinkOverTime(giant, tiny, 0.1);
 		}
 	}
 

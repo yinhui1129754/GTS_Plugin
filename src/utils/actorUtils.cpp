@@ -140,35 +140,6 @@ namespace {
 		return Result;
 	}
 
-	void Task_AdjustHalfLifeTask(Actor* tiny, float halflife) {
-		auto& Persist = Persistent::GetSingleton();
-		auto actor_data = Persist.GetData(tiny);
-		float old_halflife = 0.0;
-		if (actor_data) {
-			old_halflife = actor_data->half_life; // record old half life
-			actor_data->half_life = halflife;
-		}
-
-		auto Start = Time::FramesElapsed();
-		ActorHandle tinyhandle = tiny->CreateRefHandle();
-		std::string name = std::format("AdjustHalfLife_{}", tiny->formID);
-		TaskManager::Run(name, [=](auto& progressData) {
-			if (!tinyhandle) {
-				return false;
-			}
-			auto tinyref = tinyhandle.get().get();
-			float timepassed = Time::FramesElapsed() - Start;
-			if (timepassed > 1.2) {
-				if (actor_data) {
-					actor_data->half_life = old_halflife;
-				}
-				return false;
-			}
-
-			return true;
-		});
-	}
-
 	ExtraDataList* CreateExDataList() {
 		size_t a_size;
 		if (SKYRIM_REL_CONSTEXPR (REL::Module::IsAE()) && (REL::Module::get().version() >= SKSE::RUNTIME_SSE_1_6_629)) {
@@ -283,6 +254,35 @@ namespace Gts {
 		//  from which you can get it later
 		//  bhkCharProxyControllerCinfo+0x10 is root NiNode* of TESObjectREFR
 		return nullptr;
+	}
+
+	void Task_AdjustHalfLifeTask(Actor* tiny, float halflife, float revert_after) {
+		auto& Persist = Persistent::GetSingleton();
+		auto actor_data = Persist.GetData(tiny);
+		float old_halflife = 0.0;
+		if (actor_data) {
+			old_halflife = actor_data->half_life; // record old half life
+			actor_data->half_life = halflife;
+		}
+
+		auto Start = Time::FramesElapsed();
+		ActorHandle tinyhandle = tiny->CreateRefHandle();
+		std::string name = std::format("AdjustHalfLife_{}", tiny->formID);
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!tinyhandle) {
+				return false;
+			}
+			auto tinyref = tinyhandle.get().get();
+			float timepassed = Time::FramesElapsed() - Start;
+			if (timepassed > revert_after) {
+				if (actor_data) {
+					actor_data->half_life = old_halflife;
+				}
+				return false;
+			}
+
+			return true;
+		});
 	}
 
 	float GetLaunchPower(Actor* giant, float sizeRatio) {
@@ -468,7 +468,6 @@ namespace Gts {
 	}
 
 	bool IsBeingHeld(Actor* giant, Actor* tiny) {
-		auto transient = Transient::GetSingleton().GetData(tiny);
 		auto grabbed = Grab::GetHeldActor(giant);
 		
 		if (grabbed) {
@@ -476,7 +475,8 @@ namespace Gts {
 				return true;
 			}
 		}
-
+		
+		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
 			return transient->being_held && !tiny->IsDead();
 		}
@@ -1359,7 +1359,7 @@ namespace Gts {
 
 			float target = get_target_scale(giant);
 			float max_scale = get_max_scale(giant) * get_natural_scale(giant);
-			if (target < max_scale) {
+			if (target < max_scale || amt < 0) {
 				Persistent->target_scale += amt;
 				Persistent->visual_scale += amt;
 
@@ -2884,7 +2884,7 @@ namespace Gts {
 					return;
 				}
 
-				Task_AdjustHalfLifeTask(tiny, halflife); // to make them shrink faster
+				Task_AdjustHalfLifeTask(tiny, halflife, 1.2); // to make them shrink faster
 				AddSMTPenalty(giant, 5.0 * Adjustment_Tiny);
 				set_target_scale(tiny, targetScale);
 				StartCombat(tiny, giant);

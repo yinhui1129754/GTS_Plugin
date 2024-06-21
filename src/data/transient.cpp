@@ -110,6 +110,7 @@ namespace Gts {
 			TESObjectREFR* disable_collision_with = nullptr;
 			TESObjectREFR* Throw_Offender = nullptr;
 			float otherScales = 1.0;
+			float vore_recorded_scale = 1.0;
 			float WorldFov_Default = 0;
 			float FpFov_Default = 0;
 			float ButtCrushGrowthAmount = 0;
@@ -162,6 +163,7 @@ namespace Gts {
 			result.disable_collision_with = disable_collision_with;
 			result.Throw_Offender = Throw_Offender;
 			result.otherScales = otherScales;
+			result.vore_recorded_scale = vore_recorded_scale;
 			result.WorldFov_Default = WorldFov_Default;
 			result.FpFov_Default = FpFov_Default;
 			result.ButtCrushGrowthAmount = ButtCrushGrowthAmount;
