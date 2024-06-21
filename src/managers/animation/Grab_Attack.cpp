@@ -5,6 +5,7 @@
 #include "managers/ShrinkToNothingManager.hpp"
 #include "managers/damage/SizeHitEffects.hpp"
 #include "managers/animation/Grab_Attack.hpp"
+#include "managers/damage/TinyCalamity.hpp"
 #include "managers/damage/LaunchActor.hpp"
 #include "managers/animation/Grab.hpp"
 #include "managers/GtsSizeManager.hpp"
@@ -121,9 +122,15 @@ namespace {
 			}
 
             if (CanDoDamage(giant, grabbedActor, false)) {
+                if (Runtime::HasPerkTeam(giant, "GrowingPressure")) {
+                    auto& sizemanager = SizeManager::GetSingleton();
+                    sizemanager.ModSizeVulnerability(grabbedActor, damage * 0.0010);
+                }
+
+                TinyCalamity_ShrinkActor(giant, grabbedActor, damage * 0.10 * GetDamageSetting());
+
+                SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0.15, 6);
                 InflictSizeDamage(giant, grabbedActor, damage);
-                SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // don't do damage and just add flat debuff
-			    SizeHitEffects::GetSingleton().BreakBones(giant, grabbedActor, 0, 1); // do it twice
             }
 			
 			Rumbling::Once("GrabAttack", giant, Rumble_Grab_Hand_Attack * bonus, 0.05, "NPC L Hand [LHnd]", 0.0);

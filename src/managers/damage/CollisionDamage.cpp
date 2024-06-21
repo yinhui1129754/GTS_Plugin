@@ -129,11 +129,6 @@ namespace {
 	void ModVulnerability(Actor* giant, Actor* tiny, float damage) {
 		if (Runtime::HasPerkTeam(giant, "GrowingPressure")) {
 			auto& sizemanager = SizeManager::GetSingleton();
-
-			if (IsBeingHeld(giant, tiny)) {
-				damage *= 10.0; // Faster damage boost for grabbing
-			}
-
 			sizemanager.ModSizeVulnerability(tiny, damage * 0.0010);
 		}
 	}

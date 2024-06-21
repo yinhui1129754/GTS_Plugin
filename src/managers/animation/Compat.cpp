@@ -51,6 +51,21 @@ namespace {
 	const std::string_view RNode = "NPC R Foot [Rft ]";
 	const std::string_view LNode = "NPC L Foot [Lft ]";
 
+	void RunThighCollisionTask(Actor* giant, bool right, bool CooldownCheck, float radius, float damage, float bbmult, float crush_threshold, int random, std::string_view name) {
+		auto gianthandle = giant->CreateRefHandle();
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			auto giantref = gianthandle.get().get();
+
+			CollisionDamage::GetSingleton().DoFootCollision(giantref, damage, radius, random, bbmult, crush_threshold, DamageSource::Crushed, right, CooldownCheck, false); // Foot damage
+			ApplyThighDamage(giantref, right, CooldownCheck, radius, damage, bbmult, crush_threshold, random, DamageSource::ThighCrushed); // Thigh Damage
+		    
+			return false; // Cancel it
+		});
+	}
+
 	void TriggerKillZone(Actor* giant) {
 		if (!giant) {
 			return;
@@ -122,6 +137,30 @@ namespace {
 		//PrintMessageBox("GTS_CustomDamage_Cleavage_OFF");
 	}
 
+	void GTS_FootSwipe_L_ON(AnimationEventData& data) { // Compatibility with NickNack's upcoming Hand 2 Hand mod
+		auto giant = &data.giant;
+		std::string name = std::format("FootSwipeL_{}", giant->formID);
+		RunThighCollisionTask(&data.giant, false, true, Radius_ThighCrush_Idle, Damage_ThighCrush_CrossLegs_Out, 0.1, 0.95, 10, name);
+	}
+
+	void GTS_FootSwipe_R_ON(AnimationEventData& data) { // Compatibility with NickNack's upcoming Hand 2 Hand mod
+	auto giant = &data.giant;
+		std::string name = std::format("FootSwipeR_{}", giant->formID);
+		RunThighCollisionTask(&data.giant, true, true, Radius_ThighCrush_Idle, Damage_ThighCrush_CrossLegs_Out, 0.1, 0.95, 10, name);
+	}
+
+	void GTS_FootSwipe_L_OFF(AnimationEventData& data) { // Compatibility with NickNack's upcoming Hand 2 Hand mod
+		auto giant = &data.giant;
+		std::string name = std::format("FootSwipeL_{}", giant->formID);
+		TaskManager::Cancel(name);
+	}
+
+	void GTS_FootSwipe_R_OFF(AnimationEventData& data) { // Compatibility with NickNack's upcoming Hand 2 Hand mod
+		auto giant = &data.giant;
+		std::string name = std::format("FootSwipeR_{}", giant->formID);
+		TaskManager::Cancel(name);
+	}
+
 	void MCO_SecondDodge(AnimationEventData& data) {
 		data.stage = 0;
 		float scale = get_visual_scale(&data.giant);
@@ -169,6 +208,11 @@ namespace Gts
 
 		AnimationManager::RegisterEvent("GTS_CustomDamage_Cleavage_On", "Compat", GTS_CustomDamage_Cleavage_On);
 		AnimationManager::RegisterEvent("GTS_CustomDamage_Cleavage_Off", "Compat", GTS_CustomDamage_Cleavage_Off);
+
+		AnimationManager::RegisterEvent("GTS_FootSwipe_L_ON", "Compat", GTS_FootSwipe_L_ON);
+		AnimationManager::RegisterEvent("GTS_FootSwipe_L_OFF", "Compat", GTS_FootSwipe_L_OFF);
+		AnimationManager::RegisterEvent("GTS_FootSwipe_R_ON", "Compat", GTS_FootSwipe_R_ON);
+		AnimationManager::RegisterEvent("GTS_FootSwipe_R_OFF", "Compat", GTS_FootSwipe_R_OFF);
 	}
 
 	void AnimationCompat::RegisterTriggers() {
