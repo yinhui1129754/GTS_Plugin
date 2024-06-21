@@ -51,7 +51,7 @@ namespace {
 		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
 		if (otherActor) {
 			SetBeingEaten(otherActor, true);
-			set_target_scale(otherActor, get_target_scale(otherActor) / 3);
+			Vore::GetSingleton().ShrinkOverTime(giant, otherActor, 0.1);
 		}
 		AdjustFacialExpression(giant, 0, 1.0, "phenome"); // Start opening mouth
 		AdjustFacialExpression(giant, 1, 0.5, "phenome"); // Open it wider
