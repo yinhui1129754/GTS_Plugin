@@ -24,7 +24,7 @@ namespace Gts {
 
 //-----------------------------------------Default Damage Values
 
-    const float Damage_Grab_Attack = 3.6f;
+    const float Damage_Grab_Attack = 4.8f;
     ////////////////Defaults
 
     const float Damage_Default_Underfoot = 0.003f; // when we just stand still
@@ -234,27 +234,27 @@ namespace Gts {
 
 
     //-----------------------------------------Camera Rumble power settings
-    const float Rumble_Default_FootWalk = 2.10f; // Used for vanilla anims such as walking, running, sprinting
-    const float Rumble_Default_JumpLand = 1.6f; // Multiplies footwalk, used for vanilla anims such as walking, running, sprinting
+    const float Rumble_Default_FootWalk = 2.10f * 1.6; // Used for vanilla anims such as walking, running, sprinting
+    const float Rumble_Default_JumpLand = 1.6f * 1.6; // Multiplies footwalk, used for vanilla anims such as walking, running, sprinting
 
-    const float Rumble_Default_MassiveJump = 2.6f; // Used when player jumps and scale is >= x3.0
+    const float Rumble_Default_MassiveJump = 2.6f * 1.4; // Used when player jumps and scale is >= x3.0
 
     ////////////////////////////////////////////////////
 
-    const float Rumble_Stomp_Normal = 2.4f;
-    const float Rumble_Stomp_Strong = 4.0f;
-    const float Rumble_Stomp_Land_Normal = 2.75f;
+    const float Rumble_Stomp_Normal = 2.4f * 1.6;
+    const float Rumble_Stomp_Strong = 4.0f * 1.6;
+    const float Rumble_Stomp_Land_Normal = 2.75f * 1.6;
 
 
     // Tramples
-    const float Rumble_Trample_Stage1 = 2.2f;
-    const float Rumble_Trample_Stage2 = 3.0f;
-    const float Rumble_Trample_Stage3 = 4.15f;
+    const float Rumble_Trample_Stage1 = 2.2f * 1.6;
+    const float Rumble_Trample_Stage2 = 3.0f * 1.6;
+    const float Rumble_Trample_Stage3 = 4.15f * 1.6;
 
     // Foot Grind
     const float Rumble_FootGrind_DOT = 0.25f;
     const float Rumble_FootGrind_Rotate = 0.65f;
-    const float Rumble_FootGrind_Impact = 2.4f;
+    const float Rumble_FootGrind_Impact = 2.4f * 1.5;
 
     // Hugs
 
@@ -283,24 +283,24 @@ namespace Gts {
 
 
     // Butt crush
-    const float Rumble_ButtCrush_FeetImpact = 2.5f;
+    const float Rumble_ButtCrush_FeetImpact = 2.5f * 1.5;
     const float Rumble_ButtCrush_ButtImpact = 5.8f;  // Butt Crush
 
     // Knee Crush
-    const float Rumble_KneeCrush_FootImpact = 2.35f;
+    const float Rumble_KneeCrush_FootImpact = 2.35f * 1.2;
 
     // Breast crush
     const float Rumble_Cleavage_HoverLoop = 0.06f;
-    const float Rumble_Cleavage_Impact = 4.8f;      // Breast Crush
+    const float Rumble_Cleavage_Impact = 4.9f;      // Breast Crush
 
     // Crawling
-    const float Rumble_Crawl_KneeDrop = 4.8f;       // Knee Crush
-    const float Rumble_Crawl_KneeHand_Impact = 2.0f;// A bit higher value since it gets cut off by sneak modifier
+    const float Rumble_Crawl_KneeDrop = 4.9f;       // Knee Crush
+    const float Rumble_Crawl_KneeHand_Impact = 2.1f;// A bit higher value since it gets cut off by sneak modifier
 
     // Finger Grind
     const float Rumble_FingerGrind_Rotate = 1.0f;
     const float Rumble_FingerGrind_Impact = 1.25f;
-    const float Rumble_FingerGrind_Finisher = 1.75f;
+    const float Rumble_FingerGrind_Finisher = 1.8f;
 
     // Vore
     const float Rumble_Vore_Stomp_Light = 2.0f;

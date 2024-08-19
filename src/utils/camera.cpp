@@ -49,6 +49,21 @@ namespace Gts {
 		return 3.4028237E38; // Max float
 	}
 
+	float get_distance_to_camera_no_Z(const NiPoint3& point) {
+		auto camera = PlayerCamera::GetSingleton();
+		if (camera) {
+			auto point_a = point;
+			auto point_b = camera->pos;
+			
+			point_a.z = 0;
+			point_b.z = 0;
+
+			auto delta = point_a - point_b;
+			return delta.Length();
+		}
+		return 3.4028237E38; // Max float
+	}
+
 	float get_distance_to_camera(NiAVObject* node) {
 		if (node) {
 			return get_distance_to_camera(node->world.translate);

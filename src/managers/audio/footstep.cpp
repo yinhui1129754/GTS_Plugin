@@ -145,6 +145,7 @@ namespace Gts {
 		VolumeParams Footstep_8_Params = {.a = 6.0, .k = 0.50, .n = 0.90, .s = 1.0};
 		VolumeParams Footstep_12_Params = {.a = 12.0, .k = 0.50, .n = 0.78, .s = 1.0};
 		VolumeParams Footstep_24_Params = {.a = 20.0, .k = 0.45, .n = 0.55, .s = 1.0};
+		VolumeParams Footstep_48_Params = {.a = 44.0, .k = 0.46, .n = 0.55, .s = 1.0};
 		// Params end
 
 		BSSoundHandle xlFootstep   = get_sound(modifier, foot, scale, limit_x14, get_xlFootstep_sounddesc(foot_kind), xlFootstep_Params, Params_Empty, "XL: Footstep", 1.0, false);
@@ -163,8 +164,9 @@ namespace Gts {
 		// Stops at x14
 		BSSoundHandle Footstep_12 = get_sound(modifier, foot, scale, limit_x24, get_footstep_highheel(foot_kind, 12), Footstep_12_Params, Footstep_24_Params, "x12 Footstep", 2.0, true);
 		// Stops at x24
-		BSSoundHandle Footstep_24 = get_sound(modifier, foot, scale, limitless, get_footstep_highheel(foot_kind, 24), Footstep_24_Params, Params_Empty, "x24 Footstep", 5.0, false);
+		BSSoundHandle Footstep_24 = get_sound(modifier, foot, scale, limitless, get_footstep_highheel(foot_kind, 24), Footstep_24_Params, Footstep_48_Params, "x24 Footstep", 5.0, false);
 		// Always plays past x22.0
+		BSSoundHandle Footstep_48 = get_sound(modifier, foot, scale, limitless, get_footstep_highheel(foot_kind, 48), Footstep_48_Params, Params_Empty, "x48 Footstep", 8.0, false);
 
 		if (xlFootstep.soundID != BSSoundHandle::kInvalidID) { 
 			// 271EF4: Sound\fx\GTS\Foot\Effects  (Stone sounds)
@@ -199,6 +201,9 @@ namespace Gts {
 		}
 		if (Footstep_24.soundID != BSSoundHandle::kInvalidID) { // x24 Custom audio
 			Footstep_24.Play();
+		}
+		if (Footstep_48.soundID != BSSoundHandle::kInvalidID) { // x48 Custom audio
+			Footstep_48.Play();
 		}
 	}
 

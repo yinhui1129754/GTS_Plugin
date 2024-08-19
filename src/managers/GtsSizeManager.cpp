@@ -243,20 +243,18 @@ namespace Gts {
 			return;
 		}
 		auto Persistent = Persistent::GetSingleton().GetData(actor);
-		if (!Persistent) {
-			return;
-		}
-
-		for (auto follower: FindTeammates()) {
-			if (follower) {
-				auto TeammateData = Persistent::GetSingleton().GetData(follower);
-				if (TeammateData) {
-					TeammateData->AllowHitGrowth = allow; // Affect teammates as well
+		if (Persistent) {
+			for (auto follower: FindTeammates()) {
+				if (follower) {
+					auto TeammateData = Persistent::GetSingleton().GetData(follower);
+					if (TeammateData) {
+						TeammateData->AllowHitGrowth = allow; // Affect teammates as well
+					}
 				}
 			}
-		}
 
-		Persistent->AllowHitGrowth = allow; // Affect the player
+			Persistent->AllowHitGrowth = allow; // Affect the player
+		}
 	}
 
 	//===============Size-Vulnerability

@@ -43,12 +43,30 @@ namespace Gts {
 	}
 
 	void HighHeelManager::ActorEquip(Actor* actor) {
-		const bool FORCE_APPLY = true;
-		ApplyHH(actor, FORCE_APPLY);
+		ActorHandle actorHandle = actor->CreateRefHandle();
+		std::string taskname = std::format("ActorEquip_{}", actor->formID);
+
+		TaskManager::RunOnce(taskname, [=](auto& update){
+			if (!actorHandle) {
+				return;
+			}
+
+			auto get_actor = actorHandle.get().get();
+			ApplyHH(get_actor, true);
+		});
 	}
 	void HighHeelManager::ActorLoaded(Actor* actor) {
-		const bool FORCE_APPLY = true;
-		ApplyHH(actor, FORCE_APPLY);
+		ActorHandle actorHandle = actor->CreateRefHandle();
+		std::string taskname = std::format("ActorLoaded_{}", actor->formID);
+
+		TaskManager::RunOnce(taskname, [=](auto& update){
+			if (!actorHandle) {
+				return;
+			}
+
+			auto get_actor = actorHandle.get().get();
+			ApplyHH(get_actor, true);
+		});
 	}
 
 	void HighHeelManager::OnAddPerk(const AddPerkEvent& evt) {

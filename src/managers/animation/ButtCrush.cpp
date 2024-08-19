@@ -76,6 +76,24 @@ namespace {
 		}
 	}
 
+	void ApplyButtCrushCooldownTask(Actor* giant) {
+		std::string name = std::format("CooldownTask_{}", giant->formID);
+		auto gianthandle = giant->CreateRefHandle();
+		auto FrameA = Time::FramesElapsed();
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			
+			auto giantref = gianthandle.get().get();
+			if (IsButtCrushing(giantref)) {
+				ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush); // Set butt crush on the cooldown
+				return true;
+			}
+			return false;
+		});
+	}
+		
 	void DisableButtTrackTask(Actor* giant) {
 		std::string name = std::format("DisableCamera_{}", giant->formID);
 		auto gianthandle = giant->CreateRefHandle();
@@ -111,6 +129,7 @@ namespace {
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);
 		DoLaunch(giant, 0.75 * perk, 1.6, Event);
+
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -122,7 +141,6 @@ namespace {
 	void GTSButtCrush_MoveBody_MixFrameToLoop(AnimationEventData& data) {
 		auto giant = &data.giant;
 		ManageCamera(giant, true, CameraTracking::Butt);
-		ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush);
 	}
 
 	void GTSButtCrush_GrowthStart(AnimationEventData& data) {
@@ -173,6 +191,7 @@ namespace {
 		// do footsteps
 		//Rumbling::Stop("FS_L", &data.giant);
 		ButtCrush_DoFootImpact(&data.giant, FootEvent::Right, DamageSource::CrushedRight, RNode, "FS_L");
+		ApplyButtCrushCooldownTask(&data.giant);
 		data.HHspeed = 1.0;
 	}
 
@@ -180,6 +199,7 @@ namespace {
 		// do footsteps
 		//Rumbling::Stop("FS_R", &data.giant);
 		ButtCrush_DoFootImpact(&data.giant, FootEvent::Left, DamageSource::CrushedLeft, LNode, "FS_L");
+		ApplyButtCrushCooldownTask(&data.giant);
 		data.HHspeed = 1.0;
 	}
 
@@ -261,7 +281,6 @@ namespace {
 					}
 				}
 				ModGrowthCount(giant, 0, true); // Reset limit
-				ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush);
 				DisableButtTrackTask(giant);
 				
 				return false;

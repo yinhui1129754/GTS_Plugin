@@ -16,6 +16,8 @@ namespace Gts {
 
 	float get_distance_to_camera(const NiPoint3& point);
 
+	float get_distance_to_camera_no_Z(const NiPoint3& point);
+
 	float get_distance_to_camera(NiAVObject* node);
 
 	float get_distance_to_camera(Actor* actor);

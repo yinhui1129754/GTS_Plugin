@@ -6,6 +6,28 @@ using namespace SKSE;
 using namespace Gts;
 
 namespace Gts {
+	const int endless_loop = 800;
+
+	void loop_message(NiAVObject* root, std::string_view message) {
+		auto owner_data = root->GetUserData();
+		if (owner_data) {
+			auto name = owner_data->GetDisplayFullName();
+			log::error("{} : Possible Endless Loop on {}", message, name);
+		}
+	}
+
+	void loop_message(TESObjectREFR* object, std::string_view message) {
+		if (object) {
+			log::error("{} : Possible Endless Loop on {}", message, object->GetDisplayFullName());
+		}
+	}
+
+	void loop_message(Actor* actor, std::string_view message) {
+		if (actor) {
+			log::error("{} : Possible Endless Loop on {}", message, actor->GetDisplayFullName());
+		}
+	}
+
 	std::vector<NiAVObject*> GetAllNodes(Actor* actor) {
 		if (!actor->Is3DLoaded()) {
 			return {};
@@ -17,7 +39,15 @@ namespace Gts {
 		std::vector<NiAVObject*> nodes = {};
 		queue.push_back(model);
 
+		int counter = 0;
+
 		while (!queue.empty()) { 
+
+			counter += 1;
+			if (counter > endless_loop) {
+				log::error("Node.cpp: GetAllNodes: Possible Endless Loop");
+			}
+
 			auto currentnode = queue.front();
 			queue.pop_front();
 			try {
@@ -33,6 +63,8 @@ namespace Gts {
 					}
 					// Do smth
 					log::trace("Node {}", currentnode->name);
+				} else if (counter > queue.size()) {
+					queue.clear();
 				}
 			}
 			catch (const std::overflow_error& e) {
@@ -60,10 +92,17 @@ namespace Gts {
 		std::deque<NiAVObject*> queue;
 		queue.push_back(model);
 
+		int counter = 0;
 
-		while (!queue.empty()) { // Used to be while (!queue.empty())
+		while (!queue.empty()) {
 			auto currentnode = queue.front();
 			queue.pop_front();
+
+			counter += 1;
+			if (counter > endless_loop) {
+				loop_message(actor, "Node.cpp : walk_nodes");
+			}
+
 			try {
 				if (currentnode) {
 					auto ninode = currentnode->AsNode();
@@ -77,6 +116,8 @@ namespace Gts {
 					}
 					// Do smth
 					log::trace("Node {}", currentnode->name);
+				} else if (counter > queue.size()) {
+					queue.clear();
 				}
 			}
 			catch (const std::overflow_error& e) {
@@ -111,24 +152,37 @@ namespace Gts {
 		std::deque<NiAVObject*> queue;
 		queue.push_back(model);
 
+        int counter = 0;
 
-		while (!queue.empty()) { // Used to be while (!queue.empty())
+		while (!queue.empty()) {
 			auto currentnode = queue.front();
 			queue.pop_front();
+
+			counter += 1;
+			if (counter > endless_loop) {
+				loop_message(actor, "Node.cpp : find_node");
+			}
 			try {
 				if (currentnode) {
 					auto ninode = currentnode->AsNode();
 					if (ninode) {
 						for (auto child: ninode->GetChildren()) {
 							// Bredth first search
-							queue.push_back(child.get());
+							if (child) {
+								queue.push_back(child.get());
+							}
 							// Depth first search
 							//queue.push_front(child.get());
 						}
-					}
+					} 
 					// Do smth
-					if  (currentnode->name.c_str() == node_name) {
+					if (currentnode->name.c_str() == node_name) {
+						log::info("Found bone: {}", node_name);
 						return currentnode;
+					} else if (counter > queue.size()) {
+						//log::info("Counter {} on {} is > than size {}", counter, actor->GetDisplayFullName(), queue.size());
+						queue.clear();
+						return nullptr;
 					}
 				}
 			}
@@ -143,14 +197,14 @@ namespace Gts {
 			} // this executes if f() throws std::logic_error (base class rule)
 			catch (...) {
 				log::warn("Exception Other");
+				}
 			}
-		}
 
 		return nullptr;
 	}
 
 
-	NiAVObject* find_object_node(TESObjectREFR* object, std::string_view node_name) {
+	NiAVObject* find_object_node(TESObjectREFR* object, std::string_view node_name) { // Used inside Looting.cpp only so far
 		auto model = object->GetCurrent3D();
 		if (!model) {
 			return nullptr;
@@ -163,25 +217,37 @@ namespace Gts {
 		// Game lookup failed we try and find it manually
 		std::deque<NiAVObject*> queue;
 		queue.push_back(model);
+		
+		int counter = 0;
 
-
-		while (!queue.empty()) { // Used to be while (!queue.empty())
+		while (!queue.empty()) {
 			auto currentnode = queue.front();
 			queue.pop_front();
+
+			counter += 1;
+			if (counter > endless_loop) {
+				loop_message(object, "Node.cpp : find_object_node");
+			}
+
 			try {
 				if (currentnode) {
 					auto ninode = currentnode->AsNode();
 					if (ninode) {
 						for (auto child: ninode->GetChildren()) {
 							// Bredth first search
-							queue.push_back(child.get());
+							if (child) {
+								queue.push_back(child.get());
+							}
 							// Depth first search
 							//queue.push_front(child.get());
 						}
 					}
 					// Do smth
-					if  (currentnode->name.c_str() == node_name) {
+					if (currentnode->name.c_str() == node_name) {
 						return currentnode;
+					} else if (counter > queue.size()) {
+						queue.clear();
+						return nullptr;
 					}
 				}
 			}
@@ -217,24 +283,36 @@ namespace Gts {
 		std::deque<NiAVObject*> queue;
 		queue.push_back(model);
 
+		int counter = 0;
 
-		while (!queue.empty()) { // Used to be while (!queue.empty())
+		while (!queue.empty()) {
 			auto currentnode = queue.front();
 			queue.pop_front();
+
+			counter += 1;
+			if (counter > endless_loop) {
+				loop_message(actor, "Node.cpp : find_node_regex");
+			}
+
 			try {
 				if (currentnode) {
 					auto ninode = currentnode->AsNode();
 					if (ninode) {
 						for (auto child: ninode->GetChildren()) {
 							// Bredth first search
-							queue.push_back(child.get());
+							if (child) {
+								queue.push_back(child.get());
+							}
 							// Depth first search
 							//queue.push_front(child.get());
 						}
 					}
 					// Do smth
-					if  (std::regex_match(currentnode->name.c_str(), the_regex)) {
+					if (std::regex_match(currentnode->name.c_str(), the_regex)) {
 						return currentnode;
+					} else if (counter > queue.size()) {
+						queue.clear();
+						return nullptr;
 					}
 				}
 			}
@@ -277,7 +355,7 @@ namespace Gts {
 		return result;
 	}
 
-	void scale_hkpnodes(Actor* actor, float prev_scale, float new_scale) {
+	void scale_hkpnodes(Actor* actor, float prev_scale, float new_scale) { // Unused
 		if (!actor->Is3DLoaded()) {
 			return;
 		}
@@ -289,17 +367,26 @@ namespace Gts {
 		std::deque<NiAVObject*> queue;
 		queue.push_back(model);
 
+		int counter = 0;
 
-		while (!queue.empty()) { // Used to be while (!queue.empty())
+		while (!queue.empty()) {
 			auto currentnode = queue.front();
 			queue.pop_front();
+
+			counter += 1;
+			if (counter > endless_loop) {
+				loop_message(actor, "Node.cpp : scale_hkpnodes");
+			}
+
 			try {
 				if (currentnode) {
 					auto ninode = currentnode->AsNode();
 					if (ninode) {
 						for (auto child: ninode->GetChildren()) {
 							// Bredth first search
-							queue.push_back(child.get());
+							if (child) {
+								queue.push_back(child.get());
+							}
 							// Depth first search
 							//queue.push_front(child.get());
 						}
@@ -485,18 +572,33 @@ namespace Gts {
 		std::deque<NiAVObject*> queue;
 		queue.push_back(root);
 
-		while (!queue.empty()) { // Used to be while (!queue.empty())
+		int counter = 0;
+
+		while (!queue.empty()) {
 			auto currentnode = queue.front();
 			queue.pop_front();
+
+			counter += 1;
+			if (counter > endless_loop) {
+				loop_message(root, "Node.cpp : visitnodes");
+			}
+
 			if (currentnode) {
 				auto ninode = currentnode->AsNode();
 				if (ninode) {
 					for (auto child: ninode->GetChildren()) {
 						// Bredth first search
-						queue.push_back(child.get());
+						if (child) {
+							queue.push_back(child.get());
+						}
 						// Depth first search
 						//queue.push_front(child.get());
 					}
+				}
+				if (counter > queue.size()) {
+					//log::info("Counter > size: {} > {}", counter, queue.size());
+					queue.clear();
+					return;
 				}
 				if (!a_visitor(*currentnode)) {
 					return;

@@ -1734,11 +1734,17 @@ namespace Gts {
 		float sizedifference = (sourcesize/receiversize);
 
 		if (caster->formID == 0x14) {
-			tremor_scale = persist.tremor_scale;
+			tremor_scale = persist.tremor_scale; // Stronger shake for Player
 			if (IsFirstPerson()) {
 				tremor_scale *= 0.25; // Less annoying FP screen shake
 			}
-			distance = get_distance_to_camera(coords); // else we use player camera distance (for player only)
+
+			if (sourcesize > 1.0) {
+				distance = get_distance_to_camera_no_Z(coords); // We ignore .Z pos of camera since shake becomes weaker in Player case
+			} else {
+				distance = get_distance_to_camera(coords); // else we use player camera distance (for player only)
+			}
+
 			sizedifference = sourcesize;
 		} 
 
@@ -1755,14 +1761,20 @@ namespace Gts {
 		sizedifference *= modifier * tremor_scale * might * multiplier;
 
 		// To Sermit: Same value as before just with the math reduced to minimal steps
+
+		
+		// https://www.desmos.com/calculator/vyofjrqmrn
 		float intensity = sizedifference * 18.8 / distance;
-		float duration = 0.33 * (1 + (intensity));
+		
+		float duration = 0.33 * (1 + intensity);
 
 		if (duration_override > 0) {
 			duration *= duration_override;
 		}
+
 		intensity = std::clamp(intensity, 0.0f, 1e8f);
-		duration = std::clamp(duration, 0.0f, 2.4f);
+		duration = std::clamp(duration, 0.0f, 2.6f);
+
 		if (intensity > 0.0) {
 			shake_controller(intensity * modifier, intensity * modifier, duration);
 			shake_camera_at_node(coords, intensity * modifier, duration);

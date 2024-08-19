@@ -35,7 +35,7 @@ Still WIP
 - [X] [18] Integrate new Potions into the world
 - [X] [19] .dll optimization so it will eat less CPU and have better performance (Partially done)
 - [X] [20] Affect stealth by size (Partially done)
-- [ ] [21] Make feet deal damage and effects based on it's speed instead of being able to kill everyone while standing still
+- [ ] [21] Make feet deal damage and effects based on it's speed instead of being able to kill everyone if standing still
 - [ ] [22] Improve dll coding/code readability in sections written by me (Sermit) so it doesn't look ugly in some files
 
 ## Easier Things

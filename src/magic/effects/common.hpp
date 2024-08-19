@@ -52,7 +52,7 @@ namespace Gts {
 		}
 		auto Cache = Persistent::GetSingleton().GetData(giant);
 		if (Cache) {
-			Cache->SizeReserve += value;
+			Cache->SizeReserve += value * 1.5;
 		}
 	}
 
@@ -94,37 +94,44 @@ namespace Gts {
 
 	inline void ModSizeExperience(Actor* Caster, float value) { // Adjust Matter Of Size skill
 		if (value > 0) {
-			bool Teammate = IsTeammate(Caster);
-			if (Caster->formID == 0x14 || Teammate) {
-				if (Teammate) {
-					value *= 0.2;
-				}
-				auto GtsSkillLevel = Runtime::GetGlobal("GtsSkillLevel");
-				auto GtsSkillRatio = Runtime::GetGlobal("GtsSkillRatio");
-				auto GtsSkillProgress = Runtime::GetGlobal("GtsSkillProgress");
+			auto progressionQuest = Runtime::GetQuest("MainQuest");
+			if (progressionQuest) {
+				auto queststage = progressionQuest->GetCurrentStageID();
+				if (queststage >= 10) {
+					bool Teammate = IsTeammate(Caster);
+					if (Caster->formID == 0x14 || Teammate) {
+						if (Teammate) {
+							value *= 0.2;
+						}
+						auto GtsSkillLevel = Runtime::GetGlobal("GtsSkillLevel");
+						auto GtsSkillRatio = Runtime::GetGlobal("GtsSkillRatio");
+						auto GtsSkillProgress = Runtime::GetGlobal("GtsSkillProgress");
+						
+						if (GtsSkillLevel) {
 
-				int random = (100 + (rand()% 25 + 1)) / 100;
+							if (GtsSkillLevel->value >= 100.0) {
+								GtsSkillLevel->value = 100.0;
+								GtsSkillRatio->value = 0.0;
+								return;
+							}
 
-				if (GtsSkillLevel->value >= 100.0) {
-					GtsSkillLevel->value = 100.0;
-					GtsSkillRatio->value = 0.0;
-					return;
-				}
+							float skill_level = GtsSkillLevel->value;
 
-				float skill_level = GtsSkillLevel->value;
+							float ValueEffectiveness = std::clamp(1.0 - GtsSkillLevel->value/100, 0.10, 1.0);
 
-				float ValueEffectiveness = std::clamp(1.0 - GtsSkillLevel->value/100, 0.10, 1.0);
+							float oldvaluecalc = 1.0 - GtsSkillRatio->value; //Attempt to keep progress on the next level
+							float Total = value * ValueEffectiveness;
+							GtsSkillRatio->value += Total * GetXpBonus();
 
-				float oldvaluecalc = 1.0 - GtsSkillRatio->value; //Attempt to keep progress on the next level
-				float Total = (value * random) * ValueEffectiveness;
-				GtsSkillRatio->value += Total * GetXpBonus();
-
-				if (GtsSkillRatio->value >= 1.0) {
-					float transfer = std::clamp(Total - oldvaluecalc, 0.0f, 1.0f);
-					GtsSkillRatio->value = transfer;
-					GtsSkillLevel->value = skill_level + 1.0;
-					GtsSkillProgress->value = GtsSkillLevel->value;
-					AddPerkPoints(GtsSkillLevel->value);
+							if (GtsSkillRatio->value >= 1.0) {
+								float transfer = std::clamp(Total - oldvaluecalc, 0.0f, 1.0f);
+								GtsSkillRatio->value = transfer;
+								GtsSkillLevel->value = skill_level + 1.0;
+								GtsSkillProgress->value = GtsSkillLevel->value;
+								AddPerkPoints(GtsSkillLevel->value);
+							}
+						}
+					}
 				}
 			}
 		}

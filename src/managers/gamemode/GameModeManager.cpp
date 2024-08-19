@@ -217,6 +217,7 @@ namespace Gts {
 		float scale = get_visual_scale(actor);
 		float BonusShrink = 7.4;
 		float bonus = 1.0;
+		
 		if (BalanceMode >= 2.0) {
 			BonusShrink *= GetShrinkPenalty(scale) * 1.6;
 		}
@@ -233,6 +234,7 @@ namespace Gts {
 				}
 
 				shrinkRate *= Potion_GetShrinkResistance(actor);
+				shrinkRate /= (1.0 + Ench_Aspect_GetPower(actor));
 
 				if (Potion_IsUnderGrowthPotion(actor)) {
 					shrinkRate *= 0.0; // prevent shrinking in that case
@@ -245,7 +247,7 @@ namespace Gts {
 				} else if (SizeManager::GetSingleton().GetGrowthSpurt(actor) > 0.01) {
 					shrinkRate = 0.0;
 				} else if (actor->IsInCombat() && BalanceMode >= 2.0) {
-					shrinkRate *= 0.12; // shrink at 12% rate
+					shrinkRate *= 0.06; // shrink at 6% rate
 				}
 
 				if (fabs(shrinkRate) <= 1e-6) {
