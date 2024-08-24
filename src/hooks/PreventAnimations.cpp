@@ -65,8 +65,14 @@ namespace {
 	const auto PowerAttackRoot = 78724;
 	// Sprint
 	const auto SprintStart = 1069299;
-	const auto SprintRootStart = 242856;
+	const auto SprintRootStart =            0x03B4A8;
 	const auto SprintRootStop = 78362;
+	// Turn
+
+	const auto NPCTurnToWalk =  	0x02EDE6;
+	const auto NPCTurnInPlace = 	0x02EDBC;
+	const auto NPCPathStartRoot = 	0x02EDBA;
+
 	// Blocking
 	const auto BlockHit = 80631;
 	const auto BlockHitRoot = 80630;
@@ -137,6 +143,16 @@ namespace {
 		return Block;
 	}
 
+	bool PreventSprinting(FormID idle, Actor* performer) {
+		if (idle == SprintRootStart) {
+			if (IsTeammate(performer) && get_visual_scale(performer) > 2.0) {
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+
 	bool IsDisallowed(FormID idle) {
 		switch (idle) {
 			case DefaultSheathe:
@@ -191,10 +207,14 @@ namespace {
 				//log::info("Block IsBetweenBreasts");
 				return IsDisallowed(Form);
 			}
-
+			
 			if (PreventJumpFall(Form, performer)) {
 				//log::info("Block PreventJumpFall");
 				return true; // Disable fall down anim for GTS so it won't look off/annoying at large scales
+			}
+
+			if (performer->formID != 0x14 && PreventSprinting(Form, performer)) {
+				return true;
 			}
 
 			if (performer->formID == 0x14 && IsGtsBusy(performer) && IsFreeCameraEnabled()) {

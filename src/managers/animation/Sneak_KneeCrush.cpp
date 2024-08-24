@@ -64,13 +64,13 @@ namespace {
 		smt *= GetHighHeelsBonusDamage(giant, true);
         
         if (right) {
-            Rumbling::Once("FST_R", giant, shake_power * smt, 0.05, RNode, 0.0);
+            Rumbling::Once("FST_R", giant, shake_power * smt, 0.0, RNode, 0.0);
             DoDamageEffect(giant, Damage_Walk_Defaut * power, Radius_Walk_Default, 10, 0.25, FootEvent::Right, 1.0, DamageSource::CrushedRight);
             DoFootstepSound(giant, 1.10 * power, FootEvent::Right, RNode);
             DoDustExplosion(giant, dust * power, FootEvent::Right, RNode);
             DoLaunch(giant, 0.65 * perk * power, 1.35 * power, FootEvent::Right);
         } else {
-            Rumbling::Once("FST_L", giant, shake_power * smt, 0.05, LNode, 0.0);
+            Rumbling::Once("FST_L", giant, shake_power * smt, 0.0, LNode, 0.0);
             DoDamageEffect(giant, Damage_Walk_Defaut * power, Radius_Walk_Default, 10, 0.25, FootEvent::Left, 1.0, DamageSource::CrushedLeft);
             DoFootstepSound(giant, 1.10 * power, FootEvent::Left, LNode);
             DoDustExplosion(giant, dust * power, FootEvent::Left, LNode);
@@ -102,8 +102,8 @@ namespace {
 				DoDustExplosion(giant, 1.45 * dust * damage, FootEvent::Butt, "NPC L Butt");
 				DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
 				DoLaunch(giant, 1.30 * perk, 5.0, FootEvent::Butt);
-				Rumbling::Once("Butt_L", giant, 3.60 * damage, 0.02, "NPC R Butt", 0.0);
-				Rumbling::Once("Butt_R", giant, 3.60 * damage, 0.02, "NPC L Butt", 0.0);
+				Rumbling::Once("Butt_L", giant, 3.60 * damage, 0.05, "NPC R Butt", 0.0);
+				Rumbling::Once("Butt_R", giant, 3.60 * damage, 0.05, "NPC L Butt", 0.0);
 			}
 		} else {
 			if (!ButtR) {
@@ -129,7 +129,7 @@ namespace {
 			dust = 1.25;
 		}
 
-		SetButtCrushSize(giant, 0.0, true);
+		SetButtCrushSize(giant, 0.0, true); // Actually reset scale
 
 		float damage = GetButtCrushDamage(giant);
 		auto LeftKnee = find_node(giant, "NPC L Calf [LClf]");
@@ -147,8 +147,8 @@ namespace {
             LaunchActor::GetSingleton().LaunchAtNode(giant, 1.30 * perk, 4.20, "NPC L Calf [LClf]");
             LaunchActor::GetSingleton().LaunchAtNode(giant, 1.30 * perk, 4.20, "NPC R Calf [RClf]");
 
-            Rumbling::Once("Knee_L", giant, 3.60 * damage, 0.02, "NPC L Calf [LClf]", 0.0);
-            Rumbling::Once("Knee_R", giant, 3.60 * damage, 0.02, "NPC R Calf [RClf]", 0.0);
+            Rumbling::Once("Knee_L", giant, 3.60 * damage, 0.05, "NPC L Calf [LClf]", 0.0);
+            Rumbling::Once("Knee_R", giant, 3.60 * damage, 0.05, "NPC R Calf [RClf]", 0.0);
 		} else {
 			if (!LeftKnee) {
 				Notify("Error: Missing Knee Nodes"); // Will help people to troubleshoot it. Not everyone has 3BB/XP32 body.
@@ -164,10 +164,10 @@ namespace {
     ///                             E V E N T S
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    void GTS_SneakCrush_Knee_CamOn(AnimationEventData& data) {TrackKnee(&data.giant, true);}
+    void GTS_SneakCrush_Knee_CamOn(AnimationEventData& data) {TrackKnee(&data.giant, true);} // Record scale to reset to later
     void GTS_SneakCrush_Knee_CamOff(AnimationEventData& data) {TrackKnee(&data.giant, false);}
     // Knee / Butt camera tracking
-    void GTS_SneakCrush_Butt_CamOn(AnimationEventData& data) {TrackBooty(&data.giant, true);}
+    void GTS_SneakCrush_Butt_CamOn(AnimationEventData& data) {TrackBooty(&data.giant, true); } 
     void GTS_SneakCrush_Butt_CamOff(AnimationEventData& data) {TrackBooty(&data.giant, false);}
     // Knee / Butt impacts
     void GTS_SneakCrush_Knee_FallDownImpact(AnimationEventData& data) {DoKneeDamage(&data.giant);}
@@ -175,9 +175,9 @@ namespace {
 
     // footsteps 
     void GTS_SneakCrush_FootStepL(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, false); data.HHspeed = 4.0; data.disableHH = false;}
-    void GTS_SneakCrush_FootStepR(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, true);}
+    void GTS_SneakCrush_FootStepR(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, true); ApplyButtCrushCooldownTask(&data.giant);}
 
-    void GTS_SneakCrush_FootStep_SilentL(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, false);}
+    void GTS_SneakCrush_FootStep_SilentL(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, false); TrackKnee(&data.giant, true); SetButtCrushSize(&data.giant, 0.0, false);}
     void GTS_SneakCrush_FootStep_SilentR(AnimationEventData& data) {DoFootsteps(&data.giant, 1.0, true);}
 
 	void GTS_DisableHH(AnimationEventData& data) {data.stage = 2; data.HHspeed = 2.25; data.disableHH = true;}

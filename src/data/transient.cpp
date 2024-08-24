@@ -64,6 +64,7 @@ namespace Gts {
 
 			float potion_max_size = 0.0;
 			float buttcrush_max_size = 0.0;
+			float buttcrush_start_scale = 0.0;
 
 			float SizeVulnerability = 0.0;
 
@@ -147,6 +148,7 @@ namespace Gts {
 			result.Throw_Speed = Throw_Speed;
 			result.potion_max_size = potion_max_size;
 			result.buttcrush_max_size = buttcrush_max_size;
+			result.buttcrush_start_scale = buttcrush_start_scale;
 			result.SizeVulnerability = SizeVulnerability;
 
 			result.push_force = push_force;

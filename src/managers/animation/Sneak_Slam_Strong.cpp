@@ -5,10 +5,12 @@
 #include "managers/animation/Utils/CrawlUtils.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/LaunchActor.hpp"
+#include "managers/audio/footstep.hpp"
+#include "managers/animation/Grab.hpp"
 #include "managers/GtsSizeManager.hpp"
+#include "managers/animation/Grab.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/InputManager.hpp"
-#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
 #include "ActionSettings.hpp"
@@ -23,7 +25,6 @@ using namespace RE;
 using namespace Gts;
 
 namespace {
-
     void GTS_Sneak_SlamStrong_Raise_Arm_R(AnimationEventData& data) {
         Utils_UpdateHighHeelBlend(&data.giant, false);
         TrackMatchingHand(&data.giant, CrawlEvent::RightHand, true); // OFF is handled inside Sneak_Slam.cpp
@@ -47,6 +48,7 @@ namespace {
         float scale = get_visual_scale(&data.giant);
         DoCrawlingFunctions(&data.giant, scale, 2.75, Damage_Sneak_HandSlam_Strong, CrawlEvent::LeftHand, "RightHandRumble", 1.6, Radius_Sneak_HandSlam_Strong, 1.0, DamageSource::HandSlamLeft);
         DrainStamina(&data.giant, "StaminaDrain_StrongSneakSlam", "DestructionBasics", false, 2.2);
+        Grab::DamageActorInHand(&data.giant, Damage_Sneak_HandSlam_Strong * 0.6);
     } 
 
     void GTS_Sneak_SlamStrong_Impact_Secondary_R(AnimationEventData& data) {
@@ -56,6 +58,7 @@ namespace {
     void GTS_Sneak_SlamStrong_Impact_Secondary_L(AnimationEventData& data) {
         float scale = get_visual_scale(&data.giant) * 0.8;
         DoCrawlingFunctions(&data.giant, scale, 0.85, Damage_Sneak_HandSlam_Strong_Secondary, CrawlEvent::LeftHand, "RightHandRumble", 0.8, Radius_Sneak_HandSlam_Strong_Recover, 2.0, DamageSource::HandSlamRight);
+        Grab::DamageActorInHand(&data.giant, Damage_Sneak_HandSlam_Strong_Secondary * 0.6);
     }
 }
 

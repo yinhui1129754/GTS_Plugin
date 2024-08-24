@@ -3,7 +3,9 @@
 #include "managers/GrabAnimationController.hpp"
 #include "managers/emotions/EmotionManager.hpp"
 #include "managers/ShrinkToNothingManager.hpp"
+#include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/SizeHitEffects.hpp"
+#include "managers/damage/TinyCalamity.hpp"
 #include "managers/damage/LaunchActor.hpp"
 #include "managers/animation/Grab.hpp"
 #include "managers/GtsSizeManager.hpp"
@@ -437,6 +439,68 @@ namespace {
 
 
 namespace Gts {
+
+	void Utils_CrushTask(Actor* giant, Actor* grabbedActor, float bonus, bool do_sound) {
+        
+        auto tinyref = grabbedActor->CreateRefHandle();
+        auto giantref = giant->CreateRefHandle();
+
+        std::string taskname = std::format("GrabCrush_{}", grabbedActor->formID);
+
+        TaskManager::RunOnce(taskname, [=](auto& update) {
+            if (!tinyref) {
+                return;
+            } 
+            if (!giantref) {
+                return;
+            }
+            auto tiny = tinyref.get().get();
+            auto giantess = giantref.get().get();
+
+            if (GetAV(tiny, ActorValue::kHealth) <= 1.0 || tiny->IsDead()) {
+
+                ModSizeExperience_Crush(giant, tiny, false);
+
+                CrushManager::Crush(giantess, tiny);
+                
+                SetBeingHeld(tiny, false);
+
+                Runtime::PlaySoundAtNode("DefaultCrush", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
+
+				if (do_sound) {
+					if (!LessGore()) {
+						Runtime::PlaySoundAtNode("CrunchImpactSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
+						Runtime::PlaySoundAtNode("CrunchImpactSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
+					} else {
+						Runtime::PlaySoundAtNode("SoftHandAttack", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
+					}
+				}
+
+                AdjustSizeReserve(giantess, get_visual_scale(tiny)/10);
+                SpawnHurtParticles(giantess, tiny, 3.0, 1.6);
+                SpawnHurtParticles(giantess, tiny, 3.0, 1.6);
+                
+                SetBetweenBreasts(tiny, false);
+                StartCombat(tiny, giantess);
+                
+                AdvanceQuestProgression(giantess, tiny, QuestStage::HandCrush, 1.0, false);
+                
+                PrintDeathSource(giantess, tiny, DamageSource::HandCrushed);
+            } else {
+				if (do_sound) {
+					if (!LessGore()) {
+						Runtime::PlaySoundAtNode("CrunchImpactSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
+						SpawnHurtParticles(giantess, tiny, 1.0, 1.0);
+					} else {
+						Runtime::PlaySoundAtNode("SoftHandAttack", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
+					}
+				}
+                StaggerActor(giantess, tiny, 0.75f);
+            }
+        });
+    }
+    
+
 	Grab& Grab::GetSingleton() noexcept {
 		static Grab instance;
 		return instance;
@@ -445,6 +509,48 @@ namespace Gts {
 	std::string Grab::DebugName() {
 		return "Grab";
 	}
+
+	void Grab::DamageActorInHand(Actor* giant, float Damage) {
+        Actor* grabbed = Grab::GetHeldActor(giant);
+		auto& sizemanager = SizeManager::GetSingleton();
+
+        if (grabbed) {
+            Attacked(grabbed, giant); // force combat
+
+            float bonus = 1.0;
+
+			float tiny_scale = get_visual_scale(grabbed) * GetSizeFromBoundingBox(grabbed);
+			float gts_scale = get_visual_scale(giant) * GetSizeFromBoundingBox(giant);
+
+			float sizeDiff = gts_scale/tiny_scale;
+			float power = std::clamp(sizemanager.GetSizeAttribute(giant, SizeAttribute::Normal), 1.0f, 999999.0f);
+			float additionaldamage = 1.0 + sizemanager.GetSizeVulnerability(grabbed);
+			float damage = (Damage * sizeDiff) * power * additionaldamage * additionaldamage;
+			float experience = std::clamp(damage/1600, 0.0f, 0.06f);
+			if (HasSMT(giant)) {
+				bonus = 1.65;
+			}
+
+            if (CanDoDamage(giant, grabbed, false)) {
+                if (Runtime::HasPerkTeam(giant, "GrowingPressure")) {
+                    auto& sizemanager = SizeManager::GetSingleton();
+                    sizemanager.ModSizeVulnerability(grabbed, damage * 0.0010);
+                }
+
+                TinyCalamity_ShrinkActor(giant, grabbed, damage * 0.10 * GetDamageSetting());
+
+                SizeHitEffects::GetSingleton().BreakBones(giant, grabbed, 0.15, 6);
+                InflictSizeDamage(giant, grabbed, damage);
+            }
+			
+			Rumbling::Once("GrabAttack", giant, Rumble_Grab_Hand_Attack * bonus, 0.05, "NPC L Hand [LHnd]", 0.0);
+
+			ModSizeExperience(giant, experience);
+			AddSMTDuration(giant, 1.0);
+
+            Utils_CrushTask(giant, grabbed, bonus, false);
+        }
+    }
 
 	void Grab::DetachActorTask(Actor* giant) {
 		std::string name = std::format("GrabAttach_{}", giant->formID);

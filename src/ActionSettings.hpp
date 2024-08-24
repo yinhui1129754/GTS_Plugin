@@ -234,27 +234,27 @@ namespace Gts {
 
 
     //-----------------------------------------Camera Rumble power settings
-    const float Rumble_Default_FootWalk = 2.10f * 1.6; // Used for vanilla anims such as walking, running, sprinting
-    const float Rumble_Default_JumpLand = 1.6f * 1.6; // Multiplies footwalk, used for vanilla anims such as walking, running, sprinting
+    const float Rumble_Default_FootWalk = 2.10f * 1.0; // Used for vanilla anims such as walking, running, sprinting
+    const float Rumble_Default_JumpLand = 1.6f * 1.0; // Multiplies footwalk, used for vanilla anims such as walking, running, sprinting
 
-    const float Rumble_Default_MassiveJump = 2.6f * 1.4; // Used when player jumps and scale is >= x3.0
+    const float Rumble_Default_MassiveJump = 2.6f * 1.0; // Used when player jumps and scale is >= x3.0
 
     ////////////////////////////////////////////////////
 
-    const float Rumble_Stomp_Normal = 2.4f * 1.6;
-    const float Rumble_Stomp_Strong = 4.0f * 1.6;
-    const float Rumble_Stomp_Land_Normal = 2.75f * 1.6;
+    const float Rumble_Stomp_Normal = 2.4f * 1.0;
+    const float Rumble_Stomp_Strong = 4.0f * 1.0;
+    const float Rumble_Stomp_Land_Normal = 2.75f * 1.0;
 
 
     // Tramples
-    const float Rumble_Trample_Stage1 = 2.2f * 1.6;
-    const float Rumble_Trample_Stage2 = 3.0f * 1.6;
-    const float Rumble_Trample_Stage3 = 4.15f * 1.6;
+    const float Rumble_Trample_Stage1 = 2.2f * 1.0;
+    const float Rumble_Trample_Stage2 = 3.0f * 1.0;
+    const float Rumble_Trample_Stage3 = 4.15f * 1.0;
 
     // Foot Grind
     const float Rumble_FootGrind_DOT = 0.25f;
     const float Rumble_FootGrind_Rotate = 0.65f;
-    const float Rumble_FootGrind_Impact = 2.4f * 1.5;
+    const float Rumble_FootGrind_Impact = 2.4f * 1.0;
 
     // Hugs
 
@@ -283,11 +283,11 @@ namespace Gts {
 
 
     // Butt crush
-    const float Rumble_ButtCrush_FeetImpact = 2.5f * 1.5;
+    const float Rumble_ButtCrush_FeetImpact = 2.5f * 1.0;
     const float Rumble_ButtCrush_ButtImpact = 5.8f;  // Butt Crush
 
     // Knee Crush
-    const float Rumble_KneeCrush_FootImpact = 2.35f * 1.2;
+    const float Rumble_KneeCrush_FootImpact = 1.75f * 1.0;
 
     // Breast crush
     const float Rumble_Cleavage_HoverLoop = 0.06f;

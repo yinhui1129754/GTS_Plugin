@@ -441,6 +441,24 @@ namespace Gts {
 		}
 	}
 
+	void ApplyButtCrushCooldownTask(Actor* giant) {
+		std::string name = std::format("CooldownTask_{}", giant->formID);
+		auto gianthandle = giant->CreateRefHandle();
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			
+			auto giantref = gianthandle.get().get();
+
+			ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush); // Set butt crush on the cooldown
+			if (!IsGtsBusy(giantref)) {
+				return false;
+			}
+			return true;
+		});
+	}
+
 	void LaunchTask(Actor* actor, float radius, float power, FootEvent kind) {
 		std::string taskname = std::format("LaunchTask_{}", actor->formID);
 		ActorHandle giantref = actor->CreateRefHandle();
@@ -1454,8 +1472,9 @@ namespace Gts {
 		float smile = 0.25 + random; // up to +0.50 to open mouth
 
 		AdjustFacialExpression(giant, 3, random, "phenome"); // Slightly open mouth
-		AdjustFacialExpression(giant, 7, 1.0, "phenome"); // Close mouth stronger to counter opened mouth from smiling
 		AdjustFacialExpression(giant, 5, 0.5, "phenome"); // Actual smile but leads to opening mouth 
+		AdjustFacialExpression(giant, 7, 1.0, "phenome"); // Close mouth stronger to counter opened mouth from smiling
+		
 
 		// Emotion guide:
 		// https://steamcommunity.com/sharedfiles/filedetails/?id=187155077
@@ -1468,12 +1487,14 @@ namespace Gts {
 			auto giantref = giantHandle.get().get();
 			float timepassed = finish - start;
 			if (timepassed >= duration) {
-				AdjustFacialExpression(giant, 0, 0.0, "phenome"); // Start opening mouth
+				AdjustFacialExpression(giant, 0, 0.0, "phenome"); // Start closing mouth
 
 				AdjustFacialExpression(giant, 0, 0.0, "modifier"); // blink L
 				AdjustFacialExpression(giant, 1, 0.0, "modifier"); // blink R
 
 				AdjustFacialExpression(giant, 3, 0.0, "phenome"); // Smile a bit (Mouth)
+				AdjustFacialExpression(giant, 5, 0.0, "phenome"); // Smile a bit (Mouth)
+				AdjustFacialExpression(giant, 7, 0.0, "phenome"); // Smile a bit (Mouth)
 				return false;
 			}
 			return true;

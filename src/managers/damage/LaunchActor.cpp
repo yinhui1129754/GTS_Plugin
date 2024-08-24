@@ -112,7 +112,6 @@ namespace Gts {
 
 		float startpower = Push_Actor_Upwards * highheel * (1.0 + Potion_GetMightBonus(giant)); // determines default power of launching someone
 		
-
 		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
 			startpower *= 1.25;
 		}
@@ -125,7 +124,7 @@ namespace Gts {
 		if (HasSMT(giant)) {
 			giantSize += 3.0;
 			threshold = 0.8;
-			force += 0.20;
+			force += 0.04;
 		}
 		float Adjustment = GetSizeFromBoundingBox(tiny);
 		

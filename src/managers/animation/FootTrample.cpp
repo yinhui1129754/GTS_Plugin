@@ -70,7 +70,7 @@ namespace {
 
 				float shake_power = Rumble_Trample_Stage1 * smt * GetHighHeelsBonusDamage(giant, true);
 				
-				Rumbling::Once(rumble, giant, shake_power, 0.025, Node, 0.0);
+				Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
 				LaunchTask(giant, 0.65 * perk, 1.15 * perk, Event);
 				DoDustExplosion(giant, dust * smt, Event, Node);
 				DoFootstepSound(giant, 1.0, Event, Node);
@@ -95,7 +95,7 @@ namespace {
 
 		float shake_power = Rumble_Trample_Stage2 * smt * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.035, Node, 0.0);
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 1.1);
 		DoDamageEffect(giant, Damage_Trample_Repeat * perk, Radius_Trample_Repeat, 1, 0.12, Event, 1.10, Source);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust * smt, Event, Node);
@@ -115,7 +115,7 @@ namespace {
 
 		float shake_power = Rumble_Trample_Stage3 * smt * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.08, Node, 0.0);
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 1.2);
 		DoDamageEffect(giant, Damage_Trample_Finisher * perk, Radius_Trample_Finisher, 1, 0.25, Event, 0.85, Source);
 		DoLaunch(giant, 1.25 * perk, 4.20 * perk, Event);
 		DoFootstepSound(giant, 1.15, Event, Node);

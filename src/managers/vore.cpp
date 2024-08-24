@@ -685,7 +685,7 @@ namespace Gts {
 			if (IsFlying(prey)) {
 				return false; // Disallow to vore flying dragons
 			}
-			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
+			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey, false))) {
 				Notify("{} is important and shouldn't be eaten.", prey->GetDisplayFullName());
 				return false;
 			} else {
@@ -726,7 +726,7 @@ namespace Gts {
 				Notify("{} is too tired for vore.", pred->GetDisplayFullName());
 				DamageAV(prey, ActorValue::kHealth, 3 * sizedifference);
 				if (pred->formID == 0x14) {
-					Runtime::PlaySound("VoreSound_Fail", pred, 1.8, 1.0);
+					Runtime::PlaySound("VoreSound_Fail", pred, 0.4, 1.0);
 				}
 				StaggerActor(pred, prey, 0.25f);
 				return;
@@ -746,7 +746,7 @@ namespace Gts {
 		}
 
 		if (pred->formID == 0x14) {
-			Runtime::PlaySound("VoreSound_Success", pred, 0.6, 1.0);
+			Runtime::PlaySound("VoreSound_Fail", pred, 0.4, 1.0);
 		}
 		auto& voreData = this->GetVoreData(pred);
 		voreData.AddTiny(prey);

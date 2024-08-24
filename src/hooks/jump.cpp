@@ -39,8 +39,8 @@ namespace {
 				PushObjectsUpwards(actor, position, stagger_radius * size * Might * power, 1.25 * power, true); // Launch cabbages and stuff up
 				StaggerActor_Around(actor, stagger_radius * Might, true); // Launch actors up, Radius is scaled inside the function
 
-				log::info("Jump Power: {}", power);
-				log::info("Jump Radius: {}", stagger_radius);
+				//log::info("Jump Power: {}", power);
+				//log::info("Jump Radius: {}", stagger_radius);
 
 				Rumbling::Once("MassiveJump", actor, Rumble_Default_MassiveJump * power * Might, 0.035 * power);
 			}

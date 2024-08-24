@@ -49,6 +49,7 @@ namespace Gts {
 		float cooldown = GetRemainingCooldown(giant, CooldownSource::Action_Hugs);
 		if (giant->formID == 0x14) {
 			std::string message = std::format("Hugs are on a cooldown: {:.1f} sec", cooldown);
+			shake_camera(giant, 0.75, 0.35);
 			TiredSound(giant, message);
 		}
 	}
@@ -180,7 +181,7 @@ namespace Gts {
 		
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale)) {
 			if (sizedifference > MINIMUM_HUG_SCALE) {
-				if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
+				if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey, true))) {
 					return false;
 				}
 				if (!IsHuman(prey)) { // Allow hugs with humanoids only

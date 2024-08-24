@@ -60,8 +60,8 @@ namespace Gts {
 		auto actor = impact.actor;
 		if (actor) {
 			
-			float tremor = Rumble_Default_FootWalk * 0.4;
-			float duration = 1.0;
+			float tremor = Rumble_Default_FootWalk * 0.35;
+			float duration = 0.0;
 			float calamity = 1.0;
 
 			float threshold = 1.25; // tremor starts to appear past this scale
@@ -71,7 +71,7 @@ namespace Gts {
 				tremor *= 1.20; // slightly stronger footstep tremor for player
 				if (HasSMT(actor)) {
 					threshold = 0.55;
-					calamity = 1.45;
+					calamity = 1.8;
 				}
 			} 
 
@@ -81,7 +81,7 @@ namespace Gts {
 
 			if (!actor->AsActorState()->IsSwimming() && size > threshold) {
 				if (actor->AsActorState()->IsSprinting()) {
-					tremor *= 1.20; // Sprinting makes tremor stronger
+					tremor *= 1.10; // Sprinting makes tremor stronger
 				}
 				if (actor->AsActorState()->IsWalking()) {
 					tremor *= 0.80; // Walking makes tremor weaker

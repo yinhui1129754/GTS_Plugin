@@ -76,24 +76,6 @@ namespace {
 		}
 	}
 
-	void ApplyButtCrushCooldownTask(Actor* giant) {
-		std::string name = std::format("CooldownTask_{}", giant->formID);
-		auto gianthandle = giant->CreateRefHandle();
-		auto FrameA = Time::FramesElapsed();
-		TaskManager::Run(name, [=](auto& progressData) {
-			if (!gianthandle) {
-				return false;
-			}
-			
-			auto giantref = gianthandle.get().get();
-			if (IsButtCrushing(giantref)) {
-				ApplyActionCooldown(giant, CooldownSource::Action_ButtCrush); // Set butt crush on the cooldown
-				return true;
-			}
-			return false;
-		});
-	}
-		
 	void DisableButtTrackTask(Actor* giant) {
 		std::string name = std::format("DisableCamera_{}", giant->formID);
 		auto gianthandle = giant->CreateRefHandle();
@@ -102,11 +84,13 @@ namespace {
 			if (!gianthandle) {
 				return false;
 			}
+			auto giantref = gianthandle.get().get();
+
 			auto FrameB = Time::FramesElapsed() - FrameA;
-			if (FrameB <= 60.0) {
+			if (FrameB <= 90.0 / AnimationManager::GetAnimSpeed(giantref)) {
 				return true;
 			}
-			auto giantref = gianthandle.get().get();
+			
 			ManageCamera(giantref, false, CameraTracking::Butt);
 
 			return false;
@@ -124,7 +108,7 @@ namespace {
 
 		float shake_power = Rumble_ButtCrush_FeetImpact * smt * GetHighHeelsBonusDamage(giant, true);
 
-		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
+		Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.33);
 		DoDamageEffect(giant, Damage_ButtCrush_FootImpact, Radius_ButtCrush_FootImpact, 10, 0.25, Event, 1.0, Source);
 		DoFootstepSound(giant, 1.0, Event, Node);
 		DoDustExplosion(giant, dust, Event, Node);
@@ -139,6 +123,15 @@ namespace {
 	
 
 	void GTSButtCrush_MoveBody_MixFrameToLoop(AnimationEventData& data) {
+		auto giant = &data.giant;
+		ManageCamera(giant, true, CameraTracking::Butt);
+	}
+	void GTSButtCrush_MoveBody_Start(AnimationEventData& data) {
+		auto giant = &data.giant;
+		ApplyButtCrushCooldownTask(&data.giant);
+		RecordStartButtCrushSize(&data.giant);
+	}
+	void GTSButtCrush_MoveBody_Stop(AnimationEventData& data) { // When doing quick butt crush
 		auto giant = &data.giant;
 		ManageCamera(giant, true, CameraTracking::Butt);
 	}
@@ -191,7 +184,6 @@ namespace {
 		// do footsteps
 		//Rumbling::Stop("FS_L", &data.giant);
 		ButtCrush_DoFootImpact(&data.giant, FootEvent::Right, DamageSource::CrushedRight, RNode, "FS_L");
-		ApplyButtCrushCooldownTask(&data.giant);
 		data.HHspeed = 1.0;
 	}
 
@@ -199,7 +191,6 @@ namespace {
 		// do footsteps
 		//Rumbling::Stop("FS_R", &data.giant);
 		ButtCrush_DoFootImpact(&data.giant, FootEvent::Left, DamageSource::CrushedLeft, LNode, "FS_L");
-		ApplyButtCrushCooldownTask(&data.giant);
 		data.HHspeed = 1.0;
 	}
 
@@ -265,8 +256,8 @@ namespace {
 						DoLaunch(&data.giant, 2.25 * perk, 5.0, FootEvent::Butt);
 						DoFootstepSound(giant, 1.25, FootEvent::Right, RNode);
 						
-						Rumbling::Once("Butt_L", &data.giant, shake_power * smt, 0.05, "NPC R Butt", 0.0);
-						Rumbling::Once("Butt_R", &data.giant, shake_power * smt, 0.05, "NPC L Butt", 0.0);
+						Rumbling::Once("Butt_L", &data.giant, shake_power * smt, 0.075, "NPC R Butt", 0.0);
+						Rumbling::Once("Butt_R", &data.giant, shake_power * smt, 0.075, "NPC L Butt", 0.0);
 					}
 				} else {
 					if (!ButtR) {
@@ -396,6 +387,10 @@ namespace Gts
 		AnimationManager::RegisterEvent("GTSButtCrush_FootstepR", "ButtCrush", GTSButtCrush_FootstepR);
 		AnimationManager::RegisterEvent("GTSButtCrush_FootstepL", "ButtCrush", GTSButtCrush_FootstepL);
 		AnimationManager::RegisterEvent("GTSButtCrush_MoveBody_MixFrameToLoop", "ButtCrush", GTSButtCrush_MoveBody_MixFrameToLoop);
+		AnimationManager::RegisterEvent("GTSButtCrush_MoveBody_Start", "ButtCrush", GTSButtCrush_MoveBody_Start);
+		AnimationManager::RegisterEvent("GTSButtCrush_MoveBody_Stop", "ButtCrush", GTSButtCrush_MoveBody_Stop);
+		
+		
 
 		InputManager::RegisterInputEvent("ButtCrushStart", ButtCrushStartEvent);
 		InputManager::RegisterInputEvent("ButtCrushStart_Player", ButtCrushStartEvent_Follower);

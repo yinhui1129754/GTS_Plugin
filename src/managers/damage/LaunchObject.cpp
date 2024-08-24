@@ -34,6 +34,15 @@ using namespace SKSE;
 using namespace std;
 
 namespace {
+	void Break_Object(TESObjectREFR* ref, float damage, float giant_size, bool smt) {
+		if (giant_size > 1.5 || smt) {
+			if (smt) {
+				damage *= 4.0;
+			}
+			ref->DamageObject(damage * 40, true);
+		}
+	}
+
 	float Multiply_By_Perk(Actor* giant) {
 		float multiply = 1.0;
 		if (Runtime::HasPerkTeam(giant, "RumblingFeet")) {
@@ -116,17 +125,22 @@ namespace Gts {
 		}
 
 		float giantScale = get_visual_scale(giant);
+		bool smt = false;
 
 		power *= Multiply_By_Perk(giant);
 		power *= GetHighHeelsBonusDamage(giant, true);
 		float HH = HighHeelManager::GetHHOffset(giant).Length();
 
 		if (HasSMT(giant)) {
+			smt = true;
 			power *= 8.0;
 		}
 
-		if (giantScale < 2.5) {  // slowly gain power of shakes
+		if (giantScale < 2.5) {  // slowly gain power of pushing
 			float reduction = (giantScale - 1.5);
+			if (smt) {
+				reduction = 0.6;
+			}
 			if (reduction < 0.0) {
 				reduction = 0.0;
 			}
@@ -161,6 +175,9 @@ namespace Gts {
 								float force = 1.0 - distance / maxFootDistance;
 								float push = start_power * GetLaunchPower_Object(giantScale, true) * force * power;
 								auto Object1 = objectref->Get3D1(false);
+							
+								Break_Object(objectref, push, giantScale, smt);
+
 								if (Object1) {
 									auto collision = Object1->GetCollisionObject();
 									if (collision) {
@@ -200,6 +217,7 @@ namespace Gts {
             return;
         }
 
+		bool smt = HasSMT(giant);
 		float giantScale = get_visual_scale(giant);
 
 		float start_power = Push_Object_Forward * (1.0 + Potion_GetMightBonus(giant));
@@ -252,6 +270,7 @@ namespace Gts {
 				if (timepassed > 1e-4) {
 					NiPoint3 EndPos = Bone->world.translate;
 					ApplyPhysicsToObject_Towards(giantref, ref, EndPos - StartPos, start_power, giantScale);
+					Break_Object(ref, power * giantScale * start_power, giantScale, smt);
 					return false; // end it
 				}
 				return true;

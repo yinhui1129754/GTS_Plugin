@@ -132,7 +132,7 @@ namespace Hooks
 	void Hook_Projectiles::Handle3DLoaded_Arrow(RE::Projectile* a_this)
 	{
 		// Scale Arrow projectile once (when it first spawns). Affects only visuals.
-		log::info("Arrow True");
+		//log::info("Arrow True");
 		_Handle3DLoaded_Arrow(a_this);
 		ScaleProjectile(a_this, 1.0, false);
 	}

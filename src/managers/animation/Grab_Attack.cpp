@@ -37,62 +37,6 @@ using namespace std;
 
 namespace {
 
-    void Utils_CrushTask(Actor* giant, Actor* grabbedActor, float bonus) {
-        
-        auto tinyref = grabbedActor->CreateRefHandle();
-        auto giantref = giant->CreateRefHandle();
-
-        std::string taskname = std::format("GrabCrush_{}", grabbedActor->formID);
-
-        TaskManager::RunOnce(taskname, [=](auto& update) {
-            if (!tinyref) {
-                return;
-            } 
-            if (!giantref) {
-                return;
-            }
-            auto tiny = tinyref.get().get();
-            auto giantess = giantref.get().get();
-
-            if (GetAV(tiny, ActorValue::kHealth) <= 1.0 || tiny->IsDead()) {
-
-                ModSizeExperience_Crush(giant, tiny, false);
-
-                CrushManager::Crush(giantess, tiny);
-                
-                SetBeingHeld(tiny, false);
-                Rumbling::Once("GrabAttackKill", giantess, 2.0 * bonus, 0.15, "NPC L Hand [LHnd]", 0.0);
-                if (!LessGore()) {
-                    Runtime::PlaySoundAtNode("CrunchImpactSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
-                    Runtime::PlaySoundAtNode("CrunchImpactSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
-                } else {
-                    Runtime::PlaySoundAtNode("SoftHandAttack", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
-                }
-                
-                Runtime::PlaySoundAtNode("DefaultCrush", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
-
-                AdjustSizeReserve(giantess, get_visual_scale(tiny)/10);
-                SpawnHurtParticles(giantess, tiny, 3.0, 1.6);
-                SpawnHurtParticles(giantess, tiny, 3.0, 1.6);
-                
-                SetBetweenBreasts(tiny, false);
-                StartCombat(tiny, giantess);
-                
-                AdvanceQuestProgression(giantess, tiny, QuestStage::HandCrush, 1.0, false);
-                
-                PrintDeathSource(giantess, tiny, DamageSource::HandCrushed);
-            } else {
-                if (!LessGore()) {
-                    Runtime::PlaySoundAtNode("CrunchImpactSound", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
-                    SpawnHurtParticles(giantess, tiny, 1.0, 1.0);
-                } else {
-                    Runtime::PlaySoundAtNode("SoftHandAttack", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
-                }
-                StaggerActor(giantess, tiny, 0.75f);
-            }
-        });
-    }
-
     void GTSGrab_Attack_MoveStart(AnimationEventData& data) {
 		auto giant = &data.giant;
 		DrainStamina(giant, "GrabAttack", "DestructionBasics", true, 0.75);
@@ -138,7 +82,7 @@ namespace {
 			ModSizeExperience(giant, experience);
 			AddSMTDuration(giant, 1.0);
 
-            Utils_CrushTask(giant, grabbedActor, bonus);
+            Utils_CrushTask(giant, grabbedActor, bonus, true);
 		}
 	}
 
@@ -156,7 +100,6 @@ namespace {
 			AnimationManager::StartAnim("TinyDied", giant);
 			Grab::DetachActorTask(giant);
 			Grab::Release(giant);
-			return;
 		}
 	}
 }

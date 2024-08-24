@@ -16,6 +16,8 @@ namespace Gts {
 			float strength;
 	};
 
+	void Utils_CrushTask(Actor* giant, Actor* grabbedActor, float bonus, bool do_sound);
+
 	class Grab : public EventListener
 	{
 		public:
@@ -26,6 +28,7 @@ namespace Gts {
 			static void RegisterEvents();
 			static void RegisterTriggers();
 
+			static void DamageActorInHand(Actor* giant, float Damage);
 			static void DetachActorTask(Actor* giant);
 			static void AttachActorTask(Actor* giant, Actor* tiny);
 			virtual void Reset() override;

@@ -5,10 +5,11 @@
 #include "managers/damage/LaunchObject.hpp"
 #include "managers/damage/LaunchActor.hpp"
 #include "managers/animation/Crawling.hpp"
+#include "managers/audio/footstep.hpp"
+#include "managers/animation/Grab.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/InputManager.hpp"
-#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
 #include "ActionSettings.hpp"
@@ -121,6 +122,7 @@ namespace {
 		DoCrawlingFunctions(giant, scale, 1.4, Damage_Crawl_HandSlam, CrawlEvent::LeftHand, "LeftHandRumble", 0.9, Radius_Crawl_Slam, 1.15, DamageSource::HandSlamLeft);
 		DrainStamina(&data.giant, "StaminaDrain_CrawlStomp", "DestructionBasics", false, 1.4);
 		DrainStamina(&data.giant, "StaminaDrain_CrawlStompStrong", "DestructionBasics", false, 2.3);
+		Grab::DamageActorInHand(giant, Damage_Crawl_HandSlam * 0.6);
 	}
 
 	void GTSCrawl_SlamStrong_Impact_R(AnimationEventData& data) {
@@ -136,6 +138,7 @@ namespace {
 		DoCrawlingFunctions(giant, scale, 2.1, Damage_Crawl_HandSlam_Strong, CrawlEvent::LeftHand, "RightHandRumble", 1.2, Radius_Crawl_Slam_Strong, 1.0, DamageSource::HandSlamLeft);
 		DrainStamina(&data.giant, "StaminaDrain_CrawlStomp", "DestructionBasics", false, 1.4);
 		DrainStamina(&data.giant, "StaminaDrain_CrawlStompStrong", "DestructionBasics", false, 2.3);
+		Grab::DamageActorInHand(giant, Damage_Crawl_HandSlam_Strong * 0.6);
 	}
 
 	void GTSCrawl_Slam_Cam_Off_R(AnimationEventData& data) {

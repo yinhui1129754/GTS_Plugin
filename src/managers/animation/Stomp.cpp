@@ -149,7 +149,7 @@ namespace {
 		
 			if (Finish - Start > 0.02) { 
 
-				Rumbling::Once(rumble, giant, shake_power, 0.05, Node, 0.0);
+				Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 1.10);
 				DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 10, 0.25, Event, 1.0, Source);
 				DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
 				DoFootstepSound(giant, 1.0, Event, Node);
@@ -193,7 +193,7 @@ namespace {
 			if (Finish - Start > 0.025) { 
 				auto giant = giantHandle.get().get();
 
-				Rumbling::Once(rumble, giant, shake_power, 0.025, Node, 0.0);
+				Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
 				DoDamageEffect(giant, Damage_Stomp * perk, Radius_Stomp, 25, 0.25, Event, 1.0, DamageSource::CrushedRight);
 				DoDustExplosion(giant, dust + (animSpeed * 0.05), Event, Node);
 				DoFootstepSound(giant, 1.0 + animSpeed/14, Event, RNode);

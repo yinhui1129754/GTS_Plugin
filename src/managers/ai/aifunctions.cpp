@@ -136,17 +136,36 @@ namespace Gts {
 		}
 	}
 
+	void RecordStartButtCrushSize(Actor* giant) {
+		auto saved_data = Transient::GetSingleton().GetData(giant);
+		if (saved_data) { 
+			saved_data->buttcrush_start_scale = get_target_scale(giant);
+		}
+	}
+
 	void SetButtCrushSize(Actor* giant, float value, bool reset) {
 		auto saved_data = Transient::GetSingleton().GetData(giant);
 		if (saved_data) {
-			saved_data->buttcrush_max_size += value;
+			float scale = game_getactorscale(giant);
+			saved_data->buttcrush_max_size += value * scale;
+
+			if (!reset && GetGrowthCount(giant) <= 1) {
+				log::info("Recording default growth size");
+				RecordStartButtCrushSize(giant);
+			}
+
 			if (reset) {
-				float remove_size = (saved_data->buttcrush_max_size / get_natural_scale(giant, false)) * game_getactorscale(giant);
-				update_target_scale(giant, -remove_size, SizeEffectType::kNeutral);
-				if (get_target_scale(giant) < get_natural_scale(giant, true)) {
-					set_target_scale(giant, get_natural_scale(giant, true)); // Protect against going into negatives
+				float remove_size = saved_data->buttcrush_max_size;
+				float start_scale = saved_data->buttcrush_start_scale;
+
+				if (start_scale < get_natural_scale(giant)) { // Protect against going into negatives
+					start_scale = get_natural_scale(giant);
 				}
+
+				set_target_scale(giant, start_scale); 
+				
 				saved_data->buttcrush_max_size = 0;
+				saved_data->buttcrush_start_scale = 0.0;
 			}
 		}
 	}

@@ -252,7 +252,7 @@ namespace Gts {
 			if (IsFlying(prey)) {
 				return false; // Disallow to butt crush flying dragons
 			}
-			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
+			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey, false))) {
 				std::string_view message = std::format("{} is Essential", prey->GetDisplayFullName());
 				TiredSound(pred, message);
 				return false;

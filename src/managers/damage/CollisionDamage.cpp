@@ -368,12 +368,13 @@ namespace Gts {
 				PrintDeathSource(giant, tiny, Cause);
 				if (!LessGore()) {
 					auto node = find_node(giant, GetDeathNodeName(Cause));
-					if (IsMechanical(tiny)) {
-						return;
+					if (!IsMechanical(tiny)) {
+						PlayCrushSound(giant, node, true, StrongGore(Cause)); // Run Crush Sound task that will determine which exact type of crushing audio to play
 					} 
-
-					PlayCrushSound(giant, node, true, StrongGore(Cause)); // Run Crush Sound task that will determine which exact type of crushing audio to play
 				}
+
+				SetBetweenBreasts(tiny, false);
+				SetBeingHeld(tiny, false);
 
 				CrushManager::GetSingleton().Crush(giant, tiny);
 			}

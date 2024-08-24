@@ -39,6 +39,7 @@ namespace Gts {
 	void AllowToDoVore(Actor* actor, bool toggle);
 	void AllowToBeCrushed(Actor* actor, bool toggle);
 	void ManageCamera(Actor* giant, bool enable, CameraTracking type);
+	void ApplyButtCrushCooldownTask(Actor* giant);
 
 	void LaunchTask(Actor* actor, float radius, float power, FootEvent kind);
 

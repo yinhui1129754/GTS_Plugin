@@ -72,45 +72,17 @@ namespace Gts {
 			float maxScale = get_max_scale(actor);
 			float targetScale = get_target_scale(actor);
 
-			if (!IsFemale(actor)) {
-				return;
-			}
-
-			if (Runtime::GetFloat("MultiplyGameModePC") == 0 && actor == player) {
-				Scale = 1.0;
-			}
-			if (Runtime::GetFloat("MultiplyGameModeNPC") == 0 && actor != player) {
-				Scale = 1.0;
-			}
-
-			switch (game_mode) {
-				case ChosenGameMode::Grow: {
-					float modAmount = Scale * (0.00010 + (GrowthRate * 0.25)) * 60 * Time::WorldTimeDelta();
-					if (fabs(GrowthRate) < EPS) {
-						return;
-					}
-					if ((targetScale + modAmount) < maxScale) {
-						update_target_scale(actor, modAmount, SizeEffectType::kGrow);
-					} else if (targetScale < maxScale) {
-						set_target_scale(actor, maxScale);
-					} // else let spring handle it
-					break;
+			if (IsFemale(actor)) {
+				if (Runtime::GetFloat("MultiplyGameModePC") == 0 && actor == player) {
+					Scale = 1.0;
 				}
-				case ChosenGameMode::Shrink: {
-					float modAmount = -(0.00025 + (ShrinkRate * 0.25) * Scale) * 60 * Time::WorldTimeDelta();
-					if (fabs(ShrinkRate) < EPS) {
-						return;
-					}
-					if ((targetScale + modAmount) > natural_scale) {
-						update_target_scale(actor, modAmount, SizeEffectType::kShrink);
-					} else if (targetScale > natural_scale || targetScale < natural_scale) {
-						set_target_scale(actor, natural_scale);
-					} // Need to have size restored by someone
-					break;
+				if (Runtime::GetFloat("MultiplyGameModeNPC") == 0 && actor != player) {
+					Scale = 1.0;
 				}
-				case ChosenGameMode::Standard: {
-					if (actor->IsInCombat()) {
-						float modAmount = Scale * (0.00008 + (GrowthRate * 0.17)) * 60 * Time::WorldTimeDelta();
+
+				switch (game_mode) {
+					case ChosenGameMode::Grow: {
+						float modAmount = Scale * (0.00010 + (GrowthRate * 0.25)) * 60 * Time::WorldTimeDelta();
 						if (fabs(GrowthRate) < EPS) {
 							return;
 						}
@@ -119,86 +91,112 @@ namespace Gts {
 						} else if (targetScale < maxScale) {
 							set_target_scale(actor, maxScale);
 						} // else let spring handle it
-					} else {
-						float modAmount = Scale * -(0.00029 + (ShrinkRate * 0.34)) * 60 * Time::WorldTimeDelta();
+						break;
+					}
+					case ChosenGameMode::Shrink: {
+						float modAmount = -(0.00025 + (ShrinkRate * 0.25) * Scale) * 60 * Time::WorldTimeDelta();
 						if (fabs(ShrinkRate) < EPS) {
 							return;
 						}
 						if ((targetScale + modAmount) > natural_scale) {
 							update_target_scale(actor, modAmount, SizeEffectType::kShrink);
-						} else if (targetScale > natural_scale) {
+						} else if (targetScale > natural_scale || targetScale < natural_scale) {
 							set_target_scale(actor, natural_scale);
 						} // Need to have size restored by someone
+						break;
 					}
-					break;
-				}
-				case ChosenGameMode::StandardNoShrink: {
-					if (actor->IsInCombat()) {
-						float modAmount = Scale * (0.00008 + (GrowthRate * 0.17)) * 60 * Time::WorldTimeDelta();
-						if (fabs(GrowthRate) < EPS) {
+					case ChosenGameMode::Standard: {
+						if (actor->IsInCombat()) {
+							float modAmount = Scale * (0.00008 + (GrowthRate * 0.17)) * 60 * Time::WorldTimeDelta();
+							if (fabs(GrowthRate) < EPS) {
+								return;
+							}
+							if ((targetScale + modAmount) < maxScale) {
+								update_target_scale(actor, modAmount, SizeEffectType::kGrow);
+							} else if (targetScale < maxScale) {
+								set_target_scale(actor, maxScale);
+							} // else let spring handle it
+						} else {
+							float modAmount = Scale * -(0.00029 + (ShrinkRate * 0.34)) * 60 * Time::WorldTimeDelta();
+							if (fabs(ShrinkRate) < EPS) {
+								return;
+							}
+							if ((targetScale + modAmount) > natural_scale) {
+								update_target_scale(actor, modAmount, SizeEffectType::kShrink);
+							} else if (targetScale > natural_scale) {
+								set_target_scale(actor, natural_scale);
+							} // Need to have size restored by someone
+						}
+						break;
+					}
+					case ChosenGameMode::StandardNoShrink: {
+						if (actor->IsInCombat()) {
+							float modAmount = Scale * (0.00008 + (GrowthRate * 0.17)) * 60 * Time::WorldTimeDelta();
+							if (fabs(GrowthRate) < EPS) {
+								return;
+							}
+							if ((targetScale + modAmount) < maxScale) {
+								update_target_scale(actor, modAmount * 0.33, SizeEffectType::kGrow);
+							} else if (targetScale < maxScale) {
+								set_target_scale(actor, maxScale);
+							} // else let spring handle it
+						}
+						break;
+					}
+					case ChosenGameMode::CurseOfGrowth: {
+						float GtsSkillLevel = GetGtsSkillLevel(actor);                                                   // Based on GTS skill level
+						float MaxSize = Runtime::GetFloat("CurseOfGrowthMaxSize");                                       // Slider that determines max size cap.
+						float sizelimit = std::clamp(1.0f * (GtsSkillLevel/100.0f * MaxSize), 1.0f, MaxSize);            // Size limit between 1 and [Slider]], based on GTS Skill. Cap is Slider value.
+						int Random = rand() % 20;                                                                        // Randomize power
+						int GrowthTimer = rand() % 6 + 1;                                                                // Randomize 're-trigger' delay, kinda
+						int StrongGrowthChance = rand() % 20;                                                            // Self-explanatory
+						int MegaGrowth = rand() % 20;                                                                    // A chance to multiply growth again
+						float GrowthPower = GtsSkillLevel*0.00240 / Random;                                              // Randomized strength of growth
+						static Timer timer = Timer(1.40 * GrowthTimer);                                                  // How often it procs
+						if (targetScale >= sizelimit || Random <= 0 || GrowthTimer <= 0) {
+							return; // Protections against infinity
+						}
+						if (timer.ShouldRunFrame()) {
+							if (StrongGrowthChance >= 19 && MegaGrowth >= 19.0) {
+								GrowthPower *= 4.0;                                                                       // Proc super growth if conditions are met
+							}
+							if (StrongGrowthChance >= 19.0) {
+								GrowthPower *= 4.0;                                                                       // Stronger growth if procs
+								Rumbling::Once("CurseOfGrowth", actor, GrowthPower * 40, 0.10);
+							}
+							if (targetScale >= sizelimit) {
+								set_target_scale(actor, sizelimit);
+							}
+							if (((StrongGrowthChance >= 19 && Random >= 19.0) || (StrongGrowthChance >= 19 && MegaGrowth >= 19.0)) && Runtime::GetFloat("AllowMoanSounds") == 1.0) {
+								PlayMoanSound(actor, targetScale/4);
+								Task_FacialEmotionTask_Moan(actor, 2.0, "GameMode");
+							}
+							if (targetScale < maxScale) {
+								update_target_scale(actor, GrowthPower, SizeEffectType::kGrow);
+								Rumbling::Once("CurseOfGrowth", actor, GrowthPower * 20, 0.10);
+								Runtime::PlaySoundAtNode("growthSound", actor, GrowthPower * 6, 1.0, "NPC Pelvis [Pelv]");
+							}
+						}
+						break;
+					}
+					case ChosenGameMode::Quest: {
+						float modAmount = -ShrinkRate * Time::WorldTimeDelta();
+						if (fabs(ShrinkRate) < EPS) {
 							return;
 						}
-						if ((targetScale + modAmount) < maxScale) {
-							update_target_scale(actor, modAmount * 0.33, SizeEffectType::kGrow);
-						} else if (targetScale < maxScale) {
-							set_target_scale(actor, maxScale);
-						} // else let spring handle it
+
+						float Aspect = Ench_Aspect_GetPower(actor);
+						float gigantism = Aspect_GetEfficiency(Aspect) * 0.5;
+						float default_scale = natural_scale * (1.0 + gigantism);
+
+						if ((targetScale + modAmount) > default_scale) {
+							update_target_scale(actor, modAmount, SizeEffectType::kShrink);
+						} else if (targetScale > default_scale) {
+							set_target_scale(actor, default_scale);
+						} // Need to have size restored by something
 					}
 					break;
 				}
-				case ChosenGameMode::CurseOfGrowth: {
-					float GtsSkillLevel = GetGtsSkillLevel(actor);                                                   // Based on GTS skill level
-					float MaxSize = Runtime::GetFloat("CurseOfGrowthMaxSize");                                       // Slider that determines max size cap.
-					float sizelimit = std::clamp(1.0f * (GtsSkillLevel/100.0f * MaxSize), 1.0f, MaxSize);            // Size limit between 1 and [Slider]], based on GTS Skill. Cap is Slider value.
-					int Random = rand() % 20;                                                                        // Randomize power
-					int GrowthTimer = rand() % 6 + 1;                                                                // Randomize 're-trigger' delay, kinda
-					int StrongGrowthChance = rand() % 20;                                                            // Self-explanatory
-					int MegaGrowth = rand() % 20;                                                                    // A chance to multiply growth again
-					float GrowthPower = GtsSkillLevel*0.00240 / Random;                                              // Randomized strength of growth
-					static Timer timer = Timer(1.40 * GrowthTimer);                                                  // How often it procs
-					if (targetScale >= sizelimit || Random <= 0 || GrowthTimer <= 0) {
-						return; // Protections against infinity
-					}
-					if (timer.ShouldRunFrame()) {
-						if (StrongGrowthChance >= 19 && MegaGrowth >= 19.0) {
-							GrowthPower *= 4.0;                                                                       // Proc super growth if conditions are met
-						}
-						if (StrongGrowthChance >= 19.0) {
-							GrowthPower *= 4.0;                                                                       // Stronger growth if procs
-							Rumbling::Once("CurseOfGrowth", actor, GrowthPower * 40, 0.10);
-						}
-						if (targetScale >= sizelimit) {
-							set_target_scale(actor, sizelimit);
-						}
-						if (((StrongGrowthChance >= 19 && Random >= 19.0) || (StrongGrowthChance >= 19 && MegaGrowth >= 19.0)) && Runtime::GetFloat("AllowMoanSounds") == 1.0) {
-							PlayMoanSound(actor, targetScale/4);
-							Task_FacialEmotionTask_Moan(actor, 2.0, "GameMode");
-						}
-						if (targetScale < maxScale) {
-							update_target_scale(actor, GrowthPower, SizeEffectType::kGrow);
-							Rumbling::Once("CurseOfGrowth", actor, GrowthPower * 20, 0.10);
-							Runtime::PlaySoundAtNode("growthSound", actor, GrowthPower * 6, 1.0, "NPC Pelvis [Pelv]");
-						}
-					}
-					break;
-				}
-				case ChosenGameMode::Quest: {
-					float modAmount = -ShrinkRate * Time::WorldTimeDelta();
-					if (fabs(ShrinkRate) < EPS) {
-						return;
-					}
-
-					float Aspect = Ench_Aspect_GetPower(actor);
-					float gigantism = Aspect_GetEfficiency(Aspect) * 0.5;
-					float default_scale = natural_scale * (1.0 + gigantism);
-
-					if ((targetScale + modAmount) > default_scale) {
-						update_target_scale(actor, modAmount, SizeEffectType::kShrink);
-					} else if (targetScale > default_scale) {
-						set_target_scale(actor, default_scale);
-					} // Need to have size restored by something
-				}
-				break;
 			}
 		}
 	}

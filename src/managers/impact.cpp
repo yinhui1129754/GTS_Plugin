@@ -1,3 +1,4 @@
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/explosion.hpp"
@@ -22,6 +23,28 @@ using namespace RE;
 using namespace Gts;
 
 namespace {
+	bool CanDoImpact(Actor* actor, FootEvent kind) { // This function is needed to prevent sound spam from followers at large sizes
+		if (IsTeammate(actor) && actor->formID != 0x14) {
+			if (get_visual_scale(actor) < 6.0) {
+				return true;
+			}
+			if (kind == FootEvent::Right) {
+				if (IsActionOnCooldown(actor, CooldownSource::Footstep_Right)) {
+					return false;
+				}
+				ApplyActionCooldown(actor, CooldownSource::Footstep_Right);
+			} else if (kind == FootEvent::Left) {
+				if (IsActionOnCooldown(actor, CooldownSource::Footstep_Left)) {
+					return false;
+				}
+				ApplyActionCooldown(actor, CooldownSource::Footstep_Left);
+			}
+		} else {
+			return true;
+		}
+		return true;
+	}
+
 	FootEvent get_foot_kind(Actor* actor, std::string_view tag) {
 		auto profiler = Profilers::Profile("Impact: Get Foot Kind");
 		FootEvent foot_kind = FootEvent::Unknown;
@@ -119,6 +142,12 @@ namespace Gts {
 			event_manager.m_onfootstep.SendEvent(actor,tag);
 
 			auto kind = get_foot_kind(actor, tag);
+
+			if (!CanDoImpact(actor, kind)) { // Prevent earrape and effect spam from followers when they're large
+				log::info("Impact prevented on {}", actor->GetDisplayFullName());
+				return;
+			}
+
 			Impact impact_data = Impact {
 				.actor = actor,
 				.kind = kind,

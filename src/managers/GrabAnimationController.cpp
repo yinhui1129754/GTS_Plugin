@@ -153,7 +153,7 @@ namespace Gts {
 			if (IsFlying(prey)) {
 				return false; // Disallow to grab flying dragons
 			}
-			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
+			if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey, false))) {
 				return false;
 			} else {
 				return true;

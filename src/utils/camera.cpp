@@ -1,5 +1,6 @@
 #include "utils/camera.hpp"
 #include "utils/papyrusUtils.hpp"
+#include "managers/Rumble.hpp"
 
 #include "node.hpp"
 
@@ -12,10 +13,13 @@ namespace Gts {
 		CallFunction("Game", "ShakeCamera", actor, intensity, duration);
 	}
 
-	void shake_camera(TESObjectREFR* actor, float intensity, float duration) { // TESObjectREFR*
+	void shake_camera(Actor* actor, float intensity, float duration) { // TESObjectREFR*
 		//CallFunction("Game", "ShakeCamera", actor, intensity, duration);
-		NiPoint3 position = actor->GetPosition();
-		ShakeCamera(intensity, position, duration);
+		auto node = find_node(actor, "NPC COM [COM ]");
+		if (node) {
+			NiPoint3 position = node->world.translate;
+			ShakeCamera(intensity, position, duration);
+		}
 	}
 
 	void shake_camera_at_node(NiPoint3 position, float intensity, float duration) { // TESObjectREFR*

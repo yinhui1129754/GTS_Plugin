@@ -132,7 +132,7 @@ namespace Gts {
 
 		std::vector<Actor*> preys = Sandwiching.GetSandwichTargetsInFront(pred, 1);
 		for (auto prey: preys) {
-			if (CanPerformAnimationOn(pred, prey)) { // player check is done inside CanSandwich()
+			if (CanPerformAnimationOn(pred, prey, false)) { // player check is done inside CanSandwich()
 				Sandwiching.StartSandwiching(pred, prey);
 				auto node = find_node(pred, "GiantessRune", false);
 				if (node) {

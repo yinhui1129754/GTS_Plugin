@@ -6,7 +6,7 @@ using namespace SKSE;
 using namespace Gts;
 
 namespace Gts {
-	const int endless_loop = 800;
+	const int loop_threshold = 200;
 
 	void loop_message(NiAVObject* root, std::string_view message) {
 		auto owner_data = root->GetUserData();
@@ -44,9 +44,6 @@ namespace Gts {
 		while (!queue.empty()) { 
 
 			counter += 1;
-			if (counter > endless_loop) {
-				log::error("Node.cpp: GetAllNodes: Possible Endless Loop");
-			}
 
 			auto currentnode = queue.front();
 			queue.pop_front();
@@ -63,21 +60,25 @@ namespace Gts {
 					}
 					// Do smth
 					log::trace("Node {}", currentnode->name);
-				} else if (counter > queue.size()) {
+				} else if (counter > loop_threshold) {
 					queue.clear();
 				}
 			}
 			catch (const std::overflow_error& e) {
 				log::warn("Overflow: {}", e.what());
+				return {};
 			} // this executes if f() throws std::overflow_error (same type rule)
 			catch (const std::runtime_error& e) {
 				log::warn("Underflow: {}", e.what());
+				return {};
 			} // this executes if f() throws std::underflow_error (base class rule)
 			catch (const std::exception& e) {
 				log::warn("Exception: {}", e.what());
+				return {};
 			} // this executes if f() throws std::logic_error (base class rule)
 			catch (...) {
 				log::warn("Exception Other");
+				return {};
 			}
 		}
 		return nodes;
@@ -99,9 +100,6 @@ namespace Gts {
 			queue.pop_front();
 
 			counter += 1;
-			if (counter > endless_loop) {
-				loop_message(actor, "Node.cpp : walk_nodes");
-			}
 
 			try {
 				if (currentnode) {
@@ -116,21 +114,25 @@ namespace Gts {
 					}
 					// Do smth
 					log::trace("Node {}", currentnode->name);
-				} else if (counter > queue.size()) {
+				} else if (counter > loop_threshold) {
 					queue.clear();
 				}
 			}
 			catch (const std::overflow_error& e) {
 				log::warn("Overflow: {}", e.what());
+				return;
 			} // this executes if f() throws std::overflow_error (same type rule)
 			catch (const std::runtime_error& e) {
 				log::warn("Underflow: {}", e.what());
+				return;
 			} // this executes if f() throws std::underflow_error (base class rule)
 			catch (const std::exception& e) {
 				log::warn("Exception: {}", e.what());
+				return;
 			} // this executes if f() throws std::logic_error (base class rule)
 			catch (...) {
 				log::warn("Exception Other");
+				return;
 			}
 		}
 	}
@@ -159,9 +161,6 @@ namespace Gts {
 			queue.pop_front();
 
 			counter += 1;
-			if (counter > endless_loop) {
-				loop_message(actor, "Node.cpp : find_node");
-			}
 			try {
 				if (currentnode) {
 					auto ninode = currentnode->AsNode();
@@ -179,7 +178,7 @@ namespace Gts {
 					if (currentnode->name.c_str() == node_name) {
 						log::info("Found bone: {}", node_name);
 						return currentnode;
-					} else if (counter > queue.size()) {
+					} else if (counter > loop_threshold) {
 						//log::info("Counter {} on {} is > than size {}", counter, actor->GetDisplayFullName(), queue.size());
 						queue.clear();
 						return nullptr;
@@ -188,15 +187,19 @@ namespace Gts {
 			}
 			catch (const std::overflow_error& e) {
 				log::warn("Overflow: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::overflow_error (same type rule)
 			catch (const std::runtime_error& e) {
 				log::warn("Underflow: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::underflow_error (base class rule)
 			catch (const std::exception& e) {
 				log::warn("Exception: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::logic_error (base class rule)
 			catch (...) {
 				log::warn("Exception Other");
+				return nullptr;
 				}
 			}
 
@@ -225,9 +228,6 @@ namespace Gts {
 			queue.pop_front();
 
 			counter += 1;
-			if (counter > endless_loop) {
-				loop_message(object, "Node.cpp : find_object_node");
-			}
 
 			try {
 				if (currentnode) {
@@ -245,7 +245,7 @@ namespace Gts {
 					// Do smth
 					if (currentnode->name.c_str() == node_name) {
 						return currentnode;
-					} else if (counter > queue.size()) {
+					} else if (counter > loop_threshold) {
 						queue.clear();
 						return nullptr;
 					}
@@ -253,15 +253,19 @@ namespace Gts {
 			}
 			catch (const std::overflow_error& e) {
 				log::warn("Overflow: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::overflow_error (same type rule)
 			catch (const std::runtime_error& e) {
 				log::warn("Underflow: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::underflow_error (base class rule)
 			catch (const std::exception& e) {
 				log::warn("Exception: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::logic_error (base class rule)
 			catch (...) {
 				log::warn("Exception Other");
+				return nullptr;
 			}
 		}
 
@@ -290,9 +294,6 @@ namespace Gts {
 			queue.pop_front();
 
 			counter += 1;
-			if (counter > endless_loop) {
-				loop_message(actor, "Node.cpp : find_node_regex");
-			}
 
 			try {
 				if (currentnode) {
@@ -310,7 +311,7 @@ namespace Gts {
 					// Do smth
 					if (std::regex_match(currentnode->name.c_str(), the_regex)) {
 						return currentnode;
-					} else if (counter > queue.size()) {
+					} else if (counter > loop_threshold) {
 						queue.clear();
 						return nullptr;
 					}
@@ -318,15 +319,19 @@ namespace Gts {
 			}
 			catch (const std::overflow_error& e) {
 				log::warn("Overflow: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::overflow_error (same type rule)
 			catch (const std::runtime_error& e) {
 				log::warn("Underflow: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::underflow_error (base class rule)
 			catch (const std::exception& e) {
 				log::warn("Exception: {}", e.what());
+				return nullptr;
 			} // this executes if f() throws std::logic_error (base class rule)
 			catch (...) {
 				log::warn("Exception Other");
+				return nullptr;
 			}
 		}
 
@@ -374,9 +379,6 @@ namespace Gts {
 			queue.pop_front();
 
 			counter += 1;
-			if (counter > endless_loop) {
-				loop_message(actor, "Node.cpp : scale_hkpnodes");
-			}
 
 			try {
 				if (currentnode) {
@@ -443,18 +445,27 @@ namespace Gts {
 						}
 					}
 				}
+
+				if (counter > loop_threshold) {
+					queue.clear();
+					return;
+				}
 			}
 			catch (const std::overflow_error& e) {
 				log::warn("Overflow: {}", e.what());
+				return;
 			} // this executes if f() throws std::overflow_error (same type rule)
 			catch (const std::runtime_error& e) {
 				log::warn("Underflow: {}", e.what());
+				return;
 			} // this executes if f() throws std::underflow_error (base class rule)
 			catch (const std::exception& e) {
 				log::warn("Exception: {}", e.what());
+				return;
 			} // this executes if f() throws std::logic_error (base class rule)
 			catch (...) {
 				log::warn("Exception Other");
+				return;
 			}
 		}
 
@@ -501,7 +512,7 @@ namespace Gts {
 				return bbx;
 			}
 		}
-		log::info("Bounding Box not found for {}", actor->GetDisplayFullName());
+		//log::info("Bounding Box not found for {}", actor->GetDisplayFullName());
 		return nullptr;
 	}
 
@@ -579,9 +590,6 @@ namespace Gts {
 			queue.pop_front();
 
 			counter += 1;
-			if (counter > endless_loop) {
-				loop_message(root, "Node.cpp : visitnodes");
-			}
 
 			if (currentnode) {
 				auto ninode = currentnode->AsNode();
@@ -595,8 +603,7 @@ namespace Gts {
 						//queue.push_front(child.get());
 					}
 				}
-				if (counter > queue.size()) {
-					//log::info("Counter > size: {} > {}", counter, queue.size());
+				if (counter > loop_threshold) {
 					queue.clear();
 					return;
 				}

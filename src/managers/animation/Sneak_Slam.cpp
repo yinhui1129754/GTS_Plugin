@@ -3,12 +3,13 @@
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/animation/Utils/CrawlUtils.hpp"
 #include "managers/damage/CollisionDamage.hpp"
-#include "managers/damage/LaunchActor.hpp"
 #include "managers/animation/Sneak_Slam.hpp"
+#include "managers/damage/LaunchActor.hpp"
+#include "managers/audio/footstep.hpp"
+#include "managers/animation/Grab.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "managers/InputManager.hpp"
-#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
 #include "ActionSettings.hpp"
@@ -96,6 +97,12 @@ namespace {
 	void GTS_Sneak_Slam_Impact_L(AnimationEventData& data) {
 		float scale = get_visual_scale(&data.giant);
 		DoCrawlingFunctions(&data.giant, scale, 1.15, Damage_Sneak_HandSlam, CrawlEvent::LeftHand, "LeftHandRumble", 0.9, Radius_Sneak_HandSlam, 1.35, DamageSource::HandSlamRight);
+
+		if (Grab::GetHeldActor(&data.giant)) {
+			Grab::DamageActorInHand(&data.giant, Damage_Sneak_HandSlam * 0.6);
+			return;
+		}
+
 		CheckForFingerGrind(&data.giant, CrawlEvent::LeftHand, false, "LH");	
 		// ^ Also starts finger DOT damage
 	};

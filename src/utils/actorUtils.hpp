@@ -104,7 +104,7 @@ namespace Gts {
 	bool WasReanimated(Actor* actor);
 	bool IsFlying(Actor* actor);
 	bool IsHostile(Actor* giant, Actor* tiny);
-	bool CanPerformAnimationOn(Actor* giant, Actor* tiny);
+	bool CanPerformAnimationOn(Actor* giant, Actor* tiny, bool HugCheck);
 	bool IsEssential(Actor* giant, Actor* actor);
 	bool IsHeadtracking(Actor* giant);
 	bool AnimationsInstalled(Actor* giant);

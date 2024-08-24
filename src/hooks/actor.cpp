@@ -1,3 +1,4 @@
+#include "managers/animation/AnimationManager.hpp"
 #include "hooks/actor.hpp"
 #include "managers/Attributes.hpp"
 #include "data/runtime.hpp"
@@ -18,6 +19,24 @@ namespace {
 			}
 		}
 		return original_value;
+	}
+
+	float Get_Speed_Override(Actor* giant, float incoming_speed) {
+		float new_speed = incoming_speed;
+		if (giant->formID != 0x14 && IsTeammate(giant) && IsHuman(giant) && IsFemale(giant) && get_visual_scale(giant) > 1.5) {
+			float speed_cap = 400.0f / get_visual_scale(giant);
+			float speed = AnimationManager::GetAnimSpeed(giant);
+			new_speed *= speed * speed;
+			//log::info("Adjusting speed for {}", giant->GetDisplayFullName());
+			if (giant->AsActorState()->IsSprinting()) {
+				speed_cap *= 2.0;
+			}
+			if (new_speed < speed_cap) {
+				return speed_cap;
+			}
+		}
+		
+		return new_speed;
 	}
 }
 
@@ -102,6 +121,9 @@ namespace Hooks
 			if (a_this) {
 				if (a_akValue == ActorValue::kCarryWeight) {
 					value = AttributeManager::AlterGetAv(a_this, a_akValue, value);
+				}
+				if (a_akValue == ActorValue::kSpeedMult) {
+					value = Get_Speed_Override(a_this, value);
 				}
 			}
 		}

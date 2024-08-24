@@ -1,16 +1,17 @@
+#include "managers/animation/Utils/CooldownManager.hpp"
 #include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/animation/Utils/CrawlUtils.hpp"
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/animation/BoobCrush.hpp"
 #include "managers/damage/LaunchActor.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/animation/Grab.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
 #include "magic/effects/common.hpp"
 #include "managers/explosion.hpp"
-#include "managers/audio/footstep.hpp"
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
@@ -218,7 +219,7 @@ namespace {
 				std::string rumbleName = std::format("Node: {}", Nodes);
 				DoDamageAtPoint(giant, Radius_BreastCrush_BodyImpact, Damage_BreastCrush_Body * damage, Node, 400, 0.10, 0.8, DamageSource::BodyCrush);
 				DoLaunch(giant, 2.25 * perk, 5.0, Node);
-				Rumbling::Once(rumbleName, giant, 1.00 * damage, 0.02, Nodes, 0.0);
+				Rumbling::Once(rumbleName, giant, 1.00 * damage, 0.035, Nodes, 0.0);
 			}
 		}
 	}
@@ -252,8 +253,8 @@ namespace {
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "R Breast03");
 			DoFootstepSound(giant, 1.25, FootEvent::Left, "L Breast03");
 			DoLaunch(giant, 2.25 * perk, 5.0, FootEvent::Breasts);
-			Rumbling::Once("Breast_L", giant, shake_power * smt, 0.05, "L Breast03", 0.0);
-			Rumbling::Once("Breast_R", giant, shake_power * smt, 0.05, "R Breast03", 0.0);
+			Rumbling::Once("Breast_L", giant, shake_power * smt, 0.075, "L Breast03", 0.0);
+			Rumbling::Once("Breast_R", giant, shake_power * smt, 0.075, "R Breast03", 0.0);
 			ModGrowthCount(giant, 0, true); // Reset limit
 			return;
 		} else if (BreastL && BreastR) {
@@ -264,8 +265,8 @@ namespace {
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC R Breast");
 			DoFootstepSound(giant, 1.25, FootEvent::Right, "NPC L Breast");
 			DoLaunch(giant, 2.25 * perk, 5.0, FootEvent::Breasts);
-			Rumbling::Once("Breast_L", giant, shake_power * smt, 0.05, "NPC L Breast", 0.0);
-			Rumbling::Once("Breast_R", giant, shake_power * smt, 0.05, "NPC R Breast", 0.0);
+			Rumbling::Once("Breast_L", giant, shake_power * smt, 0.075, "NPC L Breast", 0.0);
+			Rumbling::Once("Breast_R", giant, shake_power * smt, 0.075, "NPC R Breast", 0.0);
 			ModGrowthCount(giant, 0, true); // Reset limit
 			return;
 		} else {
@@ -286,6 +287,8 @@ namespace {
 		AdjustFacialExpression(giant, 0, 1.0, "modifier"); // blink L
 		AdjustFacialExpression(giant, 1, 1.0, "modifier"); // blink R
 		AdjustFacialExpression(giant, 2, 1.0, "expression");
+
+		ApplyButtCrushCooldownTask(giant);
 		//AdjustFacialExpression(giant, 0, 0.75, "phenome");
 	}
 
@@ -302,6 +305,7 @@ namespace {
 	}
 
 	void GTS_BoobCrush_TrackBody(AnimationEventData& data) {
+		RecordStartButtCrushSize(&data.giant);
 		ManageCamera(&data.giant, true, CameraTracking::Breasts_02);
 	}
 	void GTS_BoobCrush_UnTrackBody(AnimationEventData& data) {

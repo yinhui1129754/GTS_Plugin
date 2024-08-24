@@ -224,7 +224,7 @@ namespace Gts {
 		if (IsGtsBusy(pred)) {
 			return false;
 		}
-		if (prey->formID == 0x14 && !Persistent::GetSingleton().vore_allowplayervore || !CanPerformAnimationOn(pred, prey)) {
+		if (prey->formID == 0x14 && !Persistent::GetSingleton().vore_allowplayervore || !CanPerformAnimationOn(pred, prey, false)) {
 			return false;
 		}
 		float pred_scale = get_visual_scale(pred) * GetSizeFromBoundingBox(pred);

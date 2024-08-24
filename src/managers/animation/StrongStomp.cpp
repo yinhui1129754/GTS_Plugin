@@ -78,7 +78,7 @@ namespace {
 			smt *= 1.5;
 		}
 		smt *= GetHighHeelsBonusDamage(giant, true);
-		Rumbling::Once(name, giant, shake_power * smt, 0.05, node, 0.0);
+		Rumbling::Once(name, giant, shake_power * smt, 0.0, node, 1.25);
 	}
 
 	void DoSounds(Actor* giant, float animspeed, std::string_view feet) {

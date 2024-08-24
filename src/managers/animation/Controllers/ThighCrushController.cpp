@@ -150,7 +150,7 @@ namespace Gts {
 		
 		if (prey_distance <= (MINIMUM_DISTANCE * pred_scale)) {
 			if (sizedifference > MINIMUM_CRUSH_SCALE) {
-				if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey))) {
+				if ((prey->formID != 0x14 && !CanPerformAnimationOn(pred, prey, false))) {
 					return false;
 				}
 				return true;

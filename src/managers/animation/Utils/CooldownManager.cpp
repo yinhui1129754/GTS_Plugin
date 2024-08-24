@@ -1,4 +1,5 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
+#include "managers/animation/AnimationManager.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
 #include "managers/Rumble.hpp"
@@ -49,6 +50,13 @@ namespace {
 		} 
 		return BUTTCRUSH_COOLDOWN * reduction;
 	}
+
+    float Calculate_FootstepTimer(Actor* actor) {
+        float cooldown = 0.2;
+        cooldown /= AnimationManager::GetAnimSpeed(actor);
+        //log::info("Cooldown for footstep: {}", cooldown);
+        return cooldown;
+    }
 
     float Calculate_ShrinkOutbirstTimer(Actor* actor) {
         bool DarkArts3 = Runtime::HasPerk(actor, "DarkArts_Aug3");
@@ -127,6 +135,10 @@ namespace Gts {
                 break;    
             case CooldownSource::Misc_ShrinkOutburst:
                 data.lastOutburstTime = Time::WorldTimeElapsed();
+            case CooldownSource::Footstep_Right:
+                data.lastFootstepTime_R = Time::WorldTimeElapsed();
+            case CooldownSource::Footstep_Left:
+                data.lastFootstepTime_L = Time::WorldTimeElapsed();
             break; 
         }
     }
@@ -149,7 +161,7 @@ namespace Gts {
                 return time - (data.lastPushTime + PUSH_COOLDOWN);
                 break;   
             case CooldownSource::Action_ButtCrush:
-                return (data.lastButtCrushTime + Calculate_ButtCrushTimer(giant)) - time;
+                return time - (data.lastButtCrushTime + Calculate_ButtCrushTimer(giant));
                 break;
             case CooldownSource::Action_HealthGate:
                 return time - (data.lastHealthGateTime + HEALTHGATE_COOLDOWN);
@@ -158,7 +170,7 @@ namespace Gts {
                 return time -(data.lastScareTime + SCARE_COOLDOWN);
                 break; 
             case CooldownSource::Action_Hugs:
-                return (data.lastHugTime + HUGS_COOLDOWN) - time;
+                return time - (data.lastHugTime + HUGS_COOLDOWN);
                 break;   
             case CooldownSource::Emotion_Laugh:   
                 return time - (data.lastLaughTime + LAUGH_COOLDOWN);
@@ -176,8 +188,14 @@ namespace Gts {
                 return time - (data.lastGrowthTime + AI_GROWTH_COOLDOWN);
                 break;    
             case CooldownSource::Misc_ShrinkOutburst:
-                return (data.lastOutburstTime + Calculate_ShrinkOutbirstTimer(giant)) - time;
-                break;        
+                return time - (data.lastOutburstTime + Calculate_ShrinkOutbirstTimer(giant));
+                break;    
+            case CooldownSource::Footstep_Right:
+                return time - (data.lastFootstepTime_R + Calculate_FootstepTimer(giant));
+                break;      
+            case CooldownSource::Footstep_Left:
+                return time - (data.lastFootstepTime_L + Calculate_FootstepTimer(giant));
+                break;  
             }
         return 0.0;
     }
@@ -229,6 +247,12 @@ namespace Gts {
             case CooldownSource::Misc_ShrinkOutburst:
                 return time <= (data.lastOutburstTime + Calculate_ShrinkOutbirstTimer(giant));
                 break;        
+            case CooldownSource::Footstep_Right:
+                return time <= (data.lastFootstepTime_R + Calculate_FootstepTimer(giant));
+                break;       
+            case CooldownSource::Footstep_Left:
+                return time <= (data.lastFootstepTime_L + Calculate_FootstepTimer(giant));
+                break;     
             }
         return false; 
     }

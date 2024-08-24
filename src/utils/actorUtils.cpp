@@ -802,9 +802,10 @@ namespace Gts {
 		if (base) {
 			if (base->GetSex()) {
 				sex = base->GetSex();
+				//log::info("{} Is Female: {}", actor->GetDisplayFullName(), static_cast<bool>(sex));
 			}
 		}
-		return sex == 1; // Else return sex value
+		return sex; // Else return false
 	}
 
 	bool IsDragon(Actor* actor) {
@@ -870,7 +871,7 @@ namespace Gts {
 		return tiny->IsHostileToActor(giant);
 	}
 
-	bool CanPerformAnimationOn(Actor* giant, Actor* tiny) {
+	bool CanPerformAnimationOn(Actor* giant, Actor* tiny, bool HugCheck) {
 		
 		bool Busy = IsBeingGrinded(tiny) || IsBeingHugged(tiny) || IsHugging(giant);
 		// If any of these is true = we disallow animation
@@ -879,7 +880,7 @@ namespace Gts {
 		bool essential = IsEssential(giant, tiny); // Teammate check is done here
 		bool hostile = IsHostile(giant, tiny);
 		bool no_protection = Persistent::GetSingleton().FollowerInteractions;
-		bool Ignore_Protection = (giant->formID == 0x14 && Runtime::HasPerk(giant, "HugCrush_LovingEmbrace"));
+		bool Ignore_Protection = (HugCheck && giant->formID == 0x14 && Runtime::HasPerk(giant, "HugCrush_LovingEmbrace"));
 		bool allow_teammate = (giant->formID != 0x14 && no_protection && IsTeammate(tiny) && IsTeammate(giant));
 
 		if (IsFlying(tiny)) {
@@ -1719,65 +1720,70 @@ namespace Gts {
 		}
 		// Reciever is always PC, if it is not PC - we do nothing anyways
 		Actor* receiver = PlayerCharacter::GetSingleton();
-		if (!receiver) {
-			return;
-		}
-		auto& persist = Persistent::GetSingleton();
-		
-		float might = 1.0 + Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
-		float tremor_scale = persist.npc_tremor_scale;
-		
-		float distance = (coords - receiver->GetPosition()).Length(); // In that case we apply shake based on actor distance
+		if (receiver) {
+			auto& persist = Persistent::GetSingleton();
+			
+			float tremor_scale = persist.npc_tremor_scale;
+			float might = 1.0 + Potion_GetMightBonus(caster); // Stronger, more impactful shake with Might potion
+			
+			float distance = (coords - receiver->GetPosition()).Length(); // In that case we apply shake based on actor distance
 
-		float sourcesize = get_visual_scale(caster);
-		float receiversize = get_visual_scale(receiver);
-		float sizedifference = (sourcesize/receiversize);
+			float AnimSpeed = AnimationManager::GetAnimSpeed(caster);
 
-		if (caster->formID == 0x14) {
-			tremor_scale = persist.tremor_scale; // Stronger shake for Player
-			if (IsFirstPerson()) {
-				tremor_scale *= 0.25; // Less annoying FP screen shake
+			float sourcesize = get_visual_scale(caster);
+			float receiversize = get_visual_scale(receiver);
+
+			float sizedifference = sourcesize/receiversize;
+			float scale_bonus = 0.0;
+
+			if (caster->formID == 0x14) {
+				distance = get_distance_to_camera(coords); // use player camera distance (for player only)
+				tremor_scale = persist.tremor_scale;
+				sizedifference = sourcesize;
+
+				if (HasSMT(caster)) {
+					sourcesize += 0.2; // Fix SMT having no shake at x1.0 scale
+				}
+				if (IsFirstPerson()) {
+					tremor_scale *= 0.25; // Less annoying FP screen shake
+				}
+
+				scale_bonus = 0.1;
+			} 
+
+			if (sourcesize < 2.0) {  // slowly gain power of shakes
+				float reduction = (sourcesize - 1.0);
+				if (reduction < 0.0) {
+					reduction = 0.0;
+				}
+				modifier *= reduction;
 			}
 
-			if (sourcesize > 1.0) {
-				distance = get_distance_to_camera_no_Z(coords); // We ignore .Z pos of camera since shake becomes weaker in Player case
-			} else {
-				distance = get_distance_to_camera(coords); // else we use player camera distance (for player only)
+			SoftPotential params {.k = 0.0065, .n = 3.0, .s = 1.0, .o = 0.0, .a = 0.0, };
+			//https://www.desmos.com/calculator/jeeugm72gn
+
+			sizedifference *= modifier * tremor_scale * might;
+
+			float intensity = soft_core(distance * 2.5 / sizedifference, params);
+			float duration = 0.33 * (1 + intensity);
+
+			intensity *= 1 + ((sourcesize * scale_bonus) - scale_bonus);
+
+			if (duration_override > 0) { // Custom extra duration when needed
+				duration *= duration_override;
 			}
 
-			sizedifference = sourcesize;
-		} 
+			intensity = std::clamp(intensity, 0.0f, 4.0f);
+			duration = std::clamp(duration, 0.0f, 2.6f);
 
-		if (sourcesize < 2.0) {  // slowly gain power of shakes
-			float reduction = (sourcesize - 1.0);
-			if (reduction < 0.0) {
-				reduction = 0.0;
+			if (intensity > 0.005) {
+				shake_controller(intensity, intensity, duration);
+
+				auto camera = PlayerCamera::GetSingleton(); // Shake at the camera pos, else it won't always shake properly
+				if (camera) {
+					shake_camera_at_node(camera->pos, intensity, duration);
+				}
 			}
-			modifier *= reduction;
-		}
-
-		float multiplier = 1.0 + (sourcesize * 0.10) - 0.10;
-
-		sizedifference *= modifier * tremor_scale * might * multiplier;
-
-		// To Sermit: Same value as before just with the math reduced to minimal steps
-
-		
-		// https://www.desmos.com/calculator/vyofjrqmrn
-		float intensity = sizedifference * 18.8 / distance;
-		
-		float duration = 0.33 * (1 + intensity);
-
-		if (duration_override > 0) {
-			duration *= duration_override;
-		}
-
-		intensity = std::clamp(intensity, 0.0f, 1e8f);
-		duration = std::clamp(duration, 0.0f, 2.6f);
-
-		if (intensity > 0.0) {
-			shake_controller(intensity * modifier, intensity * modifier, duration);
-			shake_camera_at_node(coords, intensity * modifier, duration);
 		}
 	}
 
@@ -2598,7 +2604,8 @@ namespace Gts {
 		}
 		static Timer Cooldown = Timer(1.2);
 		if (Cooldown.ShouldRun()) {
-			Runtime::PlaySound("VoreSound_Fail", player, 0.7, 1.0);
+			float falloff = 0.13 * get_visual_scale(player);
+			Runtime::PlaySoundAtNode_FallOff("VoreSound_Fail", player, 0.4, 1.0, "NPC COM [COM ]", falloff);
 			Notify(message);
 		}
 	}

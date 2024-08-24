@@ -23,6 +23,8 @@ namespace Gts {
         Misc_BeingHit,
         Misc_AiGrowth,
         Misc_ShrinkOutburst,
+        Footstep_Right,
+        Footstep_Left,
     };
 
     struct CooldownData {
@@ -42,6 +44,9 @@ namespace Gts {
         double lastHitTime = -1.0e8;
         double lastGrowthTime = -1.0e8;
         double lastOutburstTime = -1.0e8;
+
+        double lastFootstepTime_R = -1.0e8;
+        double lastFootstepTime_L = -1.0e8;
     };
 
     void ApplyActionCooldown(Actor* giant, CooldownSource source);

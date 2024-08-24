@@ -110,7 +110,12 @@ namespace {
 			}
 
 			bool ignore = (sizedifference_gts >= actor_ignore_limit);
+			bool busy = IsGtsBusy(actor_a) && IsGtsBusy(actor_b);
+			bool grabbed = IsBeingHeld(actor_a, actor_b) || IsBeingHeld(actor_b, actor_a);
 			if (ignore) {
+				return true;
+			}
+			if (busy || grabbed) {
 				return true;
 			}
 		}
