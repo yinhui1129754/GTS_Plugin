@@ -552,6 +552,22 @@ namespace Gts {
 		return Stomping;
 	}
 
+	bool IsInCleavageState(Actor* actor) { // For GTS 
+		bool Cleavage = false;
+
+		actor->GetGraphVariableBool("GTS_IsBoobing", Cleavage);
+
+		return Cleavage;
+	}
+
+	bool IsInsideCleavage(Actor* actor) { // For tinies
+		bool InCleavage = false;
+
+		actor->GetGraphVariableBool("GTS_IsinBoobs", InCleavage);
+
+		return InCleavage;
+	}
+
 	bool IsTrampling(Actor* actor) {
 		bool Trampling;
 		actor->GetGraphVariableBool("GTS_IsTrampling", Trampling);
@@ -990,6 +1006,21 @@ namespace Gts {
 			return false; // Protect Player against friendly NPC's damage
 		}
 		return true;
+	}
+
+	void Attachment_SetTargetNode(Actor* giant, AttachToNode Node) {
+		auto transient = Transient::GetSingleton().GetData(giant);
+		if (transient) {
+			transient->AttachmentNode = Node;
+		}
+	}
+
+	AttachToNode Attachment_GetTargetNode(Actor* giant) {
+		auto transient = Transient::GetSingleton().GetData(giant);
+		if (transient) {
+			return transient->AttachmentNode;
+		}
+		return AttachToNode::None;
 	}
 
 	void ControlAnother(Actor* target, bool reset) {
@@ -1859,9 +1890,7 @@ namespace Gts {
 		}
 	}
 
-
 	void GainWeight(Actor* giant, float value) {
-		log::info("weight gain: {}", Persistent::GetSingleton().allow_weight_gain);
 		if (Persistent::GetSingleton().allow_weight_gain) {
 			if (giant->formID == 0x14) {
 				std::string_view name = "Vore_Weight";
@@ -1881,7 +1910,6 @@ namespace Gts {
 						original_weight += value;
 					}
 					giantref->DoReset3D(true);
-					log::info("Updating Weight");
 					return false;
 				});
 			}

@@ -1,3 +1,4 @@
+#include "managers/animation/Grab.hpp"
 #include "managers/reloader.hpp"
 #include "events.hpp"
 
@@ -16,6 +17,7 @@ namespace Gts {
 			event_sources->AddEventSink<TESObjectLoadedEvent>(this);
 			event_sources->AddEventSink<TESEquipEvent>(this);
 			event_sources->AddEventSink<TESTrackedStatsEvent>(this);
+			event_sources->AddEventSink<TESCellAttachDetachEvent>(this);
 			event_sources->AddEventSink<TESResetEvent>(this);
 		}
 		auto ui = UI::GetSingleton();
@@ -86,6 +88,13 @@ namespace Gts {
 				EventDispatcher::DoDragonSoulAbsorption();
 			}
 		}
+		return BSEventNotifyControl::kContinue;
+	}
+
+	BSEventNotifyControl ReloadManager::ProcessEvent(const TESCellAttachDetachEvent* evn, BSTEventSource<TESCellAttachDetachEvent>* dispatcher)
+	{
+		Grab::ReattachTiny(evn->reference->GetParentCell());
+		// Calls this function A LOT but no idea how to reduce calls
 		return BSEventNotifyControl::kContinue;
 	}
 

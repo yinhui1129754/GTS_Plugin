@@ -1429,6 +1429,38 @@ namespace Gts {
 		});
 	}
 
+	void Task_FacialEmotionTask_OpenMouth(Actor* giant, float duration, std::string_view naming) {
+		ActorHandle giantHandle = giant->CreateRefHandle();
+
+		float start = Time::WorldTimeElapsed();
+		std::string name = std::format("{}_Facial_{}", naming, giant->formID);
+
+		AdjustFacialExpression(giant, 0, 1.0, duration/2, duration/2, "phenome"); // Start opening mouth
+		AdjustFacialExpression(giant, 1, 0.5, duration/2, duration/2, "phenome"); // Open it wider
+
+		AdjustFacialExpression(giant, 0, 0.80, duration/2, duration/2, "modifier"); // blink L
+		AdjustFacialExpression(giant, 1, 0.80, duration/2, duration/2, "modifier"); // blink R
+
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!giantHandle) {
+				return false;
+			}
+			float finish = Time::WorldTimeElapsed();
+			auto giantref = giantHandle.get().get();
+			float timepassed = finish - start;
+
+			if (timepassed >= duration) {
+				AdjustFacialExpression(giant, 0, 0.0, duration/2, duration/2, "phenome"); // Start opening mouth
+				AdjustFacialExpression(giant, 1, 0.0, duration/2, duration/2, "phenome"); // Open it wider
+
+				AdjustFacialExpression(giant, 0, 0.0, duration/2, duration/2, "modifier"); // blink L
+				AdjustFacialExpression(giant, 1, 0.0, duration/2, duration/2, "modifier"); // blink R
+				return false;
+			}
+			return true;
+		});
+	}
+
 	void Task_FacialEmotionTask_Moan(Actor* giant, float duration, std::string_view naming) {
 		ActorHandle giantHandle = giant->CreateRefHandle();
 

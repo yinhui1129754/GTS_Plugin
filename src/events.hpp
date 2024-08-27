@@ -43,6 +43,13 @@ namespace Gts {
 		Dragon,
 	};
 
+	enum class AttachToNode {
+		None,
+		Cleavage,
+		ObjectA,
+		ObjectB,
+	};
+
 	enum class ShrinkSource {
 		Other,
 		Magic,

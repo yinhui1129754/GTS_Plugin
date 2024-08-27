@@ -150,7 +150,6 @@ namespace Gts {
 			saved_data->buttcrush_max_size += value * scale;
 
 			if (!reset && GetGrowthCount(giant) <= 1) {
-				log::info("Recording default growth size");
 				RecordStartButtCrushSize(giant);
 			}
 

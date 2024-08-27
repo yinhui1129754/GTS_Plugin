@@ -188,8 +188,6 @@ namespace {
 					PlayMoanSound(giant, 1.0); // play timed sound. Timer is a must else we moan 10 times at once for example.
 					Task_FacialEmotionTask_Moan(giant, 2.0, "Vore");
 				}
-
-				log::info("Finished Vore, natural_scale: {}", natural_scale);
 			}
 		}
 	}

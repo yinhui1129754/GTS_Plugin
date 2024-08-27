@@ -60,6 +60,8 @@ namespace Gts {
 	bool IsGtsBusy(Actor* actor);
 
 	bool IsStomping(Actor* actor);
+	bool IsInCleavageState(Actor* actor);
+	bool IsInsideCleavage(Actor* actor);
 	bool IsTrampling(Actor* actor);
 
 	bool CanDoCombo(Actor* actor);
@@ -114,6 +116,9 @@ namespace Gts {
 	bool IsDebugEnabled();
 	bool CanDoDamage(Actor* giant, Actor* tiny, bool HoldCheck);
 
+	void Attachment_SetTargetNode(Actor* giant, AttachToNode Node);
+	AttachToNode Attachment_GetTargetNode(Actor* giant);
+	
 	void ControlAnother(Actor* target, bool reset);
 	Actor* GetPlayerOrControlled();
 

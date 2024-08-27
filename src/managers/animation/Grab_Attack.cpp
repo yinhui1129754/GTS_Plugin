@@ -82,7 +82,7 @@ namespace {
 			ModSizeExperience(giant, experience);
 			AddSMTDuration(giant, 1.0);
 
-            Utils_CrushTask(giant, grabbedActor, bonus, true);
+            Utils_CrushTask(giant, grabbedActor, bonus, true, true, DamageSource::HandCrushed, QuestStage::HandCrush);
 		}
 	}
 

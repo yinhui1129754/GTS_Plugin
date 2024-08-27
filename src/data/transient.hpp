@@ -80,6 +80,8 @@ namespace Gts {
 
 		TESObjectREFR* disable_collision_with;
 		TESObjectREFR* Throw_Offender;
+
+		AttachToNode AttachmentNode;
 	};
 
 	class Transient : public EventListener {

@@ -73,6 +73,7 @@ namespace Gts {
 
 	void AbsorbShout_BuffCaster(Actor* giantref, Actor* tinyref);
 	void Task_TrackSizeTask(Actor* giant, Actor* tiny, std::string_view naming);
+	void Task_FacialEmotionTask_OpenMouth(Actor* giant, float duration, std::string_view naming);
 	void Task_FacialEmotionTask_Moan(Actor* giant, float duration, std::string_view naming);
 	void Task_FacialEmotionTask_Smile(Actor* giant, float duration, std::string_view naming);
 

@@ -88,10 +88,9 @@ namespace {
 
 	void ApplyPitchRotation(Actor* actor, float pitch) {
 		auto charCont = actor->GetCharController();
-		if (!charCont) {
-			return;
+		if (charCont) {
+			charCont->pitchAngle = pitch;
 		}
-		charCont->pitchAngle = pitch;
 		//log::info("Pitch: {}", charCont->pitchAngle);
 	}
 
@@ -117,6 +116,10 @@ namespace {
 			}
 			auto giantref = gianthandle.get().get();
 			auto tinyref = tinyhandle.get().get();
+
+			if (!tinyref) {
+				return false;
+			}
 
 			float LPosX = 0.0f;
 			float LPosY = 0.0f;
@@ -440,7 +443,7 @@ namespace {
 
 namespace Gts {
 
-	void Utils_CrushTask(Actor* giant, Actor* grabbedActor, float bonus, bool do_sound) {
+	void Utils_CrushTask(Actor* giant, Actor* grabbedActor, float bonus, bool do_sound, bool stagger, DamageSource source, QuestStage stage) {
         
         auto tinyref = grabbedActor->CreateRefHandle();
         auto giantref = giant->CreateRefHandle();
@@ -483,9 +486,9 @@ namespace Gts {
                 SetBetweenBreasts(tiny, false);
                 StartCombat(tiny, giantess);
                 
-                AdvanceQuestProgression(giantess, tiny, QuestStage::HandCrush, 1.0, false);
+                AdvanceQuestProgression(giantess, tiny, stage, 1.0, false);
                 
-                PrintDeathSource(giantess, tiny, DamageSource::HandCrushed);
+                PrintDeathSource(giantess, tiny, source);
             } else {
 				if (do_sound) {
 					if (!LessGore()) {
@@ -495,7 +498,9 @@ namespace Gts {
 						Runtime::PlaySoundAtNode("SoftHandAttack", giantess, 1.0, 1.0, "NPC L Hand [LHnd]");
 					}
 				}
-                StaggerActor(giantess, tiny, 0.75f);
+				if (stagger) {
+                	StaggerActor(giantess, tiny, 0.75f);
+				}
             }
         });
     }
@@ -548,7 +553,7 @@ namespace Gts {
 			ModSizeExperience(giant, experience);
 			AddSMTDuration(giant, 1.0);
 
-            Utils_CrushTask(giant, grabbed, bonus, false);
+            Utils_CrushTask(giant, grabbed, bonus, false, true, DamageSource::HandCrushed, QuestStage::HandCrush);
         }
     }
 
@@ -559,6 +564,61 @@ namespace Gts {
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		TaskManager::Cancel(name);
 		Grab::Release(giant);
+	}
+
+	void Grab::ReattachTiny(TESObjectCELL* cell) {
+		Actor* giant = GetPlayerOrControlled();
+		if (giant) {
+			Actor* tiny = Grab::GetHeldActor(giant);
+			if (tiny) {
+				if (cell) {
+					auto GiantCell = giant->GetParentCell();
+					if (GiantCell && cell == GiantCell) {
+						auto HandNode = find_node(giant, "NPC L Hand [LHnd]");
+						if (HandNode) {
+							//NiPoint3 GiantDist = HandNode->world.translate;
+							//NiPoint3 TinyDist = tiny->GetPosition();
+
+							//float distance = (GiantDist - TinyDist).Length();
+							//if (distance > 2048) {
+								log::info("Moving tiny to giant");
+								tiny->MoveTo(giant);
+
+								float Start = Time::WorldTimeElapsed();
+								std::string name = std::format("Reattach_{}", tiny->formID);
+								ActorHandle gianthandle = giant->CreateRefHandle();
+								ActorHandle tinyhandle = tiny->CreateRefHandle();
+								TaskManager::Run(name, [=](auto& progressData) {
+									if (!gianthandle) {
+										return false;
+									}
+									if (!tinyhandle) {
+										return false;
+									}
+									auto giantref = gianthandle.get().get();
+									auto tinyref = tinyhandle.get().get();
+
+									float Finish = Time::WorldTimeElapsed();
+									float timepassed = Finish - Start;
+									if (timepassed > 0.33) {
+										DisableCollisions(tinyref, giantref);
+										if (IsBetweenBreasts(tinyref)) {
+											if (IsHostile(giantref, tinyref)) {
+												AnimationManager::StartAnim("Breasts_Idle_Unwilling", tinyref);
+											} else {
+												AnimationManager::StartAnim("Breasts_Idle_Willing", tinyref);
+											}
+										}
+										return false;
+									}
+									return true;
+								});
+							//}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	void Grab::AttachActorTask(Actor* giant, Actor* tiny) {
@@ -615,7 +675,7 @@ namespace Gts {
 				}
 			}
 
-			if (IsBeingEaten(tinyref)) {
+			if (IsBeingEaten(tinyref) && !IsInCleavageState(giantref)) {
 				if (!AttachToObjectA(gianthandle, tinyhandle)) {
 					// Unable to attach
 					return false;
@@ -627,6 +687,18 @@ namespace Gts {
 					tinyref->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, restore);
 					tinyref->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kStamina, restore);
 				}
+
+				ShutUp(tinyref);
+				ShutUp(giantref);	
+
+				if (Attachment_GetTargetNode(giant) == AttachToNode::ObjectB) { // Used in Cleavage state
+					if (!AttachToObjectB(gianthandle, tinyhandle)) {
+						Grab::Release(giantref);
+						return false;
+					}
+					return true;
+				}
+				
 				if (hostile) {
 					DamageAV(tinyref, ActorValue::kStamina, restore * 2);
 				}

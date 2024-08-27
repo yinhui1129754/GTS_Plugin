@@ -16,7 +16,7 @@ namespace Gts {
 			float strength;
 	};
 
-	void Utils_CrushTask(Actor* giant, Actor* grabbedActor, float bonus, bool do_sound);
+	void Utils_CrushTask(Actor* giant, Actor* grabbedActor, float bonus, bool do_sound, bool stagger, DamageSource source, QuestStage stage);
 
 	class Grab : public EventListener
 	{
@@ -30,6 +30,7 @@ namespace Gts {
 
 			static void DamageActorInHand(Actor* giant, float Damage);
 			static void DetachActorTask(Actor* giant);
+			static void ReattachTiny(TESObjectCELL* cell);
 			static void AttachActorTask(Actor* giant, Actor* tiny);
 			virtual void Reset() override;
 			virtual void ResetActor(Actor* actor) override;

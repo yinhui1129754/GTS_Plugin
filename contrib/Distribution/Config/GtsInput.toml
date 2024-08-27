@@ -296,6 +296,66 @@ duration = 0.0
 
 
 #========================================================
+#============ C L E A V A G E
+#========================================================
+
+[[InputEvent]]
+name = "CleavageEnter"
+keys = ["LSHIFT", "H"]
+trigger = "release"
+exclusive = false
+
+# Enter cleavage state
+# WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
+
+[[InputEvent]]
+name = "CleavageExit"
+keys = ["RMB"]
+exclusive = true
+
+# Leave cleavage state
+# WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
+
+[[InputEvent]]
+name = "CleavageLightAttack"
+keys = ["LMB"]
+trigger = "release"
+duration = 0.0
+exclusive = true
+
+# Attack tiny with breasts
+# WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
+
+[[InputEvent]]
+name = "CleavageHeavyAttack"
+keys = ["LMB"]
+trigger = "continuous"
+duration = 0.33
+exclusive = true
+
+# Heavily Attack tiny with the breasts
+# WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
+
+[[InputEvent]]
+name = "CleavageAbsorb"
+keys = ["S"]
+exclusive = false
+duration = 0.5
+# Absorb the tiny between the cleavage
+# WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
+
+[[InputEvent]]
+name = "CleavageVore"
+keys = ["V"]
+trigger = "continuous"
+exclusive = false
+duration = 0.33
+
+# Eat the tiny
+# WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
+
+
+#========================================================
 #============ H U G S
 #========================================================
 [[InputEvent]]

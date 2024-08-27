@@ -45,7 +45,7 @@ namespace {
 	}
 
 	void Task_UpdatePhenome(Actor* giant, int phenome, float halflife, float target) {
-		std::string name = std::format("Phenome_{}_{}_{}", giant->formID, phenome, target);
+		std::string name = std::format("Phenome_{}_{}_{}_{}", giant->formID, phenome, target, Time::WorldTimeElapsed());
 		ActorHandle giantHandle = giant->CreateRefHandle();
 
 		float modified = 0.0;

@@ -4,6 +4,8 @@
 #include "managers/animation/AnimationManager.hpp"
 #include "managers/animation/Grab_Sneak_Vore.hpp"
 #include "managers/animation/Sneak_KneeCrush.hpp"
+#include "managers/animation/CleavageEvents.hpp"
+#include "managers/animation/CleavageState.hpp"
 #include "managers/animation/Vore_Standing.hpp"
 #include "managers/animation/ThighSandwich.hpp"
 #include "managers/animation/Sneak_Swipes.hpp"
@@ -84,6 +86,11 @@ namespace Gts {
 		Animation_SneakSlam_Strong::RegisterEvents();
 		Animation_SneakSlam_FingerGrind::RegisterEvents();
 		Animation_SneakSlam_FingerGrind::RegisterTriggers();
+
+		Animation_Cleavage::RegisterEvents();
+		Animation_Cleavage::RegisterTriggers();
+
+		Animation_CleavageEvents::RegisterEvents();
 
 		Animation_TinyCalamity::RegisterEvents();
 		Animation_TinyCalamity::RegisterTriggers();
