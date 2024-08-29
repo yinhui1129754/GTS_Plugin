@@ -22,6 +22,7 @@
 #include "managers/Rumble.hpp"
 #include "managers/tremor.hpp"
 #include "ActionSettings.hpp"
+#include "utils/looting.hpp"
 #include "managers/vore.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
@@ -39,6 +40,18 @@ namespace {
 		"L Breast01",
 		"R Breast01",
 	};
+
+    void PrintAbsorbed(Actor* giant, Actor* tiny) {
+        int random = rand() % 6;
+        if (random <= 1) {
+            Cprint("{} suddenly disappeared between the breasts of {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName());
+        } else if (random == 2) {
+            Cprint("Mountains of {} greedily absorbed {}", giant->GetDisplayFullName(), tiny->GetDisplayFullName());
+        } else if (random >= 3) {
+            Cprint("{} became one with the breasts of {}", tiny->GetDisplayFullName(), giant->GetDisplayFullName());
+        }  
+    }
+
     void ScaleBreasts(Actor* giant, float damage) {
         for (auto Nodes: BREAST_NODES) {
             auto node = find_node(giant, Nodes);
@@ -94,11 +107,12 @@ namespace {
                 SizeHitEffects::GetSingleton().BreakBones(giant, tiny, 0.15, 6);
                 if (!IsTeammate(tiny)) {
                     InflictSizeDamage(giant, tiny, damage);
+                    DamageAV(tiny, ActorValue::kStamina, damage * 0.25);
                 } else {
                     tiny->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, damage * 5);
                 }
 
-                DamageAV(giant, ActorValue::kHealth, -damage * 0.5);
+                DamageAV(giant, ActorValue::kHealth, -damage * 0.33);
             }
 			
 			Rumbling::Once("GrabAttack", tiny, Rumble_Grab_Hand_Attack * bonus * damage_mult, 0.05, "NPC Root [Root]", 0.0);
@@ -157,14 +171,9 @@ namespace {
 			SetBeingEaten(tiny, true);
 			Vore::GetSingleton().ShrinkOverTime(giant, tiny, 0.1);
 		}
-		Task_FacialEmotionTask_OpenMouth(giant, 0.80 / AnimationManager::GetAnimSpeed(giant), "PrepareVore");
+		Task_FacialEmotionTask_OpenMouth(giant, 0.66 / AnimationManager::GetAnimSpeed(giant), "PrepareVore");
     }
     void GTS_BS_CloseMouth(const AnimationEventData& data) {
-		/*AdjustFacialExpression(&data.giant, 0, 0.0, "phenome"); // Close mouth
-		AdjustFacialExpression(&data.giant, 1, 0.0, "phenome"); // Close it
-
-		AdjustFacialExpression(&data.giant, 0, 0.0, "modifier"); // blink L
-		AdjustFacialExpression(&data.giant, 1, 0.0, "modifier"); // blink R*/
     }
     void GTS_BS_PrepareEat(const AnimationEventData& data) {
         auto tiny = Grab::GetHeldActor(&data.giant);
@@ -201,10 +210,6 @@ namespace {
 			}
 			giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
 			giant->SetGraphVariableInt("GTS_Grab_State", 0);
-            //SpawnCustomParticle(giant, ParticleType::Hearts, NiPoint3, "NPC COM [COM ]", 1.5);
-			//AnimationManager::StartAnim("TinyDied", giant);
-			//BlockFirstPerson(giant, false);
-			//ManageCamera(&data.giant, false, CameraTracking::Grab_Left);
 			SetBeingHeld(tiny, false);
 			Grab::DetachActorTask(giant);
 			Grab::Release(giant);
@@ -212,9 +217,81 @@ namespace {
     }
 
     /// Absorb
-    void GTS_BS_AbsorbStart(const AnimationEventData& data) {}
-    void GTS_BS_AbsorbPulse(const AnimationEventData& data) {}
-    void GTS_BS_FinishAbsorb(const AnimationEventData& data) {}
+    void GTS_BS_AbsorbStart(const AnimationEventData& data) {
+        Task_FacialEmotionTask_Smile(&data.giant, 3.2 / AnimationManager::GetAnimSpeed(&data.giant), "AbsorbStart");
+    }
+    void GTS_BS_AbsorbPulse(const AnimationEventData& data) {
+        auto giant = &data.giant;
+		auto tiny = Grab::GetHeldActor(&data.giant);
+		if (tiny) {
+            float scale_limit = 0.010;
+
+            Rumbling::Once("AbsorbPulse_R", giant, 1.1, 0.0, "L Breast02", 0.0);
+            Rumbling::Once("AbsorbPulse_L", giant, 1.1, 0.0, "R Breast02", 0.0);
+
+            Runtime::PlaySoundAtNode("ThighSandwichImpact", tiny, 0.15, 1.0, "NPC Root [Root]");
+
+            bool Blocked = IsActionOnCooldown(giant, CooldownSource::Emotion_Laugh);
+            if (!Blocked) {
+                ApplyActionCooldown(giant, CooldownSource::Emotion_Laugh);
+                PlayLaughSound(giant, 0.6, 1);
+            }
+
+            NiPoint3 Position = GetHeartPosition(giant, tiny);
+            Position.z -= 35 * get_visual_scale(giant);
+
+            SpawnCustomParticle(giant, ParticleType::Hearts, Position, "NPC COM [COM ]", get_visual_scale(giant) * 0.33);
+
+            if (get_target_scale(tiny) > scale_limit) {
+                set_target_scale(tiny, get_target_scale(tiny) * 0.66);
+                DamageAV(giant, ActorValue::kHealth, -get_target_scale(tiny) * 10);
+                DamageAV(tiny, ActorValue::kStamina, 42);
+            } else {
+                set_target_scale(tiny, scale_limit);
+            }
+        }
+    }
+    void GTS_BS_FinishAbsorb(const AnimationEventData& data) {
+        Actor* giant = &data.giant;
+        Task_FacialEmotionTask_Moan(giant, 1.6 / AnimationManager::GetAnimSpeed(giant), "AbsorbMoan");
+        auto tiny = Grab::GetHeldActor(giant);
+		if (tiny) {
+            NiPoint3 Position = GetHeartPosition(giant, tiny);
+            Position.z -= 35 * get_visual_scale(giant);
+
+            SpawnCustomParticle(giant, ParticleType::Hearts, Position, "NPC COM [COM ]", get_visual_scale(giant) * 0.75);
+            PlayMoanSound(giant, 0.8);
+
+            AdvanceQuestProgression(giant, tiny, QuestStage::HugSteal, 1.0, false);
+
+            Rumbling::Once("AbsorbTiny_R", giant, 1.6, 0.05, "L Breast02", 0.0);
+            Rumbling::Once("AbsorbTiny_L", giant, 1.6, 0.05, "R Breast02", 0.0);
+
+            DamageAV(giant, ActorValue::kHealth, -30); // Heal GTS
+            ModSizeExperience(giant, 0.16);
+            PrintAbsorbed(giant, tiny);
+            KillActor(giant, tiny);   
+
+            std::string taskname = std::format("MergeWithTiny{}", tiny->formID);
+            ActorHandle giantHandle = giant->CreateRefHandle();
+            ActorHandle tinyHandle = tiny->CreateRefHandle();
+            TaskManager::RunOnce(taskname, [=](auto& update){
+                if (!tinyHandle) {
+                    return;
+                }
+                if (!giantHandle) {
+                    return;
+                }
+
+                auto giant = giantHandle.get().get();
+                auto tiny = tinyHandle.get().get();
+                TransferInventory(tiny, giant, get_visual_scale(tiny) * GetSizeFromBoundingBox(tiny), false, true, DamageSource::Vored, true);
+                // Actor Reset is done inside TransferInventory:StartResetTask!
+            });
+
+            Disintegrate(tiny, false);  
+        }
+    }
     void GTS_BS_GrowBoobs(const AnimationEventData& data) {}
 
     /// Utils

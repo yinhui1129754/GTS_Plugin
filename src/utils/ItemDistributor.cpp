@@ -92,7 +92,6 @@ namespace Gts {
             case ChestType::BossChest: {
                 for (auto chest: BossChests) {
                     if (chest == form->formID) {
-                        log::info("BossChest Found");
                         return form->As<RE::TESContainer>();
                     }
                 }
@@ -101,7 +100,6 @@ namespace Gts {
             case ChestType::NormalChest: {
                 for (auto chest: NormalChests) {
                     if (chest == form->formID) {
-                        log::info("NormalChest Found");
                         return form->As<RE::TESContainer>();
                     }
                 }
@@ -110,7 +108,6 @@ namespace Gts {
             case ChestType::MiscChest: {
                 for (auto chest: MiscChests) {
                     if (chest == form->formID) {
-                        log::info("MiscChest Found");
                         return form->As<RE::TESContainer>();
                     }
                 }
@@ -140,13 +137,11 @@ namespace Gts {
                     for (std::uint32_t i = 0; i < container_Boss->numContainerObjects; ++i) {
                         if (const auto entry = container_Boss->containerObjects[i]) {
                             if (entry->obj == item->As<RE::TESBoundObject>()) {
-                                log::info("Item already exists");
                                 WasAdded = true;
                             }
                         }
                     }
                     if (!WasAdded) {
-                        log::info("Adding items to container");
                         container_Boss->AddObjectToContainer(item->As<RE::TESBoundObject>(), 1, nullptr);
                     }
                 }
@@ -163,7 +158,6 @@ namespace Gts {
         }
 
         if (Forms.empty()) {
-            log::info("Forms are empty");
             return {};
         }
 

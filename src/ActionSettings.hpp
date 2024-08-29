@@ -25,7 +25,7 @@ namespace Gts {
 //-----------------------------------------Default Damage Values
 
     const float Damage_Grab_Attack = 4.8f;
-    const float Damage_Breast_Squish = 2.6f;
+    const float Damage_Breast_Squish = 2.2f;
     ////////////////Defaults
 
     const float Damage_Default_Underfoot = 0.003f; // when we just stand still

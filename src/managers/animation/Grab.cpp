@@ -562,59 +562,61 @@ namespace Gts {
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0); // Tell behaviors 'we have nothing in our hands'. A must.
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
+		Attachment_SetTargetNode(giant, AttachToNode::None);
 		TaskManager::Cancel(name);
 		Grab::Release(giant);
 	}
 
-	void Grab::ReattachTiny(TESObjectCELL* cell) {
+	void Grab::ReattachTiny(FormID cell) {
 		Actor* giant = GetPlayerOrControlled();
 		if (giant) {
 			Actor* tiny = Grab::GetHeldActor(giant);
 			if (tiny) {
-				if (cell) {
-					auto GiantCell = giant->GetParentCell();
-					if (GiantCell && cell == GiantCell) {
-						auto HandNode = find_node(giant, "NPC L Hand [LHnd]");
-						if (HandNode) {
-							//NiPoint3 GiantDist = HandNode->world.translate;
-							//NiPoint3 TinyDist = tiny->GetPosition();
+				auto GiantCell = giant->GetParentCell();
 
-							//float distance = (GiantDist - TinyDist).Length();
-							//if (distance > 2048) {
-								log::info("Moving tiny to giant");
-								tiny->MoveTo(giant);
+				if (GiantCell && cell == GiantCell->formID) {
+					auto HandNode = find_node(giant, "NPC L Hand [LHnd]");
+					if (HandNode) {
+						//NiPoint3 GiantDist = HandNode->world.translate;
+						//NiPoint3 TinyDist = tiny->GetPosition();
+						//float distance = (GiantDist - TinyDist).Length();
 
-								float Start = Time::WorldTimeElapsed();
-								std::string name = std::format("Reattach_{}", tiny->formID);
-								ActorHandle gianthandle = giant->CreateRefHandle();
-								ActorHandle tinyhandle = tiny->CreateRefHandle();
-								TaskManager::Run(name, [=](auto& progressData) {
-									if (!gianthandle) {
-										return false;
-									}
-									if (!tinyhandle) {
-										return false;
-									}
-									auto giantref = gianthandle.get().get();
-									auto tinyref = tinyhandle.get().get();
+						log::info("Moving tiny to giant");
+						//tiny->MoveTo(giant);
 
-									float Finish = Time::WorldTimeElapsed();
-									float timepassed = Finish - Start;
-									if (timepassed > 0.33) {
-										DisableCollisions(tinyref, giantref);
-										if (IsBetweenBreasts(tinyref)) {
-											if (IsHostile(giantref, tinyref)) {
-												AnimationManager::StartAnim("Breasts_Idle_Unwilling", tinyref);
-											} else {
-												AnimationManager::StartAnim("Breasts_Idle_Willing", tinyref);
-											}
-										}
-										return false;
+						float Start = Time::WorldTimeElapsed();
+						std::string name = std::format("Reattach_{}", tiny->formID);
+						ActorHandle gianthandle = giant->CreateRefHandle();
+						ActorHandle tinyhandle = tiny->CreateRefHandle();
+						TaskManager::Run(name, [=](auto& progressData) {
+							if (!gianthandle) {
+								return false;
+							}
+							if (!tinyhandle) {
+								return false;
+							}
+							auto giantref = gianthandle.get().get();
+							auto tinyref = tinyhandle.get().get();
+
+							float Finish = Time::WorldTimeElapsed();
+							float timepassed = Finish - Start;
+							if (timepassed > 0.25) {
+								tinyref->MoveTo(giantref);
+							}
+							if (timepassed > 0.80) { // One last time
+								tinyref->MoveTo(giantref);
+								DisableCollisions(tinyref, giantref);
+								if (IsBetweenBreasts(tinyref)) {
+									if (IsHostile(giantref, tinyref)) {
+										AnimationManager::StartAnim("Breasts_Idle_Unwilling", tinyref);
+									} else {
+										AnimationManager::StartAnim("Breasts_Idle_Willing", tinyref);
 									}
-									return true;
-								});
-							//}
-						}
+								}
+								return false;
+							}
+							return true;
+						});
 					}
 				}
 			}
@@ -646,9 +648,7 @@ namespace Gts {
 			}
 
 			// Exit on death
-			float scale_gts = get_target_scale(giant) * GetSizeFromBoundingBox(giant);
-			float scale_tiny = get_target_scale(tiny) * GetSizeFromBoundingBox(tiny);
-			float sizedifference = scale_gts/scale_tiny;
+			float sizedifference = GetSizeDifference(giantref, tinyref, SizeType::VisualScale, true, false);
 
 			ForceRagdoll(tinyref, false); 
 
@@ -658,9 +658,16 @@ namespace Gts {
 			giantref->GetGraphVariableBool("GTS_IsGrabAttacking", Attacking);
 			if (!Attacking || IsBeingEaten(tinyref)) {
 				if (giantref->IsDead() || tinyref->IsDead() || GetAV(tinyref, ActorValue::kHealth) <= 0.0 || sizedifference < Action_Grab || GetAV(giantref, ActorValue::kStamina) < 2.0) {
+					log::info("Canceled Grab on {}. Reasons below", tinyref->GetDisplayFullName());
+					log::info("Giant Is Dead: {}", giantref->IsDead());
+					log::info("Tiny is dead {}", tinyref->IsDead());
+					log::info("Tiny health is < 0: {}", GetAV(tinyref, ActorValue::kHealth) <= 0.0);
+					log::info("SizeDifference < Threshold: {}, Difference: {}", sizedifference < Action_Grab, sizedifference);
+					log::info("Giant stamina is < 2: {}", GetAV(giantref, ActorValue::kStamina) < 2.0);
 					PushActorAway(giantref, tinyref, 1.0);
 					tinyref->SetGraphVariableBool("GTSBEH_T_InStorage", false);
 					SetBetweenBreasts(tinyref, false);
+					SetBeingEaten(tinyref, false);
 					SetBeingHeld(tinyref, false);
 					giantref->SetGraphVariableInt("GTS_GrabbedTiny", 0); // Tell behaviors 'we have nothing in our hands'. A must.
 					giantref->SetGraphVariableInt("GTS_Grab_State", 0);
@@ -675,9 +682,10 @@ namespace Gts {
 				}
 			}
 
-			if (IsBeingEaten(tinyref) && !IsInCleavageState(giantref)) {
+			if (IsBeingEaten(tinyref) && !IsBetweenBreasts(tinyref) && !IsInCleavageState(giantref)) {
 				if (!AttachToObjectA(gianthandle, tinyhandle)) {
 					// Unable to attach
+					log::info("Can't attach to ObjectA");
 					return false;
 				}
 			} else if (IsBetweenBreasts(tinyref)) {
@@ -691,9 +699,11 @@ namespace Gts {
 				ShutUp(tinyref);
 				ShutUp(giantref);	
 
-				if (Attachment_GetTargetNode(giant) == AttachToNode::ObjectB) { // Used in Cleavage state
+				if (Attachment_GetTargetNode(giantref) == AttachToNode::ObjectB) { // Used in Cleavage state
 					if (!AttachToObjectB(gianthandle, tinyhandle)) {
+						Attachment_SetTargetNode(giantref, AttachToNode::None);
 						Grab::Release(giantref);
+						log::info("Can't attach to ObjectB");
 						return false;
 					}
 					return true;
@@ -705,6 +715,7 @@ namespace Gts {
 				if (!AttachToCleavage(gianthandle, tinyhandle)) {
 					// Unable to attach
 					Grab::Release(giantref);
+					log::info("Can't attach to Cleavage");
 					return false;
 				}
 			} else if (AttachToHand(gianthandle, tinyhandle)) {
@@ -713,6 +724,9 @@ namespace Gts {
 			} else {
 				if (!AttachToHand(gianthandle, tinyhandle)) {
 					// Unable to attach
+					log::info("Can't attach to hand");
+					Attachment_SetTargetNode(giantref, AttachToNode::None);
+					Grab::Release(giantref);
 					return false;
 				}
 			}

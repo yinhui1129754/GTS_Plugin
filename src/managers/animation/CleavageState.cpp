@@ -52,6 +52,31 @@ IsInCleavageState(Actor* actor)
 */
 
 namespace {
+    void AttemptAbsorption() {
+        Actor* player = GetPlayerOrControlled();
+        if (IsInCleavageState(player)) {
+            auto tiny = Grab::GetHeldActor(player);
+            if (tiny) {
+                float HpThreshold = GetHugCrushThreshold(player, tiny) * 0.2;
+                float health = GetHealthPercentage(tiny);
+                if (HasSMT(player)) {
+                    AnimationManager::StartAnim("Cleavage_Absorb", player);
+                    AddSMTPenalty(player, 10.0); // Mostly called inside ShrinkUntil
+                    DamageAV(player, ActorValue::kStamina, 60);
+                    return;
+                } else if (health <= HpThreshold) {
+                    AnimationManager::StartAnim("Cleavage_Absorb", player);
+                    return;
+                } else {
+                    std::string message = std::format("{} is too healthy to be absorbed by breasts", tiny->GetDisplayFullName());
+                    shake_camera(player, 0.45, 0.30);
+                    TiredSound(player, message);
+
+                    Notify("Health: {:.0f}%; Requirement: {:.0f}%", health * 100.0, HpThreshold * 100.0);
+                }
+            }
+        }
+    }
     void PassAnimation(std::string animation, bool check_cleavage) {
         Actor* player = GetPlayerOrControlled();
         if (player) {
@@ -63,7 +88,13 @@ namespace {
     }
 
     void CleavageEnterEvent(const InputEventData& data) {
-        PassAnimation("Cleavage_EnterState", false);
+        Actor* giant = PlayerCharacter::GetSingleton();
+        if (giant) {
+            Actor* tiny = Grab::GetHeldActor(giant);
+            if (tiny && IsBetweenBreasts(tiny)) {
+                PassAnimation("Cleavage_EnterState", false);
+            }
+        }
     }
     void CleavageExitEvent(const InputEventData& data) {
         PassAnimation("Cleavage_ExitState", true);
@@ -75,7 +106,7 @@ namespace {
         PassAnimation("Cleavage_HeavyAttack", true);
     }
     void ClevageAbsorbEvent(const InputEventData& data) {
-        PassAnimation("Cleavage_Absorb", true);
+        AttemptAbsorption();
     }
     void ClevageVoreEvent(const InputEventData& data) {
         PassAnimation("Cleavage_Vore", true);

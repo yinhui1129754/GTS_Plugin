@@ -241,7 +241,11 @@ namespace {
 				AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
 				return;
 			} else {
-				Notify("{} is too healthy to be hug crushed: {:.2f}/{:.2f}", huggedActor->GetDisplayFullName(), health, HpThreshold);
+				std::string message = std::format("{} is too healthy to be hug crushed", huggedActor->GetDisplayFullName());
+				shake_camera(player, 0.45, 0.30);
+				TiredSound(player, message);
+
+				Notify("Health: {:.0f}%; Requirement: {:.0f}%", health * 100.0, HpThreshold * 100.0);
 			}
 		}
 	}
