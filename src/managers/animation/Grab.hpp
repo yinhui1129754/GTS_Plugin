@@ -30,7 +30,7 @@ namespace Gts {
 
 			static void DamageActorInHand(Actor* giant, float Damage);
 			static void DetachActorTask(Actor* giant);
-			static void ReattachTiny(FormID cell);
+			static void ReattachTiny(Actor* giant, Actor* tiny);
 			static void AttachActorTask(Actor* giant, Actor* tiny);
 			virtual void Reset() override;
 			virtual void ResetActor(Actor* actor) override;

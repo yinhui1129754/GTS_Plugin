@@ -25,6 +25,8 @@ namespace {
 	const double HANDDAMAGE_COOLDOWN = 0.6f;
 	const double THIGHDAMAGE_COOLDOWN = 1.2f;
 
+    const double ABSORB_OTHER_COOLDOWN = 30.0f;
+
 	const double HEALTHGATE_COOLDOWN = 60.0f;
 	const double SCARE_COOLDOWN = 6.0f;
 	const double BUTTCRUSH_COOLDOWN = 30.0f;
@@ -38,6 +40,15 @@ namespace {
     const double AI_GROWTH_COOLDOWN = 2.0f;
     const double SHRINK_OUTBURST_COOLDOWN = 18.0f;
 
+    float Calculate_AbsorbCooldown(Actor* giant) {
+        float mastery = std::clamp(GetGtsSkillLevel(giant) * 0.01f, 0.0f, 1.0f) * 0.73;
+        float reduction = 1.0 - mastery; // Up to 8.1 seconds at level 100
+
+        log::info("Mastery of {} is {}", giant->GetDisplayFullName(), mastery); 
+        log::info("Total Cooldown: {}", ABSORB_OTHER_COOLDOWN * reduction);
+
+        return ABSORB_OTHER_COOLDOWN * reduction;
+    }
 
     float Calculate_ButtCrushTimer(Actor* actor) {
 		bool lvl70 = Runtime::HasPerk(actor, "ButtCrush_UnstableGrowth");
@@ -118,6 +129,9 @@ namespace Gts {
             case CooldownSource::Action_Hugs:   
                 data.lastHugTime = Time::WorldTimeElapsed();
                 break;     
+            case CooldownSource::Action_AbsorbOther:
+                data.lastAbsorbTime = Time::WorldTimeElapsed();
+                break;
             case CooldownSource::Emotion_Laugh:   
                 data.lastLaughTime = Time::WorldTimeElapsed();
                 break; 
@@ -149,53 +163,55 @@ namespace Gts {
 
         switch (source) {
             case CooldownSource::Damage_Launch: 
-                return time - (data.lastLaunchTime + LAUNCH_COOLDOWN);
-                break;
+                return (data.lastLaunchTime + LAUNCH_COOLDOWN) - time;
+            break;
             case CooldownSource::Damage_Hand:
-                return time - (data.lastHandDamageTime + HANDDAMAGE_COOLDOWN);
-                break;    
+                return (data.lastHandDamageTime + HANDDAMAGE_COOLDOWN) - time;
+            break;    
             case CooldownSource::Damage_Thigh:
-                return time - (data.lastThighDamageTime + THIGHDAMAGE_COOLDOWN);
-                break;
+                return (data.lastThighDamageTime + THIGHDAMAGE_COOLDOWN) - time;
+            break;
             case CooldownSource::Push_Basic:
-                return time - (data.lastPushTime + PUSH_COOLDOWN);
-                break;   
+                return (data.lastPushTime + PUSH_COOLDOWN) - time;
+            break;   
             case CooldownSource::Action_ButtCrush:
-                return time - (data.lastButtCrushTime + Calculate_ButtCrushTimer(giant));
-                break;
+                return (data.lastButtCrushTime + Calculate_ButtCrushTimer(giant)) - time;
+            break;
             case CooldownSource::Action_HealthGate:
-                return time - (data.lastHealthGateTime + HEALTHGATE_COOLDOWN);
-                break;
+                return (data.lastHealthGateTime + HEALTHGATE_COOLDOWN) - time;
+            break;
             case CooldownSource::Action_ScareOther:   
-                return time -(data.lastScareTime + SCARE_COOLDOWN);
-                break; 
+                return time -(data.lastScareTime + SCARE_COOLDOWN) - time;
+            break; 
             case CooldownSource::Action_Hugs:
-                return time - (data.lastHugTime + HUGS_COOLDOWN);
-                break;   
+                return (data.lastHugTime + HUGS_COOLDOWN) - time;
+            break;   
+            case CooldownSource::Action_AbsorbOther:
+                return (data.lastAbsorbTime + Calculate_AbsorbCooldown(giant)) - time;    
             case CooldownSource::Emotion_Laugh:   
-                return time - (data.lastLaughTime + LAUGH_COOLDOWN);
-                break; 
+                return (data.lastLaughTime + LAUGH_COOLDOWN) - time;
+            break; 
             case CooldownSource::Emotion_Moan: 
-                return time - (data.lastMoanTime + MOAN_COOLDOWN);
-                break;  
+                return (data.lastMoanTime + MOAN_COOLDOWN) - time;
+            break;  
             case CooldownSource::Misc_RevertSound: 
-                return time - (data.lastRevertTime + SOUND_COOLDOWN);
-                break;  
+                return (data.lastRevertTime + SOUND_COOLDOWN) - time;
+            break;  
             case CooldownSource::Misc_BeingHit:
-                return time - (data.lastHitTime + HIT_COOLDOWN);
-                break;    
+                return (data.lastHitTime + HIT_COOLDOWN) - time;
+            break;    
             case CooldownSource::Misc_AiGrowth:
-                return time - (data.lastGrowthTime + AI_GROWTH_COOLDOWN);
-                break;    
+                return (data.lastGrowthTime + AI_GROWTH_COOLDOWN) - time;
+            break;    
             case CooldownSource::Misc_ShrinkOutburst:
-                return time - (data.lastOutburstTime + Calculate_ShrinkOutbirstTimer(giant));
-                break;    
+                return (data.lastOutburstTime + Calculate_ShrinkOutbirstTimer(giant)) - time;
+            break;    
             case CooldownSource::Footstep_Right:
-                return time - (data.lastFootstepTime_R + Calculate_FootstepTimer(giant));
-                break;      
+                return (data.lastFootstepTime_R + Calculate_FootstepTimer(giant)) - time;
+            break;      
             case CooldownSource::Footstep_Left:
-                return time - (data.lastFootstepTime_L + Calculate_FootstepTimer(giant));
-                break;  
+                return (data.lastFootstepTime_L + Calculate_FootstepTimer(giant)) - time;
+            break;  
             }
         return 0.0;
     }
@@ -229,6 +245,9 @@ namespace Gts {
             case CooldownSource::Action_Hugs:
                 return time <= (data.lastHugTime + HUGS_COOLDOWN);
                 break;   
+            case CooldownSource::Action_AbsorbOther:
+                return time <= (data.lastAbsorbTime + Calculate_AbsorbCooldown(giant));
+                break;
             case CooldownSource::Emotion_Laugh:   
                 return time <= (data.lastLaughTime + LAUGH_COOLDOWN);
                 break; 

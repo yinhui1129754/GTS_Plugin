@@ -16,6 +16,7 @@ namespace Gts {
         Action_ButtCrush,
         Action_HealthGate,
         Action_ScareOther,
+        Action_AbsorbOther,
         Action_Hugs,
         Emotion_Laugh,
         Emotion_Moan,
@@ -36,6 +37,8 @@ namespace Gts {
         double lastButtCrushTime = -1.0e8;
         double lastScareTime = -1.0e8;
         double lastHugTime = -1.0e8;
+
+        double lastAbsorbTime = -1.0e8;
         
         double lastLaughTime = -1.0e8;
         double lastMoanTime = -1.0e8;

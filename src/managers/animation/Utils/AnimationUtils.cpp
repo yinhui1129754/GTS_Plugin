@@ -92,6 +92,26 @@ namespace Gts {
 		controlMap->enabledControls.set(RE::UserEvents::USER_EVENT_FLAG::kPOVSwitch); // Allow POV Switching
 	}
 
+	void Task_ApplyAbsorbCooldown(Actor* giant) {
+        std::string taskname = std::format("ManageCooldown_{}", giant->formID);
+        ActorHandle giantHandle = giant->CreateRefHandle();
+        TaskManager::Run(taskname, [=](auto& update){
+            if (!giantHandle) {
+                return false;
+            }
+
+            auto giant_get = giantHandle.get().get();
+            if (giant_get) {
+                if (IsInCleavageState(giant_get) || IsHugCrushing(giant_get)) {
+                    ApplyActionCooldown(giant_get, CooldownSource::Action_AbsorbOther);
+                    return true; // reapply
+                }
+                return false;
+            }
+            return false;
+        });
+    }
+
 	void Hugs_FixAnimationDesync(Actor* giant, Actor* tiny, bool reset) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {

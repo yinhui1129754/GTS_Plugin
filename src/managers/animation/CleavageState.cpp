@@ -52,22 +52,37 @@ IsInCleavageState(Actor* actor)
 */
 
 namespace {
-    void AttemptAbsorption() {
+    bool CanForceCrush(Actor* giant, Actor* huggedActor) {
+        bool ForceCrush = Runtime::HasPerkTeam(giant, "HugCrush_MightyCuddles");
+        float staminapercent = GetStaminaPercentage(giant);
+        float stamina = GetAV(giant, ActorValue::kStamina);
+        if (ForceCrush && staminapercent >= 0.50) {
+            AnimationManager::StartAnim("Cleavage_Absorb", giant);
+            DamageAV(giant, ActorValue::kStamina, stamina * 1.10);
+            return true;
+        }
+        return false;
+    }
+
+    void AttemptAbsorption(bool force) {
         Actor* player = GetPlayerOrControlled();
         if (IsInCleavageState(player)) {
             auto tiny = Grab::GetHeldActor(player);
             if (tiny) {
                 float HpThreshold = GetHugCrushThreshold(player, tiny) * 0.2;
                 float health = GetHealthPercentage(tiny);
-                if (HasSMT(player)) {
+                if (health <= HpThreshold) {
                     AnimationManager::StartAnim("Cleavage_Absorb", player);
-                    AddSMTPenalty(player, 10.0); // Mostly called inside ShrinkUntil
-                    DamageAV(player, ActorValue::kStamina, 60);
                     return;
-                } else if (health <= HpThreshold) {
+                } else if (HasSMT(player)) {
+                    DamageAV(player, ActorValue::kStamina, 60);
                     AnimationManager::StartAnim("Cleavage_Absorb", player);
+                    AddSMTPenalty(player, 10.0);
                     return;
                 } else {
+                    if (CanForceCrush(player, tiny)) {
+                        return;
+                    }
                     std::string message = std::format("{} is too healthy to be absorbed by breasts", tiny->GetDisplayFullName());
                     shake_camera(player, 0.45, 0.30);
                     TiredSound(player, message);
@@ -75,7 +90,7 @@ namespace {
                     Notify("Health: {:.0f}%; Requirement: {:.0f}%", health * 100.0, HpThreshold * 100.0);
                 }
             }
-        }
+        } 
     }
     void PassAnimation(std::string animation, bool check_cleavage) {
         Actor* player = GetPlayerOrControlled();
@@ -105,8 +120,11 @@ namespace {
     void ClevageHeavyAttackEvent(const InputEventData& data) {
         PassAnimation("Cleavage_HeavyAttack", true);
     }
+    void CleavageForceAbsorbEvent(const InputEventData& data) {
+        AttemptAbsorption(true);
+    }
     void ClevageAbsorbEvent(const InputEventData& data) {
-        AttemptAbsorption();
+        AttemptAbsorption(false);
     }
     void ClevageVoreEvent(const InputEventData& data) {
         PassAnimation("Cleavage_Vore", true);
@@ -122,8 +140,6 @@ namespace Gts
         InputManager::RegisterInputEvent("CleavageHeavyAttack", ClevageHeavyAttackEvent);
         InputManager::RegisterInputEvent("CleavageAbsorb", ClevageAbsorbEvent);
         InputManager::RegisterInputEvent("CleavageVore", ClevageVoreEvent);
-		//AnimationManager::RegisterEvent("GTSButtCrush_Exit", "ButtCrush", GTSButtCrush_Exit);
-		//InputManager::RegisterInputEvent("ButtCrushAttack", ButtCrushAttackEvent);
 	}
 
 	void Animation_Cleavage::RegisterTriggers() {

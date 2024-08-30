@@ -340,7 +340,7 @@ exclusive = true
 name = "CleavageAbsorb"
 keys = ["S"]
 exclusive = false
-duration = 0.5
+duration = 0
 # Absorb the tiny between the breasts
 # WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
 
@@ -399,13 +399,6 @@ name = "HugCrush"
 keys = ["S"]
 exclusive = false
 #Crush the victim
-
-[[InputEvent]]
-name = "ForceHugCrush"
-keys = ["S"]
-exclusive = false
-duration = 0.50
-#Force Hug Crush when you have the perk that allows it. Hold for 0.5 sec
 
 [[InputEvent]]
 name = "HugRelease"

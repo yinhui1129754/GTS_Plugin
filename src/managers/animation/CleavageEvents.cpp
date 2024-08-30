@@ -219,6 +219,7 @@ namespace {
     /// Absorb
     void GTS_BS_AbsorbStart(const AnimationEventData& data) {
         Task_FacialEmotionTask_Smile(&data.giant, 3.2 / AnimationManager::GetAnimSpeed(&data.giant), "AbsorbStart");
+        Task_ApplyAbsorbCooldown(&data.giant);
     }
     void GTS_BS_AbsorbPulse(const AnimationEventData& data) {
         auto giant = &data.giant;
@@ -229,7 +230,7 @@ namespace {
             Rumbling::Once("AbsorbPulse_R", giant, 1.1, 0.0, "L Breast02", 0.0);
             Rumbling::Once("AbsorbPulse_L", giant, 1.1, 0.0, "R Breast02", 0.0);
 
-            Runtime::PlaySoundAtNode("ThighSandwichImpact", tiny, 0.15, 1.0, "NPC Root [Root]");
+            Runtime::PlaySoundAtNode("ThighSandwichImpact", tiny, 0.12, 1.0, "NPC Root [Root]");
 
             bool Blocked = IsActionOnCooldown(giant, CooldownSource::Emotion_Laugh);
             if (!Blocked) {
@@ -253,7 +254,7 @@ namespace {
     }
     void GTS_BS_FinishAbsorb(const AnimationEventData& data) {
         Actor* giant = &data.giant;
-        Task_FacialEmotionTask_Moan(giant, 1.6 / AnimationManager::GetAnimSpeed(giant), "AbsorbMoan");
+        Task_FacialEmotionTask_Moan(giant, 1.1 / AnimationManager::GetAnimSpeed(giant), "AbsorbMoan");
         auto tiny = Grab::GetHeldActor(giant);
 		if (tiny) {
             NiPoint3 Position = GetHeartPosition(giant, tiny);
@@ -264,13 +265,14 @@ namespace {
 
             AdvanceQuestProgression(giant, tiny, QuestStage::HugSteal, 1.0, false);
 
-            Rumbling::Once("AbsorbTiny_R", giant, 1.6, 0.05, "L Breast02", 0.0);
-            Rumbling::Once("AbsorbTiny_L", giant, 1.6, 0.05, "R Breast02", 0.0);
+            Rumbling::Once("AbsorbTiny_R", giant, 2.1, 0.05, "L Breast02", 0.0);
+            Rumbling::Once("AbsorbTiny_L", giant, 2.1, 0.05, "R Breast02", 0.0);
 
             DamageAV(giant, ActorValue::kHealth, -30); // Heal GTS
+            AdjustSizeReserve(giant, 0.04);
             ModSizeExperience(giant, 0.16);
             PrintAbsorbed(giant, tiny);
-            KillActor(giant, tiny);   
+            //KillActor(giant, tiny);   // Causes Death Screams 
 
             std::string taskname = std::format("MergeWithTiny{}", tiny->formID);
             ActorHandle giantHandle = giant->CreateRefHandle();

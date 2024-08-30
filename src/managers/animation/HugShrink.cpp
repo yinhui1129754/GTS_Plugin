@@ -36,6 +36,19 @@ using namespace std;
 
 
 namespace {
+	bool CanHugCrush(Actor* giant, Actor* huggedActor) {
+		bool ForceCrush = Runtime::HasPerkTeam(giant, "HugCrush_MightyCuddles");
+		float staminapercent = GetStaminaPercentage(giant);
+		float stamina = GetAV(giant, ActorValue::kStamina);
+		if (ForceCrush && staminapercent >= 0.50) {
+			AnimationManager::StartAnim("Huggies_HugCrush", giant);
+			AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
+			DamageAV(giant, ActorValue::kStamina, stamina * 1.10);
+			return true;
+		}
+		return false;
+	}
+
 	void ShrinkPulse_DecreaseSize(Actor* tiny, float scale) {
 		float min_scale = 0.06;
 		float target_scale = get_target_scale(tiny);
@@ -142,19 +155,18 @@ namespace {
 	void GTS_Hug_ShrinkPulse(AnimationEventData& data) {
 		auto giant = &data.giant;
 		auto huggedActor = HugShrink::GetHuggiesActor(giant);
-		if (!huggedActor) {
-			return;
+		if (huggedActor) {
+			auto scale = get_visual_scale(huggedActor);
+			float sizedifference = get_visual_scale(giant)/scale;
+
+			Attacked(huggedActor, giant);
+
+			ShrinkPulse_DecreaseSize(huggedActor, scale);
+
+			
+			Rumbling::For("ShrinkPulse", giant, Rumble_Hugs_Shrink, 0.10, "NPC COM [COM ]", 0.50 / GetAnimationSlowdown(giant), 0.0);
+			ModSizeExperience(giant, scale/6);
 		}
-		auto scale = get_visual_scale(huggedActor);
-		float sizedifference = get_visual_scale(giant)/scale;
-
-		Attacked(huggedActor, giant);
-
-		ShrinkPulse_DecreaseSize(huggedActor, scale);
-
-		
-		Rumbling::For("ShrinkPulse", giant, Rumble_Hugs_Shrink, 0.10, "NPC COM [COM ]", 0.50 / GetAnimationSlowdown(giant), 0.0);
-		ModSizeExperience(giant, scale/6);
 	}
 
 	void GTS_Hug_RunShrinkTask(AnimationEventData& data) {}
@@ -175,6 +187,8 @@ namespace {
 		AdjustFacialExpression(giant, 0, 0.0, "phenome");
 		AdjustFacialExpression(giant, 0, 0.0, "modifier");
 		AdjustFacialExpression(giant, 1, 0.0, "modifier");
+
+		Task_ApplyAbsorbCooldown(giant); // Start Cooldown right after crush
 
 		if (giant->formID == 0x14) {
 			auto caster = giant;
@@ -227,44 +241,34 @@ namespace {
 		Actor* player = GetPlayerOrControlled();
 		auto huggedActor = HugShrink::GetHuggiesActor(player);
 		if (huggedActor) {
-		
-			float health = GetHealthPercentage(huggedActor);
-			float HpThreshold = GetHugCrushThreshold(player, huggedActor);
-			if (HasSMT(player)) {
-				AnimationManager::StartAnim("Huggies_HugCrush", player);
-				AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
-				AddSMTPenalty(player, 10.0); // Mostly called inside ShrinkUntil
-				DamageAV(player, ActorValue::kStamina, 60);
-				return;
-			} else if (health <= HpThreshold) {
-				AnimationManager::StartAnim("Huggies_HugCrush", player);
-				AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
-				return;
+			if (!IsActionOnCooldown(player, CooldownSource::Action_AbsorbOther)) {
+				float health = GetHealthPercentage(huggedActor);
+				float HpThreshold = GetHugCrushThreshold(player, huggedActor);
+				if (health <= HpThreshold) {
+					AnimationManager::StartAnim("Huggies_HugCrush", player);
+					AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
+					return;
+				} else if (HasSMT(player)) {
+					AnimationManager::StartAnim("Huggies_HugCrush", player);
+					AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
+					AddSMTPenalty(player, 10.0); // Mostly called inside ShrinkUntil
+					DamageAV(player, ActorValue::kStamina, 60);
+					return;
+				} else {
+					if (CanHugCrush(player, huggedActor)) { // Force hug crush in this case
+						return;
+					}
+					std::string message = std::format("{} is too healthy to be hug crushed", huggedActor->GetDisplayFullName());
+					shake_camera(player, 0.45, 0.30);
+					TiredSound(player, message);
+
+					Notify("Health: {:.0f}%; Requirement: {:.0f}%", health * 100.0, HpThreshold * 100.0);
+				}
 			} else {
-				std::string message = std::format("{} is too healthy to be hug crushed", huggedActor->GetDisplayFullName());
-				shake_camera(player, 0.45, 0.30);
+				float cooldown = GetRemainingCooldown(player, CooldownSource::Action_AbsorbOther);
+                std::string message = std::format("Hug Crush is on a cooldown: {:.1f} sec", cooldown);
 				TiredSound(player, message);
-
-				Notify("Health: {:.0f}%; Requirement: {:.0f}%", health * 100.0, HpThreshold * 100.0);
 			}
-		}
-	}
-
-	void ForceHugCrushEvent(const InputEventData& data) {
-		Actor* player = GetPlayerOrControlled();
-
-		auto huggedActor = HugShrink::GetHuggiesActor(player);
-		if (!huggedActor) {
-			return;
-		}
-		bool ForceCrush = Runtime::HasPerkTeam(player, "HugCrush_MightyCuddles");
-		float staminapercent = GetStaminaPercentage(player);
-		float stamina = GetAV(player, ActorValue::kStamina);
-		if (ForceCrush && staminapercent >= 0.50) {
-			AnimationManager::StartAnim("Huggies_HugCrush", player);
-			AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
-			DamageAV(player, ActorValue::kStamina, stamina * 1.10);
-			return;
 		}
 	}
 
@@ -574,7 +578,6 @@ namespace Gts {
 		InputManager::RegisterInputEvent("HugShrink", HugShrinkEvent);
 		InputManager::RegisterInputEvent("HugHeal", HugHealEvent);
 		InputManager::RegisterInputEvent("HugCrush", HugCrushEvent);
-		InputManager::RegisterInputEvent("ForceHugCrush", ForceHugCrushEvent);
 
 		AnimationManager::RegisterEvent("GTS_Hug_Catch", "Hugs", GTS_Hug_Catch);
 		AnimationManager::RegisterEvent("GTS_Hug_Grab", "Hugs", GTS_Hug_Grab);

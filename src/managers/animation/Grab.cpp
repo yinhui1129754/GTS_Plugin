@@ -567,61 +567,55 @@ namespace Gts {
 		Grab::Release(giant);
 	}
 
-	void Grab::ReattachTiny(FormID cell) {
-		Actor* giant = GetPlayerOrControlled();
-		if (giant) {
-			Actor* tiny = Grab::GetHeldActor(giant);
-			if (tiny) {
-				auto GiantCell = giant->GetParentCell();
+	void Grab::ReattachTiny(Actor* giant, Actor* tiny) {
+		auto HandNode = find_node(giant, "NPC L Hand [LHnd]");
+		if (HandNode) {
+			NiPoint3 GiantDist = HandNode->world.translate;
+			NiPoint3 TinyDist = tiny->GetPosition();
+			float distance = (GiantDist - TinyDist).Length();
 
-				if (GiantCell && cell == GiantCell->formID) {
-					auto HandNode = find_node(giant, "NPC L Hand [LHnd]");
-					if (HandNode) {
-						//NiPoint3 GiantDist = HandNode->world.translate;
-						//NiPoint3 TinyDist = tiny->GetPosition();
-						//float distance = (GiantDist - TinyDist).Length();
+			if (distance > 2048) {
 
-						log::info("Moving tiny to giant");
-						//tiny->MoveTo(giant);
+				log::info("Moving tiny to giant");
+				tiny->MoveTo(giant);
 
-						float Start = Time::WorldTimeElapsed();
-						std::string name = std::format("Reattach_{}", tiny->formID);
-						ActorHandle gianthandle = giant->CreateRefHandle();
-						ActorHandle tinyhandle = tiny->CreateRefHandle();
-						TaskManager::Run(name, [=](auto& progressData) {
-							if (!gianthandle) {
-								return false;
-							}
-							if (!tinyhandle) {
-								return false;
-							}
-							auto giantref = gianthandle.get().get();
-							auto tinyref = tinyhandle.get().get();
-
-							float Finish = Time::WorldTimeElapsed();
-							float timepassed = Finish - Start;
-							if (timepassed > 0.25) {
-								tinyref->MoveTo(giantref);
-							}
-							if (timepassed > 0.80) { // One last time
-								tinyref->MoveTo(giantref);
-								DisableCollisions(tinyref, giantref);
-								if (IsBetweenBreasts(tinyref)) {
-									if (IsHostile(giantref, tinyref)) {
-										AnimationManager::StartAnim("Breasts_Idle_Unwilling", tinyref);
-									} else {
-										AnimationManager::StartAnim("Breasts_Idle_Willing", tinyref);
-									}
-								}
-								return false;
-							}
-							return true;
-						});
+				float Start = Time::WorldTimeElapsed();
+				std::string name = std::format("Reattach_{}", tiny->formID);
+				ActorHandle gianthandle = giant->CreateRefHandle();
+				ActorHandle tinyhandle = tiny->CreateRefHandle();
+				TaskManager::Run(name, [=](auto& progressData) {
+					if (!gianthandle) {
+						return false;
 					}
-				}
+					if (!tinyhandle) {
+						return false;
+					}
+					auto giantref = gianthandle.get().get();
+					auto tinyref = tinyhandle.get().get();
+
+					float Finish = Time::WorldTimeElapsed();
+					float timepassed = Finish - Start;
+					if (timepassed > 0.25) {
+						tinyref->MoveTo(giantref);
+					}
+					if (timepassed > 0.80) { // One last time
+						tinyref->MoveTo(giantref);
+						DisableCollisions(tinyref, giantref);
+						if (IsBetweenBreasts(tinyref)) {
+							if (IsHostile(giantref, tinyref)) {
+								AnimationManager::StartAnim("Breasts_Idle_Unwilling", tinyref);
+							} else {
+								AnimationManager::StartAnim("Breasts_Idle_Willing", tinyref);
+							}
+						}
+						return false;
+					}
+					return true;
+				});
 			}
 		}
 	}
+			
 
 	void Grab::AttachActorTask(Actor* giant, Actor* tiny) {
 		if (!giant) {
@@ -652,12 +646,19 @@ namespace Gts {
 
 			ForceRagdoll(tinyref, false); 
 
+			Grab::ReattachTiny(giantref, tinyref);
+
 			ShutUp(tinyref);
 
 			bool Attacking = false;
 			giantref->GetGraphVariableBool("GTS_IsGrabAttacking", Attacking);
 			if (!Attacking || IsBeingEaten(tinyref)) {
-				if (giantref->IsDead() || tinyref->IsDead() || GetAV(tinyref, ActorValue::kHealth) <= 0.0 || sizedifference < Action_Grab || GetAV(giantref, ActorValue::kStamina) < 2.0) {
+				if (giantref->IsDead() || tinyref->IsDead() 
+					|| GetAV(tinyref, ActorValue::kHealth) <= 0.0 
+					|| sizedifference < Action_Grab 
+					|| (!IsBetweenBreasts(tinyref) 
+					&& GetAV(giantref, ActorValue::kStamina) < 2.0)) {
+
 					log::info("Canceled Grab on {}. Reasons below", tinyref->GetDisplayFullName());
 					log::info("Giant Is Dead: {}", giantref->IsDead());
 					log::info("Tiny is dead {}", tinyref->IsDead());

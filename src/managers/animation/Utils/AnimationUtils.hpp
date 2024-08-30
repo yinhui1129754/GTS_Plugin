@@ -19,6 +19,7 @@ namespace Gts {
 	};
 
 	void BlockFirstPerson(Actor* actor, bool block);
+	void Task_ApplyAbsorbCooldown(Actor* giant);
 	
 	void Hugs_FixAnimationDesync(Actor* giant, Actor* tiny, bool reset);
 	void ForceFollowerAnimation(Actor* giant, FollowerAnimType Type);

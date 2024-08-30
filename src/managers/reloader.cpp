@@ -128,10 +128,10 @@ namespace Gts {
 
 		if (a_event->flags == RE::BGSActorCellEvent::CellFlag::kEnter)
 		{
-			Grab::ReattachTiny(a_event->cellID);
+			//Grab::ReattachTiny(a_event->cellID);
 		} else if(a_event->flags == RE::BGSActorCellEvent::CellFlag::kLeave)
 		{
-			Grab::ReattachTiny(a_event->cellID);
+			//Grab::ReattachTiny(a_event->cellID);
 		}
 
 		return BSEventNotifyControl::kContinue;
