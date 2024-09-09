@@ -1,10 +1,13 @@
+#include "hooks/Experiments.hpp"
 #include "utils/actorUtils.hpp"
 #include "hooks/callhook.hpp"
 #include "data/transient.hpp"
-#include "hooks/Experiments.hpp"
+#include "scale/modscale.hpp"
+#include "data/runtime.hpp"
 #include "data/runtime.hpp"
 #include "scale/scale.hpp"
-#include "data/runtime.hpp"
+
+
 
 
 using namespace RE;

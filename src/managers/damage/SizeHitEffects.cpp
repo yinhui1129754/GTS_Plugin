@@ -254,8 +254,9 @@ namespace Gts {
 							SpawnParticle(tiny, 0.20, "GTS/Damage/Explode.nif", root->world.rotate, root->world.translate, get_visual_scale(tiny), 7, root);
 						}
 					}
-					//SizeManager::GetSingleton().ModSizeVulnerability(tiny, 0.05);
-					InflictSizeDamage(giant, tiny, damage * 1.5);
+					if (damage > 0) {
+						InflictSizeDamage(giant, tiny, damage * 1.5);
+					}
 				}
 			}
 		}

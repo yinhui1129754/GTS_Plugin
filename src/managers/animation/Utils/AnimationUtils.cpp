@@ -112,7 +112,7 @@ namespace Gts {
         });
     }
 
-	void Hugs_FixAnimationDesync(Actor* giant, Actor* tiny, bool reset) {
+	void Anims_FixAnimationDesync(Actor* giant, Actor* tiny, bool reset) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
 			float& animspeed = transient->Hug_AnimSpeed;
@@ -121,7 +121,7 @@ namespace Gts {
 			} else {
 				animspeed = 1.0; // 1.0 makes dll use GetAnimSpeed of tiny
 			}
-			// Fix hug anim de-sync
+			// Fix hug and boob attacks anim de-sync
 		}
 	}
 
@@ -288,7 +288,7 @@ namespace Gts {
 		Attacked(tiny, giant);
 
 		ModSizeExperience(giant, 0.22); // Adjust Size Matter skill
-		KillActor(giant, tiny);
+		KillActor(giant, tiny, false);
 
 		if (!IsLiving(tiny)) {
 			SpawnDustParticle(tiny, tiny, "NPC Root [Root]", 3.6);
@@ -368,7 +368,7 @@ namespace Gts {
 			SetBeingHeld(tiny, false);
 			PushActorAway(giant, tiny, 1.0);
 			UpdateFriendlyHugs(giant, tiny, true); // set GTS_IsFollower (tiny) and GTS_HuggingTeammate (GTS) bools to false
-			Hugs_FixAnimationDesync(giant, tiny, true); // reset anim speed override so .dll won't use it
+			Anims_FixAnimationDesync(giant, tiny, true); // reset anim speed override so .dll won't use it
 		}
 		HugShrink::Release(giant);
 	}
@@ -1090,8 +1090,8 @@ namespace Gts {
 		float feet_damage = (Damage_ThighCrush_CrossLegs_FeetImpact * perk * speed);
 		
 		if (CooldownCheck) {
-			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, true, true, false);
-			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, false, true, false);
+			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, true, true, false, false);
+			CollisionDamage::GetSingleton().DoFootCollision(actor, feet_damage, radius, random, bbmult, crush_threshold, DamageSource::ThighCrushed, false, true, false, false);
 		}
 
 		float maxFootDistance = radius * giantScale;
@@ -1455,11 +1455,13 @@ namespace Gts {
 		float start = Time::WorldTimeElapsed();
 		std::string name = std::format("{}_Facial_{}", naming, giant->formID);
 
-		AdjustFacialExpression(giant, 0, 1.0, duration/2, duration/2, "phenome"); // Start opening mouth
-		AdjustFacialExpression(giant, 1, 0.5, duration/2, duration/2, "phenome"); // Open it wider
+		float open_speed = duration/2;
 
-		AdjustFacialExpression(giant, 0, 0.80, duration/2, duration/2, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 0.80, duration/2, duration/2, "modifier"); // blink R
+		AdjustFacialExpression(giant, 0, 1.0, open_speed, open_speed, "phenome"); // Start opening mouth
+		AdjustFacialExpression(giant, 1, 0.5, open_speed, open_speed, "phenome"); // Open it wider
+
+		AdjustFacialExpression(giant, 0, 0.80, open_speed, open_speed, "modifier"); // blink L
+		AdjustFacialExpression(giant, 1, 0.80, open_speed, open_speed, "modifier"); // blink R
 
 		TaskManager::Run(name, [=](auto& progressData) {
 			if (!giantHandle) {
@@ -1470,11 +1472,13 @@ namespace Gts {
 			float timepassed = finish - start;
 
 			if (timepassed >= duration) {
-				AdjustFacialExpression(giant, 0, 0.0, duration/2, duration/2, "phenome"); // Start opening mouth
-				AdjustFacialExpression(giant, 1, 0.0, duration/2, duration/2, "phenome"); // Open it wider
+				float close_speed = duration / 1.75;
 
-				AdjustFacialExpression(giant, 0, 0.0, duration/2, duration/2, "modifier"); // blink L
-				AdjustFacialExpression(giant, 1, 0.0, duration/2, duration/2, "modifier"); // blink R
+				AdjustFacialExpression(giant, 0, 0.0, close_speed, close_speed, "phenome"); // Start opening mouth
+				AdjustFacialExpression(giant, 1, 0.0, close_speed, close_speed, "phenome"); // Open it wider
+
+				AdjustFacialExpression(giant, 0, 0.0, close_speed, close_speed, "modifier"); // blink L
+				AdjustFacialExpression(giant, 1, 0.0, close_speed, close_speed, "modifier"); // blink R
 				return false;
 			}
 			return true;
@@ -1612,13 +1616,17 @@ namespace Gts {
 		return threshold;
 	}
 
-	float GetHugCrushThreshold(Actor* giant, Actor* tiny) {
+	float GetHugCrushThreshold(Actor* giant, Actor* tiny, bool check_size) {
 		float hp = 0.12;
 		if (Runtime::HasPerkTeam(giant, "HugCrush_MightyCuddles")) {
 			hp += 0.08;
 		}
 		if (Runtime::HasPerkTeam(giant, "HugCrush_HugsOfDeath")) {
 			hp += 0.10;
+		}
+
+		if (!check_size) {
+			return hp;
 		}
 
 		float difference = GetSizeDifference(giant, tiny, SizeType::GiantessScale, false, false);

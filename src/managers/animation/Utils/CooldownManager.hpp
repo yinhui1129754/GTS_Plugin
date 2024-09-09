@@ -17,13 +17,18 @@ namespace Gts {
         Action_HealthGate,
         Action_ScareOther,
         Action_AbsorbOther,
+        Action_Breasts_Absorb,
+        Action_Breasts_Suffocate,
+        Action_Breasts_Vore,
         Action_Hugs,
         Emotion_Laugh,
         Emotion_Moan,
         Misc_RevertSound,
+        Misc_GrowthSound,
         Misc_BeingHit,
         Misc_AiGrowth,
         Misc_ShrinkOutburst,
+        Misc_ShrinkOutburst_Forced,
         Footstep_Right,
         Footstep_Left,
     };
@@ -39,14 +44,20 @@ namespace Gts {
         double lastHugTime = -1.0e8;
 
         double lastAbsorbTime = -1.0e8;
+
+        double lastBreastAbsorbTime = -1.0e8;
+        double lastBreastSuffocateTime = -1.0e8;
+        double lastBreastVoreTime = -1.0e8;
         
         double lastLaughTime = -1.0e8;
         double lastMoanTime = -1.0e8;
 
         double lastRevertTime = -1.0e8;
+        double lastSoundGrowthTime = -1.0e8;
         double lastHitTime = -1.0e8;
         double lastGrowthTime = -1.0e8;
         double lastOutburstTime = -1.0e8;
+        double lastForceOutburstTime = -1.0e8;
 
         double lastFootstepTime_R = -1.0e8;
         double lastFootstepTime_L = -1.0e8;

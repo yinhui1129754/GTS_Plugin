@@ -60,15 +60,13 @@ namespace {
 		std::string_view tiny_name = tiny->GetDisplayFullName();
 
 		if (Runtime::HasPerkTeam(giant, "Gluttony")) {
+			restore_power = GetMaxAV(tiny, ActorValue::kHealth) * 4 * mealEffiency;
 			mealEffiency += 0.2;
 		}
 		if (Runtime::HasPerkTeam(giant, "AdditionalGrowth")) {
 			growth *= 1.25;
 		}
-		if (Runtime::HasPerkTeam(giant, "Gluttony")) {
-			restore_power = GetMaxAV(tiny, ActorValue::kHealth) * 4 * mealEffiency;
-		}
-
+			
 		float bounding_box = GetSizeFromBoundingBox(tiny);
 		float gain_power = recorded_scale * mealEffiency * growth * growth_mult * bounding_box; // power of most buffs that we start
 		//gain_power *= 1.25; // To compensate Shrinking a bit
@@ -90,49 +88,46 @@ namespace {
 	}
 
 	void BuffAttributes(Actor* giant, float tinyscale) {
-		if (!giant) {
-			return;
-		}
-		if (Runtime::HasPerk(giant, "SoulVorePerk")) { // Permamently increases random AV after eating someone
-			float TotalMod = 0.33;
-			int Boost = rand() % 3;
-			if (Boost == 0) {
-				AddStolenAttributesTowards(giant, ActorValue::kHealth, TotalMod);
-			} else if (Boost == 1) {
-				AddStolenAttributesTowards(giant, ActorValue::kStamina, TotalMod);
-			} else if (Boost >= 2) {
-				AddStolenAttributesTowards(giant, ActorValue::kMagicka, TotalMod);
+		if (giant) {
+			if (Runtime::HasPerk(giant, "SoulVorePerk")) { // Permamently increases random AV after eating someone
+				float TotalMod = 0.33;
+				int Boost = rand() % 3;
+				if (Boost == 0) {
+					AddStolenAttributesTowards(giant, ActorValue::kHealth, TotalMod);
+				} else if (Boost == 1) {
+					AddStolenAttributesTowards(giant, ActorValue::kStamina, TotalMod);
+				} else if (Boost >= 2) {
+					AddStolenAttributesTowards(giant, ActorValue::kMagicka, TotalMod);
+				}
 			}
 		}
 	}
 
 	void VoreMessage_SwallowedAbsorbing(Actor* pred, Actor* prey) {
-		if (!pred) {
-			return;
-		}
-		int random = rand() % 4;
-		if (!prey->IsDead() && !Runtime::HasPerk(pred, "SoulVorePerk") || random <= 1) {
-			Cprint("{} was Swallowed and is now being slowly absorbed by {}", prey->GetDisplayFullName(), pred->GetDisplayFullName());
-		} else if (random == 2) {
-			Cprint("{} is now absorbing {}", pred->GetDisplayFullName(), prey->GetDisplayFullName());
-		} else if (random >= 3) {
-			Cprint("{} will soon be completely absorbed by {}", prey->GetDisplayFullName(), pred->GetDisplayFullName());
+		if (pred) {
+			int random = rand() % 4;
+			if (!prey->IsDead() && !Runtime::HasPerk(pred, "SoulVorePerk") || random <= 1) {
+				Cprint("{} was Swallowed and is now being slowly absorbed by {}", prey->GetDisplayFullName(), pred->GetDisplayFullName());
+			} else if (random == 2) {
+				Cprint("{} is now absorbing {}", pred->GetDisplayFullName(), prey->GetDisplayFullName());
+			} else if (random >= 3) {
+				Cprint("{} will soon be completely absorbed by {}", prey->GetDisplayFullName(), pred->GetDisplayFullName());
+			}
 		}
 	}
 
 	void VoreMessage_Absorbed(Actor* pred, std::string_view prey) {
-		if (!pred) {
-			return;
-		}
-		int random = rand() % 3;
-		if (!Runtime::HasPerk(pred, "SoulVorePerk") || random == 0) {
-			Cprint("{} was absorbed by {}", prey, pred->GetDisplayFullName());
-		} else if (Runtime::HasPerk(pred, "SoulVorePerk") && random == 1) {
-			Cprint("{} became one with {}", prey, pred->GetDisplayFullName());
-		} else if (Runtime::HasPerk(pred, "SoulVorePerk") && random >= 2) {
-			Cprint("{} was greedily devoured by {}", prey, pred->GetDisplayFullName());
-		} else {
-			Cprint("{} was absorbed by {}", prey, pred->GetDisplayFullName());
+		if (pred) {
+			int random = rand() % 3;
+			if (!Runtime::HasPerk(pred, "SoulVorePerk") || random == 0) {
+				Cprint("{} was absorbed by {}", prey, pred->GetDisplayFullName());
+			} else if (Runtime::HasPerk(pred, "SoulVorePerk") && random == 1) {
+				Cprint("{} became one with {}", prey, pred->GetDisplayFullName());
+			} else if (Runtime::HasPerk(pred, "SoulVorePerk") && random >= 2) {
+				Cprint("{} was greedily devoured by {}", prey, pred->GetDisplayFullName());
+			} else {
+				Cprint("{} was absorbed by {}", prey, pred->GetDisplayFullName());
+			}
 		}
 	}
 
@@ -171,7 +166,7 @@ namespace {
 		
 		if (!Devourment || Allow_Devourment) {
 			if (giant) {
-				update_target_scale(giant, sizePower * 0.8, SizeEffectType::kGrow);
+				update_target_scale(giant, sizePower * 0.32, SizeEffectType::kGrow);
 				GainWeight(giant, 3.0 * tinySize * amount_of_tinies * multiplier);
 				ModSizeExperience(giant, 0.20 * multiplier + (tinySize * 0.02));
 				VoreMessage_Absorbed(giant, tiny_name);
@@ -220,7 +215,7 @@ namespace {
 				
 				float regenlimit = GetMaxAV(giantref, ActorValue::kHealth) * 0.0006; // Limit it per frame
 				float healthToApply = std::clamp(Regeneration/4000.0f, 0.0f, regenlimit);
-				float sizeToApply = Growth/5500;
+				float sizeToApply = Growth/6000;
 
 				DamageAV(giantref, ActorValue::kHealth, -healthToApply * TimeScale());
 				DamageAV(giantref, ActorValue::kStamina, -healthToApply * TimeScale()); 
@@ -300,11 +295,11 @@ namespace Gts {
 				SetBeingHeld(tiny, false);
 				AddSMTDuration(giantref.get().get(), 6.0);
 				if (tiny->formID != 0x14) {
-					KillActor(giantref.get().get(), tiny);
+					KillActor(giantref.get().get(), tiny, false);
 					Disintegrate(tiny, true);
 				} else if (tiny->formID == 0x14) {
 					InflictSizeDamage(giantref.get().get(), tiny, 900000);
-					KillActor(giantref.get().get(), tiny);
+					KillActor(giantref.get().get(), tiny, false);
 					TriggerScreenBlood(50);
 					tiny->SetAlpha(0.0); // Player can't be disintegrated: simply nothing happens. So we Just make player Invisible instead.
 				}

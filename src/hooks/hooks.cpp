@@ -1,27 +1,29 @@
-#include "hooks/hooks.hpp"
-#include "hooks/main.hpp"
-#include "hooks/headTracking.hpp"
-#include "hooks/actorRotation.hpp"
 #include "hooks/PreventAnimations.hpp"
+#include "hooks/hkbBehaviorGraph.hpp"
+#include "hooks/playerCharacter.hpp"
+#include "hooks/actorRotation.hpp"
+#include "hooks/headTracking.hpp"
+#include "hooks/playerCamera.hpp"
+#include "hooks/magicTarget.hpp"
+#include "hooks/Experiments.hpp"
+#include "hooks/Projectiles.hpp"
+#include "hooks/cameraState.hpp"
+#include "hooks/character.hpp"
+#include "hooks/Movement.hpp"
+#include "hooks/Pushback.hpp"
+#include "hooks/RaceMenu.hpp"
 #include "hooks/controls.hpp"
 #include "hooks/Stealth.hpp"
 #include "hooks/impact.hpp"
-#include "hooks/Projectiles.hpp"
-#include "hooks/Pushback.hpp"
-#include "hooks/vm.hpp"
-#include "hooks/havok.hpp"
-#include "hooks/magicTarget.hpp"
-#include "hooks/hkbBehaviorGraph.hpp"
-#include "hooks/cameraState.hpp"
-#include "hooks/playerCamera.hpp"
-#include "hooks/Movement.hpp"
-#include "hooks/playerCharacter.hpp"
+#include "hooks/damage.hpp"
 #include "hooks/actor.hpp"
-#include "hooks/character.hpp"
+#include "hooks/hooks.hpp"
+#include "hooks/havok.hpp"
+#include "hooks/main.hpp"
 #include "hooks/sink.hpp"
 #include "hooks/jump.hpp"
-#include "hooks/Experiments.hpp"
-#include "hooks/damage.hpp"
+#include "hooks/vm.hpp"
+
 
 using namespace RE;
 
@@ -76,6 +78,7 @@ namespace Hooks
 		
 		Hook_HeadTracking::Hook(trampoline);
 		Hook_PreventAnimations::Hook(trampoline);
+		Hook_RaceMenu::Hook(trampoline);
 		
 		HookCameraStates();
 

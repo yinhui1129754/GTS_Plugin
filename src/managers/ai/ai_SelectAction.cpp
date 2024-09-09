@@ -29,7 +29,7 @@ namespace {
 		int crush_rng = rand() % 4;
 
 		float health = GetHealthPercentage(tiny);
-		float HpThreshold = GetHugCrushThreshold(giant, tiny);
+		float HpThreshold = GetHugCrushThreshold(giant, tiny, true);
 
 		bool low_hp = (health <= HpThreshold);
 		bool allow_perform = (tiny->formID != 0x14 && IsHostile(giant, tiny)) || (rng <= 1);

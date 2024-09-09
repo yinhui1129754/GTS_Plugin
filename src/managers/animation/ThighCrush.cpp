@@ -204,7 +204,7 @@ namespace {
 
 		RunButtCollisionTask(&data.giant);
 
-		FreezeTinies(&data.giant, 2.8 / GetAnimationSlowdown(&data.giant));
+		FreezeTinies(&data.giant, 2.8 / AnimationManager::GetAnimSpeed(&data.giant));
 
 		data.stage = 1;
 	}

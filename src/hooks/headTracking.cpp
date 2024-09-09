@@ -2,12 +2,39 @@
 #include "utils/actorUtils.hpp"
 #include "scale/modscale.hpp"
 #include "scale/scale.hpp"
+#include "node.hpp"
 
 using namespace RE;
 using namespace SKSE;
 
 
 namespace {
+	void ForceLookAtCleavage(Actor* actor, NiPoint3& target) { // Forces someone to look at breasts
+		if (actor->formID != 0x14) {
+			auto process = actor->GetActorRuntimeData().currentProcess;
+			if (process) {
+				auto high = process->high;
+				if (high) {
+					auto target_actor = process->GetHeadtrackTarget();
+					if (target_actor) {
+						auto true_target_ref = target_actor.get().get();
+						if (true_target_ref && true_target_ref->formID == 0x14) {
+							auto true_target = skyrim_cast<Actor*>(true_target_ref);
+							if (true_target) {
+								auto breast_1 = find_node(true_target, "R Breast02");
+								auto breast_2 = find_node(true_target, "L Breast02");
+								if (breast_1 && breast_2) {
+									NiPoint3 breast_pos = (breast_1->world.translate + breast_2->world.translate) / 2;
+									target = breast_pos;
+								}
+							}
+						}
+					} 
+				}
+			}
+		}
+	}
+
 	bool HasHeadTrackingTarget(Actor* giant) {
 		auto process = giant->GetActorRuntimeData().currentProcess;
 		if (process) {
@@ -35,10 +62,12 @@ namespace {
 	float affect_by_scale(TESObjectREFR* ref, float original) {
 		Actor* giant = skyrim_cast<Actor*>(ref);
 		if (giant) {
-			if (HasHeadTrackingTarget(giant)) { // enable it only when targeting someone
-				if (IsinRagdollState(giant) || IsDragon(giant)) {  // Dragons behave funny if we edit them...sigh...
+			if (giant->formID == 0x14 && HasHeadTrackingTarget(giant)) { // Apply it ONLY when targeting someone (when locking on Enemy with TDM for example)
+				//|| giant->formID != 0x14 && !HasHeadTrackingTarget(giant)) { 
+				// ^ needs to be enabled if experimenting with ForceLookAtCleavage() function, else they double-apply
+				if (IsinRagdollState(giant) || IsDragon(giant)) {  // Dragons seem to behave funny if we edit them...sigh...
 					// For some Bethesda™ reason - it breaks tiny ragdoll (their skeleton stretches :/) when they're small, so they fly into the sky.
-					return original;      // We really want to prevent that, so we return original value.
+					return original;      // We really want to prevent that, so we return original value in this case.
 				}
 				float fix = original * ((get_giantess_scale(giant)) / game_getactorscale(giant)); // game_getscale() is used here by the game, so we want to / it again
 
@@ -53,28 +82,27 @@ namespace {
 		if (!actor) {
 			return;
 		}
-		if (!HasHeadTrackingTarget(actor)) { // Only when target is nullptr
-			if (IsinRagdollState(actor)) { // Needed to fix TDM bugs with deforming Meshes of Actors when we lock onto someone
-				return;
-			}
-			// log::info("Actor: {}", actor->GetDisplayFullName());
-			auto headPos = actor->GetLookingAtLocation();
-			// log::info("headPos: {}", Vector2Str(headPos));
-			auto model = actor->Get3D();
-			if (!model) {
-				return;
-			}
-			auto trans = model->world;
-			auto transInv = trans.Invert();
-			auto scale = get_visual_scale(actor);
+		if (!HasHeadTrackingTarget(actor)) {// || actor->formID != 0x14) { // Alter it ONLY when target is nullptr or if Actor is not a player
+		    //                                    ^ Needs to be enabled if experimenting with ForceLookAtCleavage() so dll will allow pos override
+			if (!IsinRagdollState(actor)) { // ^ Needed to fix TDM bugs with deforming Meshes of Actors when we lock onto someone
+			
+				// log::info("Actor: {}", actor->GetDisplayFullName());
+				auto headPos = actor->GetLookingAtLocation();
+				// log::info("headPos: {}", Vector2Str(headPos));
+				auto model = actor->Get3D();
+				if (model) {
+					auto trans = model->world;
+					auto transInv = trans.Invert();
+					auto scale = get_visual_scale(actor) / game_getactorscale(actor);
 
-			// log::info("headPos (local): {}", Vector2Str(transInv*headPos));
-			auto unscaledHeadPos = trans * (transInv*headPos * (1.0/scale));
-			// log::info("unscaledHeadPos: {}", Vector2Str(unscaledHeadPos));
-			// log::info("unscaledHeadPos (local): {}", Vector2Str(transInv*headPos));
-			auto direction = target - headPos;
-			// log::info("direction: {}", Vector2Str(direction));
-			target = unscaledHeadPos + direction;
+					auto unscaledHeadPos = trans * (transInv*headPos * (1.0/scale));
+
+					//ForceLookAtCleavage(actor, target); // If enabled, need to make sure that only one hook is affecting NPC's 
+
+					auto direction = target - headPos;
+					target = unscaledHeadPos + direction;
+				}
+			}
 		}
 	}
 }

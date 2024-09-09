@@ -48,12 +48,14 @@ namespace Gts {
 		Cleavage,
 		ObjectA,
 		ObjectB,
+		ObjectL,
 	};
 
 	enum class ShrinkSource {
 		Other,
 		Magic,
 		Hugs,
+		Enchantment,
 	};
 
 	enum class SizeEffectType {
@@ -161,6 +163,16 @@ namespace Gts {
 		ThighCrushed,
 		BlockDamage,
 		HitSteal,
+	};
+
+	enum class GrowthAnimation {
+		None,
+		Growth_1,
+		Growth_2,
+		Growth_3,
+		Growth_4,
+		Growth_5,
+		Growth_6,
 	};
 
 	enum class CrawlEvent {

@@ -261,7 +261,7 @@ namespace {
 		} else if (random == 4) {
 			Cprint("{} couldn't resist hug crushing {}", GiantName, TinyName);
 		} else if (random == 5) {
-			Cprint("{} failed to escape hugs of death with {}", TinyName, GiantName);
+			Cprint("{} failed to escape hugs of death from {}", TinyName, GiantName);
 		} else if (random == 6) {
 			Cprint("{} got greedy and stole all size from {} through hugs", GiantName, TinyName);
 		} else if (random >= 7) {

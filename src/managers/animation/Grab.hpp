@@ -9,7 +9,7 @@ namespace Gts {
 	struct GrabData {
 		public:
 			GrabData(TESObjectREFR* tiny, float strength);
-			void SetGrabbed(bool decide);
+			void SetGrabbed(bool enable);
 			bool GetGrabbed();
 			TESObjectREFR* tiny;
 			bool holding;
@@ -41,7 +41,7 @@ namespace Gts {
 			static void Release(Actor* giant);
 
 			bool GetHolding(Actor* giant);
-			static void SetHolding(Actor* giant, bool decide);
+			static void SetHolding(Actor* giant, bool enable);
 			// Get object being held
 			static TESObjectREFR* GetHeldObj(Actor* giant);
 			// Same as `GetHeldObj` but with a conversion to actor if possible

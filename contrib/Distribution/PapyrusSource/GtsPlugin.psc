@@ -149,7 +149,7 @@ String function SigFig(Float number, Int sf) global native
 
 
 ;==========================================
-;===================H I G H  H E E L S     |
+;===================H I G H  H E E L S  A N D   M I S C    |
 ;==========================================
 
 ; Controls if the HH correction method is enabled or not
@@ -166,6 +166,15 @@ Function SetCrawlAnimation(bool enabled, bool player) global native
 
 ; sends animation event that transitions actor to/out of crawl to sneak and vice-versa     
 Function UpdateCrawlAnimations(bool enabled, bool player) global native    
+
+; Toggle On/Off alternative Light Stomp animations for player/followers
+Function SetAlternativeLightStomp(bool enable, bool player) global native
+
+; Toggle On/Off new sneak transition for player and npc's
+Function SetAlternativeSneakTransition(bool enable) global native
+
+; Toggle On/Off Heart Effects during some animations (healing hugs, some breast anims)
+Function PreventHeartEffects(bool enable) global native
     
 ;======================================================================================
 ;======================================================================================

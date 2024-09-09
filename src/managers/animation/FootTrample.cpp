@@ -42,6 +42,30 @@ namespace {
 		Runtime::PlaySoundAtNode("xlRumble", giant, 0.14 * bonus * scale * animspeed, 1.0, feet);
 	}
 
+	void DelayedLaunch(Actor* giant, float radius, float power, FootEvent Event) {
+		std::string taskname = std::format("DelayLaunch_Trample_{}", giant->formID);
+		ActorHandle giantHandle = giant->CreateRefHandle();
+
+		float Start = Time::WorldTimeElapsed();
+
+		TaskManager::Run(taskname, [=](auto& update){ // Needed to prioritize grind over launch
+			if (!giantHandle) {
+				return false;
+			}
+			Actor* giantref = giantHandle.get().get();
+			float Finish = Time::WorldTimeElapsed();
+
+			float timepassed = Finish - Start;
+
+			if (timepassed > 0.03) {
+				LaunchTask(giant, radius, power, Event);
+				return false;
+			}
+
+			return true;
+		});
+	}
+
 	void FootTrample_Stage1(Actor* giant, bool right, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
 		float perk = GetPerkBonus_Basics(giant);
 		float smt = 1.0;
@@ -71,11 +95,12 @@ namespace {
 				float shake_power = Rumble_Trample_Stage1 * smt * GetHighHeelsBonusDamage(giant, true);
 				
 				Rumbling::Once(rumble, giant, shake_power, 0.0, Node, 0.0);
-				LaunchTask(giant, 0.65 * perk, 1.15 * perk, Event);
+				
 				DoDustExplosion(giant, dust * smt, Event, Node);
 				DoFootstepSound(giant, 1.0, Event, Node);
 				
 				FootGrindCheck(giant, Radius_Trample, true, right);
+				DelayedLaunch(giant, 0.65 * perk, 1.15 * perk, Event);
 
 				return false;
 			}

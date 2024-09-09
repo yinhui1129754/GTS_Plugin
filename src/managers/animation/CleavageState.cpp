@@ -52,54 +52,101 @@ IsInCleavageState(Actor* actor)
 */
 
 namespace {
-    bool CanForceCrush(Actor* giant, Actor* huggedActor) {
+    const std::vector<std::string_view> BREAST_NODES_R = { // used for body rumble
+        "R Breast01",
+        "R Breast02",
+		"R Breast03",
+        "R Breast04",
+	};
+
+    const std::vector<std::string_view> BREAST_NODES_L = { // used for body rumble
+        "L Breast00",
+        "L Breast01",
+        "L Breast02",
+		"L Breast03",
+        "L Breast04",
+	};
+
+    bool CanForceAction(Actor* giant, Actor* huggedActor, std::string pass_anim) {
         bool ForceCrush = Runtime::HasPerkTeam(giant, "HugCrush_MightyCuddles");
         float staminapercent = GetStaminaPercentage(giant);
         float stamina = GetAV(giant, ActorValue::kStamina);
         if (ForceCrush && staminapercent >= 0.50) {
-            AnimationManager::StartAnim("Cleavage_Absorb", giant);
+            AnimationManager::StartAnim(pass_anim, giant);
             DamageAV(giant, ActorValue::kStamina, stamina * 1.10);
             return true;
         }
         return false;
     }
 
-    void AttemptAbsorption(bool force) {
+    float GetMasteryReduction(Actor* giant) {
+        float cooldown = 0.0;
+        if (Runtime::HasPerk(giant, "Breasts_MasteryPart2")) {
+            cooldown = GetGtsSkillLevel(giant) * 0.006;
+        }
+
+        return cooldown;
+    }
+    void AttemptBreastActionOnTiny(std::string pass_anim) {
         Actor* player = GetPlayerOrControlled();
         if (IsInCleavageState(player)) {
             auto tiny = Grab::GetHeldActor(player);
             if (tiny) {
-                float HpThreshold = GetHugCrushThreshold(player, tiny) * 0.2;
-                float health = GetHealthPercentage(tiny);
-                if (health <= HpThreshold) {
-                    AnimationManager::StartAnim("Cleavage_Absorb", player);
-                    return;
-                } else if (HasSMT(player)) {
-                    DamageAV(player, ActorValue::kStamina, 60);
-                    AnimationManager::StartAnim("Cleavage_Absorb", player);
-                    AddSMTPenalty(player, 10.0);
-                    return;
-                } else {
-                    if (CanForceCrush(player, tiny)) {
-                        return;
+                AnimationManager::StartAnim(pass_anim, tiny);
+            }
+        }
+    }
+    bool AttemptBreastAction(std::string pass_anim, CooldownSource Source, std::string cooldown_msg, std::string perk) {
+        Actor* player = GetPlayerOrControlled();
+        if (IsInCleavageState(player)) {
+            auto tiny = Grab::GetHeldActor(player);
+            if (tiny) {
+                bool OnCooldown = IsActionOnCooldown(player, Source);
+                if (!OnCooldown) {
+                    if (Runtime::HasPerk(player, perk)) {
+                        float HpThreshold = (GetHugCrushThreshold(player, tiny, false) * 1.5) + GetMasteryReduction(player);
+                        float health = GetHealthPercentage(tiny);
+                        if (health <= HpThreshold) {
+                            AnimationManager::StartAnim(pass_anim, player);
+                            return true;
+                        } else if (HasSMT(player)) {
+                            DamageAV(player, ActorValue::kStamina, 60);
+                            AnimationManager::StartAnim(pass_anim, player);
+                            AddSMTPenalty(player, 10.0);
+                            return true;
+                        } else {
+                            if (CanForceAction(player, tiny, pass_anim)) {
+                                return true;
+                            }
+                            std::string message = std::format("{} is too healthy for {}", tiny->GetDisplayFullName(), cooldown_msg);
+                            shake_camera(player, 0.45, 0.30);
+                            TiredSound(player, message);
+
+                            Notify("Health: {:.0f}%; Requirement: {:.0f}%", health * 100.0, HpThreshold * 100.0);
+                            return false;
+                        }
                     }
-                    std::string message = std::format("{} is too healthy to be absorbed by breasts", tiny->GetDisplayFullName());
+                } else {
+                    std::string message = std::format("{} is on a cooldown: {:.1f} sec", cooldown_msg, GetRemainingCooldown(player, Source));
                     shake_camera(player, 0.45, 0.30);
                     TiredSound(player, message);
-
-                    Notify("Health: {:.0f}%; Requirement: {:.0f}%", health * 100.0, HpThreshold * 100.0);
+                    return false;
                 }
             }
         } 
+
+        return false;
     }
-    void PassAnimation(std::string animation, bool check_cleavage) {
+    bool PassAnimation(std::string animation, bool check_cleavage) {
         Actor* player = GetPlayerOrControlled();
         if (player) {
             bool BetweenCleavage = IsInCleavageState(player);
             if (BetweenCleavage || !check_cleavage) {
                 AnimationManager::StartAnim(animation, player);
+                return true;
             }
         }
+        return false;
     }
 
     void CleavageEnterEvent(const InputEventData& data) {
@@ -108,47 +155,102 @@ namespace {
             Actor* tiny = Grab::GetHeldActor(giant);
             if (tiny && IsBetweenBreasts(tiny)) {
                 PassAnimation("Cleavage_EnterState", false);
+                AttemptBreastActionOnTiny("Cleavage_EnterState_Tiny");
             }
         }
     }
     void CleavageExitEvent(const InputEventData& data) {
         PassAnimation("Cleavage_ExitState", true);
     }
-    void ClevageLightAttackEvent(const InputEventData& data) {
-        PassAnimation("Cleavage_LightAttack", true);
+    void CleavageLightAttackEvent(const InputEventData& data) {
+        if (PassAnimation("Cleavage_LightAttack", true)) {
+            AttemptBreastActionOnTiny("Cleavage_LightAttack_Tiny");
+        }
     }
-    void ClevageHeavyAttackEvent(const InputEventData& data) {
-        PassAnimation("Cleavage_HeavyAttack", true);
+    void CleavageHeavyAttackEvent(const InputEventData& data) {
+        if (PassAnimation("Cleavage_HeavyAttack", true)) {
+            AttemptBreastActionOnTiny("Cleavage_HeavyAttack_Tiny");
+        }
     }
-    void CleavageForceAbsorbEvent(const InputEventData& data) {
-        AttemptAbsorption(true);
+    void CleavageSuffocateEvent(const InputEventData& data) {
+        if (AttemptBreastAction("Cleavage_Suffocate", CooldownSource::Action_Breasts_Suffocate, "Suffocation", "Breasts_Suffocate")) {
+            AttemptBreastActionOnTiny("Cleavage_Suffocate_Tiny");
+        }
     }
-    void ClevageAbsorbEvent(const InputEventData& data) {
-        AttemptAbsorption(false);
+    void CleavageAbsorbEvent(const InputEventData& data) {
+        AttemptBreastAction("Cleavage_Absorb", CooldownSource::Action_Breasts_Absorb, "Absorption", "Breasts_Absorb");
     }
-    void ClevageVoreEvent(const InputEventData& data) {
-        PassAnimation("Cleavage_Vore", true);
+    void CleavageVoreEvent(const InputEventData& data) {
+        if (AttemptBreastAction("Cleavage_Vore", CooldownSource::Action_Breasts_Vore, "Vore", "Breasts_Vore")) {
+            AttemptBreastActionOnTiny("Cleavage_Vore_Tiny");
+        }
     }
 }
 
 namespace Gts
 {
+    void Animation_Cleavage::LaunchCooldownFor(Actor* giant, CooldownSource Source) {
+        std::string name = std::format("CDWatcher_{}_{}", giant->formID, Time::WorldTimeElapsed());
+        ActorHandle gianthandle = giant->CreateRefHandle();
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			auto giantref = gianthandle.get().get();
+
+            if (!IsInCleavageState(giantref)) {
+                return false;
+            }
+
+            ApplyActionCooldown(giant, Source);
+
+			return true;
+		});
+    }
+
 	void Animation_Cleavage::RegisterEvents() {
         InputManager::RegisterInputEvent("CleavageEnter", CleavageEnterEvent);
         InputManager::RegisterInputEvent("CleavageExit", CleavageExitEvent);
-        InputManager::RegisterInputEvent("CleavageLightAttack", ClevageLightAttackEvent);
-        InputManager::RegisterInputEvent("CleavageHeavyAttack", ClevageHeavyAttackEvent);
-        InputManager::RegisterInputEvent("CleavageAbsorb", ClevageAbsorbEvent);
-        InputManager::RegisterInputEvent("CleavageVore", ClevageVoreEvent);
+        InputManager::RegisterInputEvent("CleavageLightAttack", CleavageLightAttackEvent);
+        InputManager::RegisterInputEvent("CleavageHeavyAttack", CleavageHeavyAttackEvent);
+        InputManager::RegisterInputEvent("CleavageSuffocate", CleavageSuffocateEvent);
+        InputManager::RegisterInputEvent("CleavageAbsorb", CleavageAbsorbEvent);
+        InputManager::RegisterInputEvent("CleavageVore", CleavageVoreEvent);
 	}
 
 	void Animation_Cleavage::RegisterTriggers() {
+        
+        AnimationManager::RegisterTrigger("Cleavage_EnterState_Tiny", "Cleavage", "GTSBEH_T_Boobs_Enter");
         AnimationManager::RegisterTrigger("Cleavage_EnterState", "Cleavage", "GTSBEH_Boobs_Enter");
+
         AnimationManager::RegisterTrigger("Cleavage_ExitState", "Cleavage", "GTSBEH_Boobs_Exit");
+
+        AnimationManager::RegisterTrigger("Cleavage_LightAttack_Tiny", "Cleavage", "GTSBEH_T_Boobs_Crush_Light");
 		AnimationManager::RegisterTrigger("Cleavage_LightAttack", "Cleavage", "GTSBEH_Boobs_Crush_Light");
+
+        AnimationManager::RegisterTrigger("Cleavage_HeavyAttack_Tiny", "Cleavage", "GTSBEH_T_Boobs_Crush_Heavy");
         AnimationManager::RegisterTrigger("Cleavage_HeavyAttack", "Cleavage", "GTSBEH_Boobs_Crush_Heavy");
+
+        AnimationManager::RegisterTrigger("Cleavage_Suffocate_Tiny", "Cleavage", "GTSBEH_T_Boobs_SufoStart");
+        AnimationManager::RegisterTrigger("Cleavage_SuffocateStop", "Cleavage", "GTSBEH_Boobs_SufoStop");
+
+        AnimationManager::RegisterTrigger("Cleavage_Suffocate", "Cleavage", "GTSBEH_Boobs_SufoStart");
         AnimationManager::RegisterTrigger("Cleavage_Absorb", "Cleavage", "GTSBEH_Boobs_Absorb");
         AnimationManager::RegisterTrigger("Cleavage_Abort", "Cleavage", "GTSBEH_Boobs_Abort");
+
+        AnimationManager::RegisterTrigger("Cleavage_Vore_Tiny", "Cleavage", "GTSBEH_T_Boobs_Vore");
         AnimationManager::RegisterTrigger("Cleavage_Vore", "Cleavage", "GTSBEH_Boobs_Vore");
+
+
+        /* Tiny Events:
+        GTSBEH_T_Boobs_Enter
+        GTSBEH_T_Boobs_Exit
+        GTSBEH_T_Boobs_Crush_Light
+        GTSBEH_T_Boobs_Crush_Heavy
+        GTSBEH_T_Boobs_Vore
+        GTSBEH_T_Boobs_Absorb
+        GTSBEH_T_Boobs_SufoStart
+        GTSBEH_T_Boobs_SufoStop
+        */
 	}
 }

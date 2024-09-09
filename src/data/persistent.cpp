@@ -49,6 +49,8 @@ namespace {
 	inline const auto NPC_EffectImmunity = _byteswap_ulong('NPER');
 	inline const auto PC_EffectImmunity = _byteswap_ulong('PCER');
 
+	inline const auto Heart_Effects = _byteswap_ulong('HEFS');
+
 	inline const auto EnableIconsRecord = _byteswap_ulong('EIRC');
 	inline const auto AllowWeightGainRecord = _byteswap_ulong('AWGR');
 
@@ -575,6 +577,10 @@ namespace Gts {
 				bool Vore_Ai;
 				serde->ReadRecordData(&Vore_Ai, sizeof(Vore_Ai));
 				GetSingleton().Vore_Ai = Vore_Ai;
+			} else if (type == Heart_Effects) {
+				bool HeartEffects;
+				serde->ReadRecordData(&HeartEffects, sizeof(HeartEffects));
+				GetSingleton().HeartEffects = HeartEffects;
 			} else if (type == NPC_EffectImmunity) {
 				bool NPCEffectImmunity;
 				serde->ReadRecordData(&NPCEffectImmunity, sizeof(NPCEffectImmunity));
@@ -954,6 +960,14 @@ namespace Gts {
 		}
 		bool legacy_sounds = GetSingleton().legacy_sounds;
 		serde->WriteRecordData(&legacy_sounds, sizeof(legacy_sounds));
+
+		if (!serde->OpenRecord(Heart_Effects, 1)) {
+			log::error("Unable to open Heart Effects record to write cosave data");
+			return;
+		}
+
+		bool HeartEffects = GetSingleton().HeartEffects;
+		serde->WriteRecordData(&HeartEffects, sizeof(HeartEffects));
 
 		if (!serde->OpenRecord(NPC_EffectImmunity, 1)) {
 			log::error("Unable to open NPC Effect Immunity record to write cosave data");

@@ -26,6 +26,7 @@ namespace Gts {
 
 			float experiment = 1.0;
 
+			virtual void MenuChange(const MenuOpenCloseEvent* menu) override;
 			virtual void OnAddPerk(const AddPerkEvent& evt) override;
 
 			virtual void DragonSoulAbsorption() override;

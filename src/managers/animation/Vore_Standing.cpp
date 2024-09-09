@@ -207,10 +207,7 @@ namespace {
 	void GTSvore_open_mouth(AnimationEventData& data) {
 		auto giant = &data.giant;
 		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
-		AdjustFacialExpression(giant, 0, 1.0, "phenome"); // Start opening mouth
-		AdjustFacialExpression(giant, 1, 0.5, "phenome"); // Open it wider
-		AdjustFacialExpression(giant, 0, 0.80, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 0.80, "modifier"); // blink R
+		Task_FacialEmotionTask_OpenMouth(giant, 0.75 / AnimationManager::GetAnimSpeed(giant), "StandingVoreOpenMouth");
 
 		for (auto& tiny: VoreData.GetVories()) {
 			Vore::GetSingleton().ShrinkOverTime(giant, tiny, 0.1);
@@ -258,8 +255,6 @@ namespace {
 		TaskManager::Cancel(name_1);
 		TaskManager::Cancel(name_2);
 
-		AdjustFacialExpression(giant, 0, 0.0, "phenome"); // Close mouth
-		AdjustFacialExpression(giant, 1, 0.0, "phenome"); // Close mouth
 		for (auto& tiny: VoreData.GetVories()) {
 			if (tiny->formID == 0x14) {
 				PlayerCamera::GetSingleton()->cameraTarget = giant->CreateRefHandle();

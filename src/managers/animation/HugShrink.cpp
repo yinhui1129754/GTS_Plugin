@@ -50,10 +50,10 @@ namespace {
 	}
 
 	void ShrinkPulse_DecreaseSize(Actor* tiny, float scale) {
-		float min_scale = 0.06;
+		float min_scale = 0.04;
 		float target_scale = get_target_scale(tiny);
 		if (target_scale > min_scale) {
-			set_target_scale(tiny, scale*0.60);
+			set_target_scale(tiny, scale*0.48);
 		} else {
 			set_target_scale(tiny, min_scale);
 		}
@@ -164,7 +164,7 @@ namespace {
 			ShrinkPulse_DecreaseSize(huggedActor, scale);
 
 			
-			Rumbling::For("ShrinkPulse", giant, Rumble_Hugs_Shrink, 0.10, "NPC COM [COM ]", 0.50 / GetAnimationSlowdown(giant), 0.0);
+			Rumbling::For("ShrinkPulse", giant, Rumble_Hugs_Shrink, 0.10, "NPC COM [COM ]", 0.50 / AnimationManager::GetAnimSpeed(giant), 0.0);
 			ModSizeExperience(giant, scale/6);
 		}
 	}
@@ -243,7 +243,7 @@ namespace {
 		if (huggedActor) {
 			if (!IsActionOnCooldown(player, CooldownSource::Action_AbsorbOther)) {
 				float health = GetHealthPercentage(huggedActor);
-				float HpThreshold = GetHugCrushThreshold(player, huggedActor);
+				float HpThreshold = GetHugCrushThreshold(player, huggedActor, true);
 				if (health <= HpThreshold) {
 					AnimationManager::StartAnim("Huggies_HugCrush", player);
 					AnimationManager::StartAnim("Huggies_HugCrush_Victim", huggedActor);
@@ -470,7 +470,7 @@ namespace Gts {
 			float stamina = GetAV(giantref, ActorValue::kStamina);
 
 			Utils_UpdateHugBehaviors(giantref, tinyref); // Record GTS/Tiny Size-Difference value for animation blending
-			Hugs_FixAnimationDesync(giantref, tinyref, false); // Share GTS Animation Speed with hugged actor to avoid de-sync
+			Anims_FixAnimationDesync(giantref, tinyref, false); // Share GTS Animation Speed with hugged actor to avoid de-sync
 
 			if (IsHugHealing(giantref)) {
 				ForceRagdoll(tinyref, false);

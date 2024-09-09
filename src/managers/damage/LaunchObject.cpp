@@ -133,7 +133,7 @@ namespace Gts {
 
 		if (HasSMT(giant)) {
 			smt = true;
-			power *= 8.0;
+			power *= 1.25;
 		}
 
 		if (giantScale < 2.5) {  // slowly gain power of pushing

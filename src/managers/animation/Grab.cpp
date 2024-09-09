@@ -217,6 +217,7 @@ namespace {
 			PushActorAway(giant, grabbedActor, 1.0);
 			EnableCollisions(grabbedActor);
 			SetBeingHeld(grabbedActor, false);
+			Anims_FixAnimationDesync(giant, grabbedActor, true);
 		}
 		Grab::DetachActorTask(giant);
 		Grab::Release(giant);
@@ -228,9 +229,9 @@ namespace {
 		if (grabbedActor) {
 			EnableCollisions(grabbedActor);
 			SetBetweenBreasts(grabbedActor, false);
+			Anims_FixAnimationDesync(giant, grabbedActor, true);
 		}
 		
-
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
@@ -249,6 +250,7 @@ namespace {
 			EnableCollisions(grabbedActor);
 			SetBeingHeld(grabbedActor, false);
 			SetBetweenBreasts(grabbedActor, false);
+			Anims_FixAnimationDesync(giant, grabbedActor, true);
 		}
 		
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0);
@@ -298,8 +300,8 @@ namespace {
 		if (otherActor) {
 			SetBetweenBreasts(otherActor, false);
 			otherActor->SetGraphVariableBool("GTSBEH_T_InStorage", false);
-			//BlockFirstPerson(giant, true);
 			AnimationManager::StartAnim("Breasts_FreeOther", otherActor);
+			Anims_FixAnimationDesync(giant, otherActor, true);
 		}
 	}
 
@@ -559,10 +561,12 @@ namespace Gts {
 
 	void Grab::DetachActorTask(Actor* giant) {
 		std::string name = std::format("GrabAttach_{}", giant->formID);
+		giant->SetGraphVariableBool("GTS_OverrideZ", false);
 		giant->SetGraphVariableInt("GTS_GrabbedTiny", 0); // Tell behaviors 'we have nothing in our hands'. A must.
 		giant->SetGraphVariableInt("GTS_Grab_State", 0);
 		giant->SetGraphVariableInt("GTS_Storing_Tiny", 0);
 		Attachment_SetTargetNode(giant, AttachToNode::None);
+
 		TaskManager::Cancel(name);
 		Grab::Release(giant);
 	}
@@ -597,8 +601,16 @@ namespace Gts {
 					float timepassed = Finish - Start;
 					if (timepassed > 0.25) {
 						tinyref->MoveTo(giantref);
+						DisableCollisions(tinyref, giantref);
+						if (IsBetweenBreasts(tinyref)) {
+							if (IsHostile(giantref, tinyref)) {
+								AnimationManager::StartAnim("Breasts_Idle_Unwilling", tinyref);
+							} else {
+								AnimationManager::StartAnim("Breasts_Idle_Willing", tinyref);
+							}
+						}
 					}
-					if (timepassed > 0.80) { // One last time
+					if (timepassed > 1.25) { // One last time
 						tinyref->MoveTo(giantref);
 						DisableCollisions(tinyref, giantref);
 						if (IsBetweenBreasts(tinyref)) {
@@ -667,6 +679,7 @@ namespace Gts {
 					log::info("Giant stamina is < 2: {}", GetAV(giantref, ActorValue::kStamina) < 2.0);
 					PushActorAway(giantref, tinyref, 1.0);
 					tinyref->SetGraphVariableBool("GTSBEH_T_InStorage", false);
+					Anims_FixAnimationDesync(giantref, tinyref, true); // Reset anim speed override
 					SetBetweenBreasts(tinyref, false);
 					SetBeingEaten(tinyref, false);
 					SetBeingHeld(tinyref, false);
@@ -697,14 +710,39 @@ namespace Gts {
 					tinyref->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kStamina, restore);
 				}
 
+				Anims_FixAnimationDesync(giantref, tinyref, false);
+
 				ShutUp(tinyref);
 				ShutUp(giantref);	
 
-				if (Attachment_GetTargetNode(giantref) == AttachToNode::ObjectB) { // Used in Cleavage state
-					if (!AttachToObjectB(gianthandle, tinyhandle)) {
+				float AnimSpeed_GTS = AnimationManager::GetAnimSpeed(giantref);
+				float AnimSpeed_Tiny = AnimationManager::GetAnimSpeed(tinyref);
+
+				if (Attachment_GetTargetNode(giantref) == AttachToNode::ObjectL) {
+					auto ObjectL = find_node(giantref, "AnimObjectL");
+					if (ObjectL) {
+						NiPoint3 coords = ObjectL->world.translate;
+
+						if (!AttachTo(giantref, tinyref, coords)) {
+							Anims_FixAnimationDesync(giantref, tinyref, true);
+							Grab::Release(giantref);
+							return false;
+						}
+					}
+					return true;
+				} else if (Attachment_GetTargetNode(giantref) == AttachToNode::ObjectB) { // Used in Cleavage state
+					if (IsDebugEnabled()) {
+						auto node = find_node(tinyref, "NPC Root [Root]");
+						if (node) {
+							NiPoint3 point = node->world.translate;
+							
+							DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), 6.0, 40, {0.0, 1.0, 0.0, 1.0});
+						}
+					}
+
+					if (!AttachToObjectB(gianthandle, tinyhandle)) { // Attach to ObjectB non stop
 						Attachment_SetTargetNode(giantref, AttachToNode::None);
 						Grab::Release(giantref);
-						log::info("Can't attach to ObjectB");
 						return false;
 					}
 					return true;
@@ -715,6 +753,7 @@ namespace Gts {
 				}
 				if (!AttachToCleavage(gianthandle, tinyhandle)) {
 					// Unable to attach
+					Anims_FixAnimationDesync(giantref, tinyref, true); // Reset anim speed override
 					Grab::Release(giantref);
 					log::info("Can't attach to Cleavage");
 					return false;
@@ -725,8 +764,11 @@ namespace Gts {
 			} else {
 				if (!AttachToHand(gianthandle, tinyhandle)) {
 					// Unable to attach
-					log::info("Can't attach to hand");
+					
+					
 					Attachment_SetTargetNode(giantref, AttachToNode::None);
+					Anims_FixAnimationDesync(giantref, tinyref, true); // Reset anim speed override
+					log::info("Can't attach to hand");
 					Grab::Release(giantref);
 					return false;
 				}

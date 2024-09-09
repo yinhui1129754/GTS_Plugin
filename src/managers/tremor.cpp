@@ -61,7 +61,7 @@ namespace Gts {
 		if (actor) {
 			
 			float tremor = Rumble_Default_FootWalk * 0.35;
-			float duration = 0.0;
+			float duration = 1.25;
 			float calamity = 1.0;
 
 			float threshold = 1.25; // tremor starts to appear past this scale

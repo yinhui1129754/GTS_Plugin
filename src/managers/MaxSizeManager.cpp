@@ -25,7 +25,7 @@ namespace {
 
     float get_default_size_limit(float NaturalScale, float BaseLimit) { // default size limit for everyone
         float size_calc = NaturalScale + ((BaseLimit - 1.0f) * NaturalScale);
-        float GetLimit = std::clamp(size_calc, NaturalScale, 99999999.0f);
+        float GetLimit = std::clamp(size_calc, 1.0f, 99999999.0f);
 
         return GetLimit;
     }
@@ -44,14 +44,14 @@ namespace {
 
     float get_follower_size_limit(float NaturalScale, float FollowerLimit) { // Self explanatory
         float size_calc = NaturalScale + ((FollowerLimit) * NaturalScale);
-        float GetLimit = std::clamp(size_calc, NaturalScale * FollowerLimit, 99999999.0f);
+        float GetLimit = std::clamp(size_calc, 1.0f * FollowerLimit, 99999999.0f);
 
         return GetLimit;
     }
 
     float get_npc_size_limit(float NaturalScale, float NPCLimit) { // get non-follower size limit
         float size_calc = NaturalScale + ((NPCLimit - 1.0f) * NaturalScale);
-		float GetLimit = std::clamp(size_calc, NaturalScale * NPCLimit, 99999999.0f);
+		float GetLimit = std::clamp(size_calc, 1.0f * NPCLimit, 99999999.0f);
 
         return GetLimit;
     }
@@ -67,9 +67,8 @@ namespace Gts {
 				Endless = get_endless_height(actor);
 			}
 
-            float NaturalScale = get_natural_scale(actor);
+            float NaturalScale = get_natural_scale(actor, true);
             float QuestStage = Runtime::GetStage("MainQuest");
-			float GameScale = game_get_scale_overrides(actor);
 
 			float BaseLimit = Runtime::GetFloatOr("sizeLimit", 1.0);
             float NPCLimit = Runtime::GetFloatOr("NPCSizeLimit", 1.0); // 0 by default
@@ -86,7 +85,7 @@ namespace Gts {
                 GetLimit = get_npc_size_limit(NaturalScale, NPCLimit); // Apply Other NPC's max size
 			}
 
-			float TotalLimit = (GetButtCrushSize(actor) + ((GetLimit * Potion_GetSizeMultiplier(actor)) * (1.0 + Ench_Aspect_GetPower(actor)))) / GameScale;
+			float TotalLimit = (GetButtCrushSize(actor) + ((GetLimit * Potion_GetSizeMultiplier(actor)) * (1.0 + Ench_Aspect_GetPower(actor))));// / GameScale;
             //                ^ Add Butt Crush to base     ^          Multiply size with potions              ^ Aspect Of Giantess *'es it again
 
 			if (get_max_scale(actor) < TotalLimit + Endless || get_max_scale(actor) > TotalLimit + Endless) {

@@ -58,7 +58,7 @@ namespace {
 			EnableCollisions(tiny);
 			SetBeingHeld(tiny, false);
 			UpdateFriendlyHugs(giant, tiny, true); // set GTS_IsFollower (tiny) and GTS_HuggingTeammate (GTS) bools to false
-			Hugs_FixAnimationDesync(giant, tiny, true); // reset anim speed override so .dll won't use it
+			Anims_FixAnimationDesync(giant, tiny, true); // reset anim speed override so .dll won't use it
 		}
 		SetSneaking(giant, false, 0);
 		
@@ -77,8 +77,7 @@ namespace {
 		bool Healing = IsHugHealing(giantref);
 		
 		if (Healing && HeartTimer.ShouldRunFrame()) {
-			float scale = get_visual_scale(giantref);
-			SpawnCustomParticle(giantref, ParticleType::Hearts, GetHeartPosition(giantref, tinyref), "NPC COM [COM ]", scale * 2.4);
+			SpawnHearts(giantref, tinyref, 0.0, 2.4);
 		}
 
 		if (!Healing && hp >= maxhp) {
@@ -93,7 +92,7 @@ namespace {
 			float sizedifference = get_visual_scale(giantref)/get_visual_scale(tinyref);
 			shake_camera(giantref, 0.30 * sizedifference, 0.05);
 		} else {
-			Rumbling::Once("HugSteal", giantref, Rumble_Hugs_Heal, 0.10);
+			Rumbling::Once("HugSteal", giantref, Rumble_Hugs_Heal, 0.02);
 		}
 		tinyref->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, maxhp * 0.004 * 0.15 * TimeScale());
 

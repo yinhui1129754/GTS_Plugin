@@ -4,11 +4,12 @@
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/animation/FootGrind.hpp"
 #include "managers/damage/LaunchActor.hpp"
+#include "managers/audio/footstep.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/InputManager.hpp"
 #include "managers/CrushManager.hpp"
+#include "magic/effects/common.hpp"
 #include "managers/explosion.hpp"
-#include "managers/audio/footstep.hpp"
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "managers/Rumble.hpp"
@@ -27,12 +28,22 @@ namespace {
 	const std::string_view RNode = "NPC R Foot [Rft ]";
 	const std::string_view LNode = "NPC L Foot [Lft ]";
 
+	float GetGrindEventLimit(Actor* giant) {
+		float limit = 7.0;
+
+		if (IsUsingAlternativeStomp(giant)) {
+			limit = 15.0;
+		}
+
+		return limit;
+	}
+
 	void ApplyDustRing(Actor* giant, FootEvent kind, std::string_view node, float mult) {
 		auto& explosion = ExplosionManager::GetSingleton();
 		Impact impact_data = Impact {
 			.actor = giant,
 			.kind = kind,
-			.scale = get_visual_scale(giant) * mult,
+			.scale = get_visual_scale(giant),
 			.modifier = mult,
 			.nodes = find_node(giant, node),
 		};
@@ -55,7 +66,7 @@ namespace {
 			Laugh_Chance(giantref, 2.2, "FootGrind");
 
 			Rumbling::Once(r_name, giantref, Rumble_FootGrind_DOT, 0.025, RNode, 0.0);
-			float speed = AnimationManager::GetBonusAnimationSpeed(giant);
+			float speed = AnimationManager::GetBonusAnimationSpeed(giant) * TimeScale();
 			DoDamageEffect(giantref, Damage_Foot_Grind_DOT * speed, Radius_Foot_Grind_DOT, 10000, 0.025, Event, 2.5, DamageSource::FootGrindedRight);
 			return true;
 		});
@@ -64,6 +75,11 @@ namespace {
 	void ApplyRotateDamage(Actor* giant, std::string_view node, FootEvent kind, DamageSource source) {
 		Laugh_Chance(giant, 2.2, "FootGrind");
 		float speed = AnimationManager::GetBonusAnimationSpeed(giant);
+		float damage_mult = 1.0;
+
+		if (IsUsingAlternativeStomp(giant)) {
+			damage_mult = 0.6; // Since there's more total rotate events (15 vs 7)
+		}
 
 		std::string r_name = std::format("FootGrindRot_{}", giant->formID);
 
@@ -138,7 +154,7 @@ namespace {
 
 	void GTSstomp_FootGrindL_MV_E(AnimationEventData& data) { // When movement ends: Left
 		ApplyDustRing(&data.giant, FootEvent::Left, LNode, 0.9);
-		if (data.stage >= 7.0) {
+		if (data.stage >= GetGrindEventLimit(&data.giant)) { // It is a MUST to fix Tiny still being attached to our foot when Grind ends and we remove the leg
 			CancelGrindTasks(&data.giant);
 			data.stage = 1.0; // reset stage
 		}
@@ -146,7 +162,7 @@ namespace {
 
 	void GTSstomp_FootGrindR_MV_E(AnimationEventData& data) { // When movement ends: Right
 		ApplyDustRing(&data.giant, FootEvent::Right, RNode, 0.9);
-		if (data.stage >= 7.0) {
+		if (data.stage >= GetGrindEventLimit(&data.giant)) { // It is a MUST to fix Tiny still being attached to our foot when Grind ends and we remove the leg
 			CancelGrindTasks(&data.giant);
 			data.stage = 1.0; // reset stage
 		}

@@ -14,5 +14,7 @@ namespace Gts {
 
 			virtual std::string DebugName() override;
 			virtual void Update() override;
+
+			static void RestoreStats(Actor* actor, float multiplier);
 	};
 }

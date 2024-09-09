@@ -120,12 +120,6 @@ namespace Hooks
 		return _Move(a_this, a_arg2, a_position * bonus);
 	}
 
-	void Hook_PlayerCharacter::ProcessTracking(PlayerCharacter* a_this, float a_delta, NiAVObject* a_obj3D) {
-		float adjust = Runtime::GetFloat("ConversationCameraComp");
-		auto player = PlayerCharacter::GetSingleton()->Get3D();
-		_ProcessTracking(a_this, a_delta, a_obj3D);
-	}
-
 	void Hook_PlayerCharacter::PCAnimEvents(BSTEventSink<BSAnimationGraphEvent>* a_this, BSAnimationGraphEvent& a_event, BSTEventSource<BSAnimationGraphEvent>* a_src) {
 		if (a_event.tag != nullptr && a_event.holder != nullptr) {
 			Actor* actor = static_cast<Actor*>(a_this);

@@ -177,7 +177,7 @@ namespace Gts {
 		return "CollisionDamage";
 	}
 
-	void CollisionDamage::DoFootCollision(Actor* actor, float damage, float radius, int random, float bbmult, float crush_threshold, DamageSource Cause, bool Right, bool ApplyCooldown, bool ignore_rotation) { // Called from GtsManager.cpp, checks if someone is close enough, then calls DoSizeDamage()
+	void CollisionDamage::DoFootCollision(Actor* actor, float damage, float radius, int random, float bbmult, float crush_threshold, DamageSource Cause, bool Right, bool ApplyCooldown, bool ignore_rotation, bool SupportCalamity) { // Called from GtsManager.cpp, checks if someone is close enough, then calls DoSizeDamage()
 		auto profiler = Profilers::Profile("CollisionDamageLeft: DoFootCollision_Left");
 		auto& CollisionDamage = CollisionDamage::GetSingleton();
 		if (!actor) {
@@ -191,9 +191,11 @@ namespace Gts {
 
 		bool SMT = HasSMT(actor);
 		if (SMT) {
+			if (SupportCalamity) {
+				Calamity = 4.0; // Only active during stomps and such
+			}
 			giantScale += 0.20;
 			SCALE_RATIO = 0.7;
-			Calamity = 3.0 * Get_Bone_Movement_Speed(actor, Cause); // larger range for shrinking radius with Tiny Calamity
 		}
 
 		float maxFootDistance = radius * giantScale;
@@ -227,25 +229,21 @@ namespace Gts {
 								for (auto point: CoordsToCheck) {
 									if (!StopDamageLookup) {
 										VisitNodes(model, [&nodeCollisions, &Calamity, &DoDamage, SMT, point, maxFootDistance, &StopDamageLookup](NiAVObject& a_obj) {
-											float distance = (point - a_obj.world.translate).Length();
-											if (distance - Collision_Distance_Override < maxFootDistance) {
+											float distance = (point - a_obj.world.translate).Length() - Collision_Distance_Override;
+											if (distance < maxFootDistance) {
 												StopDamageLookup = true;
 												nodeCollisions += 1;
-												return false;
-											} else if (SMT && distance - Collision_Distance_Override > maxFootDistance && distance < maxFootDistance*Calamity) {
-												StopDamageLookup = true;
-												nodeCollisions += 1;
-												DoDamage = false;
 												return false;
 											}
 											return true;
 										});
 									}
 								}
+								if (SupportCalamity && SMT) { // Seek for actors to shrink during Tiny Calamity
+									TinyCalamity_SeekForShrink(actor, otherActor, damage, maxFootDistance * Calamity, Cause, Right, ApplyCooldown, ignore_rotation);
+								}
 							}
 							if (nodeCollisions > 0) {
-								//damage /= nodeCollisions;
-
 								if (ApplyCooldown) { // Needed to fix Thigh Crush stuff
 									auto& sizemanager = SizeManager::GetSingleton();
 									bool OnCooldown = IsActionOnCooldown(otherActor, CooldownSource::Damage_Thigh);
@@ -281,11 +279,17 @@ namespace Gts {
 			return;
 		}
 
+		bool SMT = HasSMT(giant);
 		auto& sizemanager = SizeManager::GetSingleton();
-
 		float size_difference = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);
 
-		if (size_difference > 1.25) {
+		float size_threshold = 1.25;
+
+		if (SMT) {
+			size_threshold = 0.9;
+		}
+
+		if (size_difference > size_threshold) {
 			if (Allow_Damage(giant, tiny, Cause, size_difference)) {
 				float damagebonus = HighHeels_PerkDamage(giant, Cause); // 15% bonus HH damage if we have perk
 
@@ -310,13 +314,12 @@ namespace Gts {
 
 				damage_result *= Might;
 
-				TinyCalamity_ShrinkActor(giant, tiny, damage_result * 0.66 * GetDamageSetting());
+				TinyCalamity_ShrinkActor(giant, tiny, damage_result * 0.35 * GetDamageSetting());
 
 				if (giant->IsSneaking()) {
 					damage_result *= 0.70;
 				}
 
-				SizeHitEffects::GetSingleton().BreakBones(giant, tiny, damage_result * bbmult, random);
 				// ^ Chance to break bonues and inflict additional damage, as well as making target more vulerable to size damage
 
 				if (!tiny->IsDead()) {
@@ -335,6 +338,8 @@ namespace Gts {
 					}
 				}
 				if (apply_damage) {
+					SizeHitEffects::GetSingleton().BreakBones(giant, tiny, damage_result * bbmult, random);
+
 					ModVulnerability(giant, tiny, damage_result);
 					InflictSizeDamage(giant, tiny, damage_result);
 					this->CrushCheck(giant, tiny, size_difference, crush_threshold, Cause);

@@ -337,6 +337,14 @@ exclusive = true
 # WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
 
 [[InputEvent]]
+name = "CleavageSuffocate"
+keys = ["W"]
+exclusive = false
+duration = 0
+# Suffocate the tiny with breasts
+# WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!
+
+[[InputEvent]]
 name = "CleavageAbsorb"
 keys = ["S"]
 exclusive = false
@@ -349,7 +357,7 @@ name = "CleavageVore"
 keys = ["V"]
 trigger = "continuous"
 exclusive = false
-duration = 0.33
+duration = 0
 
 # Eat the tiny with mouth
 # WORKS ONLY WHEN SOMEONE IS BETWEEN THE BREASTS!

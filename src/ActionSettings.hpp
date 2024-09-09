@@ -254,7 +254,7 @@ namespace Gts {
 
     // Foot Grind
     const float Rumble_FootGrind_DOT = 0.25f;
-    const float Rumble_FootGrind_Rotate = 0.65f;
+    const float Rumble_FootGrind_Rotate = 0.75f;
     const float Rumble_FootGrind_Impact = 2.4f * 1.0;
 
     // Hugs
@@ -263,7 +263,7 @@ namespace Gts {
     const float Rumble_Hugs_Release = 4.2f;
     const float Rumble_Hugs_Shrink = 3.2f;
     const float Rumble_Hugs_Catch = 4.2f;
-    const float Rumble_Hugs_Heal = 3.8f;
+    const float Rumble_Hugs_Heal = 1.6f;
 
     // Grab
     const float Rumble_Grab_Throw_Footstep = 3.0f;

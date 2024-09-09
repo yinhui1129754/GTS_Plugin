@@ -170,7 +170,7 @@ namespace Gts {
 			float hp = GetAV(tiny, ActorValue::kHealth);
 
 			if (!tiny->IsDead()) {
-				KillActor(giant, tiny); // just to make sure
+				KillActor(giant, tiny, false); // just to make sure
 			}
 			if (tiny->IsDead() || hp <= 0.0) {
 				float Finish = Time::WorldTimeElapsed();

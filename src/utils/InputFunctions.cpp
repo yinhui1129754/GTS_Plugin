@@ -32,7 +32,7 @@ namespace {
 		float gigantism = Ench_Aspect_GetPower(actor) * 100;
 		float naturalscale = get_natural_scale(actor, true);
 		float scale = get_visual_scale(actor);
-		float maxscale = get_max_scale(actor) * naturalscale;
+		float maxscale = get_max_scale(actor);
 
 		Actor* player = PlayerCharacter::GetSingleton();
 
@@ -116,6 +116,7 @@ namespace {
 			static Timer timergrowth = Timer(2.00);
 			if (timergrowth.ShouldRun()) {
 				Runtime::PlaySound("shrinkSound", player, Volume, 1.0);
+				log::info("TotalControlShrink");
 			}
 		}
 	}
@@ -177,7 +178,7 @@ namespace {
 		}
 		if (!IsGtsBusy(player) && !IsChangingSize(player)) {
 			float target = get_target_scale(player);
-			float max_scale = get_max_scale(player) * get_natural_scale(player);
+			float max_scale = get_max_scale(player);// * get_natural_scale(player);
 			if (target >= max_scale) {
 				TiredSound(player, "You can't grow any further");
 				Rumbling::Once("CantGrow", player, 0.25, 0.05);

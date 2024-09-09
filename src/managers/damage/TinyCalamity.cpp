@@ -1,9 +1,11 @@
 #include "managers/animation/Utils/CooldownManager.hpp"
+#include "managers/animation/Utils/AnimationUtils.hpp"
 #include "managers/damage/CollisionDamage.hpp"
 #include "managers/damage/TinyCalamity.hpp"
 #include "managers/CrushManager.hpp"
 #include "magic/effects/common.hpp"
 #include "managers/Attributes.hpp"
+#include "utils/MovementForce.hpp"
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "data/persistent.hpp"
@@ -25,13 +27,6 @@ using namespace RE;
 using namespace Gts;
 
 namespace {
-    const std::string_view leftFootLookup = "NPC L Foot [Lft ]";
-	const std::string_view rightFootLookup = "NPC R Foot [Rft ]";
-	const std::string_view leftCalfLookup = "NPC L Calf [LClf]";
-	const std::string_view rightCalfLookup = "NPC R Calf [RClf]";
-	const std::string_view leftToeLookup = "NPC L Toe0 [LToe]";
-	const std::string_view rightToeLookup = "NPC R Toe0 [RToe]";
-
     void ScareEnemies(Actor* giant)  {
 		int FearChance = rand() % 2;
 		if (FearChance <= 0) {
@@ -106,7 +101,7 @@ namespace Gts {
             bool HasPerk = Runtime::HasPerk(giant, "SmallMassiveThreatSizeSteal");
             float limit = Minimum_Actor_Scale;
             if (HasPerk) {
-				giant->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, shrink * 0.12);
+				DamageAV(giant, ActorValue::kHealth, -shrink * 1.25);
                 shrink *= 1.25;
 			}
 
@@ -124,11 +119,48 @@ namespace Gts {
         }
     }
 
+    void TinyCalamity_SeekForShrink(Actor* giant, Actor* tiny, float damage, float maxFootDistance, DamageSource Cause, bool Right, bool ApplyCooldown, bool ignore_rotation) {
+        std::vector<NiPoint3> CoordsToCheck = GetFootCoordinates(giant, Right, ignore_rotation);
+        int nodeCollisions = 0;
+        auto model = tiny->GetCurrent3D();
+        if (model) {
+            for (auto point: CoordsToCheck) {
+                bool StopDamageLookup = false;
+                if (!StopDamageLookup) {
+                    VisitNodes(model, [&nodeCollisions, point, maxFootDistance, &StopDamageLookup](NiAVObject& a_obj) {
+                        float distance = (point - a_obj.world.translate).Length() - Collision_Distance_Override;
+                        if (distance < maxFootDistance) {
+                            StopDamageLookup = true;
+                            nodeCollisions += 1;
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+            }
+            if (nodeCollisions > 0) {
+                auto& CollisionDamage = CollisionDamage::GetSingleton();
+                if (ApplyCooldown) { // Needed to fix Thigh Crush stuff
+                    auto& sizemanager = SizeManager::GetSingleton();
+                    bool OnCooldown = IsActionOnCooldown(tiny, CooldownSource::Damage_Thigh);
+                    if (!OnCooldown) {
+                        Utils_PushCheck(giant, tiny, Get_Bone_Movement_Speed(giant, Cause)); // pass original un-altered force
+                        CollisionDamage.DoSizeDamage(giant, tiny, damage, 0.0, 10, 0, Cause, false);
+                        ApplyActionCooldown(giant, CooldownSource::Damage_Thigh);
+                    }
+                } else {
+                    Utils_PushCheck(giant, tiny, Get_Bone_Movement_Speed(giant, Cause)); // pass original un-altered force
+                    CollisionDamage.DoSizeDamage(giant, tiny, damage, 0.0, 10, 0, Cause, false);
+                }
+            }
+        }
+    }
+
     void TinyCalamity_ExplodeActor(Actor* giant, Actor* tiny) {
         ModSizeExperience_Crush(giant, tiny, true);
 
         if (!tiny->IsDead()) {
-            KillActor(giant, tiny);
+            KillActor(giant, tiny, false);
         }
 
         ActorHandle giantHandle = giant->CreateRefHandle();
@@ -146,7 +178,7 @@ namespace Gts {
         giant->GetGraphVariableFloat("GiantessScale", OldScale); // save old scale
         giant->SetGraphVariableFloat("GiantessScale", 1.0); // Needed to allow Stagger to play, else it won't work
 
-        shake_camera_at_node(giant, "NPC COM [COM ]", 24.0, 1.0);
+        shake_camera(giant, 1.7, 0.8);
         StaggerActor(giant, 0.5f);
         RefreshDuration(giant);
 

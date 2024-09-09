@@ -55,7 +55,7 @@ namespace {
 				auto giantref = gianthandle.get().get();
                 float Finish = Time::WorldTimeElapsed();
 				auto node = find_node(giantref, node_name, false);
-				float timepassed = std::clamp(((Finish - Start) * GetAnimationSlowdown(giantref)) * speed, 0.01f, 0.98f);
+				float timepassed = std::clamp(((Finish - Start) * AnimationManager::GetAnimSpeed(giantref)) * speed, 0.01f, 0.98f);
 				if (node) {
 					node->local.scale = std::clamp(0.60f - timepassed, 0.01f, 1.0f);
 					update_node(node);

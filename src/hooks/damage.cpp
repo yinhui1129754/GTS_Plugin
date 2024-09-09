@@ -157,8 +157,9 @@ namespace {
 						if ((target <= natural) || (target - 0.35 * scale <= natural)) {
 							set_target_scale(receiver, natural); // to prevent becoming < natural scale
 						}
-						Rumbling::For("CheatDeath", receiver, 4.0, 0.10, "NPC COM [COM ]", 1.50, 2.0);
+						//Rumbling::For("CheatDeath", receiver, 4.0, 0.10, "NPC COM [COM ]", 1.50, 2.0);
 						Runtime::PlaySound("TriggerHG", receiver, 2.0, 0.5);
+						shake_camera(receiver, 1.7, 1.5);
 						
 						auto node = find_node(receiver, "NPC Root [Root]");
 						if (node) {
@@ -184,12 +185,30 @@ namespace {
 			}
 		}
 		if (Runtime::HasPerk(receiver, "DarkArts_Max") && GetHealthPercentage(receiver) <= 0.40) {
-			static Timer Shrink = Timer(180.00);
-			if (Shrink.ShouldRunFrame()) {
+			bool OnCooldown = IsActionOnCooldown(receiver, CooldownSource::Misc_ShrinkOutburst_Forced);
+			if (!OnCooldown) {
+				ApplyActionCooldown(receiver, CooldownSource::Misc_ShrinkOutburst_Forced);
 				ShrinkOutburstExplosion(receiver, true);
 			}
 		}
 		return protection;
+	}
+
+	float GrowthDamageResistance(Actor* receiver) {
+		float reduction = 1.0;
+		if (IsGrowing(receiver)) {
+			int growthtype = 0;
+			receiver->GetGraphVariableInt("GTS_Growth_Roll", growthtype);
+			if (growthtype > 0) {
+				if (Runtime::HasPerk(receiver, "RandomGrowthAug")) {
+					reduction -= 0.6;
+				}
+				if (Runtime::HasPerk(receiver, "RandomGrowthTerror")) {
+					reduction -= 0.25;
+				}
+			}
+		}
+		return reduction;
 	}
 
 	float HugDamageResistance(Actor* receiver) {
@@ -206,7 +225,7 @@ namespace {
 	}
 
 	float GetTotalDamageResistance(Actor* receiver, Actor* aggressor) {
-		float resistance = GetDamageResistance(receiver) * HugDamageResistance(receiver);
+		float resistance = GetDamageResistance(receiver) * HugDamageResistance(receiver) * GrowthDamageResistance(receiver);
 		float multiplier = GetDamageMultiplier(aggressor) / game_getactorscale(aggressor); // take GetScale into account since it boosts damage as well
 		float tiny = 1.0;
 		float IsNotImmune = 1.0;

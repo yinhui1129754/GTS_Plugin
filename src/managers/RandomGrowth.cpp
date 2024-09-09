@@ -1,4 +1,5 @@
 #include "managers/animation/Utils/AnimationUtils.hpp"
+#include "managers/animation/AnimationManager.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/RandomGrowth.hpp"
 #include "magic/effects/common.hpp"
@@ -31,7 +32,6 @@ namespace {
 		if (HasSMT(actor)) {
 			return false; // Disallow random groth during Tiny Calamity
 		}
-
 		if (SizeManager::GetSingleton().BalancedMode() == 2.0) {
 			MultiplySlider = 1.0; // Disable effect in Balance Mode, so slider is always 1.0
 		}
@@ -44,15 +44,6 @@ namespace {
 		} else {
 			return false;
 		}
-	}
-
-	void RestoreStats(Actor* actor) { // Regenerate attributes
-		float HP = GetMaxAV(actor, ActorValue::kHealth) * 0.00185;
-		float MP = GetMaxAV(actor, ActorValue::kMagicka) * 0.00095;
-		float SP = GetMaxAV(actor, ActorValue::kStamina) * 0.00125;
-		actor->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HP * TimeScale());
-		actor->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kMagicka, SP * TimeScale());
-		actor->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kStamina, MP * TimeScale());
 	}
 }
 
@@ -78,39 +69,55 @@ namespace Gts {
 			if (actor->formID == 0x14 || IsTeammate(actor)) {
 				if (ShouldGrow(actor)) {
 					// Calculations
-					float scale = get_visual_scale(actor);
-					float ProgressionMultiplier = Persistent::GetSingleton().progression_multiplier;
-					int random = rand()% 79 + 1;
-					float TotalPower = (100 + random)/100;
-					float base_power = ((0.00750 * TotalPower * 120) * ProgressionMultiplier);  // The power of it
-					float Gigantism = 1.0 + Ench_Aspect_GetPower(actor);
-					ActorHandle gianthandle = actor->CreateRefHandle();
-					std::string name = std::format("RandomGrowth_{}", actor->formID);
-					// Sounds
-					float Volume = std::clamp(scale/4, 0.20f, 2.0f);
+					if (get_target_scale(actor) < get_max_scale(actor)) {
+						float scale = get_visual_scale(actor);
+						float ProgressionMultiplier = Persistent::GetSingleton().progression_multiplier;
+						int random = rand()% 79 + 1;
+						float TotalPower = (100.0 + random)/100.0;
+						float base_power = ((0.00750 * TotalPower * 25) * ProgressionMultiplier);  // The power of it
+						float Gigantism = 1.0 + Ench_Aspect_GetPower(actor);
 
-					PlayMoanSound(actor, 1.0);
-					Task_FacialEmotionTask_Moan(actor, 2.0, "RandomGrow");
-					Runtime::PlaySoundAtNode("xlRumble", actor, base_power, 1.0, "NPC COM [COM ]");
-					Runtime::PlaySoundAtNode("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
+						if (TotalPower >= 1.68 && Runtime::HasPerk(actor, "RandomGrowthAug")) {
+							AnimationManager::StartAnim("StartRandomGrowth", actor);
+						} else {
+							ActorHandle gianthandle = actor->CreateRefHandle();
+							std::string name = std::format("RandomGrowth_{}", actor->formID);
+							// Sounds
+							float Volume = std::clamp(scale/4, 0.20f, 1.0f);
 
-					TaskManager::RunFor(name, 0.40 * TotalPower, [=](auto& progressData) {
-						if (!gianthandle) {
-							return false;
+							PlayMoanSound(actor, 1.0);
+							Task_FacialEmotionTask_Moan(actor, 2.0, "RandomGrow");
+							Runtime::PlaySoundAtNode("xlRumble", actor, base_power, 1.0, "NPC COM [COM ]");
+							Runtime::PlaySoundAtNode("growthSound", actor, Volume, 1.0, "NPC Pelvis [Pelv]");
+
+							TaskManager::RunFor(name, 0.40 * TotalPower, [=](auto& progressData) {
+								if (!gianthandle) {
+									return false;
+								}
+								auto giantref = gianthandle.get().get();
+								// Grow
+								float delta_time = Time::WorldTimeDelta();
+								update_target_scale(giantref, base_power * delta_time * Gigantism, SizeEffectType::kGrow);
+
+								// Play sound
+								Rumbling::Once("RandomGrowth", giantref, base_power, 0.10);
+								RandomGrowth::RestoreStats(giantref, 0.8); // Regens Attributes if PC has perk
+								return true;
+							});
 						}
-						auto giantref = gianthandle.get().get();
-						// Grow
-						float delta_time = Time::WorldTimeDelta();
-						update_target_scale(giantref, base_power * delta_time * Gigantism, SizeEffectType::kGrow);
-
-						// Play sound
-						Rumbling::Once("RandomGrowth", giantref, base_power, 0.10);
-						RestoreStats(giantref); // Regens Attributes if PC has perk
-						return true;
-					});
+					}
 				}
 			}
 		}
+	}
+
+	void RandomGrowth::RestoreStats(Actor* actor, float multiplier) { // Regenerate attributes
+		float HP = GetMaxAV(actor, ActorValue::kHealth) * 0.00185;
+		float MP = GetMaxAV(actor, ActorValue::kMagicka) * 0.00095;
+		float SP = GetMaxAV(actor, ActorValue::kStamina) * 0.00125;
+		actor->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, HP * TimeScale() * multiplier);
+		actor->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kMagicka, SP * TimeScale() * multiplier);
+		actor->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kStamina, MP * TimeScale() * multiplier);
 	}
 }
 

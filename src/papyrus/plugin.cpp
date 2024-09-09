@@ -353,6 +353,31 @@ namespace {
 		}
 	}
 
+	void SetAlternativeLightStomp(StaticFunctionTag*, bool enable, bool player) {
+		if (player) {
+			PlayerCharacter::GetSingleton()->SetGraphVariableBool("GTS_EnableAlternativeStomp", enable);
+		} else {
+			for (auto teammate: FindTeammates()) {
+				if (teammate && teammate != PlayerCharacter::GetSingleton()) {
+					teammate->SetGraphVariableBool("GTS_EnableAlternativeStomp", enable);
+				}
+			}
+		}
+	}
+
+	void SetAlternativeSneakTransition(StaticFunctionTag*, bool enable) {
+		PlayerCharacter::GetSingleton()->SetGraphVariableBool("GTS_DisableSneakTrans", !enable);
+		for (auto teammate: FindTeammates()) {
+			if (teammate && teammate != PlayerCharacter::GetSingleton()) {
+				teammate->SetGraphVariableBool("GTS_DisableSneakTrans", !enable);
+			}
+		}
+	}
+
+	void PreventHeartEffects(StaticFunctionTag*, bool enable) {
+		Persistent::GetSingleton().HeartEffects = enable;
+	}
+
 	void SetProgressionMultiplier(StaticFunctionTag*, float value) {
 		Persistent::GetSingleton().progression_multiplier = value;
 	}
@@ -530,6 +555,9 @@ namespace Gts {
 		vm->RegisterFunction("SetIsHHFurnitureEnabled", PapyrusClass, SetIsHHFurnitureEnabled);
 		vm->RegisterFunction("SetCrawlAnimation", PapyrusClass, SetCrawlAnimation);
 		vm->RegisterFunction("UpdateCrawlAnimations", PapyrusClass, UpdateCrawlAnimations);
+		vm->RegisterFunction("SetAlternativeLightStomp", PapyrusClass, SetAlternativeLightStomp);
+		vm->RegisterFunction("SetAlternativeSneakTransition", PapyrusClass, SetAlternativeSneakTransition);
+		vm->RegisterFunction("PreventHeartEffects", PapyrusClass, PreventHeartEffects);
 		vm->RegisterFunction("SetProgressionMultiplier", PapyrusClass, SetProgressionMultiplier);
 		vm->RegisterFunction("SetStompAi", PapyrusClass, SetStompAi);
 		vm->RegisterFunction("SetSandwichAi", PapyrusClass, SetSandwichAi);

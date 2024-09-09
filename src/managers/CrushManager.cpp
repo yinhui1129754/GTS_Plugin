@@ -165,7 +165,7 @@ namespace Gts {
 				ScareChance(giant);
 
 				// Do crush
-				KillActor(giant, tiny);
+				KillActor(giant, tiny, false);
 
 				if (!IsLiving(tiny) || LessGore()) {
 					SpawnDustParticle(giant, tiny, "NPC Root [Root]", 3.0);

@@ -69,7 +69,7 @@ namespace Gts {
 
 		log::info("Shrink Value: {}", shrink_value);
 
-		TransferSize(caster, target, false, shrink_value, gain_value, false, ShrinkSource::Magic);
+		TransferSize(caster, target, false, shrink_value, gain_value, false, ShrinkSource::Enchantment);
 	}
 
 	void SwordOfSize::OnFinish() {

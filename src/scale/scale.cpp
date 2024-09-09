@@ -18,13 +18,14 @@ namespace Gts {
 	void set_target_scale(Actor& actor, float scale) {
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
-			scale /= get_natural_scale(&actor, true);
-			if (scale < (actor_data->max_scale + EPS)) {
-				// If new value is below max: allow it
+			float natural_scale = get_natural_scale(&actor, true);
+			float target_scale = actor_data->target_scale * natural_scale;
+
+			scale /= natural_scale;
+			if (scale < (actor_data->max_scale + EPS)) { // If new value is below max: allow it
 				actor_data->target_scale = scale;
-			} else if (actor_data->target_scale < (actor_data->max_scale - EPS)) {
-				// If we are below max currently and we are trying to scale over max: make it max
-				actor_data->target_scale = actor_data->max_scale;
+			} else if (target_scale < (actor_data->max_scale - EPS)) { // If we are below max currently and we are trying to scale over max: make it max
+				actor_data->target_scale = actor_data->max_scale / natural_scale;
 			} else {
 				// If we are over max: forbid it
 			}
@@ -58,20 +59,18 @@ namespace Gts {
 		auto profiler = Profilers::Profile("Scale: ModTargetScale");
 		auto actor_data = Persistent::GetSingleton().GetData(&actor);
 		if (actor_data) {
+			float natural_scale = get_natural_scale(&actor, true);
+			float target_scale = actor_data->target_scale * natural_scale;
 
-			amt /= get_natural_scale(&actor, true);
-			
-			if (amt - EPS < 0.0) {
-				// If neative change always: allow
+			amt /= natural_scale;
+
+			if (amt - EPS < 0.0) { // If neative change always: allow
 				actor_data->target_scale += amt;
-			} else if (actor_data->target_scale + amt < (actor_data->max_scale + EPS)) {
-				// If change results is below max: allow it
+			} else if (target_scale + amt < (actor_data->max_scale + EPS)) { // If change results is below max: allow it
 				actor_data->target_scale += amt;
-			} else if (actor_data->target_scale < (actor_data->max_scale - EPS)) {
-				// If we are currently below max and we are scaling above max: make it max
-				actor_data->target_scale = actor_data->max_scale;
-			} else {
-				// if we are over max then don't allow it
+			} else if (target_scale < (actor_data->max_scale - EPS)) { // If we are currently below max and we are scaling above max: make it max
+				set_target_scale(actor, actor_data->max_scale);
+			} else { // if we are over max then don't allow it
 			}
 		}
 	}
@@ -137,6 +136,13 @@ namespace Gts {
 		auto actor_data = Transient::GetSingleton().GetData(&actor);
 		if (actor_data) {
 		    float initialScale = GetInitialScale(&actor);
+			if (actor.formID == 0x14) {
+				/*log::info("Initial Scale: {}", initialScale);
+				log::info("Other Scales: {}", actor_data->otherScales);
+				log::info("gamescale: {}", game_getactorscale(&actor));
+				log::info("npcparentnode: {}", get_npcparentnode_scale(&actor));
+				log::info("GetScale: {}", actor.GetScale());*/
+			}
 			float result = actor_data->otherScales * initialScale;
 			if (game_scale) {
 				result *= game_getactorscale(&actor);

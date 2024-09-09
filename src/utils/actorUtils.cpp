@@ -8,13 +8,13 @@
 #include "managers/ai/aifunctions.hpp"
 #include "managers/GtsSizeManager.hpp"
 #include "managers/animation/Grab.hpp"
+#include "managers/audio/footstep.hpp"
 #include "magic/effects/common.hpp"
 #include "managers/Attributes.hpp"
 #include "utils/papyrusUtils.hpp"
 #include "managers/explosion.hpp"
 #include "utils/DeathReport.hpp"
 #include "managers/highheel.hpp"
-#include "managers/audio/footstep.hpp"
 #include "utils/actorUtils.hpp"
 #include "colliders/actor.hpp"
 #include "managers/Rumble.hpp"
@@ -558,6 +558,14 @@ namespace Gts {
 		actor->GetGraphVariableBool("GTS_IsBoobing", Cleavage);
 
 		return Cleavage;
+	}
+
+	bool IsCleavageZIgnored(Actor* actor) {
+		bool ignored = false;
+
+		actor->GetGraphVariableBool("GTS_OverrideZ", ignored);
+
+		return ignored;
 	}
 
 	bool IsInsideCleavage(Actor* actor) { // For tinies
@@ -1328,7 +1336,7 @@ namespace Gts {
 										} else if (huggedActor && huggedActor == otherActor && Ally && HasLovingEmbrace && !Healing) {
 											SpawnParticle(otherActor, 3.00, "GTS/UI/Icon_LovingEmbrace.nif", NiMatrix3(), Position, iconScale, 7, node);
 										} else if (huggedActor && huggedActor == otherActor && !IsHugCrushing(giant) && !Healing) {
-											bool LowHealth = (GetHealthPercentage(huggedActor) < GetHugCrushThreshold(giant, otherActor));
+											bool LowHealth = (GetHealthPercentage(huggedActor) < GetHugCrushThreshold(giant, otherActor, true));
 											bool ForceCrush = Runtime::HasPerkTeam(giant, "HugCrush_MightyCuddles");
 											float Stamina = GetStaminaPercentage(giant);
 											if (HasSMT(giant) || LowHealth || (ForceCrush && Stamina > 0.50)) {
@@ -1390,15 +1398,11 @@ namespace Gts {
 			}
 
 			float target = get_target_scale(giant);
-			float max_scale = get_max_scale(giant) * get_natural_scale(giant);
+			float max_scale = get_max_scale(giant);
 			if (target < max_scale || amt < 0) {
+				amt /= game_getactorscale(giant);
 				Persistent->target_scale += amt;
 				Persistent->visual_scale += amt;
-
-				/*float initialScale = GetInitialScale(giant);// Do the same thing GtsManager does
-				float GameScale = game_getactorscale(giant); 
-				
-				update_model_visuals(giant, scale * initialScale * GameScale); */
 			}
 		}
 	}
@@ -1450,10 +1454,10 @@ namespace Gts {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//                                 G T S   S T A T E S  S E T S                                                                       //
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void SetBeingHeld(Actor* tiny, bool decide) {
+	void SetBeingHeld(Actor* tiny, bool enable) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
-			transient->being_held = decide;
+			transient->being_held = enable;
 		}
 	}
 	void SetProneState(Actor* giant, bool enable) {
@@ -1464,30 +1468,30 @@ namespace Gts {
 			}
 		}
 	}
-	void SetBetweenBreasts(Actor* actor, bool decide) {
+	void SetBetweenBreasts(Actor* actor, bool enable) {
 		auto transient = Transient::GetSingleton().GetData(actor);
 		if (transient) {
-			transient->is_between_breasts = decide;
+			transient->is_between_breasts = enable;
 		}
 	}
-	void SetBeingEaten(Actor* tiny, bool decide) {
+	void SetBeingEaten(Actor* tiny, bool enable) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
-			transient->about_to_be_eaten = decide;
+			transient->about_to_be_eaten = enable;
 		}
 	}
-	void SetBeingGrinded(Actor* tiny, bool decide) {
+	void SetBeingGrinded(Actor* tiny, bool enable) {
 		auto transient = Transient::GetSingleton().GetData(tiny);
 		if (transient) {
-			transient->being_foot_grinded = decide;
+			transient->being_foot_grinded = enable;
 		}
 	}
 
-	void SetCameraOverride(Actor* actor, bool decide) {
+	void SetCameraOverride(Actor* actor, bool enable) {
 		if (actor->formID == 0x14) {
 			auto transient = Transient::GetSingleton().GetData(actor);
 			if (transient) {
-				transient->OverrideCamera = decide;
+				transient->OverrideCamera = enable;
 			}
 		}
 	}
@@ -1501,6 +1505,14 @@ namespace Gts {
 				//Cprint("Set {} to reanimated: {}", actor->GetDisplayFullName(), reanimated);
 			}
 		}
+	}
+
+	bool IsUsingAlternativeStomp(Actor* giant) { // Used for alternative grind
+		bool alternative = false;
+
+		giant->GetGraphVariableBool("GTS_IsAlternativeGrind", alternative);
+
+		return alternative;
 	}
 
 	void ShutUp(Actor* actor) { // Disallow them to "So anyway i've been fishing today and my dog died" while we do something to them
@@ -1796,7 +1808,7 @@ namespace Gts {
 			sizedifference *= modifier * tremor_scale * might;
 
 			float intensity = soft_core(distance * 2.5 / sizedifference, params);
-			float duration = 0.33 * (1 + intensity);
+			float duration = 0.4 * (1 + intensity);
 
 			intensity *= 1 + ((sourcesize * scale_bonus) - scale_bonus);
 
@@ -2127,6 +2139,11 @@ namespace Gts {
 			.a = 0.0,  //Default is 0
 		};
 		float speedmultcalc = soft_core(scale, getspeed);
+
+		if (speedmultcalc > 1.0) { // We don't want it to be > 1
+			speedmultcalc = 1.0;
+		}
+
 		return speedmultcalc;
 	}
 
@@ -2221,7 +2238,7 @@ namespace Gts {
 		float sizedifference_tinypov = tinySize/giantSize;
 
 		int ragdollchance = rand() % 30 + 1.0;
-		if (giantSize > 1.25 && !IsRagdolled(tiny) && sizedifference > 2.8 && ragdollchance < 4.0 * sizedifference) { // Chance for ragdoll. Becomes 100% at high scales
+		if ((giantSize > 1.25 || IsBeingGrinded(tiny)) && !IsRagdolled(tiny) && sizedifference > 2.8 && ragdollchance < 4.0 * sizedifference) { // Chance for ragdoll. Becomes 100% at high scales
 			PushActorAway(giant, tiny, 1.0); // Ragdoll
 			return;
 		} else if (sizedifference > 1.25) { // Always Stagger
@@ -2251,10 +2268,10 @@ namespace Gts {
 	}
 	void DoDamageEffect(Actor* giant, float damage, float radius, int random, float bonedamage, FootEvent kind, float crushmult, DamageSource Cause, bool ignore_rotation) {
 		if (kind == FootEvent::Left) {
-			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, false, false, ignore_rotation);
+			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, false, false, ignore_rotation, true);
 		}
 		if (kind == FootEvent::Right) {
-			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, true, false, ignore_rotation);
+			CollisionDamage::GetSingleton().DoFootCollision(giant, damage, radius, random, bonedamage, crushmult, Cause, true, false, ignore_rotation, true);
 			//                                                                                  ^        ^           ^ - - - - Normal Crush
 			//                                                       Chance to trigger bone crush   Damage of            Threshold multiplication
 			//                                                                                      Bone Crush
@@ -2464,7 +2481,7 @@ namespace Gts {
 
 		float Adjustment = GetSizeFromBoundingBox(tiny);
 
-		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, true, false);
+		float sizedifference = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, false);
 		if (DarkArts1) {
 			giant->AsActorValueOwner()->RestoreActorValue(ACTOR_VALUE_MODIFIER::kDamage, ActorValue::kHealth, 8.0);
 		}
@@ -2482,10 +2499,12 @@ namespace Gts {
 		if (get_target_scale(tiny) <= MinScale) {
 			set_target_scale(tiny, MinScale);
 		}
-		if (sizedifference <= 4.0) { // Stagger or Push
-			StaggerActor(giant, tiny, 0.25f);
-		} else {
-			PushActorAway(giant, tiny, 1.0/Adjustment * GetLaunchPower(giant, sizedifference));
+		if (!IsBetweenBreasts(tiny)) {
+			if (sizedifference <= 4.0) { // Stagger or Push
+				StaggerActor(giant, tiny, 0.25f);
+			} else {
+				PushActorAway(giant, tiny, 1.0/Adjustment * GetLaunchPower(giant, sizedifference));
+			}
 		}
 	}
 
@@ -2998,7 +3017,7 @@ namespace Gts {
 				auto actorData = Persistent::GetSingleton().GetData(actor);
 				if (actorData) {
 					float scale = get_target_scale(actor);
-					float max_scale = get_max_scale(actor) * get_natural_scale(actor);
+					float max_scale = get_max_scale(actor);// * get_natural_scale(actor);
 					if (scale < max_scale) {
 						if (!drain_stamina) { // Apply only to growth with animation
 							actorData->visual_scale += deltaScale;
@@ -3222,6 +3241,18 @@ namespace Gts {
 		Persistent::GetSingleton().GiantCount = 0.0;
 	}
 
+	void SpawnHearts(Actor* giant, Actor* tiny, float Z, float scale) {
+		bool Allow = Persistent::GetSingleton().HeartEffects;
+		if (Allow) {
+			NiPoint3 Position = GetHeartPosition(giant, tiny);
+
+			if (Z > 0) {
+				Position.z -= Z * get_visual_scale(giant);
+			}
+			
+			SpawnCustomParticle(giant, ParticleType::Hearts, Position, "NPC COM [COM ]", get_visual_scale(giant) * scale);
+		}
+    }
 
 	void SpawnCustomParticle(Actor* actor, ParticleType Type, NiPoint3 spawn_at_point, std::string_view spawn_at_node, float scale_mult) {
 		if (actor) {

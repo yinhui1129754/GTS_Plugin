@@ -85,6 +85,21 @@ namespace {
 		Rumbling::Stop("StompL_Loop", giant);
 	}
 
+	void Stomp_ResetAnimSpeed(AnimationEventData& data) {
+		data.stage = 0;
+		data.canEditAnimSpeed = false;
+		data.animSpeed = 1.0;
+	}
+
+	void Stomp_IncreaseAnimSpeed(AnimationEventData& data) {
+		data.stage = 1;
+		data.canEditAnimSpeed = true;
+		data.animSpeed = 1.35;
+		if (data.giant.formID != 0x14) {
+			data.animSpeed = 1.35 + GetRandomBoost()/2;
+		}
+	}
+
 	void MoveUnderFoot(Actor* giant, std::string_view node) {
 		auto footNode = find_node(giant, RNode);
 		if (footNode) {
@@ -118,6 +133,30 @@ namespace {
 				return true;
 			});
 		}
+	}
+
+	void DelayedLaunch(Actor* giant, float radius, float power, FootEvent Event) {
+		std::string taskname = std::format("DelayLaunch_{}", giant->formID);
+		ActorHandle giantHandle = giant->CreateRefHandle();
+
+		float Start = Time::WorldTimeElapsed();
+
+		TaskManager::Run(taskname, [=](auto& update){ // Needed to prioritize grind over launch
+			if (!giantHandle) {
+				return false;
+			}
+			Actor* giantref = giantHandle.get().get();
+			float Finish = Time::WorldTimeElapsed();
+
+			float timepassed = Finish - Start;
+
+			if (timepassed > 0.03) {
+				LaunchTask(giantref, radius, power, Event);
+				return false;
+			}
+
+			return true;
+		});
 	}
 
 	void Stomp_Footsteps_DoEverything(Actor* giant, bool right, float animSpeed, FootEvent Event, DamageSource Source, std::string_view Node, std::string_view rumble) {
@@ -156,9 +195,9 @@ namespace {
 				
 				DrainStamina(giant, "StaminaDrain_Stomp", "DestructionBasics", false, 1.8); // cancel stamina drain
 
-				LaunchTask(giant, 0.80 * perk, 2.0* animSpeed, Event);
-				
 				FootGrindCheck(giant, Radius_Stomp, false, right);
+
+				DelayedLaunch(giant, 0.80 * perk, 2.0* animSpeed, Event);
 
 				return false;
 			}
@@ -210,27 +249,18 @@ namespace {
 ///////////////////////////////////////////////////////////////////////////////////////////////////// Events
 
 	void GTSstompstartR(AnimationEventData& data) {
-		data.stage = 1;
-		data.canEditAnimSpeed = true;
-		data.animSpeed = 1.33;
-		if (data.giant.formID != 0x14) {
-			data.animSpeed = 1.33 + GetRandomBoost()/2;
-		}
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", true, 1.8);
 		Rumbling::Start("StompR_Loop", &data.giant, 0.25, 0.15, RNode);
 		ManageCamera(&data.giant, true, CameraTracking::R_Foot);
+		Stomp_IncreaseAnimSpeed(data);
 	}
 
 	void GTSstompstartL(AnimationEventData& data) {
-		data.stage = 1;
-		data.canEditAnimSpeed = true;
-		data.animSpeed = 1.33;
-		if (data.giant.formID != 0x14) {
-			data.animSpeed = 1.33 + GetRandomBoost()/2;
-		}
+		
 		DrainStamina(&data.giant, "StaminaDrain_Stomp", "DestructionBasics", true, 1.8);
 		Rumbling::Start("StompL_Loop", &data.giant, 0.25, 0.15, LNode);
 		ManageCamera(&data.giant, true, CameraTracking::L_Foot);
+		Stomp_IncreaseAnimSpeed(data);
 	}
 
 	void GTSstompimpactR(AnimationEventData& data) {
@@ -256,15 +286,11 @@ namespace {
 	}
 
 	void GTSStompendR(AnimationEventData& data) {
-		data.stage = 0;
-		data.canEditAnimSpeed = false;
-		data.animSpeed = 1.0;
+		Stomp_ResetAnimSpeed(data);
 	}
 
 	void GTSStompendL(AnimationEventData& data) {
-		data.stage = 0;
-		data.canEditAnimSpeed = false;
-		data.animSpeed = 1.0;
+		Stomp_ResetAnimSpeed(data);
 	}
 
 	void GTS_Next(AnimationEventData& data) {

@@ -11,40 +11,40 @@
 using namespace Gts;
 
 namespace {
-  struct InitialScales {
-    float model;
-    float npc;
+	struct InitialScales {
+		float model;
+		float npc;
 
-    InitialScales() {
-      throw std::exception("Cannot init a InitialScales without an actor");
-    }
+		InitialScales() {
+		throw std::exception("Cannot init a InitialScales without an actor");
+		}
 
-    InitialScales(Actor* actor) {
-      model = get_model_scale(actor) / game_getactorscale(actor);
-      npc = get_npcnode_scale(actor);
-    }
-  };
+		InitialScales(Actor* actor) {
+			model = get_model_scale(actor) / game_getactorscale(actor);
+			npc = get_npcnode_scale(actor);
+		}
+	};
 
 
-  // Global actor inital scales singleton
-  std::unordered_map<RE::FormID, InitialScales>& GetInitialScales() {
-    static std::unordered_map<RE::FormID, InitialScales> initScales;
-    return initScales;
-  }
+	// Global actor inital scales singleton
+	std::unordered_map<RE::FormID, InitialScales>& GetInitialScales() {
+		static std::unordered_map<RE::FormID, InitialScales> initScales;
+		return initScales;
+	}
 
-  InitialScales& GetActorInitialScales(Actor* actor) {
-    if (!actor) {
-      throw std::exception("Actor must exist for GetInitialScale");
-    }
-    auto& initScales = GetInitialScales();
-    auto id = actor->formID;
-    initScales.try_emplace(id, actor);
-    return initScales.at(id);
-  }
+	InitialScales& GetActorInitialScales(Actor* actor) {
+		if (!actor) {
+		throw std::exception("Actor must exist for GetInitialScale");
+		}
+		auto& initScales = GetInitialScales();
+		auto id = actor->formID;
+		initScales.try_emplace(id, actor);
+		return initScales.at(id);
+	}
 
-  void UpdateInitScale(Actor* actor) {
-    GetActorInitialScales(actor); // It's enough just to call this
-  }
+	void UpdateInitScale(Actor* actor) {
+		GetActorInitialScales(actor); // It's enough just to call this
+	}
 
 }
 
@@ -90,13 +90,13 @@ namespace Gts {
 	}
 
   void ResetToInitScale(Actor* actor) {
-    if (actor) {
-      if (actor->Is3DLoaded()) {
-        auto& initScale = GetActorInitialScales(actor);
-        set_model_scale(actor, initScale.model);
-        set_npcnode_scale(actor, initScale.npc);
-      }
-    }
+	if (actor) {
+		if (actor->Is3DLoaded()) {
+			auto& initScale = GetActorInitialScales(actor);
+			set_model_scale(actor, initScale.model);
+			set_npcnode_scale(actor, initScale.npc);
+		}
+	}
   }
 
   float GetInitialScale(Actor* actor) {
@@ -113,6 +113,26 @@ namespace Gts {
         return 1.0;
     }
   }
+
+	void RefreshInitialScales(Actor* actor) {
+		std::string name = std::format("UpdateRace_{}", actor->formID);
+		ActorHandle gianthandle = actor->CreateRefHandle();
+
+		float Start = Time::WorldTimeElapsed();
+		
+		TaskManager::RunOnce(name, [=](auto& progressData) { // Reset it one frame later, called by SwitchRaceHook only, inside Hooks/RaceMenu.cpp 
+			if (!gianthandle) {
+				return false;
+			}
+			auto giantref = gianthandle.get().get();
+			float Finish = Time::WorldTimeElapsed();
+
+			auto& initScale = GetActorInitialScales(actor);
+			initScale.model = 1.0 * actor->GetScale();
+			return false;
+		});
+		
+	}
 
 	void set_ref_scale(Actor* actor, float target_scale) {
 		// This is how the game sets scale with the `SetScale` command
@@ -270,7 +290,7 @@ namespace Gts {
 	}
 
 	float game_getactorscale(Actor& actor) {
-		return game_getactorscale(&actor);
+		return game_getactorscale(&actor); 
 	}
 
 	float game_get_scale_overrides(Actor* actor) { // Obtain RaceMenu * GetScale values of actor

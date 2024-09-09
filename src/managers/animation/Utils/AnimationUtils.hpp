@@ -21,7 +21,7 @@ namespace Gts {
 	void BlockFirstPerson(Actor* actor, bool block);
 	void Task_ApplyAbsorbCooldown(Actor* giant);
 	
-	void Hugs_FixAnimationDesync(Actor* giant, Actor* tiny, bool reset);
+	void Anims_FixAnimationDesync(Actor* giant, Actor* tiny, bool reset);
 	void ForceFollowerAnimation(Actor* giant, FollowerAnimType Type);
 	void Vore_AttachToRightHandTask(Actor* giant, Actor* tiny);
 
@@ -83,5 +83,5 @@ namespace Gts {
 
 	float GetHugStealRate(Actor* actor);
 	float GetHugShrinkThreshold(Actor* actor);
-	float GetHugCrushThreshold(Actor* giant, Actor* tiny);
+	float GetHugCrushThreshold(Actor* giant, Actor* tiny, bool check_size);
 }

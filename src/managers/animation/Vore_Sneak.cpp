@@ -59,10 +59,7 @@ namespace {
 		auto giant = &data.giant;
 		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
 
-        AdjustFacialExpression(giant, 0, 1.0, 0.32, 0.72, "phenome"); // Start opening mouth
-		AdjustFacialExpression(giant, 1, 0.5, 0.32, 0.72, "phenome"); // Open it wider
-		AdjustFacialExpression(giant, 0, 0.8, 0.32, 0.72, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 0.8, 0.32, 0.72, "modifier"); // blink R
+		Task_FacialEmotionTask_OpenMouth(giant, 0.6 / AnimationManager::GetAnimSpeed(giant), "SneakVoreOpenMouth");
 
 		for (auto& tiny: VoreData.GetVories()) {
 			Vore::GetSingleton().ShrinkOverTime(giant, tiny, 0.1);
@@ -104,10 +101,6 @@ namespace {
     }
 
     void GTS_Sneak_Vore_CloseMouth(AnimationEventData& data) {
-		AdjustFacialExpression(&data.giant, 0, 0.0, 0.32, 0.72, "phenome"); // Start opening mouth
-		AdjustFacialExpression(&data.giant, 1, 0.0, 0.32, 0.72, "phenome"); // Open it wider
-		AdjustFacialExpression(&data.giant, 0, 0.0, 0.32, 0.72, "modifier"); // blink L
-		AdjustFacialExpression(&data.giant, 1, 0.0, 0.32, 0.72, "modifier"); // blink R
     }
 
     void GTS_Sneak_Vore_KillAll(AnimationEventData& data) {

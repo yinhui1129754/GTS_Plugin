@@ -1,10 +1,11 @@
 #pragma once
-#include "RE/N/NiMatrix3.h"
-#include "RE/N/NiPoint3.h"
+#include "managers/animation/CleavageState.hpp"
 #include "managers/highheel.hpp"
 #include "utils/actorUtils.hpp"
 #include "rays/raycast.hpp"
 #include "data/runtime.hpp"
+#include "RE/N/NiMatrix3.h"
+#include "RE/N/NiPoint3.h"
 #include "scale/scale.hpp"
 #include "UI/DebugAPI.hpp"
 #include "timer.hpp"
@@ -92,6 +93,10 @@ namespace Gts {
 		auto charcont = tiny->GetCharController();
 		if (charcont) {
 			charcont->SetLinearVelocityImpl((0.0, 0.0, 0.0, 0.0)); // Needed so Actors won't fall down.
+		}
+
+		if (IsDebugEnabled()) {
+			DebugAPI::DrawSphere(glm::vec3(point.x, point.y, point.z), 6.0, 40, {1.0, 0.0, 0.0, 1.0});
 		}
 
 		return true;
@@ -379,12 +384,18 @@ namespace Gts {
 
 
 		// Manual offsets
-		float offset_Y = Runtime::GetFloatOr("Cleavage_OffsetY", 1.0);
-		float offset_Z = Runtime::GetFloatOr("Cleavage_OffsetZ", 1.0);
+		float difference = GetSizeDifference(giant, tiny, SizeType::GiantessScale, false, false) * 0.15;
+		float offset_Y = Runtime::GetFloatOr("Cleavage_OffsetY", 1.0) * get_visual_scale(giant);
+		float offset_Z = Runtime::GetFloatOr("Cleavage_OffsetZ", 1.0) * get_visual_scale(giant);
+
+		// FIX tiny falling into breasts based on size
+		offset_Y += difference;
+		offset_Z += difference;
 
 		// Sermite: Offset adjustment HERE
 		NiPoint3 offset = NiPoint3(0.0, offset_Y, offset_Z);
 
+		
 
 		// Global space offset
 		NiPoint3 globalOffset = breastRotation * offset;
@@ -396,11 +407,20 @@ namespace Gts {
 			tiny->data.angle.z = giant->data.angle.z;
 		}
 
-		clevagePos += (globalOffset * get_visual_scale(giant));
+		clevagePos += globalOffset;
 
 		if (IsDebugEnabled()) {
 			DebugAPI::DrawSphere(glm::vec3(clevagePos.x, clevagePos.y, clevagePos.z), 2.0, 10, {1.0, 0.0, 0.0, 1.0});
 		}
+
+		if (IsCleavageZIgnored(giant)) {
+			auto objectB = find_node(giant, "AnimObjectB");
+			if (objectB) {
+				clevagePos.z = objectB->world.translate.z;
+			}
+		} /*else {
+			clevagePos.z *= Animation_Cleavage::GetWeightedBreastMovement(giant, tiny);
+		}*/
 
 		return AttachTo(anyGiant, anyTiny, clevagePos);
 	}

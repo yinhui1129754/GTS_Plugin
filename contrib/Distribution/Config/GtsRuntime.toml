@@ -227,6 +227,8 @@ ExtraGrowth = "GTS.esp|332563"
 ExtraGrowthMax = "GTS.esp|397972"
 HealthRegenPerk = "GTS.esp|18E160"
 RandomGrowth = "GTS.esp|35AD69"
+RandomGrowthAug = "GTS.esp|865E3E"
+RandomGrowthTerror = "GTS.esp|865E3F"
 Gluttony = "GTS.esp|33C764"
 SoulVorePerk = "GTS.esp|33C765"
 GrowthDesirePerk = "GTS.esp|128CF6"
@@ -243,6 +245,13 @@ GrowthOfStrength = "GTS.esp|151519"
 RumblingFeet = "GTS.esp|1CAD91"
 LaunchDamage = "GTS.esp|2496E9"
 TrueGiantess = "GTS.esp|128CF4"
+
+
+Breasts_Vore = "GTS.esp|856B38"
+Breasts_Suffocate = "GTS.esp|856B3A"
+Breasts_Absorb = "GTS.esp|856B39"
+Breasts_Mastery = "GTS.esp|856B3B"
+Breasts_MasteryPart2 = "GTS.esp|856B3D"
 
 MightOfDragons = "GTS.esp|67FDAC"
 

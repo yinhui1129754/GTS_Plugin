@@ -61,6 +61,7 @@ namespace Gts {
 
 	bool IsStomping(Actor* actor);
 	bool IsInCleavageState(Actor* actor);
+	bool IsCleavageZIgnored(Actor* actor);
 	bool IsInsideCleavage(Actor* actor);
 	bool IsTrampling(Actor* actor);
 
@@ -158,12 +159,15 @@ namespace Gts {
 	// End
 
 	// GTS State Controllers
-	void SetBeingHeld(Actor* tiny, bool decide);
+	void SetBeingHeld(Actor* tiny, bool enable);
 	void SetProneState(Actor* giant, bool enable);
-	void SetBetweenBreasts(Actor* actor, bool decide);
-	void SetBeingEaten(Actor* tiny, bool decide);
-	void SetBeingGrinded(Actor* tiny, bool decide);
-	void SetCameraOverride(Actor* actor, bool decide);
+	void SetBetweenBreasts(Actor* actor, bool enable);
+	void SetBeingEaten(Actor* tiny, bool enable);
+	void SetBeingGrinded(Actor* tiny, bool enable);
+	void SetCameraOverride(Actor* actor, bool enable);
+
+	bool IsUsingAlternativeStomp(Actor* giant);
+
 	void SetReanimatedState(Actor* actor);
 	void ShutUp(Actor* actor);
 
@@ -289,6 +293,7 @@ namespace Gts {
 	float GetQuestProgression(int stage);
 	void ResetQuest();
 
+	void SpawnHearts(Actor* giant, Actor* tiny, float Z, float scale);
 	void SpawnCustomParticle(Actor* actor, ParticleType Type, NiPoint3 spawn_at_point, std::string_view spawn_at_node, float scale_mult);
 
 	void InflictSizeDamage(Actor* attacker, Actor* receiver, float value);

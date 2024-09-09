@@ -66,19 +66,20 @@ namespace Gts {
 			return true;
 		});
 	}
-	
-	void KillActor(Actor* giant, Actor* tiny) {
+
+	void KillActor(Actor* giant, Actor* tiny, bool silent) {
 		if (!tiny->IsDead()) {
 			StartCombat(tiny, giant);
 		}
 		float hp = GetMaxAV(tiny, ActorValue::kHealth) * 9.0;	
+
 		InflictSizeDamage(giant, tiny, hp); // just to make sure
 		
 		if (tiny->formID == 0x14) {
 			tiny->KillImpl(giant, 1, true, true);
 			tiny->SetAlpha(0.0);
 		}
-
+	
 		auto* eventsource = ScriptEventSourceHolder::GetSingleton();
 		if (eventsource) {
 			auto event = TESDeathEvent();

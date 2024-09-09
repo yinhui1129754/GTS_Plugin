@@ -9,6 +9,7 @@
 #include "managers/animation/Vore_Standing.hpp"
 #include "managers/animation/ThighSandwich.hpp"
 #include "managers/animation/Sneak_Swipes.hpp"
+#include "managers/animation/RandomGrowth.hpp"
 #include "managers/animation/StrongStomp.hpp"
 #include "managers/animation/FootTrample.hpp"
 #include "managers/animation/Grab_Attack.hpp"
@@ -108,6 +109,8 @@ namespace Gts {
 		Animation_GrabThrow::RegisterEvents();
 		Animation_GrabAttack::RegisterEvents();
 		
+		Animation_RandomGrowth::RegisterEvents();
+		Animation_RandomGrowth::RegisterTriggers();
 
 		AnimationFootGrind::RegisterEvents();
 		AnimationFootGrind::RegisterTriggers();

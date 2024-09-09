@@ -305,6 +305,8 @@ namespace {
 
 				NiPoint3 endCoords = bone->world.translate;
 
+				Anims_FixAnimationDesync(giant, tiny, true);
+
 				SetBeingHeld(tiny, false);
 				EnableCollisions(tiny);
 

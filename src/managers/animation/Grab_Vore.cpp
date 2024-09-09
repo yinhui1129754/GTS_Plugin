@@ -53,13 +53,7 @@ namespace {
 			SetBeingEaten(otherActor, true);
 			Vore::GetSingleton().ShrinkOverTime(giant, otherActor, 0.1);
 		}
-		AdjustFacialExpression(giant, 0, 1.0, "phenome"); // Start opening mouth
-		AdjustFacialExpression(giant, 1, 0.5, "phenome"); // Open it wider
-
-		AdjustFacialExpression(giant, 0, 0.80, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 0.80, "modifier"); // blink R
-
-		AdjustFacialExpression(&data.giant, 3, 0.8, "phenome"); // Smile a bit (Mouth)
+		Task_FacialEmotionTask_OpenMouth(giant, 1.1 / AnimationManager::GetAnimSpeed(giant), "GrabVoreOpenMouth");
 		StopLHandRumble("GrabVoreL", data.giant);
 	}
 
@@ -81,14 +75,6 @@ namespace {
 	}
 
 	void GTSGrab_Eat_CloseMouth(AnimationEventData& data) {
-		auto giant = &data.giant;
-		AdjustFacialExpression(giant, 0, 0.0, "phenome"); // Close mouth
-		AdjustFacialExpression(giant, 1, 0.0, "phenome"); // Close it
-
-		AdjustFacialExpression(giant, 0, 0.0, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 0.0, "modifier"); // blink R
-
-		AdjustFacialExpression(&data.giant, 3, 0.0, "phenome"); // Smile a bit (Mouth)
 	}
 
 	void GTSGrab_Eat_Swallow(AnimationEventData& data) {

@@ -105,6 +105,8 @@ namespace Gts {
 			bool NPCEffectImmunity = false;
 			bool PCEffectImmunity = false;
 
+			bool HeartEffects = true;
+
 			bool EnableIcons = true;
 			bool allow_weight_gain = true;
 

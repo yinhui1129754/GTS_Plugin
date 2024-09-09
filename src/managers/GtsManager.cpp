@@ -247,6 +247,9 @@ namespace {
 		if (!persi_actor_data) {
 			return;
 		}
+		if (actor->IsDead()) {
+			return;
+		}
 		float scale = get_visual_scale(actor);
 		if (scale < 1e-5) {
 			return;
@@ -311,8 +314,8 @@ void GtsManager::Update() {
 				ScareActors(actor);
 				FixActorFade(actor);
 
-				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleL, false, false, false);
-				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleR, true, false, false);
+				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleL, false, false, false, false);
+				CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleR, true, false, false, false);
 				
 				ClothManager::GetSingleton().CheckRip();
 				TinyCalamity_SeekActors(actor);
@@ -326,13 +329,20 @@ void GtsManager::Update() {
 			}
 			if (Runtime::GetBool("PreciseDamageOthers")) {
 				if (actor->formID != 0x14 && !IsTeammate(actor)) {
-					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleL, false, false, false);
-					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleR, true, false, false);
+					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleL, false, false, false, false);
+					CollisionDamage.DoFootCollision(actor, Damage_Default_Underfoot * TimeScale(), Radius_Default_Idle, 0, 0.0, Minimum_Actor_Crush_Scale_Idle, DamageSource::FootIdleR, true, false, false, false);
 				}
 			}
 			update_actor(actor);
 			apply_actor(actor);
 		}
+	}
+}
+
+void GtsManager::MenuChange(const MenuOpenCloseEvent* menu) {
+	if ((!menu->opening || menu->opening) && menu->menuName == "RaceSex Menu") {
+		/*log::info("RaceMenu Opened: {}", menu->opening);
+		RefreshInitialScales(PlayerCharacter::GetSingleton());*/
 	}
 }
 

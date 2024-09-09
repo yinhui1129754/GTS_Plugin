@@ -69,7 +69,7 @@ namespace Gts {
 				float currentSize = get_visual_scale(tiny);
 				// Fully shrunk
 				
-				KillActor(giant, tiny);
+				KillActor(giant, tiny, false);
 
 				if (!IsLiving(tiny)) {
 					SpawnDustParticle(tiny, tiny, "NPC Root [Root]", 3.6);

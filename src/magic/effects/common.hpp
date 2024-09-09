@@ -258,7 +258,7 @@ namespace Gts {
 		float receive = CalcPower(from, receiver, 0, false);
 		float lose = CalcPower(from, receiver, 0, false);
 		float CasterScale = get_target_scale(from);
-		if (CasterScale > 1.0) { // We don't want to scale the caster below this limit!
+		if (CasterScale > get_natural_scale(from, true)) { // We don't want to scale the caster below this limit!
 			update_target_scale(from, -lose, SizeEffectType::kShrink);
 		}
 		update_target_scale(to, receive, SizeEffectType::kGrow);
@@ -289,7 +289,9 @@ namespace Gts {
 			AdvanceQuestProgression(to, nullptr, QuestStage::HugSteal, shrink_amount, false); // Stage 1: steal 2 meters worth of size (hugs)
 			AdvanceQuestProgression(to, nullptr, QuestStage::HugSpellSteal, shrink_amount, false); // Stage 2: steal 5 meters worth of size (spells/hugs)
 		} else { // For spell shrink part of the quest
-			AdvanceSkill(to, ActorValue::kAlteration, shrink_amount, XpMult); // Gain vanilla Alteration xp
+			if (source != ShrinkSource::Enchantment) {
+				AdvanceSkill(to, ActorValue::kAlteration, shrink_amount, XpMult); // Gain vanilla Alteration xp
+			}
 			AdvanceQuestProgression(to, nullptr, QuestStage::HugSpellSteal, shrink_amount, false);
 		}
 

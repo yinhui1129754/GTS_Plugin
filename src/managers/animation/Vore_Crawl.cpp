@@ -136,10 +136,7 @@ namespace {
 
 	void GTSCrawlVore_OpenMouth(AnimationEventData& data) {
 		auto giant = &data.giant;
-		AdjustFacialExpression(giant, 0, 1.0, "phenome"); // Start opening mouth
-		AdjustFacialExpression(giant, 1, 0.5, "phenome"); // Open it wider
-		AdjustFacialExpression(giant, 0, 0.80, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 0.80, "modifier"); // blink R
+		Task_FacialEmotionTask_OpenMouth(giant, 0.5 / AnimationManager::GetAnimSpeed(giant), "CrawlVoreOpenMouth");
 
 		auto& VoreData = Vore::GetSingleton().GetVoreData(giant);
 
@@ -149,11 +146,6 @@ namespace {
 	}
 
 	void GTSCrawlVore_CloseMouth(AnimationEventData& data) {
-		auto giant = &data.giant;
-		AdjustFacialExpression(giant, 0, 0.0, "phenome"); // Start opening mouth
-		AdjustFacialExpression(giant, 1, 0.0, "phenome"); // Open it wider
-		AdjustFacialExpression(giant, 0, 0.0, "modifier"); // blink L
-		AdjustFacialExpression(giant, 1, 0.0, "modifier"); // blink R
 	}
 	void GTSCrawlVore_Swallow(AnimationEventData& data) {
 		auto giant = &data.giant;

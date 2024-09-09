@@ -20,11 +20,6 @@ namespace Gts {
 			event_sources->AddEventSink<TESResetEvent>(this);
 		}
 
-		auto Player = PlayerCharacter::GetSingleton(); 
-		if (Player) { // Credits to MaxsuCombatEscape for the idea
-			Player->AsBGSActorCellEventSource()->AddEventSink<BGSActorCellEvent>(this);
-			logger::info("Register Cell Event Sink!");
-		}
 
 		auto ui = UI::GetSingleton();
 		if (ui) {
@@ -106,34 +101,4 @@ namespace Gts {
 		return RE::BSEventNotifyControl::kContinue;
 	}
 
-	BSEventNotifyControl ReloadManager::ProcessEvent(const RE::BGSActorCellEvent* a_event, RE::BSTEventSource<RE::BGSActorCellEvent>* a_eventSource)
-	{
-		if (!a_event || !a_eventSource)
-		{
-			return BSEventNotifyControl::kContinue;
-		}
-
-		auto player = PlayerCharacter::GetSingleton();
-		if (!player)
-		{
-			return BSEventNotifyControl::kContinue;
-		}
-
-		auto playercell = RE::TESForm::LookupByID<RE::TESObjectCELL>(a_event->cellID);
-
-		if (!playercell)
-		{
-			return BSEventNotifyControl::kContinue;
-		}
-
-		if (a_event->flags == RE::BGSActorCellEvent::CellFlag::kEnter)
-		{
-			//Grab::ReattachTiny(a_event->cellID);
-		} else if(a_event->flags == RE::BGSActorCellEvent::CellFlag::kLeave)
-		{
-			//Grab::ReattachTiny(a_event->cellID);
-		}
-
-		return BSEventNotifyControl::kContinue;
-	}
 }

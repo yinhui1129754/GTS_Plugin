@@ -70,7 +70,7 @@ namespace Gts {
 			} else if (data.state == OverkillState::Overkilling) {
 				if (data.delay.ShouldRun()) {
                     if (!tiny->IsDead()) {
-                        KillActor(giant, tiny);
+                        KillActor(giant, tiny, false);
                     }
 
                     ActorHandle giantHandle = giant->CreateRefHandle();

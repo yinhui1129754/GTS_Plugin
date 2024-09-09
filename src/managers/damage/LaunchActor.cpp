@@ -105,7 +105,7 @@ namespace Gts {
 			return; // Disallow to launch if we're grinding an actor
 		}
 
-		float DamageMult = 0.6;
+		float DamageMult = 0.5;
 		float giantSize = get_visual_scale(giant);
 		float tinySize = std::clamp(get_visual_scale(tiny), 0.5f, 999999.0f); // clamp else they will fly into the sky
 		float highheel = GetHighHeelsBonusDamage(tiny, true);
@@ -122,58 +122,61 @@ namespace Gts {
 		bool OwnsPerk = false;
 
 		if (HasSMT(giant)) {
-			giantSize += 3.0;
-			threshold = 0.8;
-			force += 0.04;
+			threshold = 0.92;
+			force += 0.02;
 		}
 		float Adjustment = GetSizeFromBoundingBox(tiny);
 		
 		float sizeRatio = giantSize/tinySize;
 
 		bool IsLaunching = IsActionOnCooldown(tiny, CooldownSource::Damage_Launch);
-		if (!IsLaunching && giantSize > 2.0) {
+		if (!IsLaunching) {
+			if (sizeRatio > threshold) {
+				if (force >= 0.10) {
+					float power = (1.0 * launch_power) / Adjustment;
+					if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
+						DamageMult *= 2.0;
+						OwnsPerk = true;
+						power *= 1.5;
+					}
 
-			if (force >= 0.10) {
-				float power = (1.0 * launch_power) / Adjustment;
-				if (Runtime::HasPerkTeam(giant, "DisastrousTremor")) {
-					DamageMult *= 2.0;
-					OwnsPerk = true;
-					power *= 1.5;
-				}
+					ApplyActionCooldown(tiny, CooldownSource::Damage_Launch);
 
-				ApplyActionCooldown(tiny, CooldownSource::Damage_Launch);
+					if (Runtime::HasPerkTeam(giant, "LaunchDamage") && CanDoDamage(giant, tiny, true)) {
+						float damage = LAUNCH_DAMAGE * sizeRatio * force * DamageMult * highheel;
+						InflictSizeDamage(giant, tiny, damage);
+						if (OwnsPerk) { // Apply only when we have DisastrousTremor perk
+							update_target_scale(tiny, -(damage / 1500) * GetDamageSetting(), SizeEffectType::kShrink);
 
-				if (Runtime::HasPerkTeam(giant, "LaunchDamage") && CanDoDamage(giant, tiny, true)) {
-					float damage = LAUNCH_DAMAGE * sizeRatio * force * DamageMult * highheel;
-					InflictSizeDamage(giant, tiny, damage);
-					if (OwnsPerk) { // Apply only when we have DisastrousTremor perk
-						update_target_scale(tiny, -(damage / 1500) * GetDamageSetting(), SizeEffectType::kShrink);
-
-						if (get_target_scale(tiny) < 0.12/Adjustment) {
-							set_target_scale(tiny, 0.12/Adjustment);
+							if (get_target_scale(tiny) < 0.12/Adjustment) {
+								set_target_scale(tiny, 0.12/Adjustment);
+							}
 						}
 					}
-				}
 
-				PushActorAway(giant, tiny, 1.0);
-				NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
+					PushActorAway(giant, tiny, 1.0);
+					NiPoint3 Push = NiPoint3(0, 0, startpower * GetLaunchPower(giant, sizeRatio) * force * power);
 
-				std::string name = std::format("LaunchOther_{}_{}", giant->formID, tiny->formID);
-				ActorHandle tinyHandle = tiny->CreateRefHandle();
-				double startTime = Time::WorldTimeElapsed();
+					std::string name = std::format("LaunchOther_{}_{}", giant->formID, tiny->formID);
+					ActorHandle tinyHandle = tiny->CreateRefHandle();
+					double startTime = Time::WorldTimeElapsed();
 
-				TaskManager::Run(name, [=](auto& update){
-					if (tinyHandle) {
-						double endTime = Time::WorldTimeElapsed();
-						auto tinyref = tinyHandle.get().get();
-						if ((endTime - startTime) > 0.05) {
-							ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, 1.0);
-							return false;
+					TaskManager::Run(name, [=](auto& update){
+						if (tinyHandle) {
+							double endTime = Time::WorldTimeElapsed();
+							auto tinyref = tinyHandle.get().get();
+							if ((endTime - startTime) > 0.05) {
+								ApplyManualHavokImpulse(tinyref, Push.x, Push.y, Push.z, 1.0);
+								return false;
+							}
+							return true;
 						}
 						return true;
-					}
-					return true;
-				});
+					});
+				}
+			} else if (sizeRatio > threshold * 0.86 && sizeRatio < threshold) {
+				ApplyActionCooldown(tiny, CooldownSource::Damage_Launch);
+				StaggerActor(tiny, 0.25f);
 			}
 		}
 	}

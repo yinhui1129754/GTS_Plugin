@@ -28,7 +28,6 @@ namespace {
 			auto casterref = casterhandle.get().get();
 
 			bool BlockSound = IsActionOnCooldown(casterref, CooldownSource::Misc_RevertSound);
-
 			if (!BlockSound) {
 				float Volume = std::clamp(get_visual_scale(casterref) * 0.1f, 0.15f, 1.0f);
 				ApplyActionCooldown(casterref, CooldownSource::Misc_RevertSound);
@@ -57,6 +56,8 @@ namespace Gts {
 		}
 		float Volume = std::clamp(get_visual_scale(caster) * 0.1f, 0.10f, 1.0f);
 		Runtime::PlaySound("shrinkSound", caster, Volume, 1.0);
+
+		//log::info("Starting Reset Size of {}", caster->GetDisplayFullName());
 
 		Task_RestoreSizeTask(caster, DualCasted());
 	}
