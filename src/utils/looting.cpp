@@ -167,18 +167,18 @@ namespace Gts {
 			auto tiny = tinyhandle.get().get();
 			auto giant = gianthandle.get().get();
 
-			float hp = GetAV(tiny, ActorValue::kHealth);
-
-			if (!tiny->IsDead()) {
+			if (tiny && !tiny->IsDead()) {
 				KillActor(giant, tiny, false); // just to make sure
 			}
-			if (tiny->IsDead() || hp <= 0.0) {
+
+			float hp = GetAV(tiny, ActorValue::kHealth);
+
+			if (tiny && (tiny->IsDead() || hp <= 0.0)) {
 				float Finish = Time::WorldTimeElapsed();
 				float timepassed = Finish - Start;
 				if (timepassed < expectedtime) {
 					return true; // retry, not enough time has passed yet
 				}
-				TESObjectREFR* ref = skyrim_cast<TESObjectREFR*>(tiny);
 
 				if (giant->formID == 0x14 && !PCLoot) {
 					TransferInventory_Normal(giant, tiny, removeQuestItems);

@@ -178,7 +178,9 @@ namespace {
         }
     }
     void CleavageAbsorbEvent(const InputEventData& data) {
-        AttemptBreastAction("Cleavage_Absorb", CooldownSource::Action_Breasts_Absorb, "Absorption", "Breasts_Absorb");
+        if (AttemptBreastAction("Cleavage_Absorb", CooldownSource::Action_Breasts_Absorb, "Absorption", "Breasts_Absorb")) {
+            AttemptBreastActionOnTiny("Cleavage_Absorb_Tiny");
+        }
     }
     void CleavageVoreEvent(const InputEventData& data) {
         if (AttemptBreastAction("Cleavage_Vore", CooldownSource::Action_Breasts_Vore, "Vore", "Breasts_Vore")) {
@@ -231,11 +233,14 @@ namespace Gts
         AnimationManager::RegisterTrigger("Cleavage_HeavyAttack_Tiny", "Cleavage", "GTSBEH_T_Boobs_Crush_Heavy");
         AnimationManager::RegisterTrigger("Cleavage_HeavyAttack", "Cleavage", "GTSBEH_Boobs_Crush_Heavy");
 
-        AnimationManager::RegisterTrigger("Cleavage_Suffocate_Tiny", "Cleavage", "GTSBEH_T_Boobs_SufoStart");
         AnimationManager::RegisterTrigger("Cleavage_SuffocateStop", "Cleavage", "GTSBEH_Boobs_SufoStop");
 
+        AnimationManager::RegisterTrigger("Cleavage_Suffocate_Tiny", "Cleavage", "GTSBEH_T_Boobs_SufoStart");
         AnimationManager::RegisterTrigger("Cleavage_Suffocate", "Cleavage", "GTSBEH_Boobs_SufoStart");
+
+        AnimationManager::RegisterTrigger("Cleavage_Absorb_Tiny", "Cleavage", "GTSBEH_T_Boobs_Absorb");
         AnimationManager::RegisterTrigger("Cleavage_Absorb", "Cleavage", "GTSBEH_Boobs_Absorb");
+
         AnimationManager::RegisterTrigger("Cleavage_Abort", "Cleavage", "GTSBEH_Boobs_Abort");
 
         AnimationManager::RegisterTrigger("Cleavage_Vore_Tiny", "Cleavage", "GTSBEH_T_Boobs_Vore");

@@ -46,7 +46,7 @@ namespace Gts {
 		ActorHandle tinyHandle = tiny->CreateRefHandle();
 		std::string taskname = std::format("EnterRagdoll_{}", tiny->formID);
 
-		TaskManager::Run(taskname, [=](auto& update){
+		TaskManager::RunFor(taskname, 2.0, [=](auto& update){
 			if (!tinyHandle) {
 				return false;
 			}
@@ -54,8 +54,11 @@ namespace Gts {
 			if (!tinyref) {
 				return false;
 			}
+			if (!tinyref->Is3DLoaded()) {
+				return true;
+			}
 			if (!tinyref->IsDead()) {
-				return false;
+				return true;
 			}
 			double endTime = Time::WorldTimeElapsed();
 
@@ -67,8 +70,33 @@ namespace Gts {
 		});
 	}
 
+	void SendDeathEvent(Actor* giant, Actor* tiny) {
+		auto* eventsource = ScriptEventSourceHolder::GetSingleton();
+		if (eventsource) {
+			TESObjectREFR* dyingTiny = skyrim_cast<TESObjectREFR*>(tiny);
+			TESObjectREFR* killer = skyrim_cast<TESObjectREFR*>(giant);
+
+			if (dyingTiny && killer) {
+				ObjectRefHandle dyingRefr = dyingTiny->CreateRefHandle();
+				ObjectRefHandle killerRefr = killer->CreateRefHandle();
+
+				if (dyingRefr && killerRefr) {
+					TESObjectREFRPtr dying_get = dyingRefr.get();
+					TESObjectREFRPtr killer_get = killerRefr.get();
+					if (dying_get && killer_get) {
+						auto event = TESDeathEvent();
+						event.actorDying = dying_get;
+						event.actorKiller = killer_get;
+						event.dead = true;
+						eventsource->SendEvent(&event);
+					}
+				}
+			}
+		}
+	}
+
 	void KillActor(Actor* giant, Actor* tiny, bool silent) {
-		if (!tiny->IsDead()) {
+		if (tiny && tiny->Is3DLoaded() && !tiny->IsDead()) {
 			StartCombat(tiny, giant);
 		}
 		float hp = GetMaxAV(tiny, ActorValue::kHealth) * 9.0;	
@@ -79,16 +107,9 @@ namespace Gts {
 			tiny->KillImpl(giant, 1, true, true);
 			tiny->SetAlpha(0.0);
 		}
-	
-		auto* eventsource = ScriptEventSourceHolder::GetSingleton();
-		if (eventsource) {
-			auto event = TESDeathEvent();
-			event.actorDying = skyrim_cast<TESObjectREFR*>(tiny)->CreateRefHandle().get();
-			event.actorKiller = skyrim_cast<TESObjectREFR*>(giant)->CreateRefHandle().get();
-			event.dead = true;
-			eventsource->SendEvent(&event);
-		}
 
+		SendDeathEvent(giant, tiny);
+	
 		Task_InitHavokTask(tiny);
 	}
 

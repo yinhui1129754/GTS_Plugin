@@ -462,7 +462,7 @@ namespace Gts {
             auto tiny = tinyref.get().get();
             auto giantess = giantref.get().get();
 
-            if (GetAV(tiny, ActorValue::kHealth) <= 1.0 || tiny->IsDead()) {
+            if (tiny && tiny->Is3DLoaded() && (GetAV(tiny, ActorValue::kHealth) <= 1.0 || tiny->IsDead())) {
 
                 ModSizeExperience_Crush(giant, tiny, false);
 

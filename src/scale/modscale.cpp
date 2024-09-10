@@ -127,8 +127,8 @@ namespace Gts {
 			auto giantref = gianthandle.get().get();
 			float Finish = Time::WorldTimeElapsed();
 
-			auto& initScale = GetActorInitialScales(actor);
-			initScale.model = 1.0 * actor->GetScale();
+			auto& initScale = GetActorInitialScales(giantref);
+			initScale.model = 1.0 * giantref->GetScale();
 			return false;
 		});
 		

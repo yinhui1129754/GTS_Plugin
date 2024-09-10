@@ -97,34 +97,37 @@ namespace {
 	void DoThighDamage(Actor* giant, Actor* tiny, float animSpeed, float mult, float sizemult) {
 		auto& sandwichdata = ThighSandwichController::GetSingleton().GetSandwichingData(giant);
 		auto& sizemanager = SizeManager::GetSingleton();
-		float sizedifference = get_visual_scale(giant)/ (get_visual_scale(tiny) * GetSizeFromBoundingBox(tiny));
-		float additionaldamage = 1.0 + sizemanager.GetSizeVulnerability(tiny); // Get size damage debuff from enemy
-		float normaldamage = std::clamp(sizemanager.GetSizeAttribute(giant, SizeAttribute::Normal), 1.0f, 999.0f);
-		float damage = Damage_ThighSandwich_Impact * sizedifference * animSpeed * mult * normaldamage * GetPerkBonus_Thighs(giant);
-		if (HasSMT(giant)) {
-			damage *= 1.5;
-		}
 
-		if (CanDoDamage(giant, tiny, false)) {
-			InflictSizeDamage(giant, tiny, damage);
-		}
+		if (tiny && tiny->Is3DLoaded()) {
+			float sizedifference = get_visual_scale(giant)/ (get_visual_scale(tiny) * GetSizeFromBoundingBox(tiny));
+			float additionaldamage = 1.0 + sizemanager.GetSizeVulnerability(tiny); // Get size damage debuff from enemy
+			float normaldamage = std::clamp(sizemanager.GetSizeAttribute(giant, SizeAttribute::Normal), 1.0f, 999.0f);
+			float damage = Damage_ThighSandwich_Impact * sizedifference * animSpeed * mult * normaldamage * GetPerkBonus_Thighs(giant);
+			if (HasSMT(giant)) {
+				damage *= 1.5;
+			}
 
-		float experience = std::clamp(damage/200, 0.0f, 0.20f);
-		ModSizeExperience(giant, experience);
+			if (CanDoDamage(giant, tiny, false)) {
+				InflictSizeDamage(giant, tiny, damage);
+			}
 
-		float hp = GetAV(tiny, ActorValue::kHealth);
-		if (damage > hp || hp <= 0) {
-			ModSizeExperience_Crush(giant, tiny, true);
-			
-			CrushManager::GetSingleton().Crush(giant, tiny);
-			
-			PrintDeathSource(giant, tiny, DamageSource::ThighSandwiched);
-			AdvanceQuestProgression(giant, tiny, QuestStage::HandCrush, 1.0, false);
-			auto node = find_node(giant, "NPC R FrontThigh");
-			
-			PlayCrushSound(giant, node, false, false);
+			float experience = std::clamp(damage/200, 0.0f, 0.20f);
+			ModSizeExperience(giant, experience);
 
-			sandwichdata.Remove(tiny);
+			float hp = GetAV(tiny, ActorValue::kHealth);
+			if (damage > hp || hp <= 0) {
+				ModSizeExperience_Crush(giant, tiny, true);
+				
+				CrushManager::GetSingleton().Crush(giant, tiny);
+				
+				PrintDeathSource(giant, tiny, DamageSource::ThighSandwiched);
+				AdvanceQuestProgression(giant, tiny, QuestStage::HandCrush, 1.0, false);
+				auto node = find_node(giant, "NPC R FrontThigh");
+				
+				PlayCrushSound(giant, node, false, false);
+
+				sandwichdata.Remove(tiny);
+			}
 		}
 	}
 

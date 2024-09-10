@@ -136,13 +136,13 @@ namespace Gts {
 		auto actor_data = Transient::GetSingleton().GetData(&actor);
 		if (actor_data) {
 		    float initialScale = GetInitialScale(&actor);
-			if (actor.formID == 0x14) {
-				/*log::info("Initial Scale: {}", initialScale);
+			/*if (actor.formID == 0x14) {
+				log::info("Initial Scale: {}", initialScale);
 				log::info("Other Scales: {}", actor_data->otherScales);
 				log::info("gamescale: {}", game_getactorscale(&actor));
 				log::info("npcparentnode: {}", get_npcparentnode_scale(&actor));
-				log::info("GetScale: {}", actor.GetScale());*/
-			}
+				log::info("GetScale: {}", actor.GetScale());
+			}*/
 			float result = actor_data->otherScales * initialScale;
 			if (game_scale) {
 				result *= game_getactorscale(&actor);

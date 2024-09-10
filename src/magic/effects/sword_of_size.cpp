@@ -13,9 +13,7 @@ namespace {
 		float n = 0.7;
 		float s = 1.0;
 		float result = k*pow(s*(value-a), n);
-		log::info("Shrink Result: {}, Value {}", result, value);
 		if (result < 1.0) {
-			log::info("value is < 1");
 			return 1.0;
 		}
 		return result;
@@ -40,7 +38,7 @@ namespace Gts {
 	void SwordOfSize::OnStart() {
 		auto caster = GetCaster();
 		if (caster) {
-			this->power = GetActiveEffect()->magnitude * 0.10;
+			this->power = GetActiveEffect()->magnitude * 0.20;
 		}
 	}
 
@@ -66,8 +64,6 @@ namespace Gts {
 			shrink_value *= 3.0;
 			gain_value *= 0.20;
 		}
-
-		log::info("Shrink Value: {}", shrink_value);
 
 		TransferSize(caster, target, false, shrink_value, gain_value, false, ShrinkSource::Enchantment);
 	}

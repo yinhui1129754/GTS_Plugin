@@ -275,10 +275,13 @@ namespace Gts {
 		if (giant == tiny) {
 			return;
 		}
+		if (!tiny->Is3DLoaded() || !giant->Is3DLoaded()) {
+			return;
+		}
 		if (!CanDoDamage(giant, tiny, true) || IsBetweenBreasts(tiny)) { // disallow 
 			return;
 		}
-
+		
 		bool SMT = HasSMT(giant);
 		auto& sizemanager = SizeManager::GetSingleton();
 		float size_difference = GetSizeDifference(giant, tiny, SizeType::VisualScale, false, true);

@@ -1502,7 +1502,6 @@ namespace Gts {
 			bool reanimated = actor->AsActorState()->GetLifeState() == ACTOR_LIFE_STATE::kReanimate;
 			if (transient) {
 				transient->WasReanimated = reanimated;
-				//Cprint("Set {} to reanimated: {}", actor->GetDisplayFullName(), reanimated);
 			}
 		}
 	}
@@ -2292,7 +2291,7 @@ namespace Gts {
 
 		double startTime = Time::WorldTimeElapsed();
 
-		TaskManager::Run(TaskName, [=](auto& update){
+		TaskManager::RunFor(TaskName, 2, [=](auto& update){
 			if (!giantHandle) {
 				return false;
 			}
@@ -2303,7 +2302,15 @@ namespace Gts {
 			Actor* tiny = tinyHandle.get().get();
 			
 			double endTime = Time::WorldTimeElapsed();
-
+			if (!tiny) {
+				return false;
+			} 
+			if (!tiny->Is3DLoaded()) {
+				return true;
+			}
+			if (!tiny->GetCurrent3D()) {
+				return true;
+			}
 			if ((endTime - startTime) > 0.05) {
 				// Enough time has elapsed
 

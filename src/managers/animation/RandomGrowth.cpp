@@ -127,7 +127,7 @@ namespace {
 				RandomGrowth::RestoreStats(giant, gain);
 			}
 			
-			Rumbling::Once("RandomGrowth", giant, 4.0 * gain, 0.05, "NPC Pelvis [Pelv]", 0.0);
+			Rumbling::Once("RandomGrowth", giant, 2.0 * gain, 0.0, "NPC Pelvis [Pelv]", 0.0);
 
 			//log::info("elapsed: {}, mult: {}, IsGrowing: {}", elapsed, gain, IsGrowing(giant));
 			if (!IsActionOnCooldown(giant, CooldownSource::Misc_GrowthSound)) {
@@ -138,8 +138,6 @@ namespace {
 			}
 			
 			if (!IsGrowing(giant) || elapsed > 1.8 && gain < 0.0) {
-				giant->SetGraphVariableInt("GTS_Growth_Roll", 0);
-				//log::info("Task Terminated");
 				return false;
 			}
 			return true;
@@ -172,6 +170,30 @@ namespace {
 	}
 	void GTS_RandomGrowth_Taper(AnimationEventData& data) {}
 	void GTS_RandomGrowth_End(AnimationEventData& data) {}
+
+	void GTS_ResetVars(const AnimationEventData& data) {
+        Actor* giant = &data.giant;
+        std::string name = std::format("ResetIGrowth_{}", giant->formID);
+		ActorHandle gianthandle = giant->CreateRefHandle();
+
+		TaskManager::Run(name, [=](auto& progressData) {
+			if (!gianthandle) {
+				return false;
+			}
+			auto giantref = gianthandle.get().get();
+
+			if (!giantref) {
+				return false; // end task in that case
+			}
+
+            if (!IsGrowing(giantref)) {
+                giantref->SetGraphVariableInt("GTS_Growth_Roll", 0);
+                return false;
+            }
+			// All good try another frame
+			return true;
+		});
+    }
 }
 
 namespace Gts
@@ -181,6 +203,7 @@ namespace Gts
         AnimationManager::RegisterEvent("GTS_RandomGrowth_Peak", "RandomGrowth", GTS_RandomGrowth_Peak);
         AnimationManager::RegisterEvent("GTS_RandomGrowth_Taper", "RandomGrowth", GTS_RandomGrowth_Taper);
         AnimationManager::RegisterEvent("GTS_RandomGrowth_End", "RandomGrowth", GTS_RandomGrowth_End);
+		AnimationManager::RegisterEvent("GTS_ResetVars", "RandomGrowth", GTS_ResetVars);
 	}
 
 	void Animation_RandomGrowth::RegisterTriggers() {

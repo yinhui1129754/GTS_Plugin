@@ -159,8 +159,6 @@ namespace Gts {
 				std::mt19937 gen(rd());
 				std::uniform_real_distribution<float> dis(-0.2, 0.2);
 
-				
-
 				AddSMTDuration(giant, 5.0);
 				ScareChance(giant);
 

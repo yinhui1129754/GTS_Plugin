@@ -339,13 +339,6 @@ void GtsManager::Update() {
 	}
 }
 
-void GtsManager::MenuChange(const MenuOpenCloseEvent* menu) {
-	if ((!menu->opening || menu->opening) && menu->menuName == "RaceSex Menu") {
-		/*log::info("RaceMenu Opened: {}", menu->opening);
-		RefreshInitialScales(PlayerCharacter::GetSingleton());*/
-	}
-}
-
 void GtsManager::OnAddPerk(const AddPerkEvent& evt) {
 	if (evt.actor->formID == 0x14) {
 		if (evt.perk == Runtime::GetPerk("ColossalGrowth")) {

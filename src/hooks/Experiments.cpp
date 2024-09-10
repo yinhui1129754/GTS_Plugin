@@ -135,7 +135,7 @@ namespace {
 
 namespace Hooks {
 	void Hook_Experiments::PatchShaking() { 
-		log::info("Attempting the patch");
+		/*log::info("Attempting the patch");
 		constexpr REL::ID ShakeCamera_GetOffset_SE(32275); // 1404f5420 - 1404f54b5: 0x95
 		constexpr REL::ID ShakeCamera_GetOffset_AE(33012); // 14050E560 - 14050e5f5: 0x95
 
@@ -166,6 +166,7 @@ namespace Hooks {
 		// Atempt to do ASM stuff. targets copied from https://github.com/jarari/ImmersiveImpactSE/blob/b1e0be03f4308718e49072b28010c38c455c394f/HitStopManager.cpp#L67
 		// It seems to patch it, but crashes the game on shaking the screen, after ~0.2sec.
 		// Seems to point to ni-node stuff so i guess altering it is a bad idea
+		*/
 	}
 
 	void Hook_Experiments::Hook(Trampoline& trampoline) { // This hook is usually commented out inside hooks.cpp
