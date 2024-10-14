@@ -1,4 +1,4 @@
-#include "profiler.hpp"
+﻿#include "profiler.hpp"
 #include "Config.hpp"
 #include "data/time.hpp"
 #include <chrono>

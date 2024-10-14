@@ -1,14 +1,14 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.26)
 message("Using toolchain file ${CMAKE_TOOLCHAIN_FILE}.")
 
+if(POLICY CMP0025)
+  cmake_policy(SET CMP0025 NEW)
+endif()
+set(DCMAKE_CXX_COMPILER,"clang-cl")
 ########################################################################################################################
 ## Define project
 ########################################################################################################################
-project(
-        GtsPlugin
-        VERSION 1.0.0
-        DESCRIPTION "Size Matters Plugin."
-        LANGUAGES CXX)
+project(GtsPlugin VERSION 1.0.0 DESCRIPTION "Size Matters Plugin." LANGUAGES CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -105,7 +105,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/contrib/Distribution/Plugin${BUILD_NAME}/")
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> "${CMAKE_CURRENT_SOURCE_DIR}/contrib/Distribution/Plugin${BUILD_NAME}/")
-if(${CMAKE_BUILD_TYPE} STREQUAL Debug OR ${CMAKE_BUILD_TYPE} STREQUAL RelWithDebInfo)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE:${PROJECT_NAME}> "${CMAKE_CURRENT_SOURCE_DIR}/contrib/Distribution/Plugin${BUILD_NAME}/")
 endif()

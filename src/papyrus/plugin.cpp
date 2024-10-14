@@ -167,7 +167,7 @@ namespace {
 		int d = (int)::ceil(::log10(f < 0 ? -f : f)); /*digits before decimal point*/
 		double order = ::pow(10., n - d);
 		std::stringstream ss;
-		ss << std::fixed << std::setprecision(std::max(n - d, 0)) << round(f * order) / order;
+		ss << std::fixed << std::setprecision(max(n - d, 0)) << round(f * order) / order;
 		return ss.str();
 	}
 
