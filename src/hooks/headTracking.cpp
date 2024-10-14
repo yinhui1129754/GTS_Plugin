@@ -1,4 +1,4 @@
-#include "hooks/headTracking.hpp"
+﻿#include "hooks/headTracking.hpp"
 #include "utils/actorUtils.hpp"
 #include "scale/modscale.hpp"
 #include "scale/scale.hpp"
