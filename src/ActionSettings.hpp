@@ -13,14 +13,14 @@ namespace Gts {
     const float Minimum_Actor_Scale = 0.04f;
     const float Minimum_Actor_Crush_Scale_Idle = 16.0f; // x16.0 crush threshold for just standing still
 //-----------------------------------------Default Trigger Threshold Values
-    const float Action_Sandwich = 6.0f; // used for sandwich only
-    const float Action_ThighCrush = 12.0f; // Used for AI only
-	const float Action_Crush = 10.0f;
-	const float Action_Booty = 2.0f; // for butt and cleavage crush
-	const float Action_Vore = 8.0f;
-	const float Action_Grab = 8.0f;
-	const float Action_Hug = 0.92f; // for hug grab/drop threshold 
-    const float Action_FingerGrind = 6.0f;
+    const float Action_Sandwich = 0.4f; // used for sandwich only
+    const float Action_ThighCrush = 1.2f; // Used for AI only
+	const float Action_Crush = 0.9f;
+	const float Action_Booty = 0.2f; // for butt and cleavage crush
+	const float Action_Vore = 0.5f;
+	const float Action_Grab = 0.5f;
+	const float Action_Hug = 0.1f; // for hug grab/drop threshold 
+    const float Action_FingerGrind = 0.4;
 
 //-----------------------------------------Default Damage Values
 

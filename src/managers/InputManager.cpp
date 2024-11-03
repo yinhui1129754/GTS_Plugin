@@ -320,7 +320,7 @@ namespace Gts {
 					}
 				}
 				if (groupAlreadyFired) {
-					trigger.Reset();
+					 trigger.Reset();
 				} else {
 					log::debug(" - Running event {}", trigger.GetName());
 					firedTriggers.push_back(&trigger);
